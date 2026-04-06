@@ -13,6 +13,11 @@ import { GoogleIcon } from "@/shared/icons/google";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useFieldErrorMessage from "shared/hooks/use-field-error-message";
+import type { ISignupForm } from "../types/auth.types";
+import useSignupWithEmail from "../hooks/use-signup-with-email";
+import { toast } from "sonner";
+import { handleApiError } from "shared/utils/api/errors";
+
 
 const validationSchema = yup.object({
   firstName: yup.string().required("First Name is required"),
@@ -36,7 +41,18 @@ export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const formik = useFormik({
+  const { mutateAsync: signup, isPending } = useSignupWithEmail();
+
+  const handleSignup = async (values: ISignupForm) => {
+    try {
+      await signup(values);
+      toast.success("Account created successfully");
+    } catch (error) {
+      handleApiError(error, { showToast: true });
+    }
+  };
+
+  const formik = useFormik<ISignupForm>({
     initialValues: {
       firstName: "",
       lastName: "",
@@ -44,10 +60,7 @@ export function SignupForm({
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      // Simulate submission
-      console.log(values);
-    },
+    onSubmit: handleSignup,
   });
 
   const getErrorMessage = useFieldErrorMessage({
@@ -85,7 +98,7 @@ export function SignupForm({
 
           <Field className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+              <FieldLabel htmlFor="firstName">First name</FieldLabel>
               <Input
                 id="firstName"
                 name="firstName"
@@ -97,7 +110,7 @@ export function SignupForm({
               <FieldError errors={getErrorMessage("firstName")} />
             </div>
             <div className="flex flex-col">
-              <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+              <FieldLabel htmlFor="lastName">Last name</FieldLabel>
               <Input
                 id="lastName"
                 name="lastName"
@@ -137,7 +150,9 @@ export function SignupForm({
             </div>
           </Field>
           <Field className="mt-2">
-            <Button type="submit">Create Account</Button>
+            <Button type="submit" loading={isPending}>
+              Create Account
+            </Button>
           </Field>
           <FieldDescription>
             Already have an account? <a href="#">Sign in</a>
