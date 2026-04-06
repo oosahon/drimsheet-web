@@ -1,0 +1,153 @@
+import { cn } from "shared/ui/utils";
+import { Button } from "shared/ui/button";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "shared/ui/field";
+import { Input, PasswordInput } from "shared/ui/input";
+import { GoogleIcon } from "@/shared/icons/google";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import useFieldErrorMessage from "shared/hooks/use-field-error-message";
+
+const validationSchema = yup.object({
+  firstName: yup.string().required("First Name is required"),
+  lastName: yup.string().required("Last Name is required"),
+  email: yup
+    .string()
+    .email("Enter a valid email")
+    .required("Email is required"),
+  password: yup
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .matches(/(?=.*[0-9])/, "Password must contain at least one number")
+    .matches(
+      /(?=.*[^A-Za-z0-9])/,
+      "Password must contain at least one special character",
+    )
+    .required("Password is required"),
+});
+
+export function SignupForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      // Simulate submission
+      console.log(values);
+    },
+  });
+
+  const getErrorMessage = useFieldErrorMessage({
+    errors: formik.errors,
+    touched: formik.touched,
+  });
+
+  return (
+    <div className={cn("flex flex-col gap-6", className)} {...props}>
+      <form onSubmit={formik.handleSubmit}>
+        <FieldGroup>
+          <div className="flex flex-col items-center gap-2 text-center">
+            <a
+              href="#"
+              className="flex flex-col items-center gap-2 font-medium"
+            >
+              <div className="flex size-8 items-center justify-center rounded-md">
+                <img
+                  src="/logo.svg"
+                  alt="Purple Ledger Limited"
+                  className="min-w-12 rounded-2xl mb-6"
+                />
+              </div>
+              <span className="sr-only">Purple Ledger Limited.</span>
+            </a>
+          </div>
+          <Field className="grid gap-4">
+            <Button variant="outline" type="button">
+              <GoogleIcon />
+              Continue with Google
+            </Button>
+          </Field>
+
+          <FieldSeparator className="my-4">Or</FieldSeparator>
+
+          <Field className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col">
+              <FieldLabel htmlFor="firstName">First Name</FieldLabel>
+              <Input
+                id="firstName"
+                name="firstName"
+                type="text"
+                value={formik.values.firstName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <FieldError errors={getErrorMessage("firstName")} />
+            </div>
+            <div className="flex flex-col">
+              <FieldLabel htmlFor="lastName">Last Name</FieldLabel>
+              <Input
+                id="lastName"
+                name="lastName"
+                type="text"
+                value={formik.values.lastName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <FieldError errors={getErrorMessage("lastName")} />
+            </div>
+          </Field>
+
+          <Field>
+            <div>
+              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <FieldError errors={getErrorMessage("email")} />
+            </div>
+
+            <div className="mt-2">
+              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <PasswordInput
+                id="password"
+                name="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <FieldError errors={getErrorMessage("password")} />
+            </div>
+          </Field>
+          <Field className="mt-2">
+            <Button type="submit">Create Account</Button>
+          </Field>
+          <FieldDescription>
+            Already have an account? <a href="#">Sign in</a>
+          </FieldDescription>
+        </FieldGroup>
+      </form>
+      <FieldDescription className="px-6 text-center">
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        and <a href="#">Privacy Policy</a>.
+      </FieldDescription>
+    </div>
+  );
+}
