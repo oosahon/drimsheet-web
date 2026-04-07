@@ -1,5 +1,5 @@
 import purpleLedgerApi from "@/shared/utils/api";
-import type { ISignupForm } from "../types/auth.types";
+import type { ISignupFormValues } from "../ui/signup-form";
 
 const authService = {
   getAuthToken() {
@@ -19,11 +19,8 @@ const authService = {
     window.localStorage.removeItem("refreshToken");
   },
 
-  async signupWithEmail(payload: ISignupForm) {
-    return purpleLedgerApi.auth.signupWithEmail({
-      ...payload,
-      reportingCurrencyCode: "NGN",
-    });
+  async signupWithEmail(payload: ISignupFormValues) {
+    return purpleLedgerApi.auth.signupWithEmail(payload);
   },
 };
 

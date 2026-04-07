@@ -26,7 +26,6 @@ export interface IIndividualSignupReq {
   lastName: string;
   email: string;
   password: string;
-  reportingCurrencyCode: string;
 }
 
 import type {

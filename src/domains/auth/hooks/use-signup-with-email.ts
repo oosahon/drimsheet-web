@@ -1,10 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import authService from "../services/auth.service";
-import type { ISignupForm } from "../types/auth.types";
+import type { ISignupFormValues } from "../ui/signup-form";
+
 
 export default function useSignupWithEmail() {
   return useMutation({
-    mutationFn: async (payload: ISignupForm) => {
+    mutationFn: async (payload: ISignupFormValues) => {
       await authService.signupWithEmail(payload);
     },
   });

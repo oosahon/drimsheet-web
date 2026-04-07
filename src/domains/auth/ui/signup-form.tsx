@@ -13,10 +13,19 @@ import { GoogleIcon } from "@/shared/icons/google";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useFieldErrorMessage from "shared/hooks/use-field-error-message";
-import type { ISignupForm } from "../types/auth.types";
-import useSignupWithEmail from "../hooks/use-signup-with-email";
-import { toast } from "sonner";
-import { handleApiError } from "shared/utils/api/errors";
+import type { ComponentProps } from "react";
+
+export interface ISignupFormValues {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+interface ISignupFormProps extends Omit<ComponentProps<"div">, "onSubmit"> {
+  onSubmit: (values: ISignupFormValues) => void;
+  loading: boolean;
+}
 
 
 const validationSchema = yup.object({
@@ -39,20 +48,11 @@ const validationSchema = yup.object({
 
 export function SignupForm({
   className,
+  onSubmit,
+  loading,
   ...props
-}: React.ComponentProps<"div">) {
-  const { mutateAsync: signup, isPending } = useSignupWithEmail();
-
-  const handleSignup = async (values: ISignupForm) => {
-    try {
-      await signup(values);
-      toast.success("Account created successfully");
-    } catch (error) {
-      handleApiError(error, { showToast: true });
-    }
-  };
-
-  const formik = useFormik<ISignupForm>({
+}: ISignupFormProps) {
+  const formik = useFormik<ISignupFormValues>({
     initialValues: {
       firstName: "",
       lastName: "",
@@ -60,7 +60,7 @@ export function SignupForm({
       password: "",
     },
     validationSchema: validationSchema,
-    onSubmit: handleSignup,
+    onSubmit,
   });
 
   const getErrorMessage = useFieldErrorMessage({
@@ -150,7 +150,7 @@ export function SignupForm({
             </div>
           </Field>
           <Field className="mt-2">
-            <Button type="submit" loading={isPending}>
+            <Button type="submit" loading={loading}>
               Create Account
             </Button>
           </Field>
