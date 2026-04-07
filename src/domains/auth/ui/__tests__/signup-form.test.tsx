@@ -1,17 +1,17 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { SignupForm } from "../signup-form";
 
 describe("SignupForm", () => {
   it("renders correctly", () => {
-    render(<SignupForm />);
+    render(<SignupForm onSubmit={vi.fn()} loading={false} />);
     expect(screen.getByLabelText(/First Name/i)).toBeInTheDocument();
   });
 
   it("shows required validation errors on submit empty", async () => {
     const user = userEvent.setup();
-    render(<SignupForm />);
+    render(<SignupForm onSubmit={vi.fn()} loading={false} />);
     
     await user.click(screen.getByRole("button", { name: /Create Account/i }));
     
@@ -24,7 +24,7 @@ describe("SignupForm", () => {
   describe("Password Validation", () => {
     it("requires at least 8 characters", async () => {
       const user = userEvent.setup();
-      render(<SignupForm />);
+      render(<SignupForm onSubmit={vi.fn()} loading={false} />);
       
       await user.type(screen.getByLabelText(/^Password$/i), "Short1!");
       await user.click(screen.getByRole("button", { name: /Create Account/i }));
@@ -34,7 +34,7 @@ describe("SignupForm", () => {
 
     it("requires at least one number", async () => {
       const user = userEvent.setup();
-      render(<SignupForm />);
+      render(<SignupForm onSubmit={vi.fn()} loading={false} />);
       
       await user.type(screen.getByLabelText(/^Password$/i), "NoNumbers!");
       await user.click(screen.getByRole("button", { name: /Create Account/i }));
@@ -44,7 +44,7 @@ describe("SignupForm", () => {
 
     it("requires at least one special character", async () => {
       const user = userEvent.setup();
-      render(<SignupForm />);
+      render(<SignupForm onSubmit={vi.fn()} loading={false} />);
       
       await user.type(screen.getByLabelText(/^Password$/i), "NoSpecialChar1");
       await user.click(screen.getByRole("button", { name: /Create Account/i }));
@@ -54,7 +54,7 @@ describe("SignupForm", () => {
 
     it("accepts valid passwords", async () => {
       const user = userEvent.setup();
-      render(<SignupForm />);
+      render(<SignupForm onSubmit={vi.fn()} loading={false} />);
       
       await user.type(screen.getByLabelText(/First Name/i), "John");
       await user.type(screen.getByLabelText(/Last Name/i), "Doe");
