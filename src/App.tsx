@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import SignupRoute from "@/routes/auth/signup.route";
 import { Toaster } from "./shared/ui/sonner";
+import CompleteSignupRoute from "./routes/auth/complete-signup.route";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -19,6 +20,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/auth/signup" element={<SignupRoute />} />
+          <Route
+            path="/auth/signup/complete"
+            element={<CompleteSignupRoute />}
+          />
           <Route path="/" element={<Navigate to="/auth/signup" replace />} />
         </Routes>
       </BrowserRouter>
