@@ -28,6 +28,11 @@ export interface IIndividualSignupReq {
   password: string;
 }
 
+export interface IAuthRes {
+  authToken: string;
+  refreshToken: string;
+}
+
 import type {
   AxiosInstance,
   AxiosRequestConfig,
@@ -270,10 +275,11 @@ export class Api<
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, IApiError>({
+      this.request<IAuthRes, IApiError>({
         path: `/auth/signup/complete`,
         method: "POST",
         query: query,
+        format: "json",
         ...params,
       }),
   };

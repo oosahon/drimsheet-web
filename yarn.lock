@@ -4754,7 +4754,7 @@ swagger-schema-official@2.0.0-bab6bed:
   resolved "https://registry.npmjs.org/swagger-schema-official/-/swagger-schema-official-2.0.0-bab6bed.tgz"
   integrity sha512-rCC0NWGKr/IJhtRuPq/t37qvZHI/mH4I4sxflVM+qgVe5Z2uOCivzWaVbuioJaB61kvm5UvB7b49E+oBY0M8jA==
 
-swagger-typescript-api@^13.6.7:
+swagger-typescript-api@^13.2.16:
   version "13.6.7"
   resolved "https://registry.npmjs.org/swagger-typescript-api/-/swagger-typescript-api-13.6.7.tgz"
   integrity sha512-+22//lzosf/y6t6mf/uSozhU5GlDeSNwn9PJDaEcgIfyMtWCQBOc9oLevl4zJU5uzYM7jlJoWUTOZmslwwAiHw==

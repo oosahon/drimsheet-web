@@ -2,7 +2,8 @@ import observabilityService from "@/shared/services/observability.service";
 import { toast } from "sonner";
 
 import type { IApiValidationError } from "./Api";
-import { AxiosError } from "axios";
+import { type AxiosError } from "axios";
+import authService from "@/domains/auth/services/auth.service";
 
 type TApiError = {
   code?: number;
@@ -34,9 +35,9 @@ export const handleApiError = (err: unknown, options?: THandleErrorOptions) => {
   const error = parseApiError(err);
 
   if (error.code === 401) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/auth/login";
-    }
+    authService.removeToken();
+    window.location.href = "/auth/login";
+    return;
   }
 
   if (error.code === 500) {
