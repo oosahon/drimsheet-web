@@ -22,6 +22,11 @@ const authService = {
   async signupWithEmail(payload: ISignupFormValues) {
     return purpleLedgerApi.auth.signupWithEmail(payload);
   },
+
+  async verifyEmail(token: string) {
+    const response = await purpleLedgerApi.auth.verifyEmail({ token });
+    this.setToken(response.data.authToken, response.data.refreshToken);
+  },
 };
 
 export default authService;

@@ -256,5 +256,25 @@ export class Api<
         type: ContentType.Json,
         ...params,
       }),
+
+    /**
+     * @description Verify user email
+     *
+     * @tags Auth
+     * @name VerifyEmail
+     * @request POST:/auth/signup/complete
+     */
+    verifyEmail: (
+      query: {
+        token: string;
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, IApiError>({
+        path: `/auth/signup/complete`,
+        method: "POST",
+        query: query,
+        ...params,
+      }),
   };
 }
