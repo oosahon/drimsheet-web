@@ -17,6 +17,7 @@ async function fetchSwaggerFromGitHub() {
     headers: {
       Accept: "application/vnd.github.v3.raw",
       Authorization: GITHUB_TOKEN ? `token ${GITHUB_TOKEN}` : "",
+      Cache: "no-cache",
     },
   });
 

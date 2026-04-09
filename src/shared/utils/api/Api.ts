@@ -10,6 +10,35 @@
  * ---------------------------------------------------------------
  */
 
+export enum UAccountingEntityType {
+  Individual = "individual",
+  SoleTrader = "sole_trader",
+  Company = "company",
+}
+
+export type TEntityId = string & {
+  __brand: "uuid";
+};
+
+export interface IUserAppPreferences {
+  theme: "light" | "dark" | "system";
+}
+
+export interface IUserPreferences {
+  id: TEntityId;
+  appPreferences: IUserAppPreferences;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+}
+
+/** From T, pick a set of properties whose keys are in the union K */
+export type PickIUserExcludeKeysPassword = object;
+
+/** Construct a type with the properties of T except for those in type K. */
+export type OmitIUserPassword = PickIUserExcludeKeysPassword;
+
 export interface IApiValidationError {
   field: string;
   message: string;
@@ -31,6 +60,57 @@ export interface IIndividualSignupReq {
 export interface IAuthRes {
   authToken: string;
   refreshToken: string;
+}
+
+/**
+ * Represents the month and day on which an accounting entity's fiscal year ends.
+ * Defaults to December 31 for individuals. Companies and sole traders
+ * may configure any valid calendar date (e.g., March 31, June 30).
+ */
+export interface IFiscalYearStart {
+  /** @format double */
+  month: number;
+  /** @format double */
+  day: number;
+}
+
+/** From T, pick a set of properties whose keys are in the union K */
+export interface PickIAccountingEntityExcludeKeysFunctionalCurrencyOrReportingCurrency {
+  id: TEntityId;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt: string;
+  type: UAccountingEntityType;
+  ownerId: TEntityId;
+  /**
+   * Represents the month and day on which an accounting entity's fiscal year ends.
+   * Defaults to December 31 for individuals. Companies and sole traders
+   * may configure any valid calendar date (e.g., March 31, June 30).
+   */
+  fiscalYearStart: IFiscalYearStart;
+}
+
+export interface IAccountingEntityRes {
+  id: TEntityId;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt: string;
+  type: UAccountingEntityType;
+  ownerId: TEntityId;
+  /**
+   * Represents the month and day on which an accounting entity's fiscal year ends.
+   * Defaults to December 31 for individuals. Companies and sole traders
+   * may configure any valid calendar date (e.g., March 31, June 30).
+   */
+  fiscalYearStart: IFiscalYearStart;
+  functionalCurrency: string;
+  reportingCurrency: string;
 }
 
 import type {
@@ -220,6 +300,37 @@ export class HttpClient<SecurityDataType = unknown> {
 export class Api<
   SecurityDataType extends unknown,
 > extends HttpClient<SecurityDataType> {
+  users = {
+    /**
+     * @description Get user preferences
+     *
+     * @tags User
+     * @name GetUserPreferences
+     * @request GET:/users/preferences
+     */
+    getUserPreferences: (params: RequestParams = {}) =>
+      this.request<IUserPreferences, any>({
+        path: `/users/preferences`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+
+    /**
+     * @description Get authenticated user profile
+     *
+     * @tags User
+     * @name GetAuthUserProfile
+     * @request GET:/users/profile
+     */
+    getAuthUserProfile: (params: RequestParams = {}) =>
+      this.request<OmitIUserPassword, any>({
+        path: `/users/profile`,
+        method: "GET",
+        format: "json",
+        ...params,
+      }),
+  };
   currencies = {
     /**
      * @description Get Currencies
@@ -279,6 +390,22 @@ export class Api<
         path: `/auth/signup/complete`,
         method: "POST",
         query: query,
+        format: "json",
+        ...params,
+      }),
+  };
+  accountingEntities = {
+    /**
+     * @description Get all accounting entities of an authenticated user
+     *
+     * @tags Accounting Entity
+     * @name GetAll
+     * @request GET:/accounting-entities
+     */
+    getAll: (params: RequestParams = {}) =>
+      this.request<IAccountingEntityRes[], any>({
+        path: `/accounting-entities`,
+        method: "GET",
         format: "json",
         ...params,
       }),
