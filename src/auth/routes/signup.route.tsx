@@ -1,5 +1,5 @@
-import authService from "@/domains/auth/services/auth.service";
-import { SignupFormContainer } from "@/domains/auth/ui/signup-form-container";
+import authService from "@/auth/services/auth.service";
+import { SignupFormContainer } from "@/auth/ui/signup-form/container";
 import { AnimatedThemeToggler } from "@/shared/ui/animated-theme-toggler";
 import { useMemo } from "react";
 import { Navigate } from "react-router-dom";

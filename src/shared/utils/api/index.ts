@@ -1,4 +1,4 @@
-import authService from "@/domains/auth/services/auth.service";
+import authService from "@/auth/services/auth.service";
 import { Api } from "./Api";
 import type { InternalAxiosRequestConfig } from "axios";
 

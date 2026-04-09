@@ -25,11 +25,8 @@
     "paths": {
       "@/*": [
         "./src/*"
-      ],
-      "shared/*": [
-        "./src/shared/*"
       ]
     }
   },
-  "include": ["src"]
+  "include": ["src", "./setup-test.ts"]
 }

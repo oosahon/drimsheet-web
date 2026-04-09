@@ -3,7 +3,7 @@ import { toast } from "sonner";
 
 import type { IApiValidationError } from "./Api";
 import { type AxiosError } from "axios";
-import authService from "@/domains/auth/services/auth.service";
+import authService from "@/auth/services/auth.service";
 
 type TApiError = {
   code?: number;
