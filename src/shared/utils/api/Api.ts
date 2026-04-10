@@ -16,12 +16,24 @@ export enum UAccountingEntityType {
   Company = "company",
 }
 
+export enum UAppUsageMode {
+  PowerUser = "power_user",
+  NonPowerUser = "non_power_user",
+}
+
+export enum UAppThemePreference {
+  Light = "light",
+  Dark = "dark",
+  System = "system",
+}
+
 export type TEntityId = string & {
   __brand: "uuid";
 };
 
 export interface IUserAppPreferences {
-  theme: "light" | "dark" | "system";
+  theme?: UAppThemePreference | null;
+  appUsageMode?: UAppUsageMode | null;
 }
 
 export interface IUserPreferences {
@@ -38,6 +50,33 @@ export type PickIUserExcludeKeysPassword = object;
 
 /** Construct a type with the properties of T except for those in type K. */
 export type OmitIUserPassword = PickIUserExcludeKeysPassword;
+
+/**
+ * Represents the month and day on which an accounting entity's fiscal year ends.
+ * Defaults to December 31 for individuals. Companies and sole traders
+ * may configure any valid calendar date (e.g., March 31, June 30).
+ */
+export interface IFiscalYearStart {
+  /** @format double */
+  month: number;
+  /** @format double */
+  day: number;
+}
+
+export interface IAccountingEntityOnboardingReq {
+  name: string;
+  entityType: UAccountingEntityType;
+  operatingCountryCode: string;
+  functionalCurrencyCode: string;
+  reportingCurrencyCode: string;
+  /**
+   * Represents the month and day on which an accounting entity's fiscal year ends.
+   * Defaults to December 31 for individuals. Companies and sole traders
+   * may configure any valid calendar date (e.g., March 31, June 30).
+   */
+  fiscalYearStart: IFiscalYearStart;
+  accountingMode: UAppUsageMode;
+}
 
 export interface IApiValidationError {
   field: string;
@@ -60,18 +99,6 @@ export interface IIndividualSignupReq {
 export interface IAuthRes {
   authToken: string;
   refreshToken: string;
-}
-
-/**
- * Represents the month and day on which an accounting entity's fiscal year ends.
- * Defaults to December 31 for individuals. Companies and sole traders
- * may configure any valid calendar date (e.g., March 31, June 30).
- */
-export interface IFiscalYearStart {
-  /** @format double */
-  month: number;
-  /** @format double */
-  day: number;
 }
 
 /** From T, pick a set of properties whose keys are in the union K */
@@ -328,6 +355,26 @@ export class Api<
         path: `/users/profile`,
         method: "GET",
         format: "json",
+        ...params,
+      }),
+  };
+  onboarding = {
+    /**
+     * @description Onboard Accounting Entity
+     *
+     * @tags Onboarding
+     * @name OnboardAccountingEntity
+     * @request POST:/onboarding/accounting-entity
+     */
+    onboardAccountingEntity: (
+      data: IAccountingEntityOnboardingReq,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/onboarding/accounting-entity`,
+        method: "POST",
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   };

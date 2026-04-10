@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
-import { SignupForm } from "./presentation";
+import { SignupForm } from "../signup-form";
 
 describe("SignupForm", () => {
   it("renders correctly", () => {

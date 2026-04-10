@@ -3,7 +3,8 @@ import accountingEntityService from "../services/accounting-entity.service";
 
 export default function useAccountingEntities() {
   return useQuery({
-    queryKey: ["useAccountingEntities"],
+    queryKey: ["accountingEntityService.getAll"],
     queryFn: () => accountingEntityService.getAll(),
+    staleTime: 1 * 60 * 1000,
   });
 }

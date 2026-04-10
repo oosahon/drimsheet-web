@@ -1,5 +1,5 @@
 import purpleLedgerApi from "@/shared/utils/api";
-import type { ISignupFormValues } from "../ui/signup-form/presentation";
+import type { ISignupFormValues } from "../ui/signup-form";
 
 const authService = {
   getAuthToken() {

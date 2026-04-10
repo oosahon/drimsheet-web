@@ -3,7 +3,7 @@ import userService from "../services/user.service";
 
 export default function usePreferences() {
   return useQuery({
-    queryKey: ["usePreferences"],
+    queryKey: ["userService.getPreferences"],
     queryFn: () => userService.getPreferences(),
   });
 }

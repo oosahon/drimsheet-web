@@ -7,30 +7,36 @@ import {
   FieldLabel,
   FieldTitle,
 } from "@/shared/ui/field";
+import { formatFiscalDate } from "@/shared/utils/date";
 import { Label } from "@/shared/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
-import countries from "@/shared/config/countries.json" with { type: "json" };
-import { GlobeIcon } from "lucide-react";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/shared/ui/combobox";
-import { InputGroupAddon } from "@/shared/ui/input-group";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import useFieldErrorMessage from "@/shared/hooks/use-field-error-message";
+import { CountryComboBox } from "@/shared/ui/country-combobox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/shared/ui/select";
+import { CurrencyComboBox } from "@/shared/ui/currency-combobox";
+import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
+import { Calendar } from "@/shared/ui/calendar";
 import { useState } from "react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
+import { Button } from "@/shared/ui/button";
+import { Calendar1 } from "lucide-react";
 
 export interface IAccountingEntityFormValues {
   entityType: string;
   countryCode: string;
+  functionalCurrency: string;
+  reportingCurrency: string;
+  fiscalYearStart: { month: number; day: number };
 }
 
-export interface IAccountingEntityFormProps {
+export interface AccountingEntityOnboardingFormProps {
   onSubmit: (values: IAccountingEntityFormValues) => void;
   loading?: boolean;
 }
@@ -38,62 +44,17 @@ export interface IAccountingEntityFormProps {
 const validationSchema = yup.object({
   entityType: yup.string().required("Entity type is required"),
   countryCode: yup.string().required("Country is required"),
+  functionalCurrency: yup.string().required("Functional currency is required"),
+  reportingCurrency: yup.string().required("Reporting currency is required"),
+  fiscalYearStart: yup.object({
+    month: yup.number().required(),
+    day: yup.number().required()
+  }).required("Fiscal year start is required"),
 });
 
-interface ICountrySelectProps {
+interface EntitySelectProps {
   value: string;
-  onChange: (value: string) => void;
   error?: Array<{ message?: string } | undefined>;
-}
-
-function CountrySelect({ value, onChange, error }: ICountrySelectProps) {
-  const [options, setOptions] = useState(countries);
-
-  const selectedCountry = countries.find((country) => country.code === value);
-
-  return (
-    <Field>
-      <Label htmlFor="country-select">Where do you reside?</Label>
-      <Combobox
-        items={options}
-        autoHighlight
-        value={selectedCountry ?? null}
-        onValueChange={(val: any) => onChange(val ? val.code : "")}
-        itemToStringLabel={(item: any) => item?.name || ""}
-        onInputValueChange={(val) => {
-          setOptions(
-            countries.filter((country) =>
-              country.name.toLowerCase().includes(val.toLowerCase()),
-            ),
-          );
-        }}
-      >
-        <ComboboxInput id="country-select" placeholder="Select a country">
-          <InputGroupAddon>
-            {selectedCountry ? (
-              <span className="text-xl leading-none">
-                {selectedCountry.flag}
-              </span>
-            ) : (
-              <GlobeIcon />
-            )}
-          </InputGroupAddon>
-        </ComboboxInput>
-        <ComboboxContent alignOffset={-28} className="w-60">
-          <ComboboxEmpty>No countries found.</ComboboxEmpty>
-          <ComboboxList>
-            {options.map((item) => (
-              <ComboboxItem key={item.code} value={item}>
-                <span className="mr-2 text-base leading-none">{item.flag}</span>
-                {item.name}
-              </ComboboxItem>
-            ))}
-          </ComboboxList>
-        </ComboboxContent>
-      </Combobox>
-      <FieldError errors={error} />
-    </Field>
-  );
 }
 
 interface IEntityTypeRadioGroupProps {
@@ -109,16 +70,30 @@ function EntityTypeRadioGroup({
 }: IEntityTypeRadioGroupProps) {
   return (
     <Field>
-      <Label htmlFor="individual-entity">Who is this account for?</Label>
+      <Label htmlFor="individual-entity">Accounting mode</Label>
       <RadioGroup value={value} onValueChange={onChange} className="max-w-sm">
         <FieldLabel htmlFor="individual-entity" className="cursor-pointer">
           <Field orientation="horizontal">
             <FieldContent>
               <FieldTitle className="text-md font-medium text-bold">
-                Individual
+                Automated (Recommended)
               </FieldTitle>
-              <FieldDescription className="text-xs text-muted-foreground">
-                Track cashflow and compute taxes.
+              <FieldDescription className="text-xs w-full text-muted-foreground">
+                PurpleLedger handles the core accounting.
+              </FieldDescription>
+            </FieldContent>
+            <RadioGroupItem value="individual" id="individual-entity" />
+          </Field>
+        </FieldLabel>
+
+        <FieldLabel htmlFor="individual-entity" className="cursor-pointer">
+          <Field orientation="horizontal">
+            <FieldContent>
+              <FieldTitle className="text-md font-medium text-bold">
+                Manual
+              </FieldTitle>
+              <FieldDescription className="text-xs w-full text-muted-foreground">
+                You handle journal entries and adjustments.
               </FieldDescription>
             </FieldContent>
             <RadioGroupItem value="individual" id="individual-entity" />
@@ -130,13 +105,88 @@ function EntityTypeRadioGroup({
   );
 }
 
-export function AccountingEntityOnboardingForm({
+function EntitySelect({ value, error }: EntitySelectProps) {
+  return (
+    <Field>
+      <Label htmlFor="individual-entity">Who is this account for?</Label>
+      <Select value={value}>
+        <SelectTrigger>
+          <SelectValue placeholder="Select an entity" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="individual">An Individual</SelectItem>
+          <SelectItem value="business">
+            A Sole Proprietorship (coming soon)
+          </SelectItem>
+          <SelectItem value="business">A Company (coming soon)</SelectItem>
+        </SelectContent>
+      </Select>
+      <FieldError errors={error} />
+    </Field>
+  );
+}
+
+
+interface IFiscalYearStartSelectProps {
+  value: { month: number; day: number };
+  onChange: (value: { month: number; day: number }) => void;
+  error?: string;
+}
+
+function FiscalYearStartSelect({ value, onChange, error }: IFiscalYearStartSelectProps) {
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  const displayValue = value ? formatFiscalDate(value.month, value.day) : "Select a financial start date";
+  const selectedDate = value ? new Date(2024, value.month - 1, value.day) : undefined;
+
+  const handleSelect = (date: Date | undefined) => {
+    if (date) {
+      onChange({ month: date.getMonth() + 1, day: date.getDate() });
+      setShowCalendar(false);
+    }
+  };
+
+  return (
+    <Field>
+      <Label>When does your financial year start?</Label>
+      <Popover open={showCalendar} onOpenChange={setShowCalendar}>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className={"w-full justify-start text-left font-normal " + (!value ? "text-muted-foreground" : "")}>
+            <Calendar1 className="mr-2 h-4 w-4" />
+            {displayValue}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar 
+            mode="single" 
+            selected={selectedDate}
+            onSelect={handleSelect}
+            defaultMonth={selectedDate}
+            formatters={{
+              formatMonthCaption: (date) => date.toLocaleString(undefined, { month: "long" })
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+      <FieldError errors={error ? [{ message: error }] : undefined} />
+    </Field>
+  );
+}
+
+
+function AccountingEntityOnboardingForm({
   onSubmit,
-}: IAccountingEntityFormProps) {
+}: AccountingEntityOnboardingFormProps) {
   const formik = useFormik<IAccountingEntityFormValues>({
     initialValues: {
       entityType: "individual",
       countryCode: "NG",
+      functionalCurrency: "NGN",
+      reportingCurrency: "NGN",
+      fiscalYearStart: {
+        month: 1,
+        day: 1
+      }
     },
     validationSchema,
     onSubmit: (values) => {
@@ -149,20 +199,70 @@ export function AccountingEntityOnboardingForm({
     touched: formik.touched,
   });
 
+  const getFiscalYearStartErrorStr = () => {
+    const errs = formik.errors.fiscalYearStart;
+    const touch = formik.touched.fiscalYearStart;
+    if (!errs) return undefined;
+
+    if (typeof errs === "string") {
+      return errs;
+    }
+
+    const fieldErrs = errs as { month?: string; day?: string };
+    const fieldTouch = touch as { month?: boolean; day?: boolean } | undefined;
+
+    if (fieldTouch?.month && typeof fieldErrs.month === "string") {
+      return fieldErrs.month;
+    }
+    if (fieldTouch?.day && typeof fieldErrs.day === "string") {
+      return fieldErrs.day;
+    }
+
+    return undefined;
+  };
+
   return (
     <form id="accounting-entity-form" onSubmit={formik.handleSubmit}>
       <FieldGroup>
+        <EntitySelect
+          value={formik.values.entityType}
+          error={getErrorMessage("entityType")}
+        />
+        <CountryComboBox
+          label="Where do you reside?"
+          value={formik.values.countryCode}
+          onChange={(val) => formik.setFieldValue("countryCode", val)}
+          error={getErrorMessage("countryCode")}
+        />
+
+        <CurrencyComboBox
+          label="What currency do you primarily transact in?"
+          value={formik.values.functionalCurrency}
+          onChange={(val) => formik.setFieldValue("functionalCurrency", val)}
+          error={getErrorMessage("functionalCurrency")}
+        />
+
+        <CurrencyComboBox
+          label="What currency should we use for your reports?"
+          value={formik.values.reportingCurrency}
+          onChange={(val) => formik.setFieldValue("reportingCurrency", val)}
+          error={getErrorMessage("reportingCurrency")}
+        />
+
+        <FiscalYearStartSelect 
+          value={formik.values.fiscalYearStart}
+          onChange={(val) => formik.setFieldValue("fiscalYearStart", val)}
+          error={getFiscalYearStartErrorStr()}
+        />
+
         <EntityTypeRadioGroup
           value={formik.values.entityType}
           onChange={(val) => formik.setFieldValue("entityType", val)}
           error={getErrorMessage("entityType")}
         />
-        <CountrySelect
-          value={formik.values.countryCode}
-          onChange={(val) => formik.setFieldValue("countryCode", val)}
-          error={getErrorMessage("countryCode")}
-        />
       </FieldGroup>
     </form>
   );
 }
+
+export { AccountingEntityOnboardingForm };
