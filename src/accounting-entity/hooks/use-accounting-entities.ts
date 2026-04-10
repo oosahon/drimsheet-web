@@ -5,6 +5,6 @@ export default function useAccountingEntities() {
   return useQuery({
     queryKey: ["accountingEntityService.getAll"],
     queryFn: () => accountingEntityService.getAll(),
-    staleTime: 1 * 60 * 1000,
+    throwOnError: true,
   });
 }

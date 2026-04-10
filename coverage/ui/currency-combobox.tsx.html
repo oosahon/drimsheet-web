@@ -264,7 +264,7 @@ import {
 import { InputGroupAddon } from "@/shared/ui/input-group";
 import { useState } from "react";
 &nbsp;
-export interface CurrencyComboBoxProps {
+export interface CurrencySelectProps {
   label: string;
   value: string;
   onChange: (value: string) =&gt; void;
@@ -290,12 +290,12 @@ function CurrencyLogo({ url }: { url: string }) {
   );
 }
 &nbsp;
-export function CurrencyComboBox({
+export function CurrencySelect({
   label,
   value,
   onChange,
   error,
-}: CurrencyComboBoxProps) {
+}: CurrencySelectProps) {
   const [options, setOptions] = useState(currencies);
 &nbsp;
   const selectedCurrency = currencies.find(

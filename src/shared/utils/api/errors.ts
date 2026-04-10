@@ -32,23 +32,27 @@ type THandleErrorOptions = {
 };
 
 export const handleApiError = (err: unknown, options?: THandleErrorOptions) => {
-  const error = parseApiError(err);
+  try {
+    const error = parseApiError(err);
 
-  if (error.code === 401) {
-    authService.removeToken();
-    window.location.href = "/auth/login";
-    return;
+    if (error.code === 401) {
+      authService.removeToken();
+      window.location.href = "/auth/signup";
+      return;
+    }
+
+    if (error.code === 500) {
+      observabilityService.report(new Error("Server error"), error);
+    }
+
+    if (options?.showToast) {
+      toast.error(error.message ?? "An error occurred");
+    }
+
+    options?.setValidationError?.(error.validationErrors);
+
+    return error;
+  } catch (error) {
+    observabilityService.report(error as Error, {});
   }
-
-  if (error.code === 500) {
-    observabilityService.report(new Error("Server error"), error);
-  }
-
-  if (options?.showToast) {
-    toast.error(error.message ?? "An error occurred");
-  }
-
-  options?.setValidationError?.(error.validationErrors);
-
-  return error;
 };

@@ -20,13 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import { CurrencyComboBox } from "@/shared/ui/currency-combobox";
+import { CurrencySelect } from "@/shared/ui/currency-select";
 import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
 import { Calendar } from "@/shared/ui/calendar";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
 import { Button } from "@/shared/ui/button";
-import { Calendar1 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calendar1 } from "lucide-react";
 
 export interface IAccountingEntityFormValues {
   entityType: string;
@@ -54,6 +54,7 @@ const validationSchema = yup.object({
 
 interface EntitySelectProps {
   value: string;
+  onChange: (value: string) => void;
   error?: Array<{ message?: string } | undefined>;
 }
 
@@ -70,7 +71,9 @@ function EntityTypeRadioGroup({
 }: IEntityTypeRadioGroupProps) {
   return (
     <Field>
-      <Label htmlFor="individual-entity">Accounting mode</Label>
+      <Label htmlFor="individual-entity" className="text-muted-foreground">
+        Accounting mode
+      </Label>
       <RadioGroup value={value} onValueChange={onChange} className="max-w-sm">
         <FieldLabel htmlFor="individual-entity" className="cursor-pointer">
           <Field orientation="horizontal">
@@ -105,11 +108,11 @@ function EntityTypeRadioGroup({
   );
 }
 
-function EntitySelect({ value, error }: EntitySelectProps) {
+function EntitySelect({ value, onChange, error }: EntitySelectProps) {
   return (
     <Field>
       <Label htmlFor="individual-entity">Who is this account for?</Label>
-      <Select value={value}>
+      <Select value={value} onValueChange={onChange}>
         <SelectTrigger>
           <SelectValue placeholder="Select an entity" />
         </SelectTrigger>
@@ -174,9 +177,145 @@ function FiscalYearStartSelect({ value, onChange, error }: IFiscalYearStartSelec
 }
 
 
+interface StepProps {
+  formik: import("formik").FormikProps<IAccountingEntityFormValues>;
+  getErrorMessage: (name: string) => Array<{ message?: string } | undefined> | undefined;
+}
+
+function Step1({ formik, getErrorMessage, onNext }: StepProps & { onNext: () => void }) {
+  const isComplete =
+    !!formik.values.entityType &&
+    !!formik.values.countryCode &&
+    !formik.errors.entityType &&
+    !formik.errors.countryCode;
+
+  return (
+    <div className="flex flex-col gap-6">
+      <FieldGroup>
+        <EntitySelect
+          value={formik.values.entityType}
+          onChange={(val) => formik.setFieldValue("entityType", val)}
+          error={getErrorMessage("entityType")}
+        />
+        <CountryComboBox
+          label="Where do you reside?"
+          value={formik.values.countryCode}
+          onChange={(val) => formik.setFieldValue("countryCode", val)}
+          error={getErrorMessage("countryCode")}
+        />
+      </FieldGroup>
+      <div className="flex justify-end mt-4">
+        <Button type="button" onClick={onNext} disabled={!isComplete}>
+          Next
+          <ArrowRight />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Step2({
+  formik,
+  getErrorMessage,
+  getFiscalYearStartErrorStr,
+  onNext,
+  onBack,
+}: StepProps & {
+  getFiscalYearStartErrorStr: () => string | undefined;
+  onNext: () => void;
+  onBack: () => void;
+}) {
+  const isComplete =
+    !!formik.values.functionalCurrency &&
+    !!formik.values.reportingCurrency &&
+    !!formik.values.fiscalYearStart &&
+    !formik.errors.functionalCurrency &&
+    !formik.errors.reportingCurrency &&
+    !getFiscalYearStartErrorStr();
+
+  return (
+    <div className="flex flex-col gap-6">
+      <FieldGroup>
+        <CurrencySelect
+          label="What currency do you primarily transact in?"
+          value={formik.values.functionalCurrency}
+          onChange={(val) => formik.setFieldValue("functionalCurrency", val)}
+          error={getErrorMessage("functionalCurrency")}
+        />
+
+        <CurrencySelect
+          label="What currency should we use for your reports?"
+          value={formik.values.reportingCurrency}
+          onChange={(val) => formik.setFieldValue("reportingCurrency", val)}
+          error={getErrorMessage("reportingCurrency")}
+        />
+
+        <FiscalYearStartSelect
+          value={formik.values.fiscalYearStart}
+          onChange={(val) => formik.setFieldValue("fiscalYearStart", val)}
+          error={getFiscalYearStartErrorStr()}
+        />
+      </FieldGroup>
+      <div className="flex justify-between mt-4">
+        <Button type="button" variant="outline" onClick={onBack}>
+          <ArrowLeft />
+          Back
+        </Button>
+        <Button type="button" onClick={onNext} disabled={!isComplete}>
+          Next
+          <ArrowRight />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Step3({
+  formik,
+  getErrorMessage,
+  onBack,
+  isSubmitting,
+}: StepProps & { onBack: () => void; isSubmitting?: boolean }) {
+  const isComplete = formik.isValid;
+  return (
+    <div className="flex flex-col gap-6">
+      <FieldGroup>
+        <EntityTypeRadioGroup
+          value={formik.values.entityType}
+          onChange={(val) => formik.setFieldValue("entityType", val)}
+          error={getErrorMessage("entityType")}
+        />
+      </FieldGroup>
+      <div className="flex justify-between mt-4">
+        <Button type="button" variant="outline" onClick={onBack}>
+          <ArrowLeft />
+          Back
+        </Button>
+        <Button type="submit" loading={!isComplete || isSubmitting}>
+          Complete setup
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 function AccountingEntityOnboardingForm({
   onSubmit,
+  loading,
 }: AccountingEntityOnboardingFormProps) {
+  const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState<"right" | "left">("right");
+
+  const handleNext = (nextStep: number) => {
+    setDirection("right");
+    setStep(nextStep);
+  };
+
+  const handleBack = (prevStep: number) => {
+    setDirection("left");
+    setStep(prevStep);
+  };
+
   const formik = useFormik<IAccountingEntityFormValues>({
     initialValues: {
       entityType: "individual",
@@ -223,44 +362,35 @@ function AccountingEntityOnboardingForm({
 
   return (
     <form id="accounting-entity-form" onSubmit={formik.handleSubmit}>
-      <FieldGroup>
-        <EntitySelect
-          value={formik.values.entityType}
-          error={getErrorMessage("entityType")}
-        />
-        <CountryComboBox
-          label="Where do you reside?"
-          value={formik.values.countryCode}
-          onChange={(val) => formik.setFieldValue("countryCode", val)}
-          error={getErrorMessage("countryCode")}
-        />
-
-        <CurrencyComboBox
-          label="What currency do you primarily transact in?"
-          value={formik.values.functionalCurrency}
-          onChange={(val) => formik.setFieldValue("functionalCurrency", val)}
-          error={getErrorMessage("functionalCurrency")}
-        />
-
-        <CurrencyComboBox
-          label="What currency should we use for your reports?"
-          value={formik.values.reportingCurrency}
-          onChange={(val) => formik.setFieldValue("reportingCurrency", val)}
-          error={getErrorMessage("reportingCurrency")}
-        />
-
-        <FiscalYearStartSelect 
-          value={formik.values.fiscalYearStart}
-          onChange={(val) => formik.setFieldValue("fiscalYearStart", val)}
-          error={getFiscalYearStartErrorStr()}
-        />
-
-        <EntityTypeRadioGroup
-          value={formik.values.entityType}
-          onChange={(val) => formik.setFieldValue("entityType", val)}
-          error={getErrorMessage("entityType")}
-        />
-      </FieldGroup>
+      <div 
+        key={step} 
+        className={direction === "right" ? "animate-slide-step-right" : "animate-slide-step-left"}
+      >
+        {step === 1 && (
+          <Step1
+            formik={formik}
+            getErrorMessage={getErrorMessage}
+            onNext={() => handleNext(2)}
+          />
+        )}
+        {step === 2 && (
+          <Step2
+            formik={formik}
+            getErrorMessage={getErrorMessage}
+            getFiscalYearStartErrorStr={getFiscalYearStartErrorStr}
+            onNext={() => handleNext(3)}
+            onBack={() => handleBack(1)}
+          />
+        )}
+        {step === 3 && (
+          <Step3
+            formik={formik}
+            getErrorMessage={getErrorMessage}
+            onBack={() => handleBack(2)}
+            isSubmitting={loading}
+          />
+        )}
+      </div>
     </form>
   );
 }

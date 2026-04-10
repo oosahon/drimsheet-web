@@ -5,6 +5,7 @@ import { OnboardingDialog } from "@/onboarding/ui/onboarding-dialog";
 export function AppLayout() {
   const { data: accountingEntities } = useAccountingEntities();
 
+
   return (
     <>
       <Outlet />
