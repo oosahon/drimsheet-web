@@ -3,8 +3,11 @@ import AccountingOnboardingFormContainer from '@/onboarding/components/accountin
 import { useMemo } from 'react';
 
 export default function OnboardingManager() {
-  const { data: accountingEntities, isLoading: isLoadingEntities } =
-    useAccountingEntities();
+  const {
+    data: accountingEntities,
+    isLoading: isLoadingEntities,
+    refetch,
+  } = useAccountingEntities();
 
   const openAccountingOnboardingForm = useMemo(
     () => !accountingEntities?.length && !isLoadingEntities,
@@ -17,7 +20,10 @@ export default function OnboardingManager() {
 
   return (
     <>
-      <AccountingOnboardingFormContainer open={openAccountingOnboardingForm} />
+      <AccountingOnboardingFormContainer
+        open={openAccountingOnboardingForm}
+        done={refetch}
+      />
     </>
   );
 }
