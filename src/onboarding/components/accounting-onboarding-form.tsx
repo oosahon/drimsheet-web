@@ -16,10 +16,12 @@ import { toast } from 'sonner';
 
 interface AccountingOnboardingFormContainerProps {
   open: boolean;
+  done: () => void;
 }
 
 export default function AccountingOnboardingFormContainer({
   open,
+  done,
 }: AccountingOnboardingFormContainerProps) {
   const { mutateAsync: onboardIndividual, isPending } =
     useOnboardIndividualAccountingEntity();
@@ -30,6 +32,7 @@ export default function AccountingOnboardingFormContainer({
       const userName = `${user?.firstName} ${user?.lastName}`;
       await onboardIndividual({ ...values, name: userName });
       toast.success('Welcome to the purple side!');
+      done();
     } catch (error) {
       handleApiError(error, { showToast: true });
     }
