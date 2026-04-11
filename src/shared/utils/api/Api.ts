@@ -45,6 +45,17 @@ export interface IUserPreferences {
   updatedAt: string;
 }
 
+export interface IApiValidationError {
+  field: string;
+  message: string;
+}
+
+export interface IApiError {
+  message: string;
+  validationErrors?: IApiValidationError[];
+  cause?: any;
+}
+
 export interface IUser {
   id: TEntityId;
   email: string;
@@ -87,17 +98,6 @@ export interface IAccountingEntityOnboardingReq {
   appUsageMode: UAppUsageMode;
 }
 
-export interface IApiValidationError {
-  field: string;
-  message: string;
-}
-
-export interface IApiError {
-  message: string;
-  validationErrors?: IApiValidationError[];
-  cause?: any;
-}
-
 export interface IUserSignupReq {
   firstName: string;
   lastName: string;
@@ -108,6 +108,11 @@ export interface IUserSignupReq {
 export interface IAuthRes {
   authToken: string;
   refreshToken: string;
+}
+
+export interface ILoginReq {
+  email: string;
+  password: string;
 }
 
 /** From T, pick a set of properties whose keys are in the union K */
@@ -351,11 +356,13 @@ export class Api<
      * @tags User
      * @name GetUserPreferences
      * @request GET:/users/preferences
+     * @secure
      */
     getUserPreferences: (params: RequestParams = {}) =>
-      this.request<IUserPreferences, any>({
+      this.request<IUserPreferences, IApiError>({
         path: `/users/preferences`,
         method: 'GET',
+        secure: true,
         format: 'json',
         ...params,
       }),
@@ -369,7 +376,7 @@ export class Api<
      * @secure
      */
     getAuthUserProfile: (params: RequestParams = {}) =>
-      this.request<IUser, any>({
+      this.request<IUser, IApiError>({
         path: `/users/profile`,
         method: 'GET',
         secure: true,
@@ -379,7 +386,7 @@ export class Api<
   };
   onboarding = {
     /**
-     * @description Onboard Accounting Entity
+     * @description Onboard an accounting entity
      *
      * @tags Onboarding
      * @name OnboardAccountingEntity
@@ -390,7 +397,7 @@ export class Api<
       data: IAccountingEntityOnboardingReq,
       params: RequestParams = {}
     ) =>
-      this.request<void, any>({
+      this.request<void, IApiError>({
         path: `/onboarding/accounting-entity`,
         method: 'POST',
         body: data,
@@ -401,7 +408,7 @@ export class Api<
   };
   currencies = {
     /**
-     * @description Get Currencies
+     * @description Gets all system currencies
      *
      * @tags Currency
      * @name GetCurrencies
@@ -458,6 +465,23 @@ export class Api<
         path: `/auth/signup/complete`,
         method: 'POST',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description User login with email and password
+     *
+     * @tags Auth
+     * @name LoginWithEmail
+     * @request POST:/auth/login-with-email
+     */
+    loginWithEmail: (data: ILoginReq, params: RequestParams = {}) =>
+      this.request<IAuthRes, IApiError>({
+        path: `/auth/login-with-email`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

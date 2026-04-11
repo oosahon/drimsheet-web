@@ -1,0 +1,17 @@
+import authService from '@/auth/services/auth.service';
+import { useMemo } from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+
+export default function AuthLayout() {
+  const isAuthenticated = useMemo(() => authService.isLoggedIn(), []);
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return (
+    <div className="flex h-screen min-h-screen w-full items-center justify-center">
+      <Outlet />
+    </div>
+  );
+}

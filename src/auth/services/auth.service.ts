@@ -1,5 +1,6 @@
 import type { ISignupFormValues } from '@/auth/ui/signup-form';
 import purpleLedgerApi from '@/shared/utils/api';
+import type { ILoginReq } from '@/shared/utils/api/Api';
 
 const authService = {
   getAuthToken() {
@@ -25,6 +26,11 @@ const authService = {
 
   async verifyEmail(token: string) {
     const response = await purpleLedgerApi.auth.verifyEmail({ token });
+    this.setToken(response.data.authToken, response.data.refreshToken);
+  },
+
+  async loginWithEmail(payload: ILoginReq) {
+    const response = await purpleLedgerApi.auth.loginWithEmail(payload);
     this.setToken(response.data.authToken, response.data.refreshToken);
   },
 };

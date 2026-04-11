@@ -93,7 +93,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild onSelect={(e) => e.preventDefault()}>
                 <AnimatedThemeToggler
                   showText
                   className="w-full cursor-default justify-start"

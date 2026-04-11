@@ -1,10 +1,10 @@
 import { GoogleAuthButton } from '@/auth/components/google-auth-button';
-import { SignupFormContainer } from '@/auth/components/signup-form';
+import { LoginFormContainer } from '@/auth/components/login-form';
 import { AuthConsent } from '@/auth/ui/auth-consent';
 import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
 import { Link } from 'react-router-dom';
 
-export default function SignupRoute() {
+export default function LoginRoute() {
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -22,24 +22,24 @@ export default function SignupRoute() {
         </div>
 
         <div className="grid gap-4">
-          <GoogleAuthButton>Continue with Google</GoogleAuthButton>
+          <GoogleAuthButton>Sign in with Google</GoogleAuthButton>
         </div>
 
         <FieldSeparator className="my-4">Or</FieldSeparator>
 
-        <SignupFormContainer />
+        <LoginFormContainer />
 
         <FieldDescription className="text-center">
-          Already have an account?{' '}
+          Don't have an account?{' '}
           <Link
-            to="/auth/login"
-            className="text-purple-600 hover:text-purple-500"
+            to="/auth/signup"
+            className="text-purple-400 hover:text-purple-200"
           >
-            Sign in
+            Sign up
           </Link>
         </FieldDescription>
 
-        <AuthConsent actionText="clicking continue" />
+        <AuthConsent actionText="signing in" />
       </div>
     </div>
   );
