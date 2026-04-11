@@ -1,6 +1,6 @@
 import { handleApiError } from "@/shared/utils/api/errors";
-import useSignupWithEmail from "../hooks/use-signup-with-email";
-import { SignupForm, type ISignupFormValues } from "./signup-form";
+import useSignupWithEmail from "@/auth/hooks/use-signup-with-email";
+import { SignupForm, type ISignupFormValues } from "@/auth/ui/signup-form";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";

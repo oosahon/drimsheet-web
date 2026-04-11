@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Eye, EyeOff } from "lucide-react";
 
-import { cn } from "shared/ui/utils";
+import { cn } from "@/shared/ui/utils";
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (

@@ -1,6 +1,6 @@
 import FullPageLoader from "@/shared/ui/full-page-loader";
 import { useNavigate } from "react-router-dom";
-import useVerifyEmail from "@/domains/auth/hooks/use-verify-email";
+import useVerifyEmail from "@/auth/hooks/use-verify-email";
 import { useEffect } from "react";
 import { handleApiError } from "@/shared/utils/api/errors";
 import { toast } from "sonner";

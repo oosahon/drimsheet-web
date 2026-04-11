@@ -1,9 +1,19 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import SignupRoute from "@/routes/auth/signup.route";
+import SignupRoute from "@/auth/routes/signup.route";
 import { Toaster } from "./shared/ui/sonner";
-import CompleteSignupRoute from "./routes/auth/complete-signup.route";
+import CompleteSignupRoute from "./auth/routes/complete-signup.route";
+import DashboardRoute from "./reporting/routes/dashboard.route";
+import { AnimatedThemeToggler } from "./shared/ui/animated-theme-toggler";
+import { AppLayout } from "./shared/ui/app-layout";
+import { DefaultErrorBoundary } from "./shared/components/error-boundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,20 +26,32 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/auth/signup" element={<SignupRoute />} />
-          <Route
-            path="/auth/signup/complete"
-            element={<CompleteSignupRoute />}
-          />
-          <Route path="/" element={<Navigate to="/auth/signup" replace />} />
-        </Routes>
-      </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={false} />
-      <Toaster />
-    </QueryClientProvider>
+    <DefaultErrorBoundary>
+      <>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Routes>
+              <Route path="/auth" element={<Outlet />}>
+                <Route path="signup" element={<SignupRoute />} />
+                <Route
+                  path="signup/complete"
+                  element={<CompleteSignupRoute />}
+                />
+              </Route>
+
+              <Route path="/" element={<AppLayout />}>
+                <Route index element={<Navigate to="/dashboard" replace />} />
+                <Route path="dashboard" element={<DashboardRoute />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+          <ReactQueryDevtools initialIsOpen={false} />
+
+          <AnimatedThemeToggler />
+          <Toaster />
+        </QueryClientProvider>
+      </>
+    </DefaultErrorBoundary>
   );
 }
 

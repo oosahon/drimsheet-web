@@ -1,5 +1,5 @@
-import { cn } from "shared/ui/utils";
-import { Button } from "shared/ui/button";
+import { cn } from "@/shared/ui/utils";
+import { Button } from "@/shared/ui/button";
 import {
   Field,
   FieldDescription,
@@ -7,12 +7,12 @@ import {
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "shared/ui/field";
-import { Input, PasswordInput } from "shared/ui/input";
+} from "@/shared/ui/field";
+import { Input, PasswordInput } from "@/shared/ui/input";
 import { GoogleIcon } from "@/shared/icons/google";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import useFieldErrorMessage from "shared/hooks/use-field-error-message";
+import useFieldErrorMessage from "@/shared/hooks/use-field-error-message";
 import type { ComponentProps } from "react";
 
 export interface ISignupFormValues {
@@ -26,7 +26,6 @@ interface ISignupFormProps extends Omit<ComponentProps<"div">, "onSubmit"> {
   onSubmit: (values: ISignupFormValues) => void;
   loading: boolean;
 }
-
 
 const validationSchema = yup.object({
   firstName: yup.string().required("First Name is required"),

@@ -2,7 +2,8 @@ import observabilityService from "@/shared/services/observability.service";
 import { toast } from "sonner";
 
 import type { IApiValidationError } from "./Api";
-import { AxiosError } from "axios";
+import { type AxiosError } from "axios";
+import authService from "@/auth/services/auth.service";
 
 type TApiError = {
   code?: number;
@@ -31,23 +32,27 @@ type THandleErrorOptions = {
 };
 
 export const handleApiError = (err: unknown, options?: THandleErrorOptions) => {
-  const error = parseApiError(err);
+  try {
+    const error = parseApiError(err);
 
-  if (error.code === 401) {
-    if (typeof window !== "undefined") {
-      window.location.href = "/auth/login";
+    if (error.code === 401) {
+      authService.removeToken();
+      window.location.href = "/auth/signup";
+      return;
     }
+
+    if (error.code === 500) {
+      observabilityService.report(new Error("Server error"), error);
+    }
+
+    if (options?.showToast) {
+      toast.error(error.message ?? "An error occurred");
+    }
+
+    options?.setValidationError?.(error.validationErrors);
+
+    return error;
+  } catch (error) {
+    observabilityService.report(error as Error, {});
   }
-
-  if (error.code === 500) {
-    observabilityService.report(new Error("Server error"), error);
-  }
-
-  if (options?.showToast) {
-    toast.error(error.message ?? "An error occurred");
-  }
-
-  options?.setValidationError?.(error.validationErrors);
-
-  return error;
 };

@@ -1,0 +1,26 @@
+[
+  {
+    "code": "NGN",
+    "name": "Nigerian Naira",
+    "symbol": "₦",
+    "logo": "https://flagcdn.com/w320/ng.png"
+  },
+  {
+    "code": "USD",
+    "name": "United States Dollar",
+    "symbol": "$",
+    "logo": "https://flagcdn.com/w320/us.png"
+  },
+  {
+    "code": "GBP",
+    "name": "British Pound",
+    "symbol": "£",
+    "logo": "https://flagcdn.com/w320/gb.png"
+  },
+  {
+    "code": "EUR",
+    "name": "Euro",
+    "symbol": "€",
+    "logo": "https://flagcdn.com/w320/eu.png"
+  }
+]
