@@ -16,46 +16,32 @@ import type { ComponentProps } from 'react';
 import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 
-export interface ISignupFormValues {
-  firstName: string;
-  lastName: string;
+export interface ILoginFormValues {
   email: string;
   password: string;
 }
 
-interface ISignupFormProps extends Omit<ComponentProps<'div'>, 'onSubmit'> {
-  onSubmit: (values: ISignupFormValues) => void;
+interface ILoginFormProps extends Omit<ComponentProps<'div'>, 'onSubmit'> {
+  onSubmit: (values: ILoginFormValues) => void;
   loading: boolean;
 }
 
 const validationSchema = yup.object({
-  firstName: yup.string().required('First Name is required'),
-  lastName: yup.string().required('Last Name is required'),
   email: yup
     .string()
     .email('Enter a valid email')
     .required('Email is required'),
-  password: yup
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/(?=.*[0-9])/, 'Password must contain at least one number')
-    .matches(
-      /(?=.*[^A-Za-z0-9])/,
-      'Password must contain at least one special character'
-    )
-    .required('Password is required'),
+  password: yup.string().required('Password is required'),
 });
 
-export function SignupForm({
+export function LoginForm({
   className,
   onSubmit,
   loading,
   ...props
-}: ISignupFormProps) {
-  const formik = useFormik<ISignupFormValues>({
+}: ILoginFormProps) {
+  const formik = useFormik<ILoginFormValues>({
     initialValues: {
-      firstName: '',
-      lastName: '',
       email: '',
       password: '',
     },
@@ -90,38 +76,11 @@ export function SignupForm({
           <Field className="grid gap-4">
             <Button variant="outline" type="button">
               <GoogleIcon />
-              Continue with Google
+              Sign in with Google
             </Button>
           </Field>
 
           <FieldSeparator className="my-4">Or</FieldSeparator>
-
-          <Field className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col">
-              <FieldLabel htmlFor="firstName">First name</FieldLabel>
-              <Input
-                id="firstName"
-                name="firstName"
-                type="text"
-                value={formik.values.firstName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError errors={getErrorMessage('firstName')} />
-            </div>
-            <div className="flex flex-col">
-              <FieldLabel htmlFor="lastName">Last name</FieldLabel>
-              <Input
-                id="lastName"
-                name="lastName"
-                type="text"
-                value={formik.values.lastName}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError errors={getErrorMessage('lastName')} />
-            </div>
-          </Field>
 
           <Field>
             <div>
@@ -137,41 +96,57 @@ export function SignupForm({
               <FieldError errors={getErrorMessage('email')} />
             </div>
 
-            <div className="mt-2">
-              <FieldLabel htmlFor="password">Password</FieldLabel>
-              <PasswordInput
-                id="password"
-                name="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError errors={getErrorMessage('password')} />
+            <div className="mt-2 text-left">
+              <div className="flex justify-between items-center w-full">
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <Link
+                  to="#"
+                  className="text-xs font-medium hover:text-purple-200"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="mt-2">
+                <PasswordInput
+                  id="password"
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
+                <FieldError errors={getErrorMessage('password')} />
+              </div>
             </div>
           </Field>
           <Field className="mt-2">
             <Button type="submit" loading={loading}>
-              Create Account
+              Sign In
             </Button>
           </Field>
           <FieldDescription>
-            Already have an account?{' '}
+            Don't have an account?{' '}
             <Link
-              to="/auth/login"
-              className="text-purple-600 hover:text-purple-500"
+              to="/auth/signup"
+              className="text-purple-400 hover:text-purple-200"
             >
-              Sign in
+              Sign up
             </Link>
           </FieldDescription>
         </FieldGroup>
       </form>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our{' '}
-        <a href="#" className="text-purple-600 hover:text-purple-500">
+      <FieldDescription className="px-6 text-center text-xs">
+        By signing in, you agree to our{' '}
+        <a
+          href="https://purpleledger.com/terms-of-service"
+          className="text-xs hover:text-purple-500"
+        >
           Terms of Service
         </a>{' '}
         and{' '}
-        <a href="#" className="text-purple-600 hover:text-purple-500">
+        <a
+          href="https://purpleledger.com/privacy-policy"
+          className="text-xs hover:text-purple-500"
+        >
           Privacy Policy
         </a>
         .
