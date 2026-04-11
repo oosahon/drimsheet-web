@@ -13,7 +13,7 @@ import CompleteSignupRoute from "./auth/routes/complete-signup.route";
 import DashboardRoute from "./reporting/routes/dashboard.route";
 import { AnimatedThemeToggler } from "./shared/ui/animated-theme-toggler";
 import { AppLayout } from "./shared/ui/app-layout";
-import { DefaultErrorBoundary } from "./shared/ui/error-boundary";
+import { DefaultErrorBoundary } from "./shared/components/error-boundary";
 
 const queryClient = new QueryClient({
   defaultOptions: {

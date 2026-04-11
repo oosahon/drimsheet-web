@@ -62,7 +62,7 @@ export function CountryComboBox({
           <ComboboxEmpty>No countries found.</ComboboxEmpty>
           <ComboboxList>
             {options.map((item) => (
-              <ComboboxItem key={item.code} value={item}>
+              <ComboboxItem key={item.code} value={item} className="z-400">
                 <span className="mr-2 text-base leading-none">{item.flag}</span>
                 {item.name}
               </ComboboxItem>

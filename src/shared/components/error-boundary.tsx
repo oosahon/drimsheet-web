@@ -49,7 +49,7 @@ const DefaultErrorFallback = ({
         An unexpected error occurred. Our technical team has been notified.
       </p>
       {import.meta.env.DEV && (
-        <pre className="text-left w-full max-w-2xl bg-muted p-4 rounded-md overflow-auto text-xs text-muted-foreground mt-4">
+        <pre className="text-center w-full max-w-2xl bg-muted p-4 rounded-md overflow-auto text-xs text-muted-foreground mt-4">
           {errorMessage}
         </pre>
       )}

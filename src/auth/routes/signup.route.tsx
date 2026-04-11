@@ -1,6 +1,5 @@
 import authService from "@/auth/services/auth.service";
 import { SignupFormContainer } from "@/auth/components/signup-form";
-import { AnimatedThemeToggler } from "@/shared/ui/animated-theme-toggler";
 import { useMemo } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -15,7 +14,6 @@ export default function SignupRoute() {
     <div className="flex h-screen items-center justify-center">
       <div className="w-full max-w-sm">
         <SignupFormContainer />
-        <AnimatedThemeToggler />
       </div>
     </div>
   );
