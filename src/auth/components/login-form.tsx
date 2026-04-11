@@ -1,21 +1,20 @@
+import useLoginWithEmail from '@/auth/hooks/use-login-with-email';
 import { LoginForm, type ILoginFormValues } from '@/auth/ui/login-form';
-import { useState } from 'react';
-import { toast } from 'sonner';
+import { handleApiError } from '@/shared/utils/api/errors';
+import { useNavigate } from 'react-router-dom';
 
 export function LoginFormContainer() {
-  const [isPending, setIsPending] = useState(false);
+  const { mutateAsync: loginWithEmail, isPending } = useLoginWithEmail();
+  const navigate = useNavigate();
 
   const handleLogin = async (values: ILoginFormValues) => {
-    setIsPending(true);
     try {
-      // TODO: Implement actual login when API is ready
-      console.log('Login values:', values);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      toast.success('Logged in successfully (Mock)');
-    } catch {
-      toast.error('Login failed');
-    } finally {
-      setIsPending(false);
+      await loginWithEmail(values);
+      navigate('/dashboard');
+    } catch (error) {
+      handleApiError(error, {
+        showToast: true,
+      });
     }
   };
 
