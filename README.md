@@ -1,73 +1,71 @@
-# React + TypeScript + Vite
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# PurpleLedger
 
-Currently, two official plugins are available:
+PurpleLedger is an AI-powered, robust, auditable accounting software for companies, sole traders (business name owners), and individuals in Nigeria.\
+It's a software for accountants and non-accountants alike.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Accounting-savvy users who want to be in control of everything can create journals, charts of accounts, etc.
 
-## React Compiler
+Users with no accounting background are not left out. They can also track their income, expenses and taxes. Under the hood, PurpleLedger will use accounting standards to set up their ledgers.\
+\
+PurpleLedger was created with 💜 and distributed for free by [Osahon Oboite](https://osahon.dev)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Table of Contents
 
-## Expanding the ESLint configuration
+- [Introduction](#introduction)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Running the app](#running-the-app)
+  - [Testing](#testing)
+  - [Linting and Formatting](#linting-and-formatting)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Introduction
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+This repo contains the frontend web application of PurpleLedger. It provides the user interface for the core accounting module, NTA computation and filing integrations, open banking reconciliations, and connects with the backend API.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Requirements
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js (>=20.18.1 as specified in `package.json`)
+- npm or yarn
+
+## Installation
+
+- Clone the repo
+- Run `npm install` or `yarn install`
+- Copy the environment variables from Doppler (dev) and save them in a `.env` file in the root directory.
+
+### Running the app
+
+- Run `npm run dev` or `yarn dev`
+- The app should now be running on `http://localhost:5173` (or the port specified in Vite config/env)
+
+### Testing
+
+Run the test suite:
+
+```bash
+npm run test
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Linting and Formatting
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Lint your code before submitting a PR:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run lint
 ```
+
+## Documentation
+
+**[Architecture Documentation](docs/README.md)**: A comprehensive guide to the system's architecture, including technical constraints, domain models, and architectural decisions.
+
+## Contributing
+
+Please read the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+
+## License
+
+This project is licensed under the [GNU Affero General Public License v3.0 (AGPLv3)](LICENSE).
