@@ -1,5 +1,6 @@
-import { cn } from "@/shared/ui/utils";
-import { Button } from "@/shared/ui/button";
+import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { GoogleIcon } from '@/shared/icons/google';
+import { Button } from '@/shared/ui/button';
 import {
   Field,
   FieldDescription,
@@ -7,13 +8,12 @@ import {
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/shared/ui/field";
-import { Input, PasswordInput } from "@/shared/ui/input";
-import { GoogleIcon } from "@/shared/icons/google";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import useFieldErrorMessage from "@/shared/hooks/use-field-error-message";
-import type { ComponentProps } from "react";
+} from '@/shared/ui/field';
+import { Input, PasswordInput } from '@/shared/ui/input';
+import { cn } from '@/shared/ui/utils';
+import { useFormik } from 'formik';
+import type { ComponentProps } from 'react';
+import * as yup from 'yup';
 
 export interface ISignupFormValues {
   firstName: string;
@@ -22,27 +22,27 @@ export interface ISignupFormValues {
   password: string;
 }
 
-interface ISignupFormProps extends Omit<ComponentProps<"div">, "onSubmit"> {
+interface ISignupFormProps extends Omit<ComponentProps<'div'>, 'onSubmit'> {
   onSubmit: (values: ISignupFormValues) => void;
   loading: boolean;
 }
 
 const validationSchema = yup.object({
-  firstName: yup.string().required("First Name is required"),
-  lastName: yup.string().required("Last Name is required"),
+  firstName: yup.string().required('First Name is required'),
+  lastName: yup.string().required('Last Name is required'),
   email: yup
     .string()
-    .email("Enter a valid email")
-    .required("Email is required"),
+    .email('Enter a valid email')
+    .required('Email is required'),
   password: yup
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .matches(/(?=.*[0-9])/, "Password must contain at least one number")
+    .min(8, 'Password must be at least 8 characters')
+    .matches(/(?=.*[0-9])/, 'Password must contain at least one number')
     .matches(
       /(?=.*[^A-Za-z0-9])/,
-      "Password must contain at least one special character",
+      'Password must contain at least one special character'
     )
-    .required("Password is required"),
+    .required('Password is required'),
 });
 
 export function SignupForm({
@@ -53,10 +53,10 @@ export function SignupForm({
 }: ISignupFormProps) {
   const formik = useFormik<ISignupFormValues>({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
     },
     validationSchema: validationSchema,
     onSubmit,
@@ -68,7 +68,7 @@ export function SignupForm({
   });
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn('flex flex-col gap-6', className)} {...props}>
       <form onSubmit={formik.handleSubmit}>
         <FieldGroup>
           <div className="flex flex-col items-center gap-2 text-center">
@@ -106,7 +106,7 @@ export function SignupForm({
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              <FieldError errors={getErrorMessage("firstName")} />
+              <FieldError errors={getErrorMessage('firstName')} />
             </div>
             <div className="flex flex-col">
               <FieldLabel htmlFor="lastName">Last name</FieldLabel>
@@ -118,7 +118,7 @@ export function SignupForm({
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              <FieldError errors={getErrorMessage("lastName")} />
+              <FieldError errors={getErrorMessage('lastName')} />
             </div>
           </Field>
 
@@ -133,7 +133,7 @@ export function SignupForm({
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              <FieldError errors={getErrorMessage("email")} />
+              <FieldError errors={getErrorMessage('email')} />
             </div>
 
             <div className="mt-2">
@@ -145,7 +145,7 @@ export function SignupForm({
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              <FieldError errors={getErrorMessage("password")} />
+              <FieldError errors={getErrorMessage('password')} />
             </div>
           </Field>
           <Field className="mt-2">
@@ -159,7 +159,7 @@ export function SignupForm({
         </FieldGroup>
       </form>
       <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{' '}
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>

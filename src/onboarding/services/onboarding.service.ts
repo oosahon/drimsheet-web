@@ -1,14 +1,14 @@
+import type { IAccountingEntityFormValues } from '@/onboarding/ui/accounting-entity-form';
+import purpleLedgerApi from '@/shared/utils/api';
 import {
   UAccountingEntityType,
   UAppUsageMode,
   type IAccountingEntityOnboardingReq,
-} from "@/shared/utils/api/Api";
-import type { IAccountingEntityFormValues } from "../ui/accounting-entity-form";
-import purpleLedgerApi from "@/shared/utils/api";
+} from '@/shared/utils/api/Api';
 
 const onboardingService = {
   toIndividualOnboardingReq(
-    data: IAccountingEntityFormValues,
+    data: IAccountingEntityFormValues
   ): IAccountingEntityOnboardingReq {
     return {
       name: data.name,
@@ -26,10 +26,10 @@ const onboardingService = {
 
   async onboardIndividual(data: IAccountingEntityFormValues) {
     const res = await purpleLedgerApi.onboarding.onboardAccountingEntity(
-      this.toIndividualOnboardingReq(data),
+      this.toIndividualOnboardingReq(data)
     );
 
-    localStorage.setItem("accounting_entity_type", data.entityType);
+    localStorage.setItem('accounting_entity_type', data.entityType);
     return res.data;
   },
 };

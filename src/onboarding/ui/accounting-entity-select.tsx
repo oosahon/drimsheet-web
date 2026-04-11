@@ -1,12 +1,12 @@
-import { Field, FieldError } from "@/shared/ui/field";
-import { Label } from "@/shared/ui/label";
+import { Field, FieldError } from '@/shared/ui/field';
+import { Label } from '@/shared/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/shared/ui/select";
+} from '@/shared/ui/select';
 
 export interface AccountingEntitySelectProps {
   value: string;

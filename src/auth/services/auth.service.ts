@@ -1,22 +1,22 @@
-import purpleLedgerApi from "@/shared/utils/api";
-import type { ISignupFormValues } from "../ui/signup-form";
+import type { ISignupFormValues } from '@/auth/ui/signup-form';
+import purpleLedgerApi from '@/shared/utils/api';
 
 const authService = {
   getAuthToken() {
-    return window.localStorage.getItem("token");
+    return window.localStorage.getItem('token');
   },
   isLoggedIn() {
     return !!this.getAuthToken();
   },
   setToken(token: string, refreshToken?: string) {
-    window.localStorage.setItem("token", token);
+    window.localStorage.setItem('token', token);
     if (refreshToken) {
-      window.localStorage.setItem("refreshToken", refreshToken);
+      window.localStorage.setItem('refreshToken', refreshToken);
     }
   },
   removeToken() {
-    window.localStorage.removeItem("token");
-    window.localStorage.removeItem("refreshToken");
+    window.localStorage.removeItem('token');
+    window.localStorage.removeItem('refreshToken');
   },
 
   async signupWithEmail(payload: ISignupFormValues) {

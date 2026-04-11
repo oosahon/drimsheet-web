@@ -1,28 +1,15 @@
-import AccountingOnboardingFormContainer from "@/onboarding/components/accounting-onboarding-form";
-import useAccountingEntities from "@/accounting-entity/hooks/use-accounting-entities";
-import { useEffect, useState } from "react";
-
-const EOnboardingSteps = {
-  None: "none",
-  AccountingEntity: "accounting-entity",
-} as const;
-
-type UOnboardingStep = (typeof EOnboardingSteps)[keyof typeof EOnboardingSteps];
+import useAccountingEntities from '@/accounting-entity/hooks/use-accounting-entities';
+import AccountingOnboardingFormContainer from '@/onboarding/components/accounting-onboarding-form';
+import { useMemo } from 'react';
 
 export default function OnboardingManager() {
-  const [currentOnboardingStep, setCurrentOnboardingStep] =
-    useState<UOnboardingStep | null>(null);
-
   const { data: accountingEntities, isLoading: isLoadingEntities } =
     useAccountingEntities();
 
-  useEffect(() => {
-    if (isLoadingEntities) return;
-
-    if (!accountingEntities?.length) {
-      setCurrentOnboardingStep(EOnboardingSteps.AccountingEntity);
-    }
-  }, [accountingEntities, isLoadingEntities]);
+  const openAccountingOnboardingForm = useMemo(
+    () => !accountingEntities?.length && !isLoadingEntities,
+    [accountingEntities, isLoadingEntities]
+  );
 
   const isLoading = isLoadingEntities;
 
@@ -30,10 +17,7 @@ export default function OnboardingManager() {
 
   return (
     <>
-      <AccountingOnboardingFormContainer
-        open={currentOnboardingStep === EOnboardingSteps.AccountingEntity}
-        onClose={() => setCurrentOnboardingStep(null)}
-      />
+      <AccountingOnboardingFormContainer open={openAccountingOnboardingForm} />
     </>
   );
 }

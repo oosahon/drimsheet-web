@@ -1,5 +1,5 @@
-import { useMutation } from "@tanstack/react-query";
-import authService from "../services/auth.service";
+import authService from '@/auth/services/auth.service';
+import { useMutation } from '@tanstack/react-query';
 
 export default function useVerifyEmail() {
   return useMutation({

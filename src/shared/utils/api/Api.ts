@@ -11,24 +11,24 @@
  */
 
 export enum UAccountingEntityType {
-  Individual = "individual",
-  SoleTrader = "sole_trader",
-  Company = "company",
+  Individual = 'individual',
+  SoleTrader = 'sole_trader',
+  Company = 'company',
 }
 
 export enum UAppUsageMode {
-  PowerUser = "power_user",
-  NonPowerUser = "non_power_user",
+  PowerUser = 'power_user',
+  NonPowerUser = 'non_power_user',
 }
 
 export enum UAppThemePreference {
-  Light = "light",
-  Dark = "dark",
-  System = "system",
+  Light = 'light',
+  Dark = 'dark',
+  System = 'system',
 }
 
 export type TEntityId = string & {
-  __brand: "uuid";
+  __brand: 'uuid';
 };
 
 export interface IUserAppPreferences {
@@ -159,13 +159,15 @@ import type {
   AxiosResponse,
   HeadersDefaults,
   ResponseType,
-} from "axios";
-import axios from "axios";
+} from 'axios';
+import axios from 'axios';
 
 export type QueryParamsType = Record<string | number, any>;
 
-export interface FullRequestParams
-  extends Omit<AxiosRequestConfig, "data" | "params" | "url" | "responseType"> {
+export interface FullRequestParams extends Omit<
+  AxiosRequestConfig,
+  'data' | 'params' | 'url' | 'responseType'
+> {
   /** set parameter to `true` for call `securityWorker` for this request */
   secure?: boolean;
   /** request path */
@@ -182,30 +184,32 @@ export interface FullRequestParams
 
 export type RequestParams = Omit<
   FullRequestParams,
-  "body" | "method" | "query" | "path"
+  'body' | 'method' | 'query' | 'path'
 >;
 
-export interface ApiConfig<SecurityDataType = unknown>
-  extends Omit<AxiosRequestConfig, "data" | "cancelToken"> {
+export interface ApiConfig<SecurityDataType = unknown> extends Omit<
+  AxiosRequestConfig,
+  'data' | 'cancelToken'
+> {
   securityWorker?: (
-    securityData: SecurityDataType | null,
+    securityData: SecurityDataType | null
   ) => Promise<AxiosRequestConfig | void> | AxiosRequestConfig | void;
   secure?: boolean;
   format?: ResponseType;
 }
 
 export enum ContentType {
-  Json = "application/json",
-  JsonApi = "application/vnd.api+json",
-  FormData = "multipart/form-data",
-  UrlEncoded = "application/x-www-form-urlencoded",
-  Text = "text/plain",
+  Json = 'application/json',
+  JsonApi = 'application/vnd.api+json',
+  FormData = 'multipart/form-data',
+  UrlEncoded = 'application/x-www-form-urlencoded',
+  Text = 'text/plain',
 }
 
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
   private securityData: SecurityDataType | null = null;
-  private securityWorker?: ApiConfig<SecurityDataType>["securityWorker"];
+  private securityWorker?: ApiConfig<SecurityDataType>['securityWorker'];
   private secure?: boolean;
   private format?: ResponseType;
 
@@ -217,7 +221,7 @@ export class HttpClient<SecurityDataType = unknown> {
   }: ApiConfig<SecurityDataType> = {}) {
     this.instance = axios.create({
       ...axiosConfig,
-      baseURL: axiosConfig.baseURL || "/api/v1",
+      baseURL: axiosConfig.baseURL || '/api/v1',
     });
     this.secure = secure;
     this.format = format;
@@ -230,7 +234,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
   protected mergeRequestParams(
     params1: AxiosRequestConfig,
-    params2?: AxiosRequestConfig,
+    params2?: AxiosRequestConfig
   ): AxiosRequestConfig {
     const method = params1.method || (params2 && params2.method);
 
@@ -251,7 +255,7 @@ export class HttpClient<SecurityDataType = unknown> {
   }
 
   protected stringifyFormItem(formItem: unknown) {
-    if (typeof formItem === "object" && formItem !== null) {
+    if (typeof formItem === 'object' && formItem !== null) {
       return JSON.stringify(formItem);
     } else {
       return `${formItem}`;
@@ -271,7 +275,7 @@ export class HttpClient<SecurityDataType = unknown> {
         const isFileType = formItem instanceof Blob || formItem instanceof File;
         formData.append(
           key,
-          isFileType ? formItem : this.stringifyFormItem(formItem),
+          isFileType ? formItem : this.stringifyFormItem(formItem)
         );
       }
 
@@ -289,7 +293,7 @@ export class HttpClient<SecurityDataType = unknown> {
     ...params
   }: FullRequestParams): Promise<AxiosResponse<T>> => {
     const secureParams =
-      ((typeof secure === "boolean" ? secure : this.secure) &&
+      ((typeof secure === 'boolean' ? secure : this.secure) &&
         this.securityWorker &&
         (await this.securityWorker(this.securityData))) ||
       {};
@@ -300,7 +304,7 @@ export class HttpClient<SecurityDataType = unknown> {
       type === ContentType.FormData &&
       body &&
       body !== null &&
-      typeof body === "object"
+      typeof body === 'object'
     ) {
       body = this.createFormData(body as Record<string, unknown>);
     }
@@ -309,7 +313,7 @@ export class HttpClient<SecurityDataType = unknown> {
       type === ContentType.Text &&
       body &&
       body !== null &&
-      typeof body !== "string"
+      typeof body !== 'string'
     ) {
       body = JSON.stringify(body);
     }
@@ -318,7 +322,7 @@ export class HttpClient<SecurityDataType = unknown> {
       ...requestParams,
       headers: {
         ...(requestParams.headers || {}),
-        ...(type ? { "Content-Type": type } : {}),
+        ...(type ? { 'Content-Type': type } : {}),
       },
       params: query,
       responseType: responseFormat,
@@ -351,8 +355,8 @@ export class Api<
     getUserPreferences: (params: RequestParams = {}) =>
       this.request<IUserPreferences, any>({
         path: `/users/preferences`,
-        method: "GET",
-        format: "json",
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -367,9 +371,9 @@ export class Api<
     getAuthUserProfile: (params: RequestParams = {}) =>
       this.request<IUser, any>({
         path: `/users/profile`,
-        method: "GET",
+        method: 'GET',
         secure: true,
-        format: "json",
+        format: 'json',
         ...params,
       }),
   };
@@ -384,11 +388,11 @@ export class Api<
      */
     onboardAccountingEntity: (
       data: IAccountingEntityOnboardingReq,
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<void, any>({
         path: `/onboarding/accounting-entity`,
-        method: "POST",
+        method: 'POST',
         body: data,
         secure: true,
         type: ContentType.Json,
@@ -415,8 +419,8 @@ export class Api<
         any
       >({
         path: `/currencies`,
-        method: "GET",
-        format: "json",
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
   };
@@ -431,7 +435,7 @@ export class Api<
     signupWithEmail: (data: IUserSignupReq, params: RequestParams = {}) =>
       this.request<void, IApiError>({
         path: `/auth/signup-with-email`,
-        method: "POST",
+        method: 'POST',
         body: data,
         type: ContentType.Json,
         ...params,
@@ -448,13 +452,13 @@ export class Api<
       query: {
         token: string;
       },
-      params: RequestParams = {},
+      params: RequestParams = {}
     ) =>
       this.request<IAuthRes, IApiError>({
         path: `/auth/signup/complete`,
-        method: "POST",
+        method: 'POST',
         query: query,
-        format: "json",
+        format: 'json',
         ...params,
       }),
   };
@@ -469,8 +473,8 @@ export class Api<
     getAll: (params: RequestParams = {}) =>
       this.request<IAccountingEntityRes[], any>({
         path: `/accounting-entities`,
-        method: "GET",
-        format: "json",
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
   };

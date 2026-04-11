@@ -1,82 +1,87 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi, beforeAll } from "vitest";
-import { CurrencySelect } from "../currency-select";
+import { CurrencySelect } from '@/shared/ui/currency-select';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-describe("CurrencySelect", () => {
+describe('CurrencySelect', () => {
   beforeAll(() => {
-    window.HTMLElement.prototype.hasPointerCapture = vi.fn(() => false) as unknown as typeof window.HTMLElement.prototype.hasPointerCapture;
-    window.HTMLElement.prototype.releasePointerCapture = vi.fn() as unknown as typeof window.HTMLElement.prototype.releasePointerCapture;
-    window.HTMLElement.prototype.setPointerCapture = vi.fn() as unknown as typeof window.HTMLElement.prototype.setPointerCapture;
-    window.HTMLElement.prototype.scrollIntoView = vi.fn() as unknown as typeof window.HTMLElement.prototype.scrollIntoView;
+    window.HTMLElement.prototype.hasPointerCapture = vi.fn(
+      () => false
+    ) as unknown as typeof window.HTMLElement.prototype.hasPointerCapture;
+    window.HTMLElement.prototype.releasePointerCapture =
+      vi.fn() as unknown as typeof window.HTMLElement.prototype.releasePointerCapture;
+    window.HTMLElement.prototype.setPointerCapture =
+      vi.fn() as unknown as typeof window.HTMLElement.prototype.setPointerCapture;
+    window.HTMLElement.prototype.scrollIntoView =
+      vi.fn() as unknown as typeof window.HTMLElement.prototype.scrollIntoView;
   });
-  it("renders correctly with no initial value", () => {
+  it('renders correctly with no initial value', () => {
     const onChange = vi.fn();
     render(<CurrencySelect label="Currency" value="" onChange={onChange} />);
 
-    expect(screen.getByText("Currency")).toBeInTheDocument();
+    expect(screen.getByText('Currency')).toBeInTheDocument();
     expect(
-      screen.getByRole("combobox", { name: "Currency" }),
+      screen.getByRole('combobox', { name: 'Currency' })
     ).toBeInTheDocument();
   });
 
-  it("renders with an initial value and displays the logo", () => {
+  it('renders with an initial value and displays the logo', () => {
     const onChange = vi.fn();
     render(<CurrencySelect label="Currency" value="NGN" onChange={onChange} />);
 
     // Since NGN is selected, checking for the background image
     const logoDivs = document.querySelectorAll(
-      'div[style*="background-image"]',
+      'div[style*="background-image"]'
     );
     const hasNgIcon = Array.from(logoDivs).some((div) => {
       const element = div as HTMLElement;
-      return element.style.backgroundImage.includes("ng.png");
+      return element.style.backgroundImage.includes('ng.png');
     });
     expect(hasNgIcon).toBe(true);
-    expect(screen.getByText("Nigerian Naira")).toBeInTheDocument();
+    expect(screen.getByText('Nigerian Naira')).toBeInTheDocument();
   });
 
-  it("opens the select and chooses a currency", async () => {
+  it('opens the select and chooses a currency', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<CurrencySelect label="Currency" value="" onChange={onChange} />);
 
-    const trigger = screen.getByRole("combobox", { name: "Currency" });
+    const trigger = screen.getByRole('combobox', { name: 'Currency' });
     await user.click(trigger);
 
     // Option should be visible
-    const option = await screen.findByRole("option", {
+    const option = await screen.findByRole('option', {
       name: /Nigerian Naira/i,
     });
     expect(option).toBeInTheDocument();
 
     await user.click(option);
 
-    expect(onChange).toHaveBeenCalledWith("NGN");
+    expect(onChange).toHaveBeenCalledWith('NGN');
   });
 
-  it("displays an error when error prop is provided", () => {
+  it('displays an error when error prop is provided', () => {
     const onChange = vi.fn();
     render(
       <CurrencySelect
         label="Currency"
         value=""
         onChange={onChange}
-        error={[{ message: "Currency is required" }]}
-      />,
+        error={[{ message: 'Currency is required' }]}
+      />
     );
 
-    expect(screen.getByText("Currency is required")).toBeInTheDocument();
+    expect(screen.getByText('Currency is required')).toBeInTheDocument();
   });
 
-  it("handles invalid initial value gracefully", () => {
+  it('handles invalid initial value gracefully', () => {
     const onChange = vi.fn();
     render(
-      <CurrencySelect label="Currency" value="INVALID" onChange={onChange} />,
+      <CurrencySelect label="Currency" value="INVALID" onChange={onChange} />
     );
 
     expect(
-      screen.getByRole("combobox", { name: "Currency" }),
+      screen.getByRole('combobox', { name: 'Currency' })
     ).toBeInTheDocument();
   });
 });
