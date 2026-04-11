@@ -1,4 +1,4 @@
-import purpleLedgerApi from "@/shared/utils/api";
+import purpleLedgerApi from '@/shared/utils/api';
 
 const accountingEntityService = {
   async getAll() {

@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Moon, Sun } from "lucide-react";
-import { flushSync } from "react-dom";
+import { Moon, Sun } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 
-import { cn } from "@/shared/ui/utils";
+import { cn } from '@/shared/ui/utils';
 
-interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<"button"> {
+interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<'button'> {
   duration?: number;
 }
 
@@ -18,7 +18,7 @@ export const AnimatedThemeToggler = ({
 
   useEffect(() => {
     const updateTheme = () => {
-      setIsDark(document.documentElement.classList.contains("dark"));
+      setIsDark(document.documentElement.classList.contains('dark'));
     };
 
     updateTheme();
@@ -26,7 +26,7 @@ export const AnimatedThemeToggler = ({
     const observer = new MutationObserver(updateTheme);
     observer.observe(document.documentElement, {
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ['class'],
     });
 
     return () => observer.disconnect();
@@ -43,17 +43,17 @@ export const AnimatedThemeToggler = ({
     const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
     const maxRadius = Math.hypot(
       Math.max(x, viewportWidth - x),
-      Math.max(y, viewportHeight - y),
+      Math.max(y, viewportHeight - y)
     );
 
     const applyTheme = () => {
       const newTheme = !isDark;
       setIsDark(newTheme);
-      document.documentElement.classList.toggle("dark");
-      localStorage.setItem("theme", newTheme ? "dark" : "light");
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', newTheme ? 'dark' : 'light');
     };
 
-    if (typeof document.startViewTransition !== "function") {
+    if (typeof document.startViewTransition !== 'function') {
       applyTheme();
       return;
     }
@@ -63,7 +63,7 @@ export const AnimatedThemeToggler = ({
     });
 
     const ready = transition?.ready;
-    if (ready && typeof ready.then === "function") {
+    if (ready && typeof ready.then === 'function') {
       ready.then(() => {
         document.documentElement.animate(
           {
@@ -74,9 +74,9 @@ export const AnimatedThemeToggler = ({
           },
           {
             duration,
-            easing: "ease-in-out",
-            pseudoElement: "::view-transition-new(root)",
-          },
+            easing: 'ease-in-out',
+            pseudoElement: '::view-transition-new(root)',
+          }
         );
       });
     }

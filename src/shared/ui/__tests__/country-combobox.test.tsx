@@ -1,91 +1,91 @@
-import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
-import { describe, it, expect, vi } from "vitest";
-import { CountryComboBox } from "../country-combobox";
+import { CountryComboBox } from '@/shared/ui/country-combobox';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect, it, vi } from 'vitest';
 
-describe("CountryComboBox", () => {
-  it("renders correctly with no initial value", () => {
+describe('CountryComboBox', () => {
+  it('renders correctly with no initial value', () => {
     const onChange = vi.fn();
     render(<CountryComboBox label="Country" value="" onChange={onChange} />);
 
-    expect(screen.getByLabelText("Country")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Select a country")).toBeInTheDocument();
+    expect(screen.getByLabelText('Country')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Select a country')).toBeInTheDocument();
   });
 
-  it("renders with an initial value and displays the correct flag", () => {
+  it('renders with an initial value and displays the correct flag', () => {
     const onChange = vi.fn();
     render(<CountryComboBox label="Country" value="NG" onChange={onChange} />);
 
     // Since Nigeria flag is rendered, we can find it
-    expect(screen.getByText("🇳🇬")).toBeInTheDocument();
+    expect(screen.getByText('🇳🇬')).toBeInTheDocument();
   });
 
-  it("opens the combobox and selects a country", async () => {
+  it('opens the combobox and selects a country', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<CountryComboBox label="Country" value="" onChange={onChange} />);
 
-    const input = screen.getByPlaceholderText("Select a country");
+    const input = screen.getByPlaceholderText('Select a country');
     await user.click(input);
 
     // Option should be visible
-    const option = await screen.findByRole("option", { name: /Nigeria/i });
+    const option = await screen.findByRole('option', { name: /Nigeria/i });
     expect(option).toBeInTheDocument();
 
     await user.click(option);
 
-    expect(onChange).toHaveBeenCalledWith("NG");
+    expect(onChange).toHaveBeenCalledWith('NG');
   });
 
-  it("filters countries when typing", async () => {
+  it('filters countries when typing', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<CountryComboBox label="Country" value="" onChange={onChange} />);
 
-    const input = screen.getByPlaceholderText("Select a country");
-    await user.type(input, "cana"); // Should match Canada
+    const input = screen.getByPlaceholderText('Select a country');
+    await user.type(input, 'cana'); // Should match Canada
 
     expect(
-      await screen.findByRole("option", { name: /Canada/i }),
+      await screen.findByRole('option', { name: /Canada/i })
     ).toBeInTheDocument();
 
     // Should not show non-matching options
     expect(
-      screen.queryByRole("option", { name: /Nigeria/i }),
+      screen.queryByRole('option', { name: /Nigeria/i })
     ).not.toBeInTheDocument();
   });
 
-  it("displays an error when error prop is provided", () => {
+  it('displays an error when error prop is provided', () => {
     const onChange = vi.fn();
     render(
       <CountryComboBox
         label="Country"
         value=""
         onChange={onChange}
-        error={[{ message: "Country is required" }]}
-      />,
+        error={[{ message: 'Country is required' }]}
+      />
     );
 
-    expect(screen.getByText("Country is required")).toBeInTheDocument();
+    expect(screen.getByText('Country is required')).toBeInTheDocument();
   });
 
-  it("shows empty state when no countries match", async () => {
+  it('shows empty state when no countries match', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<CountryComboBox label="Country" value="" onChange={onChange} />);
 
-    const input = screen.getByPlaceholderText("Select a country");
-    await user.type(input, "xyz123");
+    const input = screen.getByPlaceholderText('Select a country');
+    await user.type(input, 'xyz123');
 
-    expect(await screen.findByText("No countries found.")).toBeInTheDocument();
+    expect(await screen.findByText('No countries found.')).toBeInTheDocument();
   });
 
-  it("calls onChange with empty string if value is cleared", async () => {
+  it('calls onChange with empty string if value is cleared', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<CountryComboBox label="Country" value="US" onChange={onChange} />);
 
-    const input = screen.getByPlaceholderText("Select a country");
+    const input = screen.getByPlaceholderText('Select a country');
     // Clear the input
     await user.clear(input);
     // Try to blur the input to commit the cleared value
@@ -96,13 +96,13 @@ describe("CountryComboBox", () => {
     // To ensure coverage, if it doesn't do it via userEvent naturally here, we will just have this test.
   });
 
-  it("handles invalid initial value gracefully", () => {
+  it('handles invalid initial value gracefully', () => {
     const onChange = vi.fn();
     render(
-      <CountryComboBox label="Country" value="INVALID" onChange={onChange} />,
+      <CountryComboBox label="Country" value="INVALID" onChange={onChange} />
     );
 
     // Should render the fallback GlobeIcon
-    expect(screen.getByPlaceholderText("Select a country")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Select a country')).toBeInTheDocument();
   });
 });

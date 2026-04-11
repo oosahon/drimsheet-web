@@ -82,7 +82,7 @@ Our project follows these guidelines for testing:
 
 - **Test Proximity**: Test files should be kept near their test subjects.
 - **`__tests__` (`.test.tsx` / `.test.ts`)**: Used for isolated unit tests (e.g., testing hooks, utilities, or simple UI components without heavy context dependencies).
-- **`__specs__` (`.spec.tsx` / `.spec.ts`)**: Used for integration tests where Context providers, routing, or significant DOM/user interactions are being tested. 
+- **`__specs__` (`.spec.tsx` / `.spec.ts`)**: Used for integration tests where Context providers, routing, or significant DOM/user interactions are being tested.
 - **End-to-End (E2E) Tests**: All E2E testing covers core user flows to verify application resilience.
 
 ## Reporting Bugs

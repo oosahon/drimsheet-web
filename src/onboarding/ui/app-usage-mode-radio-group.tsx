@@ -5,9 +5,9 @@ import {
   FieldError,
   FieldLabel,
   FieldTitle,
-} from "@/shared/ui/field";
-import { Label } from "@/shared/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/shared/ui/radio-group";
+} from '@/shared/ui/field';
+import { Label } from '@/shared/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
 
 export interface AppUsageModeRadioGroupProps {
   value: string;

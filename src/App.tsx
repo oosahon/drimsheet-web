@@ -1,19 +1,19 @@
+import CompleteSignupRoute from '@/auth/routes/complete-signup.route';
+import SignupRoute from '@/auth/routes/signup.route';
+import DashboardRoute from '@/reporting/routes/dashboard.route';
+import { DefaultErrorBoundary } from '@/shared/components/error-boundary';
+import { AnimatedThemeToggler } from '@/shared/ui/animated-theme-toggler';
+import { AppLayout } from '@/shared/ui/app-layout';
+import { Toaster } from '@/shared/ui/sonner';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   BrowserRouter,
-  Routes,
-  Route,
   Navigate,
   Outlet,
-} from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import SignupRoute from "@/auth/routes/signup.route";
-import { Toaster } from "./shared/ui/sonner";
-import CompleteSignupRoute from "./auth/routes/complete-signup.route";
-import DashboardRoute from "./reporting/routes/dashboard.route";
-import { AnimatedThemeToggler } from "./shared/ui/animated-theme-toggler";
-import { AppLayout } from "./shared/ui/app-layout";
-import { DefaultErrorBoundary } from "./shared/components/error-boundary";
+  Route,
+  Routes,
+} from 'react-router-dom';
 
 const queryClient = new QueryClient({
   defaultOptions: {

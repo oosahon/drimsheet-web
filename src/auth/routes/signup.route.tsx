@@ -1,7 +1,7 @@
-import authService from "@/auth/services/auth.service";
-import { SignupFormContainer } from "@/auth/components/signup-form";
-import { useMemo } from "react";
-import { Navigate } from "react-router-dom";
+import { SignupFormContainer } from '@/auth/components/signup-form';
+import authService from '@/auth/services/auth.service';
+import { useMemo } from 'react';
+import { Navigate } from 'react-router-dom';
 
 export default function SignupRoute() {
   const isAuthenticated = useMemo(() => authService.isLoggedIn(), []);

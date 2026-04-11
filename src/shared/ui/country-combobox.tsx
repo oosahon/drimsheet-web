@@ -1,7 +1,4 @@
-import { Field, FieldError } from "@/shared/ui/field";
-import { Label } from "@/shared/ui/label";
-import countries from "@/shared/config/countries.json" with { type: "json" };
-import { GlobeIcon } from "lucide-react";
+import countries from '@/shared/config/countries.json' with { type: 'json' };
 import {
   Combobox,
   ComboboxContent,
@@ -9,15 +6,24 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from "@/shared/ui/combobox";
-import { InputGroupAddon } from "@/shared/ui/input-group";
-import { useState } from "react";
+} from '@/shared/ui/combobox';
+import { Field, FieldError } from '@/shared/ui/field';
+import { InputGroupAddon } from '@/shared/ui/input-group';
+import { Label } from '@/shared/ui/label';
+import { GlobeIcon } from 'lucide-react';
+import { useState } from 'react';
 
 export interface CountryComboBoxProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
   error?: Array<{ message?: string } | undefined>;
+}
+
+interface ICountry {
+  code: string;
+  name: string;
+  flag: string;
 }
 
 export function CountryComboBox({
@@ -37,13 +43,13 @@ export function CountryComboBox({
         items={options}
         autoHighlight
         value={selectedCountry ?? null}
-        onValueChange={(val: any) => onChange(val ? val.code : "")}
-        itemToStringLabel={(item: any) => item?.name || ""}
+        onValueChange={(val: ICountry) => onChange(val ? val.code : '')}
+        itemToStringLabel={(item: ICountry) => item?.name || ''}
         onInputValueChange={(val) => {
           setOptions(
             countries.filter((country) =>
-              country.name.toLowerCase().includes(val.toLowerCase()),
-            ),
+              country.name.toLowerCase().includes(val.toLowerCase())
+            )
           );
         }}
       >

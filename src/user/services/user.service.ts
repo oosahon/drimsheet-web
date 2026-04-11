@@ -1,4 +1,4 @@
-import purpleLedgerApi from "@/shared/utils/api";
+import purpleLedgerApi from '@/shared/utils/api';
 
 const userService = {
   async getProfile() {
@@ -8,7 +8,7 @@ const userService = {
 
   async getPreferences() {
     const res = await purpleLedgerApi.users.getUserPreferences();
-    window.localStorage.setItem("preferences", JSON.stringify(res.data));
+    window.localStorage.setItem('preferences', JSON.stringify(res.data));
 
     return res.data;
   },

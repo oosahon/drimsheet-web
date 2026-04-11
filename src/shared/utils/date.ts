@@ -1,15 +1,19 @@
-import dayjs from "dayjs";
-import advancedFormat from "dayjs/plugin/advancedFormat";
+import dayjs from 'dayjs';
+import advancedFormat from 'dayjs/plugin/advancedFormat';
 
 dayjs.extend(advancedFormat);
 
 export const formatOptions = Object.freeze({
-  monthAndDayOnly: 'MMMM Do'
+  monthAndDayOnly: 'MMMM Do',
 });
 
 export function formatFiscalDate(month: number, day: number) {
   // Use a fixed leap year (2024) to support February 29th
-  return dayjs().year(2024).month(month - 1).date(day).format(formatOptions.monthAndDayOnly);
+  return dayjs()
+    .year(2024)
+    .month(month - 1)
+    .date(day)
+    .format(formatOptions.monthAndDayOnly);
 }
 
 function isValidDate(date: Date | string | number) {

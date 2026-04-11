@@ -1,11 +1,11 @@
-import { Field, FieldError } from "@/shared/ui/field";
-import { formatFiscalDate } from "@/shared/utils/date";
-import { Label } from "@/shared/ui/label";
-import { Calendar } from "@/shared/ui/calendar";
-import { useState } from "react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/shared/ui/popover";
-import { Button } from "@/shared/ui/button";
-import { Calendar1 } from "lucide-react";
+import { Button } from '@/shared/ui/button';
+import { Calendar } from '@/shared/ui/calendar';
+import { Field, FieldError } from '@/shared/ui/field';
+import { Label } from '@/shared/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
+import { formatFiscalDate } from '@/shared/utils/date';
+import { Calendar1 } from 'lucide-react';
+import { useState } from 'react';
 
 interface FiscalYearStartSelectProps {
   value: { month: number; day: number };
@@ -22,7 +22,7 @@ function FiscalYearStartSelect({
 
   const displayValue = value
     ? formatFiscalDate(value.month, value.day)
-    : "Select a financial start date";
+    : 'Select a financial start date';
   const selectedDate = value
     ? new Date(2024, value.month - 1, value.day)
     : undefined;
@@ -42,8 +42,8 @@ function FiscalYearStartSelect({
           <Button
             variant="outline"
             className={
-              "w-full justify-start text-left font-normal " +
-              (!value ? "text-muted-foreground" : "")
+              'w-full justify-start text-left font-normal ' +
+              (!value ? 'text-muted-foreground' : '')
             }
           >
             <Calendar1 className="mr-2 h-4 w-4" />
@@ -58,7 +58,7 @@ function FiscalYearStartSelect({
             defaultMonth={selectedDate}
             formatters={{
               formatMonthCaption: (date) =>
-                date.toLocaleString(undefined, { month: "long" }),
+                date.toLocaleString(undefined, { month: 'long' }),
             }}
           />
         </PopoverContent>

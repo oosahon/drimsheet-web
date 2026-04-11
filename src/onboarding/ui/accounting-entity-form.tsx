@@ -1,16 +1,16 @@
-import { FieldGroup } from "@/shared/ui/field";
-import { useFormik } from "formik";
-import * as yup from "yup";
-import useFieldErrorMessage from "@/shared/hooks/use-field-error-message";
-import { CountryComboBox } from "@/shared/ui/country-combobox";
-import { CurrencySelect } from "@/shared/ui/currency-select";
-import { useMemo, useState } from "react";
-import { Button } from "@/shared/ui/button";
-import { AlertCircleIcon, ArrowLeft, ArrowRight } from "lucide-react";
-import { AppUsageModeRadioGroup } from "./app-usage-mode-radio-group";
-import { AccountingEntitySelect } from "./accounting-entity-select";
-import { FiscalYearStartSelect } from "./fiscal-year-start-select";
-import { AlertTitle, WarningAlert } from "@/shared/ui/alert";
+import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { AlertTitle, WarningAlert } from '@/shared/ui/alert';
+import { Button } from '@/shared/ui/button';
+import { CountryComboBox } from '@/shared/ui/country-combobox';
+import { CurrencySelect } from '@/shared/ui/currency-select';
+import { FieldGroup } from '@/shared/ui/field';
+import { useFormik } from 'formik';
+import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import * as yup from 'yup';
+import { AccountingEntitySelect } from './accounting-entity-select';
+import { AppUsageModeRadioGroup } from './app-usage-mode-radio-group';
+import { FiscalYearStartSelect } from './fiscal-year-start-select';
 
 export interface IAccountingEntityFormValues {
   name: string;
@@ -19,7 +19,7 @@ export interface IAccountingEntityFormValues {
   functionalCurrency: string;
   reportingCurrency: string;
   fiscalYearStart: { month: number; day: number };
-  appUsageMode: "power_user" | "non_power_user";
+  appUsageMode: 'power_user' | 'non_power_user';
 }
 
 export interface AccountingEntityOnboardingFormProps {
@@ -28,22 +28,22 @@ export interface AccountingEntityOnboardingFormProps {
 }
 
 const validationSchema = yup.object({
-  entityType: yup.string().required("Entity type is required"),
-  countryCode: yup.string().required("Country is required"),
-  functionalCurrency: yup.string().required("Functional currency is required"),
-  reportingCurrency: yup.string().required("Reporting currency is required"),
+  entityType: yup.string().required('Entity type is required'),
+  countryCode: yup.string().required('Country is required'),
+  functionalCurrency: yup.string().required('Functional currency is required'),
+  reportingCurrency: yup.string().required('Reporting currency is required'),
   fiscalYearStart: yup
     .object({
       month: yup.number().required(),
       day: yup.number().required(),
     })
-    .required("Fiscal year start is required"),
+    .required('Fiscal year start is required'),
 });
 
 interface StepProps {
-  formik: import("formik").FormikProps<IAccountingEntityFormValues>;
+  formik: import('formik').FormikProps<IAccountingEntityFormValues>;
   getErrorMessage: (
-    name: keyof IAccountingEntityFormValues,
+    name: keyof IAccountingEntityFormValues
   ) => Array<{ message?: string } | undefined> | undefined;
 }
 
@@ -58,7 +58,7 @@ function Step1({
     !formik.errors.entityType &&
     !formik.errors.countryCode;
 
-  const showTaxWarning = formik.values.countryCode != "NG";
+  const showTaxWarning = formik.values.countryCode != 'NG';
 
   return (
     <div className="flex flex-col gap-6">
@@ -67,13 +67,13 @@ function Step1({
           value={formik.values.entityType}
           // NB: only individual is supported for now
           onChange={() => {}}
-          error={getErrorMessage("entityType")}
+          error={getErrorMessage('entityType')}
         />
         <CountryComboBox
           label="Where do you reside?"
           value={formik.values.countryCode}
-          onChange={(val) => formik.setFieldValue("countryCode", val)}
-          error={getErrorMessage("countryCode")}
+          onChange={(val) => formik.setFieldValue('countryCode', val)}
+          error={getErrorMessage('countryCode')}
         />
         {showTaxWarning && (
           <WarningAlert>
@@ -126,20 +126,20 @@ function Step2({
         <CurrencySelect
           label="What currency do you primarily transact in?"
           value={functionalCurrency}
-          onChange={(val) => formik.setFieldValue("functionalCurrency", val)}
-          error={getErrorMessage("functionalCurrency")}
+          onChange={(val) => formik.setFieldValue('functionalCurrency', val)}
+          error={getErrorMessage('functionalCurrency')}
         />
 
         <CurrencySelect
           label="What currency should we use for your reports?"
           value={reportingCurrency}
-          onChange={(val) => formik.setFieldValue("reportingCurrency", val)}
-          error={getErrorMessage("reportingCurrency")}
+          onChange={(val) => formik.setFieldValue('reportingCurrency', val)}
+          error={getErrorMessage('reportingCurrency')}
         />
 
         <FiscalYearStartSelect
           value={fiscalYearStart}
-          onChange={(val) => formik.setFieldValue("fiscalYearStart", val)}
+          onChange={(val) => formik.setFieldValue('fiscalYearStart', val)}
           error={getFiscalYearStartErrorStr()}
         />
 
@@ -179,8 +179,8 @@ function Step3({
       <FieldGroup>
         <AppUsageModeRadioGroup
           value={formik.values.appUsageMode}
-          onChange={(val) => formik.setFieldValue("appUsageMode", val)}
-          error={getErrorMessage("appUsageMode")}
+          onChange={(val) => formik.setFieldValue('appUsageMode', val)}
+          error={getErrorMessage('appUsageMode')}
         />
       </FieldGroup>
       <div className="flex justify-between mt-4">
@@ -201,31 +201,31 @@ function AccountingEntityOnboardingForm({
   loading,
 }: AccountingEntityOnboardingFormProps) {
   const [step, setStep] = useState(1);
-  const [direction, setDirection] = useState<"right" | "left">("right");
+  const [direction, setDirection] = useState<'right' | 'left'>('right');
 
   const handleNext = (nextStep: number) => {
-    setDirection("right");
+    setDirection('right');
     setStep(nextStep);
   };
 
   const handleBack = (prevStep: number) => {
-    setDirection("left");
+    setDirection('left');
     setStep(prevStep);
   };
 
   const formik = useFormik<IAccountingEntityFormValues>({
     initialValues: {
       // This was removed to simplify the form. It will be injected by the caller
-      name: "",
-      entityType: "individual",
-      countryCode: "NG",
-      functionalCurrency: "NGN",
-      reportingCurrency: "NGN",
+      name: '',
+      entityType: 'individual',
+      countryCode: 'NG',
+      functionalCurrency: 'NGN',
+      reportingCurrency: 'NGN',
       fiscalYearStart: {
         month: 1,
         day: 1,
       },
-      appUsageMode: "non_power_user",
+      appUsageMode: 'non_power_user',
     },
     validationSchema,
     onSubmit: (values) => {
@@ -243,17 +243,17 @@ function AccountingEntityOnboardingForm({
     const touch = formik.touched.fiscalYearStart;
     if (!errs) return undefined;
 
-    if (typeof errs === "string") {
+    if (typeof errs === 'string') {
       return errs;
     }
 
     const fieldErrs = errs as { month?: string; day?: string };
     const fieldTouch = touch as { month?: boolean; day?: boolean } | undefined;
 
-    if (fieldTouch?.month && typeof fieldErrs.month === "string") {
+    if (fieldTouch?.month && typeof fieldErrs.month === 'string') {
       return fieldErrs.month;
     }
-    if (fieldTouch?.day && typeof fieldErrs.day === "string") {
+    if (fieldTouch?.day && typeof fieldErrs.day === 'string') {
       return fieldErrs.day;
     }
 
@@ -265,9 +265,9 @@ function AccountingEntityOnboardingForm({
       <div
         key={step}
         className={
-          direction === "right"
-            ? "animate-slide-step-right"
-            : "animate-slide-step-left"
+          direction === 'right'
+            ? 'animate-slide-step-right'
+            : 'animate-slide-step-left'
         }
       >
         {step === 1 && (

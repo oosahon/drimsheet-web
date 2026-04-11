@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
-import authService from "../services/auth.service";
-import type { ISignupFormValues } from "../ui/signup-form";
+import authService from '@/auth/services/auth.service';
+import type { ISignupFormValues } from '@/auth/ui/signup-form';
+import { useMutation } from '@tanstack/react-query';
 
 export default function useSignupWithEmail() {
   return useMutation({

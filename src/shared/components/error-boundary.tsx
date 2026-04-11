@@ -1,10 +1,10 @@
-import { ErrorBoundary as SentryErrorBoundary } from "@sentry/react";
-import { type ReactNode, type ReactElement, useState, useEffect } from "react";
-import observabilityService from "@/shared/services/observability.service";
-import { Button } from "@/shared/ui/button";
-import FullPageLoader from "@/shared/ui/full-page-loader";
-import { isAxiosError } from "axios";
-import { handleApiError } from "@/shared/utils/api/errors";
+import observabilityService from '@/shared/services/observability.service';
+import { Button } from '@/shared/ui/button';
+import FullPageLoader from '@/shared/ui/full-page-loader';
+import { handleApiError } from '@/shared/utils/api/errors';
+import { ErrorBoundary as SentryErrorBoundary } from '@sentry/react';
+import { isAxiosError } from 'axios';
+import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
 
 export interface DefaultErrorBoundaryProps {
   children: ReactNode;
