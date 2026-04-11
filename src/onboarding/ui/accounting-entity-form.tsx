@@ -43,7 +43,7 @@ const validationSchema = yup.object({
 interface StepProps {
   formik: import("formik").FormikProps<IAccountingEntityFormValues>;
   getErrorMessage: (
-    name: string,
+    name: keyof IAccountingEntityFormValues,
   ) => Array<{ message?: string } | undefined> | undefined;
 }
 
