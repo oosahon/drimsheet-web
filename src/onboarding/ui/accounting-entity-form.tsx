@@ -4,12 +4,13 @@ import * as yup from "yup";
 import useFieldErrorMessage from "@/shared/hooks/use-field-error-message";
 import { CountryComboBox } from "@/shared/ui/country-combobox";
 import { CurrencySelect } from "@/shared/ui/currency-select";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/shared/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { AlertCircleIcon, ArrowLeft, ArrowRight } from "lucide-react";
 import { AppUsageModeRadioGroup } from "./app-usage-mode-radio-group";
 import { AccountingEntitySelect } from "./accounting-entity-select";
 import { FiscalYearStartSelect } from "./fiscal-year-start-select";
+import { AlertTitle, WarningAlert } from "@/shared/ui/alert";
 
 export interface IAccountingEntityFormValues {
   name: string;
@@ -57,6 +58,8 @@ function Step1({
     !formik.errors.entityType &&
     !formik.errors.countryCode;
 
+  const showTaxWarning = formik.values.countryCode != "NG";
+
   return (
     <div className="flex flex-col gap-6">
       <FieldGroup>
@@ -72,6 +75,14 @@ function Step1({
           onChange={(val) => formik.setFieldValue("countryCode", val)}
           error={getErrorMessage("countryCode")}
         />
+        {showTaxWarning && (
+          <WarningAlert>
+            <AlertCircleIcon />
+            <AlertTitle>
+              Tax computations are only supported for Nigerian residents.
+            </AlertTitle>
+          </WarningAlert>
+        )}
       </FieldGroup>
       <div className="flex justify-end mt-4">
         <Button type="button" onClick={onNext} disabled={!isComplete}>
@@ -102,28 +113,45 @@ function Step2({
     !formik.errors.reportingCurrency &&
     !getFiscalYearStartErrorStr();
 
+  const { functionalCurrency, reportingCurrency, fiscalYearStart } =
+    formik.values;
+
+  const showFiscalYearWarning = useMemo(() => {
+    return fiscalYearStart.month !== 1 || fiscalYearStart.day !== 1;
+  }, [fiscalYearStart]);
+
   return (
     <div className="flex flex-col gap-6">
       <FieldGroup>
         <CurrencySelect
           label="What currency do you primarily transact in?"
-          value={formik.values.functionalCurrency}
+          value={functionalCurrency}
           onChange={(val) => formik.setFieldValue("functionalCurrency", val)}
           error={getErrorMessage("functionalCurrency")}
         />
 
         <CurrencySelect
           label="What currency should we use for your reports?"
-          value={formik.values.reportingCurrency}
+          value={reportingCurrency}
           onChange={(val) => formik.setFieldValue("reportingCurrency", val)}
           error={getErrorMessage("reportingCurrency")}
         />
 
         <FiscalYearStartSelect
-          value={formik.values.fiscalYearStart}
+          value={fiscalYearStart}
           onChange={(val) => formik.setFieldValue("fiscalYearStart", val)}
           error={getFiscalYearStartErrorStr()}
         />
+
+        {showFiscalYearWarning && (
+          <WarningAlert>
+            <AlertCircleIcon />
+            <AlertTitle>
+              Unless approved by the tax authorities, your fiscal year must
+              start on January 1st.
+            </AlertTitle>
+          </WarningAlert>
+        )}
       </FieldGroup>
       <div className="flex justify-between mt-4">
         <Button type="button" variant="outline" onClick={onBack}>

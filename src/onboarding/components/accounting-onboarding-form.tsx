@@ -43,7 +43,7 @@ export default function AccountingOnboardingFormContainer({
 
   return (
     <Dialog open={open} modal>
-      <DialogContent className="sm:max-w-sm">
+      <DialogContent className="sm:max-w-sm" showCloseButton={false}>
         <DialogHeader>
           <DialogTitle>Account Setup</DialogTitle>
           <DialogDescription className="text-sm">

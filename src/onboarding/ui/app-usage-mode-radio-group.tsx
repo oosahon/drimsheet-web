@@ -27,11 +27,11 @@ export function AppUsageModeRadioGroup({
         <FieldLabel htmlFor="non_power_user" className="cursor-pointer">
           <Field orientation="horizontal">
             <FieldContent>
-              <FieldTitle className="text-md font-medium text-bold">
+              <FieldTitle className="text-md text-bold text-primary">
                 Automated (Recommended)
               </FieldTitle>
               <FieldDescription className="text-xs w-full text-muted-foreground">
-                PurpleLedger handles the core accounting.
+                We handle the core accounting and reporting.
               </FieldDescription>
             </FieldContent>
             <RadioGroupItem value="non_power_user" id="non_power_user" />
@@ -41,7 +41,7 @@ export function AppUsageModeRadioGroup({
         <FieldLabel htmlFor="power_user" className="cursor-pointer">
           <Field orientation="horizontal">
             <FieldContent>
-              <FieldTitle className="text-md font-medium text-bold">
+              <FieldTitle className="text-md text-bold text-primary">
                 Manual
               </FieldTitle>
               <FieldDescription className="text-xs w-full text-muted-foreground">
