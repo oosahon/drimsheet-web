@@ -45,11 +45,20 @@ export interface IUserPreferences {
   updatedAt: string;
 }
 
-/** From T, pick a set of properties whose keys are in the union K */
-export type PickIUserExcludeKeysPassword = object;
-
-/** Construct a type with the properties of T except for those in type K. */
-export type OmitIUserPassword = PickIUserExcludeKeysPassword;
+export interface IUser {
+  id: TEntityId;
+  email: string;
+  emailVerified: boolean;
+  password?: string;
+  firstName: string;
+  lastName: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt: string | null;
+}
 
 /**
  * Represents the month and day on which an accounting entity's fiscal year ends.
@@ -75,7 +84,7 @@ export interface IAccountingEntityOnboardingReq {
    * may configure any valid calendar date (e.g., March 31, June 30).
    */
   fiscalYearStart: IFiscalYearStart;
-  accountingMode: UAppUsageMode;
+  appUsageMode: UAppUsageMode;
 }
 
 export interface IApiValidationError {
@@ -89,7 +98,7 @@ export interface IApiError {
   cause?: any;
 }
 
-export interface IIndividualSignupReq {
+export interface IUserSignupReq {
   firstName: string;
   lastName: string;
   email: string;
@@ -104,12 +113,8 @@ export interface IAuthRes {
 /** From T, pick a set of properties whose keys are in the union K */
 export interface PickIAccountingEntityExcludeKeysFunctionalCurrencyOrReportingCurrency {
   id: TEntityId;
-  /** @format date-time */
-  createdAt: string;
-  /** @format date-time */
-  updatedAt: string;
-  /** @format date-time */
-  deletedAt: string;
+  name: string;
+  operatingCountryCode: string;
   type: UAccountingEntityType;
   ownerId: TEntityId;
   /**
@@ -118,16 +123,18 @@ export interface PickIAccountingEntityExcludeKeysFunctionalCurrencyOrReportingCu
    * may configure any valid calendar date (e.g., March 31, June 30).
    */
   fiscalYearStart: IFiscalYearStart;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt: string;
 }
 
 export interface IAccountingEntityRes {
   id: TEntityId;
-  /** @format date-time */
-  createdAt: string;
-  /** @format date-time */
-  updatedAt: string;
-  /** @format date-time */
-  deletedAt: string;
+  name: string;
+  operatingCountryCode: string;
   type: UAccountingEntityType;
   ownerId: TEntityId;
   /**
@@ -136,6 +143,12 @@ export interface IAccountingEntityRes {
    * may configure any valid calendar date (e.g., March 31, June 30).
    */
   fiscalYearStart: IFiscalYearStart;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt: string;
   functionalCurrency: string;
   reportingCurrency: string;
 }
@@ -349,11 +362,13 @@ export class Api<
      * @tags User
      * @name GetAuthUserProfile
      * @request GET:/users/profile
+     * @secure
      */
     getAuthUserProfile: (params: RequestParams = {}) =>
-      this.request<OmitIUserPassword, any>({
+      this.request<IUser, any>({
         path: `/users/profile`,
         method: "GET",
+        secure: true,
         format: "json",
         ...params,
       }),
@@ -365,6 +380,7 @@ export class Api<
      * @tags Onboarding
      * @name OnboardAccountingEntity
      * @request POST:/onboarding/accounting-entity
+     * @secure
      */
     onboardAccountingEntity: (
       data: IAccountingEntityOnboardingReq,
@@ -374,6 +390,7 @@ export class Api<
         path: `/onboarding/accounting-entity`,
         method: "POST",
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -411,7 +428,7 @@ export class Api<
      * @name SignupWithEmail
      * @request POST:/auth/signup-with-email
      */
-    signupWithEmail: (data: IIndividualSignupReq, params: RequestParams = {}) =>
+    signupWithEmail: (data: IUserSignupReq, params: RequestParams = {}) =>
       this.request<void, IApiError>({
         path: `/auth/signup-with-email`,
         method: "POST",
