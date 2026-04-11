@@ -43,8 +43,8 @@ export function CountryComboBox({
         items={options}
         autoHighlight
         value={selectedCountry ?? null}
-        onValueChange={(val: ICountry) => onChange(val ? val.code : '')}
-        itemToStringLabel={(item: ICountry) => item?.name || ''}
+        onValueChange={(val: ICountry | null) => onChange(val ? val.code : '')}
+        itemToStringLabel={(item: ICountry | null) => item?.name || ''}
         onInputValueChange={(val) => {
           setOptions(
             countries.filter((country) =>

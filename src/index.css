@@ -63,6 +63,8 @@
 
   --destructive: oklch(0.577 0.245 27.325);
 
+  --border: var(--color-gray-300);
+
   --input: oklch(0.92 0.004 286.32);
 
   --ring: oklch(0.705 0.015 286.067);
@@ -91,7 +93,7 @@
 
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
 
-  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-border: var(--color-gray-300);
 
   --sidebar-ring: oklch(0.705 0.015 286.067);
 }
@@ -103,7 +105,7 @@
     --text: #6b6375;
     --text-h: #08060d;
     --bg: #fff;
-    --border: oklch(0.92 0.004 286.32);
+    --border: var(--color-gray-300);
     --code-bg: #f4f3ec;
     --accent: oklch(0.21 0.006 285.885);
     --accent-bg: rgba(170, 59, 255, 0.1);

@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { Combobox as ComboboxPrimitive } from '@base-ui/react';
 
 import { Button } from '@/shared/ui/button';
@@ -10,7 +9,6 @@ import {
 } from '@/shared/ui/input-group';
 import { cn } from '@/shared/ui/utils';
 import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';
-import { useRef } from 'react';
 
 const Combobox = ComboboxPrimitive.Root;
 
@@ -277,10 +275,6 @@ function ComboboxChipsInput({
   );
 }
 
-function useComboboxAnchor() {
-  return useRef<HTMLDivElement | null>(null);
-}
-
 export {
   Combobox,
   ComboboxChip,
@@ -297,5 +291,4 @@ export {
   ComboboxSeparator,
   ComboboxTrigger,
   ComboboxValue,
-  useComboboxAnchor,
 };
