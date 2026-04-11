@@ -3,7 +3,6 @@ import SignupRoute from '@/auth/routes/signup.route';
 import DashboardRoute from '@/reporting/routes/dashboard.route';
 import AppLayout from '@/shared/components/app-layout';
 import { DefaultErrorBoundary } from '@/shared/components/error-boundary';
-import { AnimatedThemeToggler } from '@/shared/ui/animated-theme-toggler';
 import { Toaster } from '@/shared/ui/sonner';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -51,8 +50,6 @@ function App() {
           </TooltipProvider>
 
           <ReactQueryDevtools initialIsOpen={false} />
-
-          <AnimatedThemeToggler />
           <Toaster />
           <OnboardingManager />
         </QueryClientProvider>

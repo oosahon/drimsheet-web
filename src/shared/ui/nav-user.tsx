@@ -23,6 +23,7 @@ import {
   LogOutIcon,
   SparklesIcon,
 } from 'lucide-react';
+import { AnimatedThemeToggler } from './animated-theme-toggler';
 
 export function NavUser() {
   const { data: user, isLoading } = useProfile();
@@ -89,6 +90,14 @@ export function NavUser() {
               <DropdownMenuItem>
                 <BellIcon />
                 Notifications
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <AnimatedThemeToggler
+                  showText
+                  className="w-full cursor-default justify-start"
+                />
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
