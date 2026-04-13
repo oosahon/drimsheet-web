@@ -485,6 +485,27 @@ export class Api<
         format: 'json',
         ...params,
       }),
+
+    /**
+     * @description Get password reset link
+     *
+     * @tags Auth
+     * @name GetPasswordResetLink
+     * @request POST:/auth/get-password-reset-link
+     */
+    getPasswordResetLink: (
+      data: {
+        email: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<void, IApiError>({
+        path: `/auth/get-password-reset-link`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
   };
   accountingEntities = {
     /**

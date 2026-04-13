@@ -1,5 +1,6 @@
 import CompleteSignupRoute from '@/auth/routes/complete-signup.route';
 import LoginRoute from '@/auth/routes/login.route';
+import RequestPasswordResetRoute from '@/auth/routes/request-password-reset.route';
 import SignupRoute from '@/auth/routes/signup.route';
 import DashboardRoute from '@/reporting/routes/dashboard.route';
 import AppLayout from '@/shared/components/app-layout';
@@ -34,6 +35,10 @@ function App() {
                   <Route
                     path="signup/complete"
                     element={<CompleteSignupRoute />}
+                  />
+                  <Route
+                    path="forgot-password"
+                    element={<RequestPasswordResetRoute />}
                   />
                 </Route>
 

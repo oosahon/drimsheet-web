@@ -33,6 +33,10 @@ const authService = {
     const response = await purpleLedgerApi.auth.loginWithEmail(payload);
     this.setToken(response.data.authToken, response.data.refreshToken);
   },
+
+  async requestPasswordReset(email: string) {
+    await purpleLedgerApi.auth.getPasswordResetLink({ email });
+  },
 };
 
 export default authService;

@@ -1,20 +1,21 @@
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
-import { Input, PasswordInput } from '@/shared/ui/input';
+import { Input } from '@/shared/ui/input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
-import { Link } from 'react-router-dom';
 import * as yup from 'yup';
 
-export interface ILoginFormValues {
+export interface IRequestPasswordResetFormValues {
   email: string;
-  password: string;
 }
 
-interface ILoginFormProps extends Omit<ComponentProps<'div'>, 'onSubmit'> {
-  onSubmit: (values: ILoginFormValues) => void;
+interface IRequestPasswordResetFormProps extends Omit<
+  ComponentProps<'div'>,
+  'onSubmit'
+> {
+  onSubmit: (values: IRequestPasswordResetFormValues) => void;
   loading: boolean;
 }
 
@@ -23,19 +24,17 @@ const validationSchema = yup.object({
     .string()
     .email('Enter a valid email')
     .required('Email is required'),
-  password: yup.string().required('Password is required'),
 });
 
-export function LoginForm({
+export function RequestPasswordResetForm({
   className,
   onSubmit,
   loading,
   ...props
-}: ILoginFormProps) {
-  const formik = useFormik<ILoginFormValues>({
+}: IRequestPasswordResetFormProps) {
+  const formik = useFormik<IRequestPasswordResetFormValues>({
     initialValues: {
       email: '',
-      password: '',
     },
     validationSchema: validationSchema,
     onSubmit,
@@ -47,7 +46,7 @@ export function LoginForm({
   });
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn('flex flex-col gap-6 max-w-sm', className)} {...props}>
       <form onSubmit={formik.handleSubmit}>
         <FieldGroup>
           <Field>
@@ -63,32 +62,10 @@ export function LoginForm({
               />
               <FieldError errors={getErrorMessage('email')} />
             </div>
-
-            <div className="mt-2 text-left">
-              <div className="flex justify-between items-center w-full">
-                <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Link
-                  to="/auth/forgot-password"
-                  className="text-xs font-medium hover:text-purple-200"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="mt-2">
-                <PasswordInput
-                  id="password"
-                  name="password"
-                  value={formik.values.password}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                />
-                <FieldError errors={getErrorMessage('password')} />
-              </div>
-            </div>
           </Field>
           <Field className="mt-2">
-            <Button type="submit" loading={loading}>
-              Sign In
+            <Button type="submit" loading={loading} className="w-full">
+              Get password reset link
             </Button>
           </Field>
         </FieldGroup>
