@@ -6,17 +6,19 @@ import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
 import * as yup from 'yup';
+import { ResetPasswordRequestSuccess } from './reset-password-request-success';
 
-export interface IRequestPasswordResetFormValues {
+export interface IResetPasswordRequestFormValues {
   email: string;
 }
 
-interface IRequestPasswordResetFormProps extends Omit<
+interface IResetPasswordRequestFormProps extends Omit<
   ComponentProps<'div'>,
   'onSubmit'
 > {
-  onSubmit: (values: IRequestPasswordResetFormValues) => void;
+  onSubmit: (values: IResetPasswordRequestFormValues) => void;
   loading: boolean;
+  isSuccess: boolean;
 }
 
 const validationSchema = yup.object({
@@ -26,13 +28,14 @@ const validationSchema = yup.object({
     .required('Email is required'),
 });
 
-export function RequestPasswordResetForm({
+export function ResetPasswordRequestForm({
   className,
   onSubmit,
   loading,
+  isSuccess,
   ...props
-}: IRequestPasswordResetFormProps) {
-  const formik = useFormik<IRequestPasswordResetFormValues>({
+}: IResetPasswordRequestFormProps) {
+  const formik = useFormik<IResetPasswordRequestFormValues>({
     initialValues: {
       email: '',
     },
@@ -44,6 +47,15 @@ export function RequestPasswordResetForm({
     errors: formik.errors,
     touched: formik.touched,
   });
+
+  if (isSuccess) {
+    return (
+      <ResetPasswordRequestSuccess
+        loading={loading}
+        retry={formik.handleSubmit}
+      />
+    );
+  }
 
   return (
     <div className={cn('flex flex-col gap-6 max-w-sm', className)} {...props}>

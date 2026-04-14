@@ -1,4 +1,4 @@
-import { ResetPasswordFormContainer } from '@/auth/components/reset-password-form';
+import { ResetPasswordFormContainer } from '@/auth/components/reset-password-form-container';
 import { Link } from 'react-router-dom';
 
 export default function ResetPasswordRoute() {

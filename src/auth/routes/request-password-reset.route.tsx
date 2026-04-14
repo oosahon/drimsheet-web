@@ -1,4 +1,4 @@
-import { RequestPasswordResetFormContainer } from '@/auth/components/request-password-reset-form';
+import { ResetPasswordRequestFormContainer } from '@/auth/components/request-password-reset-form-container';
 import { Link } from 'react-router-dom';
 
 export default function RequestPasswordResetRoute() {
@@ -21,13 +21,9 @@ export default function RequestPasswordResetRoute() {
           <h1 className="text-2xl/4 font-bold tracking-tight">
             Reset your password
           </h1>
-          <p className="text-sm text-muted-foreground">
-            Enter your user account's verified email address and we will send
-            you a password reset link.
-          </p>
         </div>
         <div>
-          <RequestPasswordResetFormContainer />
+          <ResetPasswordRequestFormContainer />
         </div>
       </div>
     </div>
