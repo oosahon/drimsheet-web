@@ -1,6 +1,6 @@
 import authService from '@/auth/services/auth.service';
+import { Api } from '@/shared/utils/api/Api';
 import type { InternalAxiosRequestConfig } from 'axios';
-import { Api } from './Api';
 
 const purpleLedgerApi = new Api({
   baseURL: `${import.meta.env.VITE_API_URL}/api/v1`,

@@ -42,7 +42,7 @@ export function Button({
       data-size={size}
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-      disabled={loading}
+      disabled={loading || props.disabled}
     >
       {loading && <Loader2 className="animate-spin" />}
       {children}

@@ -21,6 +21,7 @@ export function SignupFormContainer() {
   };
 
   if (showSuccessCard) {
+    // TODO: move to a separate component
     return (
       <div>
         <Card>

@@ -1,3 +1,6 @@
+import { AccountingEntitySelect } from '@/onboarding/ui/accounting-entity-select';
+import { AppUsageModeRadioGroup } from '@/onboarding/ui/app-usage-mode-radio-group';
+import { FiscalYearStartSelect } from '@/onboarding/ui/fiscal-year-start-select';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { AlertTitle, WarningAlert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
@@ -8,9 +11,6 @@ import { useFormik } from 'formik';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import * as yup from 'yup';
-import { AccountingEntitySelect } from './accounting-entity-select';
-import { AppUsageModeRadioGroup } from './app-usage-mode-radio-group';
-import { FiscalYearStartSelect } from './fiscal-year-start-select';
 
 export interface IAccountingEntityFormValues {
   name: string;

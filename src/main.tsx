@@ -1,8 +1,8 @@
+import App from '@/_app/index';
+import '@/_app/index.css';
 import * as Sentry from '@sentry/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
 
 createRoot(document.getElementById('root')!, {
   onUncaughtError: Sentry.reactErrorHandler(),
