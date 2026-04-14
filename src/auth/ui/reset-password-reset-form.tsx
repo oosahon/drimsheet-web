@@ -1,3 +1,4 @@
+import { ResetPasswordRequestSuccess } from '@/auth/ui/reset-password-request-success';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -6,7 +7,6 @@ import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
 import * as yup from 'yup';
-import { ResetPasswordRequestSuccess } from './reset-password-request-success';
 
 export interface IResetPasswordRequestFormValues {
   email: string;

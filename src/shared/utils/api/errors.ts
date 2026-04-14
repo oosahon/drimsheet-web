@@ -2,8 +2,8 @@ import observabilityService from '@/shared/services/observability.service';
 import { toast } from 'sonner';
 
 import authService from '@/auth/services/auth.service';
+import type { IApiValidationError } from '@/shared/utils/api/Api';
 import { type AxiosError } from 'axios';
-import type { IApiValidationError } from './Api';
 
 type TApiError = {
   code?: number;

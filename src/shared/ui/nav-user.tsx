@@ -1,4 +1,5 @@
 import { useSidebar } from '@/shared/hooks/use-sidebar';
+import { AnimatedThemeToggler } from '@/shared/ui/animated-theme-toggler';
 import { Avatar, AvatarFallback } from '@/shared/ui/avatar';
 import {
   DropdownMenu,
@@ -23,7 +24,6 @@ import {
   LogOutIcon,
   SparklesIcon,
 } from 'lucide-react';
-import { AnimatedThemeToggler } from './animated-theme-toggler';
 
 export function NavUser() {
   const { data: user, isLoading } = useProfile();
