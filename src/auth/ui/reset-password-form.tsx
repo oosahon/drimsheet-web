@@ -12,7 +12,7 @@ export interface IResetPasswordFormValues {
   confirmPassword: string;
 }
 
-interface IResetPasswordFormProps extends Omit<
+export interface ResetPasswordFormProps extends Omit<
   ComponentProps<'div'>,
   'onSubmit'
 > {
@@ -46,7 +46,7 @@ export function ResetPasswordForm({
   onSubmit,
   loading,
   ...props
-}: IResetPasswordFormProps) {
+}: ResetPasswordFormProps) {
   const formik = useFormik<IResetPasswordFormValues>({
     initialValues: {
       password: '',
