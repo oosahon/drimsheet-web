@@ -1,6 +1,11 @@
 import type { ISignupFormValues } from '@/auth/ui/signup-form';
 import purpleLedgerApi from '@/shared/utils/api';
-import type { ILoginReq } from '@/shared/utils/api/Api';
+import type {
+  ILoginReq,
+  IResetPasswordReq,
+  IUser,
+} from '@/shared/utils/api/Api';
+import { jwtDecode } from 'jwt-decode';
 
 const authService = {
   getAuthToken() {
@@ -36,6 +41,16 @@ const authService = {
 
   async requestPasswordReset(email: string) {
     await purpleLedgerApi.auth.getPasswordResetLink({ email });
+  },
+
+  async resetPassword(payload: IResetPasswordReq) {
+    const res = await purpleLedgerApi.auth.resetPassword(payload);
+    this.setToken(res.data.authToken, res.data.refreshToken);
+  },
+
+  decodeToken(token?: string | null) {
+    if (!token) return null;
+    return jwtDecode(token) as IUser;
   },
 };
 

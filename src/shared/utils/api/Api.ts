@@ -115,6 +115,12 @@ export interface ILoginReq {
   password: string;
 }
 
+export interface IResetPasswordReq {
+  token: string;
+  password: string;
+  confirmPassword: string;
+}
+
 /** From T, pick a set of properties whose keys are in the union K */
 export interface PickIAccountingEntityExcludeKeysFunctionalCurrencyOrReportingCurrency {
   id: TEntityId;
@@ -504,6 +510,23 @@ export class Api<
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description Reset password
+     *
+     * @tags Auth
+     * @name ResetPassword
+     * @request POST:/auth/reset-password
+     */
+    resetPassword: (data: IResetPasswordReq, params: RequestParams = {}) =>
+      this.request<IAuthRes, IApiError>({
+        path: `/auth/reset-password`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   };
