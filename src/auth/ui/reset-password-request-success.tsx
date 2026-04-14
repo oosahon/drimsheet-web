@@ -29,10 +29,6 @@ export const ResetPasswordRequestSuccess = ({
 
   return (
     <div className="flex flex-col gap-4 text-center max-w-sm">
-      <p className="text-sm text-muted-foreground">
-        If an account exists for that email, we have sent a password reset link.
-      </p>
-
       <div className="flex flex-col gap-2">
         <p className="text-sm text-muted-foreground">Didn't receive it?</p>
         <Button
@@ -40,7 +36,6 @@ export const ResetPasswordRequestSuccess = ({
           onClick={handleRetryClick}
           loading={loading}
           disabled={countdown > 0}
-          variant="secondary"
           className="w-full"
         >
           {countdown > 0 ? `Retry in ${countdown}s` : 'Retry'}

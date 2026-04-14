@@ -21,6 +21,10 @@ export default function RequestPasswordResetRoute() {
           <h1 className="text-2xl/4 font-bold tracking-tight">
             Reset your password
           </h1>
+          <p className="text-sm/6 text-muted-foreground">
+            A password reset link will be sent to the email address associated
+            with your account.
+          </p>
         </div>
         <div>
           <ResetPasswordRequestFormContainer />

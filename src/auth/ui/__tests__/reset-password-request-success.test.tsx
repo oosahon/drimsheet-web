@@ -20,12 +20,6 @@ describe('ResetPasswordRequestSuccess', () => {
       </MemoryRouter>
     );
 
-    expect(
-      screen.getByText(
-        /If an account exists for that email, we have sent a password reset link\./i
-      )
-    ).toBeInTheDocument();
-
     expect(screen.getByText(/Didn't receive it\?/i)).toBeInTheDocument();
 
     const retryButton = screen.getByRole('button', { name: /Retry in 30s/i });
