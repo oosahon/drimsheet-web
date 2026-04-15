@@ -1,3 +1,4 @@
+import { LogoutConfirmationDialog } from '@/auth/components/logout-confirmation-dialog';
 import { useSidebar } from '@/shared/hooks/use-sidebar';
 import { AnimatedThemeToggler } from '@/shared/ui/animated-theme-toggler';
 import { Avatar, AvatarFallback } from '@/shared/ui/avatar';
@@ -101,10 +102,12 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOutIcon />
-              Log out
-            </DropdownMenuItem>
+            <LogoutConfirmationDialog>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                <LogOutIcon />
+                Log out
+              </DropdownMenuItem>
+            </LogoutConfirmationDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

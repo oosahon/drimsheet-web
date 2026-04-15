@@ -100,6 +100,11 @@ const authService = {
     if (!token) return null;
     return jwtDecode(token) as IUser;
   },
+
+  async logout() {
+    await purpleLedgerApi.auth.logout();
+    this.removeToken();
+  },
 };
 
 export default authService;

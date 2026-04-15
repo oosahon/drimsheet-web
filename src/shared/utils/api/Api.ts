@@ -570,6 +570,20 @@ export class Api<
         format: 'json',
         ...params,
       }),
+
+    /**
+     * @description Logout user
+     *
+     * @tags Auth
+     * @name Logout
+     * @request POST:/auth/logout
+     */
+    logout: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/logout`,
+        method: 'POST',
+        ...params,
+      }),
   };
   accountingEntities = {
     /**
