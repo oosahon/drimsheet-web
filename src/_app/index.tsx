@@ -1,4 +1,5 @@
 import AppRoutes from '@/_app/index.routes';
+import AccessTokenManager from '@/auth/components/access-token-manager';
 import { DefaultErrorBoundary } from '@/shared/components/error-boundary';
 import { Toaster } from '@/shared/ui/sonner';
 import { TooltipProvider } from '@/shared/ui/tooltip';
@@ -18,15 +19,17 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <DefaultErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
-        </TooltipProvider>
-        <ReactQueryDevtools initialIsOpen={false} />
-        <Toaster />
-      </QueryClientProvider>
+      <AccessTokenManager>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </TooltipProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
+          <Toaster />
+        </QueryClientProvider>
+      </AccessTokenManager>
     </DefaultErrorBoundary>
   );
 }

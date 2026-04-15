@@ -1,0 +1,38 @@
+sequenceDiagram
+    autonumber
+    participant UI as Component
+    participant ATM as AccessTokenManager
+    participant Auth as auth.service.ts
+    participant API as Axios Interceptors
+    participant BE as Backend Server
+
+    rect rgb(240, 245, 250)
+        Note over UI, BE: Phase 1: Application Boot / Hard Refresh
+        UI->>ATM: Mounts React Application
+        ATM->>Auth: authService.init()
+        Note right of Auth: Checks localStorage 'isLoggedIn'
+        alt isLoggedIn && !accessToken
+            Auth->>Auth: Acquire 'token_refresh_lock'<br>(Cross-Tab Mutex)
+            Auth->>BE: POST /auth/refresh-access-token<br>(HttpOnly Cookie)
+            BE-->>Auth: Returns { accessToken }
+            Auth->>Auth: Store token in JS memory
+        end
+        ATM-->>UI: Unmounts FullPageLoader, Renders Children
+    end
+
+    rect rgb(240, 250, 240)
+        Note over UI, BE: Phase 2: Reactive Token Renewal (Interceptor)
+        UI->>API: standard API request (e.g. GET /profile)
+        API->>API: Request Interceptor appends Auth Bearer
+        API->>BE: GET /profile
+        BE-->>API: 401 Unauthorized (Token Expired)
+        API->>API: Response Interceptor catches 401
+        API->>Auth: await authService.getAccessToken()
+        Note over Auth: Single-Flight Batching ensures exactly 1<br>refresh network request for concurrent 401s
+        Auth->>BE: POST /auth/refresh-access-token
+        BE-->>Auth: Returns { accessToken }
+        Auth-->>API: Resolves new token
+        API->>API: Update original request headers
+        API->>BE: Retry GET /profile
+        BE-->>UI: 200 OK Data Returned
+    end

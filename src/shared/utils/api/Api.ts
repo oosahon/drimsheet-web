@@ -60,7 +60,6 @@ export interface IUser {
   id: TEntityId;
   email: string;
   emailVerified: boolean;
-  password?: string;
   firstName: string;
   lastName: string;
   /** @format date-time */
@@ -105,12 +104,11 @@ export interface IUserSignupReq {
   password: string;
 }
 
-export interface IAuthRes {
-  authToken: string;
-  refreshToken: string;
+export interface IAccessToken {
+  accessToken: string;
 }
 
-export interface ILoginReq {
+export interface IEmailLoginReq {
   email: string;
   password: string;
 }
@@ -467,7 +465,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<IAuthRes, IApiError>({
+      this.request<IAccessToken, IApiError>({
         path: `/auth/signup/complete`,
         method: 'POST',
         query: query,
@@ -482,8 +480,8 @@ export class Api<
      * @name LoginWithEmail
      * @request POST:/auth/login-with-email
      */
-    loginWithEmail: (data: ILoginReq, params: RequestParams = {}) =>
-      this.request<IAuthRes, IApiError>({
+    loginWithEmail: (data: IEmailLoginReq, params: RequestParams = {}) =>
+      this.request<IAccessToken, IApiError>({
         path: `/auth/login-with-email`,
         method: 'POST',
         body: data,
@@ -521,12 +519,69 @@ export class Api<
      * @request POST:/auth/reset-password
      */
     resetPassword: (data: IResetPasswordReq, params: RequestParams = {}) =>
-      this.request<IAuthRes, IApiError>({
+      this.request<IAccessToken, IApiError>({
         path: `/auth/reset-password`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Start the Google OAuth flow. Redirects the user to Google for authentication.
+     *
+     * @tags Auth
+     * @name LoginWithGoogle
+     * @request GET:/auth/google
+     */
+    loginWithGoogle: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/google`,
+        method: 'GET',
+        ...params,
+      }),
+
+    /**
+     * @description Google OAuth callback. Exchanges the Google user profile for an auth token and redirects to the client.
+     *
+     * @tags Auth
+     * @name LoginWithGoogleCallback
+     * @request GET:/auth/google/callback
+     */
+    loginWithGoogleCallback: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/google/callback`,
+        method: 'GET',
+        ...params,
+      }),
+
+    /**
+     * @description Refresh access token
+     *
+     * @tags Auth
+     * @name RefreshAccessToken
+     * @request POST:/auth/refresh-access-token
+     */
+    refreshAccessToken: (params: RequestParams = {}) =>
+      this.request<IAccessToken, IApiError>({
+        path: `/auth/refresh-access-token`,
+        method: 'POST',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Logout user
+     *
+     * @tags Auth
+     * @name Logout
+     * @request POST:/auth/logout
+     */
+    logout: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/logout`,
+        method: 'POST',
         ...params,
       }),
   };

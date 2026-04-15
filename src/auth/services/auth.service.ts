@@ -1,28 +1,76 @@
 import type { ISignupFormValues } from '@/auth/ui/signup-form';
 import purpleLedgerApi from '@/shared/utils/api';
 import type {
-  ILoginReq,
+  IEmailLoginReq,
   IResetPasswordReq,
   IUser,
 } from '@/shared/utils/api/Api';
 import { jwtDecode } from 'jwt-decode';
 
+let accessToken: string;
+let refreshPromise: Promise<string> | null = null;
+
+async function executeRefresh(): Promise<string> {
+  try {
+    const { data } = await purpleLedgerApi.auth.refreshAccessToken();
+    authService.setToken(data.accessToken);
+    return data.accessToken;
+  } catch (error) {
+    authService.removeToken();
+    throw error;
+  }
+}
+
 const authService = {
-  getAuthToken() {
-    return window.localStorage.getItem('token');
-  },
   isLoggedIn() {
-    return !!this.getAuthToken();
+    return localStorage.getItem('isLoggedIn') === 'true';
   },
-  setToken(token: string, refreshToken?: string) {
-    window.localStorage.setItem('token', token);
-    if (refreshToken) {
-      window.localStorage.setItem('refreshToken', refreshToken);
-    }
+
+  getToken() {
+    return accessToken;
   },
+
+  setToken(token: string) {
+    localStorage.setItem('isLoggedIn', 'true');
+    accessToken = token;
+  },
+
   removeToken() {
-    window.localStorage.removeItem('token');
-    window.localStorage.removeItem('refreshToken');
+    localStorage.removeItem('isLoggedIn');
+    accessToken = '';
+  },
+
+  async getAccessToken(): Promise<string> {
+    if (refreshPromise) {
+      return refreshPromise;
+    }
+
+    refreshPromise = (async () => {
+      try {
+        if (typeof navigator !== 'undefined' && navigator.locks) {
+          return await navigator.locks.request(
+            'token_refresh_lock',
+            executeRefresh
+          );
+        } else {
+          return await executeRefresh();
+        }
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+
+    return refreshPromise;
+  },
+
+  async init() {
+    if (this.isLoggedIn() && !accessToken) {
+      try {
+        await this.getAccessToken();
+      } catch (error) {
+        console.error('Failed to get access token during init:', error);
+      }
+    }
   },
 
   async signupWithEmail(payload: ISignupFormValues) {
@@ -31,12 +79,12 @@ const authService = {
 
   async verifyEmail(token: string) {
     const response = await purpleLedgerApi.auth.verifyEmail({ token });
-    this.setToken(response.data.authToken, response.data.refreshToken);
+    this.setToken(response.data.accessToken);
   },
 
-  async loginWithEmail(payload: ILoginReq) {
+  async loginWithEmail(payload: IEmailLoginReq) {
     const response = await purpleLedgerApi.auth.loginWithEmail(payload);
-    this.setToken(response.data.authToken, response.data.refreshToken);
+    this.setToken(response.data.accessToken);
   },
 
   async requestPasswordReset(email: string) {
@@ -44,13 +92,18 @@ const authService = {
   },
 
   async resetPassword(payload: IResetPasswordReq) {
-    const res = await purpleLedgerApi.auth.resetPassword(payload);
-    this.setToken(res.data.authToken, res.data.refreshToken);
+    const response = await purpleLedgerApi.auth.resetPassword(payload);
+    this.setToken(response.data.accessToken);
   },
 
   decodeToken(token?: string | null) {
     if (!token) return null;
     return jwtDecode(token) as IUser;
+  },
+
+  async logout() {
+    await purpleLedgerApi.auth.logout();
+    this.removeToken();
   },
 };
 

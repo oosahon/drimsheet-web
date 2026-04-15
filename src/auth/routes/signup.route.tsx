@@ -1,10 +1,35 @@
 import { GoogleAuthButton } from '@/auth/components/google-auth-button';
 import { SignupFormContainer } from '@/auth/components/signup-form';
 import { AuthConsent } from '@/auth/ui/auth-consent';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
-import { Link } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function SignupRoute() {
+  const [searchParams] = useSearchParams();
+
+  const success = useMemo(
+    () => searchParams.get('success') === 'true',
+    [searchParams]
+  );
+
+  if (success) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Card>
+          <CardHeader className="flex flex-col items-center gap-4">
+            <img src="/email-sent.svg" alt="Email Sent" />
+            <CardTitle>Account created successfully!</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-4">
+            <p>Please check your email for a verification link</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen items-center justify-center">
       <div className="flex w-full max-w-sm flex-col gap-6">
