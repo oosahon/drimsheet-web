@@ -5,16 +5,8 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from '@/shared/ui/sidebar';
-import useProfile from '@/user/hooks/use-profile';
-import { Navigate } from 'react-router-dom';
 
 export default function AppLayout() {
-  const { data: userProfile, isLoading } = useProfile();
-
-  if (isLoading) return <></>;
-
-  if (!userProfile) return <Navigate to="/auth/login" replace />;
-
   return (
     <>
       <SidebarProvider>
