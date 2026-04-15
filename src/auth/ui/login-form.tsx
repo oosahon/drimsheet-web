@@ -64,17 +64,14 @@ export function LoginForm({
               <FieldError errors={getErrorMessage('email')} />
             </div>
 
-            <div className="mt-2 text-left">
-              <div className="flex justify-between items-center w-full">
-                <FieldLabel htmlFor="password">Password</FieldLabel>
-                <Link
-                  to="/auth/forgot-password"
-                  className="text-xs font-medium hover:text-purple-200"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="mt-2">
+            <div className="mt-2 grid grid-cols-[1fr_auto] items-center text-left">
+              <FieldLabel
+                htmlFor="password"
+                className="col-start-1 row-start-1"
+              >
+                Password
+              </FieldLabel>
+              <div className="col-span-2 row-start-2 mt-2">
                 <PasswordInput
                   id="password"
                   name="password"
@@ -84,6 +81,12 @@ export function LoginForm({
                 />
                 <FieldError errors={getErrorMessage('password')} />
               </div>
+              <Link
+                to="/auth/forgot-password"
+                className="col-start-2 row-start-1 justify-self-end text-xs font-medium hover:text-purple-200"
+              >
+                Forgot password?
+              </Link>
             </div>
           </Field>
           <Field className="mt-2">
