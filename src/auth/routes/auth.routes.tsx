@@ -1,4 +1,5 @@
 import AuthLayout from '@/auth/components/auth-layout';
+import OAuthConfirmation from '@/auth/components/oauth-confirmation';
 import CompleteSignupRoute from '@/auth/routes/complete-signup.route';
 import LoginRoute from '@/auth/routes/login.route';
 import RequestPasswordResetRoute from '@/auth/routes/request-password-reset.route';
@@ -16,6 +17,7 @@ const useAuthRoutes: TModuleRoutes = (basePath) => {
       { path: 'signup/complete', element: <CompleteSignupRoute /> },
       { path: 'forgot-password', element: <RequestPasswordResetRoute /> },
       { path: 'reset-password', element: <ResetPasswordRoute /> },
+      { path: 'oauth-confirmation', element: <OAuthConfirmation /> },
     ],
   };
 };
