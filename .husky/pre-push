@@ -1,1 +1,2 @@
 yarn test --run
+yarn check-stories
