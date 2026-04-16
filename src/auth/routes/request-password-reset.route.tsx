@@ -1,4 +1,4 @@
-import { ResetPasswordRequestFormContainer } from '@/auth/components/request-password-reset-form-container';
+import { RequestPasswordResetFormContainer } from '@/auth/components/request-password-reset-form-container';
 import { Link } from 'react-router-dom';
 
 export default function RequestPasswordResetRoute() {
@@ -27,7 +27,7 @@ export default function RequestPasswordResetRoute() {
           </p>
         </div>
         <div>
-          <ResetPasswordRequestFormContainer />
+          <RequestPasswordResetFormContainer />
         </div>
       </div>
     </div>

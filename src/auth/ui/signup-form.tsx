@@ -60,7 +60,10 @@ export function SignupForm({
   });
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div
+      className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+      {...props}
+    >
       <form onSubmit={formik.handleSubmit}>
         <FieldGroup>
           <Field className="grid grid-cols-2 gap-4">

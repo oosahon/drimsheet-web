@@ -2,15 +2,15 @@ import { Button } from '@/shared/ui/button';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-interface ResetPasswordRequestSuccessProps {
+interface RequestPasswordResetSuccessProps {
   retry: () => void;
   loading: boolean;
 }
 
-export const ResetPasswordRequestSuccess = ({
+export const RequestPasswordResetSuccess = ({
   retry,
   loading,
-}: ResetPasswordRequestSuccessProps) => {
+}: RequestPasswordResetSuccessProps) => {
   const [countdown, setCountdown] = useState<number>(30);
 
   useEffect(() => {
