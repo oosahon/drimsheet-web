@@ -1,12 +1,12 @@
 import useRequestPasswordReset from '@/auth/hooks/use-request-password-reset';
 import {
-  ResetPasswordRequestForm,
-  type IResetPasswordRequestFormValues,
-} from '@/auth/ui/reset-password-reset-form';
+  RequestPasswordResetForm,
+  type IRequestPasswordResetFormValues,
+} from '@/auth/ui/request-password-reset-form';
 import { handleApiError } from '@/shared/utils/api/errors';
 import { toast } from 'sonner';
 
-export function ResetPasswordRequestFormContainer() {
+export function RequestPasswordResetFormContainer() {
   const {
     mutateAsync: requestPasswordReset,
     isPending,
@@ -14,7 +14,7 @@ export function ResetPasswordRequestFormContainer() {
   } = useRequestPasswordReset();
 
   const handleRequestReset = async (
-    values: IResetPasswordRequestFormValues
+    values: IRequestPasswordResetFormValues
   ) => {
     try {
       await requestPasswordReset(values.email);
@@ -27,7 +27,7 @@ export function ResetPasswordRequestFormContainer() {
   };
 
   return (
-    <ResetPasswordRequestForm
+    <RequestPasswordResetForm
       onSubmit={handleRequestReset}
       loading={isPending}
       isSuccess={isSuccess}

@@ -184,7 +184,12 @@ function Step3({
         />
       </FieldGroup>
       <div className="flex justify-between mt-4">
-        <Button type="button" variant="outline" onClick={onBack}>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={isSubmitting}
+          onClick={onBack}
+        >
           <ArrowLeft />
           Back
         </Button>
@@ -261,41 +266,43 @@ function AccountingEntityOnboardingForm({
   };
 
   return (
-    <form id="accounting-entity-form" onSubmit={formik.handleSubmit}>
-      <div
-        key={step}
-        className={
-          direction === 'right'
-            ? 'animate-slide-step-right'
-            : 'animate-slide-step-left'
-        }
-      >
-        {step === 1 && (
-          <Step1
-            formik={formik}
-            getErrorMessage={getErrorMessage}
-            onNext={() => handleNext(2)}
-          />
-        )}
-        {step === 2 && (
-          <Step2
-            formik={formik}
-            getErrorMessage={getErrorMessage}
-            getFiscalYearStartErrorStr={getFiscalYearStartErrorStr}
-            onNext={() => handleNext(3)}
-            onBack={() => handleBack(1)}
-          />
-        )}
-        {step === 3 && (
-          <Step3
-            formik={formik}
-            getErrorMessage={getErrorMessage}
-            onBack={() => handleBack(2)}
-            isSubmitting={loading}
-          />
-        )}
-      </div>
-    </form>
+    <div className="min-w-xs max-w-full">
+      <form id="accounting-entity-form" onSubmit={formik.handleSubmit}>
+        <div
+          key={step}
+          className={
+            direction === 'right'
+              ? 'animate-slide-step-right'
+              : 'animate-slide-step-left'
+          }
+        >
+          {step === 1 && (
+            <Step1
+              formik={formik}
+              getErrorMessage={getErrorMessage}
+              onNext={() => handleNext(2)}
+            />
+          )}
+          {step === 2 && (
+            <Step2
+              formik={formik}
+              getErrorMessage={getErrorMessage}
+              getFiscalYearStartErrorStr={getFiscalYearStartErrorStr}
+              onNext={() => handleNext(3)}
+              onBack={() => handleBack(1)}
+            />
+          )}
+          {step === 3 && (
+            <Step3
+              formik={formik}
+              getErrorMessage={getErrorMessage}
+              onBack={() => handleBack(2)}
+              isSubmitting={loading}
+            />
+          )}
+        </div>
+      </form>
+    </div>
   );
 }
 

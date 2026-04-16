@@ -1,9 +1,9 @@
-import { ResetPasswordRequestSuccess } from '@/auth/ui/reset-password-request-success';
+import { RequestPasswordResetSuccess } from '@/auth/ui/reset-password-request-success';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('ResetPasswordRequestSuccess', () => {
+describe('RequestPasswordResetSuccess', () => {
   beforeEach(() => {
     vi.useFakeTimers();
   });
@@ -16,7 +16,7 @@ describe('ResetPasswordRequestSuccess', () => {
   it('renders successfully and shows the countdown initially', () => {
     render(
       <MemoryRouter>
-        <ResetPasswordRequestSuccess retry={vi.fn()} loading={false} />
+        <RequestPasswordResetSuccess retry={vi.fn()} loading={false} />
       </MemoryRouter>
     );
 
@@ -30,7 +30,7 @@ describe('ResetPasswordRequestSuccess', () => {
   it('counts down the timer correctly', () => {
     render(
       <MemoryRouter>
-        <ResetPasswordRequestSuccess retry={vi.fn()} loading={false} />
+        <RequestPasswordResetSuccess retry={vi.fn()} loading={false} />
       </MemoryRouter>
     );
 
@@ -58,7 +58,7 @@ describe('ResetPasswordRequestSuccess', () => {
   it('enables the retry button when the countdown reaches 0', () => {
     render(
       <MemoryRouter>
-        <ResetPasswordRequestSuccess retry={vi.fn()} loading={false} />
+        <RequestPasswordResetSuccess retry={vi.fn()} loading={false} />
       </MemoryRouter>
     );
 
@@ -76,7 +76,7 @@ describe('ResetPasswordRequestSuccess', () => {
 
     render(
       <MemoryRouter>
-        <ResetPasswordRequestSuccess retry={handleRetry} loading={false} />
+        <RequestPasswordResetSuccess retry={handleRetry} loading={false} />
       </MemoryRouter>
     );
 
@@ -104,7 +104,7 @@ describe('ResetPasswordRequestSuccess', () => {
   it('disables the retry button when loading is true', () => {
     render(
       <MemoryRouter>
-        <ResetPasswordRequestSuccess retry={vi.fn()} loading={true} />
+        <RequestPasswordResetSuccess retry={vi.fn()} loading={true} />
       </MemoryRouter>
     );
 

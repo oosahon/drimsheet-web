@@ -1,4 +1,4 @@
-import { ResetPasswordRequestSuccess } from '@/auth/ui/reset-password-request-success';
+import { RequestPasswordResetSuccess } from '@/auth/ui/reset-password-request-success';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -8,15 +8,15 @@ import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
 import * as yup from 'yup';
 
-export interface IResetPasswordRequestFormValues {
+export interface IRequestPasswordResetFormValues {
   email: string;
 }
 
-interface IResetPasswordRequestFormProps extends Omit<
+interface IRequestPasswordResetFormProps extends Omit<
   ComponentProps<'div'>,
   'onSubmit'
 > {
-  onSubmit: (values: IResetPasswordRequestFormValues) => void;
+  onSubmit: (values: IRequestPasswordResetFormValues) => void;
   loading: boolean;
   isSuccess: boolean;
 }
@@ -28,14 +28,14 @@ const validationSchema = yup.object({
     .required('Email is required'),
 });
 
-export function ResetPasswordRequestForm({
+export function RequestPasswordResetForm({
   className,
   onSubmit,
   loading,
   isSuccess,
   ...props
-}: IResetPasswordRequestFormProps) {
-  const formik = useFormik<IResetPasswordRequestFormValues>({
+}: IRequestPasswordResetFormProps) {
+  const formik = useFormik<IRequestPasswordResetFormValues>({
     initialValues: {
       email: '',
     },
@@ -50,7 +50,7 @@ export function ResetPasswordRequestForm({
 
   if (isSuccess) {
     return (
-      <ResetPasswordRequestSuccess
+      <RequestPasswordResetSuccess
         loading={loading}
         retry={formik.handleSubmit}
       />
@@ -58,7 +58,10 @@ export function ResetPasswordRequestForm({
   }
 
   return (
-    <div className={cn('flex flex-col gap-6 max-w-sm', className)} {...props}>
+    <div
+      className={cn('flex flex-col gap-6 max-w-full min-w-xs', className)}
+      {...props}
+    >
       <form onSubmit={formik.handleSubmit}>
         <FieldGroup>
           <Field>

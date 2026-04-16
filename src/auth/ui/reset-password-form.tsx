@@ -62,7 +62,10 @@ export function ResetPasswordForm({
   });
 
   return (
-    <div className={cn('flex flex-col gap-6 max-w-sm', className)} {...props}>
+    <div
+      className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+      {...props}
+    >
       <form onSubmit={formik.handleSubmit}>
         <FieldGroup>
           <Field>
