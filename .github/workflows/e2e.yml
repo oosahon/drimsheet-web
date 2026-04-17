@@ -37,7 +37,9 @@ jobs:
 
       - name: Write pl-core .env.test
         working-directory: pl-core
-        run: echo "${{ secrets.PL_CORE_ENV_TEST }}" > .env.test
+        run: echo "$PL_CORE_ENV" > .env.test
+        env:
+          PL_CORE_ENV: ${{ secrets.PL_CORE_ENV_TEST }}
 
       - name: Build pl-core routes
         working-directory: pl-core
