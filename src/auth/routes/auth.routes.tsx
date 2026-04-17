@@ -12,7 +12,7 @@ const useAuthRoutes: TModuleRoutes = (basePath) => {
     path: basePath,
     element: <AuthLayout />,
     children: [
-      { path: 'login', element: <LoginRoute /> },
+      { path: 'signin', element: <LoginRoute /> },
       { path: 'signup', element: <SignupRoute /> },
       { path: 'signup/complete', element: <CompleteSignupRoute /> },
       { path: 'forgot-password', element: <RequestPasswordResetRoute /> },

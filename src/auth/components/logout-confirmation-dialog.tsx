@@ -33,7 +33,7 @@ export function LogoutConfirmationDialog({
     try {
       await logout();
       setOpen(false);
-      navigate('/auth/login');
+      navigate('/auth/signin');
     } catch (error) {
       handleApiError(error, { showToast: true });
     }

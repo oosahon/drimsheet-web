@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { userAccounts } from '../../config/accounts.config';
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/auth/login');
+  await page.goto('/auth/signin');
 });
 
 const { email, password } = userAccounts.existing;
@@ -11,6 +11,9 @@ test('page contains important links', async ({ page }) => {
   const signupLink = page.locator('a[href="/auth/signup"]');
   await expect(signupLink).toBeVisible();
   await expect(signupLink).toHaveText('Sign up');
+
+  const forgotPasswordLink = page.locator('a[href="/auth/forgot-password"]');
+  await expect(forgotPasswordLink).toBeVisible();
 
   const termsOfServiceLink = page.locator('a[href="/terms-of-service"]');
   await expect(termsOfServiceLink).toBeVisible();

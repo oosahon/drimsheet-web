@@ -43,10 +43,10 @@ export const RequestPasswordResetSuccess = ({
       </div>
 
       <Link
-        to="/auth/login"
+        to="/auth/signin"
         className="text-sm font-medium text-purple-400 hover:text-purple-200"
       >
-        Back to login
+        Back to sign in
       </Link>
     </div>
   );

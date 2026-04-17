@@ -7,9 +7,9 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('page contains important links', async ({ page }) => {
-  const loginLink = page.locator('a[href="/auth/login"]');
-  await expect(loginLink).toBeVisible();
-  await expect(loginLink).toHaveText('Log in');
+  const signinLink = page.locator('a[href="/auth/signin"]');
+  await expect(signinLink).toBeVisible();
+  await expect(signinLink).toHaveText('Sign in');
 
   const termsOfServiceLink = page.locator('a[href="/terms-of-service"]');
   await expect(termsOfServiceLink).toBeVisible();

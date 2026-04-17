@@ -18,7 +18,7 @@ export function RequestPasswordResetFormContainer() {
   ) => {
     try {
       await requestPasswordReset(values.email);
-      toast.success('Password reset link sent to your email.');
+      toast.success('A password reset link was sent to your email.');
     } catch (error) {
       handleApiError(error, {
         showToast: true,

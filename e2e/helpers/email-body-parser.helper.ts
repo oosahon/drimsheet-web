@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import { API_URL } from '../config/var.config';
 
 export interface ITransactionalEmailPayload {
   emails: string[];
@@ -16,8 +17,9 @@ interface IGetterProps {
 
 async function get({ email, subject }: IGetterProps) {
   const response = await axios.get<ITransactionalEmailPayload | null>(
-    `${process.env.API_URL}/internal/test/sent-emails?email=${email}&subject=${subject}`
+    `${API_URL}/internal/test/sent-emails?email=${email}&subject=${subject}`
   );
+
   return response.data;
 }
 

@@ -37,7 +37,7 @@ export const handleApiError = (err: unknown, options?: THandleErrorOptions) => {
 
     if (error.code === 401) {
       authService.removeToken();
-      window.location.href = '/auth/login';
+      window.location.href = '/auth/signin';
       return;
     }
 

@@ -46,9 +46,9 @@ jobs:
       - name: Checkout pl-core
         uses: actions/checkout@v4
         with:
-          repository: purple-ledger/pl-core    # ← update if org name differs
+          repository: purple-ledger/pl-core # ← update if org name differs
           path: ../pl-core
-          token: ${{ secrets.GH_PAT }}          # PAT with repo:read for pl-core
+          token: ${{ secrets.GH_PAT }} # PAT with repo:read for pl-core
 
       # ── Node.js ───────────────────────────────────────────────────────────
       - name: Setup Node.js

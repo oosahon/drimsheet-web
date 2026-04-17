@@ -60,10 +60,10 @@ export default function SignupRoute() {
         <FieldDescription className="text-center">
           Already have an account?{' '}
           <Link
-            to="/auth/login"
+            to="/auth/signin"
             className="text-purple-600 hover:text-purple-500"
           >
-            Log in
+            Sign in
           </Link>
         </FieldDescription>
 
