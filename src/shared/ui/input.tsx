@@ -17,8 +17,6 @@ function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
   );
 }
 
-export { Input };
-
 function PasswordInput({ className, ...props }: React.ComponentProps<'input'>) {
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -45,4 +43,4 @@ function PasswordInput({ className, ...props }: React.ComponentProps<'input'>) {
   );
 }
 
-export { PasswordInput };
+export { Input, PasswordInput };

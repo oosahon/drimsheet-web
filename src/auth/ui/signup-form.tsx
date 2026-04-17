@@ -73,6 +73,7 @@ export function SignupForm({
                 id="firstName"
                 name="firstName"
                 type="text"
+                autoComplete="given-name"
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -85,6 +86,7 @@ export function SignupForm({
                 id="lastName"
                 name="lastName"
                 type="text"
+                autoComplete="family-name"
                 value={formik.values.lastName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -100,6 +102,7 @@ export function SignupForm({
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -112,6 +115,7 @@ export function SignupForm({
               <PasswordInput
                 id="password"
                 name="password"
+                autoComplete="new-password"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -121,7 +125,7 @@ export function SignupForm({
           </Field>
           <Field className="mt-2">
             <Button type="submit" loading={loading}>
-              Create Account
+              Create account
             </Button>
           </Field>
         </FieldGroup>

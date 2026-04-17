@@ -70,6 +70,19 @@ export interface IUser {
   deletedAt: string | null;
 }
 
+/** Construct a type with a set of properties K of type T */
+export type RecordStringString = Record<string, string>;
+
+export interface ITransactionalEmailPayload {
+  correlationId: string;
+  emails: string[];
+  subject: string;
+  html: string;
+  templateId?: string;
+  /** Construct a type with a set of properties K of type T */
+  data?: RecordStringString;
+}
+
 /**
  * Represents the month and day on which an accounting entity's fiscal year ends.
  * Defaults to December 31 for individuals. Companies and sole traders
@@ -384,6 +397,29 @@ export class Api<
         path: `/users/profile`,
         method: 'GET',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+  };
+  test = {
+    /**
+     * @description Gets sent email
+     *
+     * @tags Test
+     * @name GetSentEmail
+     * @request GET:/test/sent-email
+     */
+    getSentEmail: (
+      query: {
+        email: string;
+        subject: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<ITransactionalEmailPayload, any>({
+        path: `/test/sent-email`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),
