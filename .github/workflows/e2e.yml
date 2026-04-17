@@ -49,6 +49,7 @@ jobs:
           repository: purple-ledger/purple-ledger-core # ← update if org name differs
           path: pl-core
           token: ${{ secrets.GH_PAT }} # PAT with repo:read for pl-core
+          submodules: true
 
       # ── Node.js ───────────────────────────────────────────────────────────
       - name: Setup Node.js
