@@ -67,7 +67,7 @@ jobs:
 
       - name: Run DB migrations
         working-directory: pl-core
-        run: npm run db:migrate -- redo 9999
+        run: npm run db:migrate -- redo 9999 --envPath .env.test
         env:
           NODE_ENV: test
 
