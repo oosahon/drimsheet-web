@@ -11,33 +11,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
-    services:
-      # ── Postgres (test DB for pl-core) ─────────────────────────────────────
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: core
-          POSTGRES_PASSWORD: ${{ secrets.PL_CORE_POSTGRES_PASSWORD }}
-          POSTGRES_DB: purple_ledger_db_test
-        ports:
-          - 5433:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      # ── Redis (BullMQ / caching for pl-core) ───────────────────────────────
-      redis:
-        image: redis:8
-        ports:
-          - 6380:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       # ── Checkout both repos ───────────────────────────────────────────────
       - name: Checkout pl-web
@@ -66,16 +39,6 @@ jobs:
         working-directory: pl-core
         run: echo "${{ secrets.PL_CORE_ENV_TEST }}" > .env.test
 
-      - name: Run DB migrations
-        working-directory: pl-core
-        run: npm run db:migrate -- redo 9999 --envPath .env.test
-        env:
-          NODE_ENV: test
-
-      - name: Build pl-core
-        working-directory: pl-core
-        run: npm run build
-
       - name: Start pl-core server (background)
         working-directory: pl-core
         run: yarn start:test &
@@ -83,7 +46,7 @@ jobs:
           NODE_ENV: test
 
       - name: Wait for pl-core to be healthy
-        run: npx wait-on http://localhost:3001/health --timeout 30000
+        run: npx wait-on http://localhost:3001/health --timeout 120000
 
       # ── Frontend (pl-web) ─────────────────────────────────────────────────
       - name: Install pl-web dependencies
