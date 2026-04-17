@@ -41,6 +41,12 @@ jobs:
         env:
           PL_CORE_ENV: ${{ secrets.PL_CORE_ENV_TEST }}
 
+      - name: Write pl-core .seed.env
+        working-directory: pl-core
+        run: echo "$PL_CORE_SEED" > .seed.env
+        env:
+          PL_CORE_SEED: ${{ secrets.PL_CORE_SEED_ENV }}
+
       - name: Build pl-core routes
         working-directory: pl-core
         run: npm run build:routes
