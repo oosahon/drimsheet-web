@@ -77,7 +77,7 @@ jobs:
 
       - name: Start pl-core server (background)
         working-directory: pl-core
-        run: node ./dist/src/app/bootstrap/index.js &
+        run: yarn start:test &
         env:
           NODE_ENV: test
 
