@@ -50,7 +50,7 @@ jobs:
           NODE_ENV: test
 
       - name: Wait for pl-core to be healthy
-        run: npx wait-on http://localhost:3001/health --timeout 120000 || (cat pl-core/server.log && exit 1)
+        run: npx wait-on tcp:localhost:3001 --timeout 120000 || (cat pl-core/server.log && exit 1)
 
       # ── Frontend (pl-web) ─────────────────────────────────────────────────
       - name: Install pl-web dependencies
