@@ -46,8 +46,8 @@ jobs:
       - name: Checkout pl-core
         uses: actions/checkout@v4
         with:
-          repository: purple-ledger/pl-core # ← update if org name differs
-          path: ../pl-core
+          repository: purple-ledger/purple-ledger-core # ← update if org name differs
+          path: pl-core
           token: ${{ secrets.GH_PAT }} # PAT with repo:read for pl-core
 
       # ── Node.js ───────────────────────────────────────────────────────────
@@ -58,25 +58,25 @@ jobs:
 
       # ── Backend (pl-core) ─────────────────────────────────────────────────
       - name: Install pl-core dependencies
-        working-directory: ../pl-core
+        working-directory: pl-core
         run: npm ci
 
       - name: Write pl-core .env.test
-        working-directory: ../pl-core
+        working-directory: pl-core
         run: echo "${{ secrets.PL_CORE_ENV_TEST }}" > .env.test
 
       - name: Run DB migrations
-        working-directory: ../pl-core
+        working-directory: pl-core
         run: npm run db:migrate -- redo 9999
         env:
           NODE_ENV: test
 
       - name: Build pl-core
-        working-directory: ../pl-core
+        working-directory: pl-core
         run: npm run build
 
       - name: Start pl-core server (background)
-        working-directory: ../pl-core
+        working-directory: pl-core
         run: node ./dist/src/app/bootstrap/index.js &
         env:
           NODE_ENV: test
