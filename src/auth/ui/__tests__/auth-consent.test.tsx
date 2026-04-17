@@ -7,7 +7,7 @@ describe('AuthConsent', () => {
     render(<AuthConsent />);
 
     expect(
-      screen.getByText(/By clicking continue, you agree to our/i)
+      screen.getByText(/By creating an account, you agree to our/i)
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /Terms of Service/i })

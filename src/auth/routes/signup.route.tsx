@@ -4,6 +4,9 @@ import { AuthConsent } from '@/auth/ui/auth-consent';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
 import { useMemo } from 'react';
+
+import emailSentImg from '@/assets/email-sent.svg';
+import logoImg from '@/assets/logo.svg';
 import { Link, useSearchParams } from 'react-router-dom';
 
 export default function SignupRoute() {
@@ -19,7 +22,7 @@ export default function SignupRoute() {
       <div className="flex h-screen items-center justify-center">
         <Card>
           <CardHeader className="flex flex-col items-center gap-4">
-            <img src="/email-sent.svg" alt="Email Sent" />
+            <img src={emailSentImg} alt="Email Sent" />
             <CardTitle>Account created successfully!</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4">
@@ -37,7 +40,7 @@ export default function SignupRoute() {
           <Link to="/" className="flex flex-col items-center gap-2 font-medium">
             <div className="flex size-8 items-center justify-center rounded-md">
               <img
-                src="/logo.svg"
+                src={logoImg}
                 alt="Purple Ledger Limited"
                 className="mb-6 min-w-12 rounded-2xl"
               />
@@ -47,7 +50,7 @@ export default function SignupRoute() {
         </div>
 
         <div className="grid gap-4">
-          <GoogleAuthButton>Continue with Google</GoogleAuthButton>
+          <GoogleAuthButton />
         </div>
 
         <FieldSeparator className="my-4">Or</FieldSeparator>
@@ -57,14 +60,14 @@ export default function SignupRoute() {
         <FieldDescription className="text-center">
           Already have an account?{' '}
           <Link
-            to="/auth/login"
+            to="/auth/signin"
             className="text-purple-600 hover:text-purple-500"
           >
             Sign in
           </Link>
         </FieldDescription>
 
-        <AuthConsent actionText="clicking continue" />
+        <AuthConsent actionText="creating an account" />
       </div>
     </div>
   );

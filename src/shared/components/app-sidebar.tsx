@@ -20,6 +20,8 @@ import {
   UsersRound,
 } from 'lucide-react';
 
+import logoImg from '@/assets/logo.svg';
+
 const data = {
   navMain: [
     {
@@ -75,7 +77,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <div className="flex items-center gap-2">
           <img
-            src="/logo.svg"
+            src={logoImg}
             width={40}
             height={40}
             className="rounded-lg"

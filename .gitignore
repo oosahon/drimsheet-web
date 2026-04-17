@@ -29,5 +29,20 @@ coverage
 
 .env
 .env.local
+.env.test
+.seed.env
+
 *storybook.log
 storybook-static
+
+# E2E
+e2e/.auth/
+e2e/playwright-report/
+e2e/test-results/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -41,7 +41,7 @@ export const Destructive: Story = {
         <div>
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>
-            Your session has expired. Please log in again.
+            Your session has expired. Please sign in again.
           </AlertDescription>
         </div>
       </div>
