@@ -22,7 +22,7 @@ export default function LoginRoute() {
         </div>
 
         <div className="grid gap-4">
-          <GoogleAuthButton>Sign in with Google</GoogleAuthButton>
+          <GoogleAuthButton />
         </div>
 
         <FieldSeparator className="my-4">Or</FieldSeparator>
@@ -39,7 +39,7 @@ export default function LoginRoute() {
           </Link>
         </FieldDescription>
 
-        <AuthConsent actionText="signing in" />
+        <AuthConsent actionText="logging in" />
       </div>
     </div>
   );

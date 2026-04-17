@@ -2,29 +2,27 @@ import { expect, test } from '@playwright/test';
 import { userAccounts } from '../../config/accounts.config';
 import emailBodyParser from '../../helpers/email-body-parser.helper';
 
-const email = `${userAccounts.firstTimer.firstName}.${Date.now()}@mailinator.com`;
-
 test.beforeEach(async ({ page }) => {
   await page.goto('/auth/signup');
 });
 
 test('page contains important links', async ({ page }) => {
   const loginLink = page.locator('a[href="/auth/login"]');
-  expect(loginLink).toBeVisible();
-  expect(loginLink).toHaveText('Log in');
+  await expect(loginLink).toBeVisible();
+  await expect(loginLink).toHaveText('Log in');
 
   const termsOfServiceLink = page.locator('a[href="/terms-of-service"]');
-  expect(termsOfServiceLink).toBeVisible();
-  expect(termsOfServiceLink).toHaveText('Terms of Service');
+  await expect(termsOfServiceLink).toBeVisible();
+  await expect(termsOfServiceLink).toHaveText('Terms of Service');
 
   const privacyPolicyLink = page.locator('a[href="/privacy-policy"]');
-  expect(privacyPolicyLink).toBeVisible();
-  expect(privacyPolicyLink).toHaveText('Privacy Policy');
+  await expect(privacyPolicyLink).toBeVisible();
+  await expect(privacyPolicyLink).toHaveText('Privacy Policy');
 
   const consentText = page.getByText(
     'By creating an account, you agree to our Terms of Service and Privacy Policy.'
   );
-  expect(consentText).toBeVisible();
+  await expect(consentText).toBeVisible();
 });
 
 test('existing email signup attempt', async ({ page }) => {
@@ -43,10 +41,9 @@ test('existing email signup attempt', async ({ page }) => {
 });
 
 test('successful signup for a first timer', async ({ page }) => {
-  test.setTimeout(60000); // 60 seconds
   await page.getByLabel('First name').fill(userAccounts.firstTimer.firstName);
   await page.getByLabel('Last name').fill(userAccounts.firstTimer.lastName);
-  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Email').fill(userAccounts.firstTimer.email);
   await page
     .getByLabel('Password', { exact: true })
     .fill(userAccounts.existing.password);
@@ -65,7 +62,7 @@ test('successful signup for a first timer', async ({ page }) => {
   const emailSubject = 'Action Required: Verify Your Email Address';
 
   const emailBody = await emailBodyParser.fetch({
-    email,
+    email: userAccounts.firstTimer.email,
     subject: emailSubject,
   });
 

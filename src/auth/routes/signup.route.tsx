@@ -50,7 +50,7 @@ export default function SignupRoute() {
         </div>
 
         <div className="grid gap-4">
-          <GoogleAuthButton>Continue with Google</GoogleAuthButton>
+          <GoogleAuthButton />
         </div>
 
         <FieldSeparator className="my-4">Or</FieldSeparator>

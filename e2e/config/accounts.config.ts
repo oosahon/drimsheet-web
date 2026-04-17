@@ -2,6 +2,7 @@ import { config } from 'dotenv';
 import {
   USER_ACCOUNT_EXISTING,
   USER_ACCOUNT_FIRST_TIMER,
+  USER_ACCOUNT_GOOGLE_STRATEGY,
   USER_ACCOUNT_UN_ONBOARDED,
   USER_FIRST_NAME,
   USER_LAST_NAME,
@@ -27,6 +28,12 @@ export const userAccounts = {
     firstName: USER_FIRST_NAME,
     lastName: USER_LAST_NAME,
     email: USER_ACCOUNT_UN_ONBOARDED,
+    password: USER_PASSWORD,
+  },
+  googleStrategy: {
+    firstName: USER_FIRST_NAME,
+    lastName: USER_LAST_NAME,
+    email: USER_ACCOUNT_GOOGLE_STRATEGY,
     password: USER_PASSWORD,
   },
 };

@@ -93,7 +93,11 @@ export function LoginForm({
             </div>
           </Field>
           <Field className="mt-2">
-            <Button type="submit" loading={loading}>
+            <Button
+              type="submit"
+              data-testid="login-submit-btn"
+              loading={loading}
+            >
               Sign In
             </Button>
           </Field>
