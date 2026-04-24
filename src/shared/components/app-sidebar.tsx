@@ -20,7 +20,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 
-import logoImg from '@/assets/logo.svg';
+import logoImg from '@/shared/assets/logo.svg';
 
 const data = {
   navMain: [
