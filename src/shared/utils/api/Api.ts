@@ -10,6 +10,11 @@
  * ---------------------------------------------------------------
  */
 
+export enum UExchangeRateType {
+  Official = 'official',
+  Negotiated = 'negotiated',
+}
+
 export enum UAccountingEntityType {
   Individual = 'individual',
   SoleTrader = 'sole_trader',
@@ -70,19 +75,6 @@ export interface IUser {
   deletedAt: string | null;
 }
 
-/** Construct a type with a set of properties K of type T */
-export type RecordStringString = Record<string, string>;
-
-export interface ITransactionalEmailPayload {
-  correlationId: string;
-  emails: string[];
-  subject: string;
-  html: string;
-  templateId?: string;
-  /** Construct a type with a set of properties K of type T */
-  data?: RecordStringString;
-}
-
 /**
  * Represents the month and day on which an accounting entity's fiscal year ends.
  * Defaults to December 31 for individuals. Companies and sole traders
@@ -132,12 +124,40 @@ export interface IResetPasswordReq {
   confirmPassword: string;
 }
 
+export interface IMoneyDto {
+  /** @format double */
+  amount: number;
+  currencyCode: string;
+  isMinorUnit: boolean;
+}
+
+export interface IExchangeRateDto {
+  baseCurrencyCode: string;
+  targetCurrencyCode: string;
+  /** @format double */
+  rate: number;
+  type: UExchangeRateType;
+  /** @format date-time */
+  asOf: string;
+  source: string;
+  /** @format double */
+  id?: number;
+}
+
+export interface IPettyCashAccountCreationReq {
+  name: string;
+  openingBalance: IMoneyDto;
+  isControlAccount: boolean;
+  exchangeRate: IExchangeRateDto | null;
+  controlAccountCode?: string;
+}
+
 /** From T, pick a set of properties whose keys are in the union K */
 export interface PickIAccountingEntityExcludeKeysFunctionalCurrencyOrReportingCurrency {
+  type: UAccountingEntityType;
   id: TEntityId;
   name: string;
   operatingCountryCode: string;
-  type: UAccountingEntityType;
   ownerId: TEntityId;
   /**
    * Represents the month and day on which an accounting entity's fiscal year ends.
@@ -154,10 +174,10 @@ export interface PickIAccountingEntityExcludeKeysFunctionalCurrencyOrReportingCu
 }
 
 export interface IAccountingEntityRes {
+  type: UAccountingEntityType;
   id: TEntityId;
   name: string;
   operatingCountryCode: string;
-  type: UAccountingEntityType;
   ownerId: TEntityId;
   /**
    * Represents the month and day on which an accounting entity's fiscal year ends.
@@ -401,29 +421,6 @@ export class Api<
         ...params,
       }),
   };
-  test = {
-    /**
-     * @description Gets sent email
-     *
-     * @tags Test
-     * @name GetSentEmail
-     * @request GET:/test/sent-email
-     */
-    getSentEmail: (
-      query: {
-        email: string;
-        subject: string;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<ITransactionalEmailPayload, any>({
-        path: `/test/sent-email`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params,
-      }),
-  };
   onboarding = {
     /**
      * @description Onboard an accounting entity
@@ -618,6 +615,26 @@ export class Api<
       this.request<void, any>({
         path: `/auth/logout`,
         method: 'POST',
+        ...params,
+      }),
+  };
+  assetAccounts = {
+    /**
+     * @description Create a new petty cash sub account
+     *
+     * @tags Asset Accounts
+     * @name CreatePettyCashSubAccount
+     * @request POST:/asset-accounts
+     */
+    createPettyCashSubAccount: (
+      data: IPettyCashAccountCreationReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<void, IApiError>({
+        path: `/asset-accounts`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   };

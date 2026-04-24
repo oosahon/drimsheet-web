@@ -31,9 +31,19 @@ const data = {
       isActive: true,
     },
     {
-      title: 'Bank Accounts',
-      url: '#',
+      title: 'Accounts',
+      url: '/accounts',
       icon: <Landmark />,
+      items: [
+        {
+          title: 'Bank Accounts',
+          url: '/accounts/bank',
+        },
+        {
+          title: 'Petty Cash Accounts',
+          url: '/accounts/petty-cash',
+        },
+      ],
     },
 
     {

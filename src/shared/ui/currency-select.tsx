@@ -51,7 +51,7 @@ export function CurrencySelect({
         <SelectTrigger id="currency-select">
           <SelectValue placeholder="Select a currency" />
         </SelectTrigger>
-        <SelectContent className="w-60">
+        <SelectContent className="w-full">
           {currencies.map((item) => (
             <SelectItem key={item.code} value={item.code}>
               <div className="flex items-center gap-2">
