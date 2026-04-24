@@ -24,7 +24,7 @@ function findMissingStories(dir) {
         const isInUI = parts.includes('ui');
         const isNotStory = !parts.includes('__stories__');
         const isNotTest = !parts.includes('__tests__');
-        const isNotContainer = !parts.includes('container');
+        const isNotContainer = !parts.includes('containers');
 
         if (isInUI && isNotStory && isNotTest && isNotContainer) {
           const dirname = path.dirname(filePath);
