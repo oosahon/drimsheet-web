@@ -1,4 +1,5 @@
 import authService from '@/auth/services/auth.service';
+import localStorageService from '@/shared/services/local-storage.service';
 import { Api } from '@/shared/utils/api/Api';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
@@ -12,6 +13,7 @@ purpleLedgerApi.instance.defaults.withCredentials = true;
 purpleLedgerApi.instance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = authService.getToken();
+    const accountingEntityId = localStorageService.getAccountingEntityId();
 
     config.headers.withCredentials = true;
 
@@ -21,6 +23,10 @@ purpleLedgerApi.instance.interceptors.request.use(
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    if (accountingEntityId) {
+      config.headers['x-accounting-entity-id'] = accountingEntityId;
     }
 
     return config;

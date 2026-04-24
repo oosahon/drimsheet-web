@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
 import { useMemo } from 'react';
 
-import emailSentImg from '@/assets/email-sent.svg';
-import logoImg from '@/assets/logo.svg';
+import emailSentImg from '@/shared/assets/email-sent.svg';
+import logoImg from '@/shared/assets/logo.svg';
 import { Link, useSearchParams } from 'react-router-dom';
 
 export default function SignupRoute() {

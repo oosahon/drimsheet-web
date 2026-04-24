@@ -1,7 +1,8 @@
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
-import { Input, PasswordInput } from '@/shared/ui/input';
+import { Input } from '@/shared/ui/input';
+import { PasswordInput } from '@/shared/ui/password-input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik, type FormikHelpers } from 'formik';
 import { type ComponentProps } from 'react';

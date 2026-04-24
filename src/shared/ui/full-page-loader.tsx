@@ -1,4 +1,4 @@
-import animatedLogoImg from '@/assets/animated-purple-ledger.svg';
+import animatedLogoImg from '@/shared/assets/animated-purple-ledger.svg';
 
 export default function FullPageLoader() {
   return (

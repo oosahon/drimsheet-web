@@ -20,7 +20,7 @@ import {
   UsersRound,
 } from 'lucide-react';
 
-import logoImg from '@/assets/logo.svg';
+import logoImg from '@/shared/assets/logo.svg';
 
 const data = {
   navMain: [
@@ -31,9 +31,19 @@ const data = {
       isActive: true,
     },
     {
-      title: 'Bank Accounts',
-      url: '#',
+      title: 'Accounts',
+      url: '/accounts',
       icon: <Landmark />,
+      items: [
+        {
+          title: 'Bank Accounts',
+          url: '/accounts/bank',
+        },
+        {
+          title: 'Petty Cash Accounts',
+          url: '/accounts/petty-cash',
+        },
+      ],
     },
 
     {
