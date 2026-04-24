@@ -25,12 +25,12 @@ Here are the conventions you would find within each domain under `src/` (e.g., `
 ```text
 src/
 ├─ [domain-name]/
-│  ├─ components/  # Domain-specific smart components and complex compositions
 │  ├─ hooks/       # Custom hooks (e.g., React Query and form state integration)
 │  ├─ routes/      # The actual feature pages and layouts mapped to the router
 │  ├─ services/    # API clients (e.g., Axios calls) connecting to backend
 │  ├─ types/       # Domain-specific TypeScript types and interfaces
-│  └─ ui/          # Purely presentational components tied to the domain
+│  └─ ui/          # Purely presentational components (pure functions without side effects) tied to the domain
+│     └─ containers/ # Wrappers and containers that have side effects
 │
 └─ shared/         # Shared utilities, global UI components (design system), and cross-domain types
 ```

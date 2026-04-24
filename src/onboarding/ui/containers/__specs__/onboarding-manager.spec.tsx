@@ -1,11 +1,11 @@
 import useAccountingEntities from '@/accounting-entity/hooks/use-accounting-entities';
-import OnboardingManager from '@/onboarding/components/onboarding-manager';
+import OnboardingManager from '@/onboarding/ui/containers/onboarding-manager';
 import type { IAccountingEntityRes } from '@/shared/utils/api/Api';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/onboarding/components/accounting-onboarding-form', () => {
+vi.mock('@/onboarding/ui/containers/accounting-onboarding-form', () => {
   return {
     __esModule: true,
     default: ({ open }: { open: boolean }) => (
