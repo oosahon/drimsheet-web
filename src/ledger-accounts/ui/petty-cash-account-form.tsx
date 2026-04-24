@@ -4,6 +4,7 @@ import { CurrencySelect } from '@/shared/ui/currency-select';
 import { Field, FieldError, FieldGroup } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
+import { MoneyInput } from '@/shared/ui/money-input';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
@@ -54,7 +55,7 @@ export function PettyCashAccountForm({
   });
 
   return (
-    <div className="w-sm max-w-full">
+    <div className="w-xs max-w-full">
       <form onSubmit={handleSubmit}>
         <FieldGroup>
           <Field>
@@ -63,27 +64,30 @@ export function PettyCashAccountForm({
             <FieldError errors={getErrorMessage('name')} />
           </Field>
 
-          <CurrencySelect
-            label="Currency"
-            value={values.currencyCode}
-            onChange={(val) => setFieldValue('currencyCode', val)}
-            error={getErrorMessage('currencyCode')}
-          />
-
-          <Field>
-            <Label htmlFor="openingBalance">Starting balance</Label>
-            <Input
-              id="openingBalance"
-              type="number"
-              onChange={handleChange}
-              value={values.openingBalance}
+          <div className="grid grid-cols-[2fr_3fr]  gap-x-3">
+            <CurrencySelect
+              label="Currency"
+              value={values.currencyCode}
+              onChange={(val) => setFieldValue('currencyCode', val)}
+              error={getErrorMessage('currencyCode')}
+              displayCode
             />
-            <FieldError errors={getErrorMessage('openingBalance')} />
-          </Field>
+
+            <Field>
+              <Label htmlFor="openingBalance">Starting balance</Label>
+              <MoneyInput
+                id="openingBalance"
+                currencyCode={values.currencyCode}
+                onChange={handleChange}
+                value={values.openingBalance}
+              />
+              <FieldError errors={getErrorMessage('openingBalance')} />
+            </Field>
+          </div>
 
           <Field className="mt-2">
             <Button type="submit" loading={loading}>
-              Create account
+              Save cash account
             </Button>
           </Field>
         </FieldGroup>

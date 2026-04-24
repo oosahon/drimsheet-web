@@ -1,4 +1,4 @@
-import { PasswordInput } from '@/shared/ui/input';
+import { PasswordInput } from '@/shared/ui/password-input';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';

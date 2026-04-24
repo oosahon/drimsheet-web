@@ -14,7 +14,7 @@ describe('PettyCashAccountForm', () => {
     expect(screen.getByLabelText(/Petty Cash Name/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Starting balance/i)).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: /Create account/i })
+      screen.getByRole('button', { name: /Save cash account/i })
     ).toBeInTheDocument();
   });
 
@@ -26,7 +26,9 @@ describe('PettyCashAccountForm', () => {
       </MemoryRouter>
     );
 
-    await user.click(screen.getByRole('button', { name: /Create account/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Save cash account/i })
+    );
 
     expect(
       await screen.findByText(/Account name is required/i)
@@ -42,7 +44,9 @@ describe('PettyCashAccountForm', () => {
     );
 
     await user.type(screen.getByLabelText(/Petty Cash Name/i), 'ab');
-    await user.click(screen.getByRole('button', { name: /Create account/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Save cash account/i })
+    );
 
     expect(
       await screen.findByText(/Account name must be at least 3 characters/i)
@@ -59,7 +63,9 @@ describe('PettyCashAccountForm', () => {
 
     const longName = 'a'.repeat(101);
     await user.type(screen.getByLabelText(/Petty Cash Name/i), longName);
-    await user.click(screen.getByRole('button', { name: /Create account/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Save cash account/i })
+    );
 
     expect(
       await screen.findByText(/Account name must not exceed 100 characters/i)
@@ -77,7 +83,9 @@ describe('PettyCashAccountForm', () => {
     const balanceInput = screen.getByLabelText(/Starting balance/i);
     await user.clear(balanceInput);
     await user.type(balanceInput, '-50');
-    await user.click(screen.getByRole('button', { name: /Create account/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Save cash account/i })
+    );
 
     expect(
       await screen.findByText(/Opening balance cannot be negative/i)
@@ -103,7 +111,9 @@ describe('PettyCashAccountForm', () => {
     // Ideally, we would also select a currency here, but since CurrencySelect is a custom component,
     // and we want to just test the form logic, we can verify that onSubmit is called or validation errors for currency show up.
     // Let's trigger submit to see currency validation error
-    await user.click(screen.getByRole('button', { name: /Create account/i }));
+    await user.click(
+      screen.getByRole('button', { name: /Save cash account/i })
+    );
 
     expect(
       await screen.findByText(/Currency is required/i)

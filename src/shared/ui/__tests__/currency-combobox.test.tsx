@@ -38,7 +38,7 @@ describe('CurrencySelect', () => {
       return element.style.backgroundImage.includes('ng.png');
     });
     expect(hasNgIcon).toBe(true);
-    expect(screen.getByText('Nigerian Naira')).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toHaveValue('Nigerian Naira');
   });
 
   it('opens the select and chooses a currency', async () => {
@@ -72,6 +72,20 @@ describe('CurrencySelect', () => {
     );
 
     expect(screen.getByText('Currency is required')).toBeInTheDocument();
+  });
+
+  it('displays the currency code in the trigger when displayCode is true', () => {
+    const onChange = vi.fn();
+    render(
+      <CurrencySelect
+        label="Currency"
+        value="NGN"
+        onChange={onChange}
+        displayCode
+      />
+    );
+
+    expect(screen.getByRole('combobox')).toHaveValue('NGN');
   });
 
   it('handles invalid initial value gracefully', () => {
