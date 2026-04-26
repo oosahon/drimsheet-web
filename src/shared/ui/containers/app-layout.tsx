@@ -1,11 +1,11 @@
-import OnboardingManager from '@/onboarding/components/onboarding-manager';
-import { AppSidebar } from '@/shared/components/app-sidebar';
+import OnboardingManager from '@/onboarding/ui/containers/onboarding-manager';
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from '@/shared/ui/sidebar';
 import { Outlet } from 'react-router-dom';
+import { AppSidebar } from './app-sidebar';
 
 export default function AppLayout() {
   return (

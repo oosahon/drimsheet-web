@@ -1,5 +1,5 @@
-import AppLayout from '@/shared/components/app-layout';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
+import AppLayout from '@/shared/ui/containers/app-layout';
 import PettyCashAccountRoute from './petty-cash-account.route';
 
 const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {

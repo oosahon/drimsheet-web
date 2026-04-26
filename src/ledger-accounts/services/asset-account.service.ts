@@ -6,12 +6,15 @@ const assetAccountService = {
   async createPettyCashAccount(payload: IPettyCashAccountFormValues) {
     const body: IPettyCashAccountCreationReq = {
       name: payload.name,
+      currencyCode: payload.currencyCode,
       openingBalance: {
-        amount: payload.openingBalance,
-        currencyCode: payload.currencyCode,
-        isMinorUnit: true,
+        amount: {
+          amount: payload.openingBalance,
+          currencyCode: payload.currencyCode,
+          isMinorUnit: true,
+        },
+        exchangeRate: null,
       },
-      exchangeRate: null,
       isControlAccount: false,
     };
 

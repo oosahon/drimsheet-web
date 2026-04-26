@@ -1,6 +1,6 @@
 import useGoogleOAuth from '@/auth/hooks/use-google-oauth';
-import { GoogleIcon } from '@/shared/icons/google';
 import { Button } from '@/shared/ui/button';
+import { GoogleIcon } from '@/shared/ui/icons/google';
 import { type ComponentProps } from 'react';
 
 export function GoogleAuthButton({ ...props }: ComponentProps<typeof Button>) {

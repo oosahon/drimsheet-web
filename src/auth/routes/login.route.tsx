@@ -1,6 +1,6 @@
-import { GoogleAuthButton } from '@/auth/components/google-auth-button';
-import { LoginFormContainer } from '@/auth/components/login-form-container';
 import { AuthConsent } from '@/auth/ui/auth-consent';
+import { GoogleAuthButton } from '@/auth/ui/containers/google-auth-button';
+import { LoginFormContainer } from '@/auth/ui/containers/login-form-container';
 import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
 import { Link } from 'react-router-dom';
 

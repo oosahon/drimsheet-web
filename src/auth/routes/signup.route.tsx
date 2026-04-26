@@ -1,6 +1,6 @@
-import { GoogleAuthButton } from '@/auth/components/google-auth-button';
-import { SignupFormContainer } from '@/auth/components/signup-form';
 import { AuthConsent } from '@/auth/ui/auth-consent';
+import { GoogleAuthButton } from '@/auth/ui/containers/google-auth-button';
+import { SignupFormContainer } from '@/auth/ui/containers/signup-form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
 import { useMemo } from 'react';

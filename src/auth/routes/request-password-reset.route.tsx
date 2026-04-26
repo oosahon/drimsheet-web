@@ -1,4 +1,4 @@
-import { RequestPasswordResetFormContainer } from '@/auth/components/request-password-reset-form-container';
+import { RequestPasswordResetFormContainer } from '@/auth/ui/containers/request-password-reset-form-container';
 import { Link } from 'react-router-dom';
 
 export default function RequestPasswordResetRoute() {

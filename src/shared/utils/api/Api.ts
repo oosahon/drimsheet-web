@@ -144,12 +144,17 @@ export interface IExchangeRateDto {
   id?: number;
 }
 
+export interface IOpeningBalanceDto {
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+}
+
 export interface IPettyCashAccountCreationReq {
   name: string;
-  openingBalance: IMoneyDto;
+  currencyCode: string;
   isControlAccount: boolean;
-  exchangeRate: IExchangeRateDto | null;
   controlAccountCode?: string;
+  openingBalance: IOpeningBalanceDto | null;
 }
 
 /** From T, pick a set of properties whose keys are in the union K */
