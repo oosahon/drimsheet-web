@@ -132,8 +132,6 @@ export interface IMoneyDto {
 }
 
 export interface IExchangeRateDto {
-  /** @format double */
-  id?: number;
   baseCurrencyCode: string;
   targetCurrencyCode: string;
   /** @format double */
@@ -142,24 +140,21 @@ export interface IExchangeRateDto {
   /** @format date-time */
   asOf: string;
   source: string;
+  /** @format double */
+  id?: number;
 }
 
-/** From T, pick a set of properties whose keys are in the union K */
-export interface PickIOpeningBalanceCreationReqExcludeKeysAccountId {
+export interface IOpeningBalanceDto {
   amount: IMoneyDto;
-  exchangeRate: IExchangeRateDto;
+  exchangeRate: IExchangeRateDto | null;
 }
-
-/** Construct a type with the properties of T except for those in type K. */
-export type OmitIOpeningBalanceCreationReqAccountId =
-  PickIOpeningBalanceCreationReqExcludeKeysAccountId;
 
 export interface IPettyCashAccountCreationReq {
   name: string;
   currencyCode: string;
   isControlAccount: boolean;
   controlAccountCode?: string;
-  openingBalance: OmitIOpeningBalanceCreationReqAccountId | null;
+  openingBalance: IOpeningBalanceDto | null;
 }
 
 /** From T, pick a set of properties whose keys are in the union K */
