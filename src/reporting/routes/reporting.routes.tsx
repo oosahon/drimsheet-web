@@ -1,6 +1,6 @@
 import DashboardRoute from '@/reporting/routes/dashboard.route';
-import AppLayout from '@/shared/components/app-layout';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
+import AppLayout from '@/shared/ui/containers/app-layout';
 import { Navigate } from 'react-router-dom';
 
 const useReportingRoutes: TModuleRoutes = (basePath) => {

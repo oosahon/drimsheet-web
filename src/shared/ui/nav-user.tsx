@@ -1,4 +1,4 @@
-import { LogoutConfirmationDialog } from '@/auth/components/logout-confirmation-dialog';
+import { LogoutConfirmationDialog } from '@/auth/ui/containers/logout-confirmation-dialog';
 import { useSidebar } from '@/shared/hooks/use-sidebar';
 import { AnimatedThemeToggler } from '@/shared/ui/animated-theme-toggler';
 import { Avatar, AvatarFallback } from '@/shared/ui/avatar';
