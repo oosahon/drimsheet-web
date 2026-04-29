@@ -1,15 +1,15 @@
-import { AccountingEntitySelect } from '@/onboarding/ui/accounting-entity-select';
+import { AccountingEntityTypeSelect } from '@/accounting/ui/accounting-entity-type-select';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Onboarding/AccountingEntitySelect',
-  component: AccountingEntitySelect,
+  title: 'Accounting/AccountingEntityTypeSelect',
+  component: AccountingEntityTypeSelect,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
   args: { onChange: () => {} },
-} satisfies Meta<typeof AccountingEntitySelect>;
+} satisfies Meta<typeof AccountingEntityTypeSelect>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

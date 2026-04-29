@@ -1,12 +1,12 @@
-import { AccountingEntitySelect } from '@/onboarding/ui/accounting-entity-select';
-import { AppUsageModeRadioGroup } from '@/onboarding/ui/app-usage-mode-radio-group';
-import { FiscalYearStartSelect } from '@/onboarding/ui/fiscal-year-start-select';
+import { AccountingEntityTypeSelect } from '@/accounting/ui/accounting-entity-type-select';
+import { FiscalYearStartSelect } from '@/accounting/ui/fiscal-year-start-select';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { AlertTitle, WarningAlert } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
 import { CountryComboBox } from '@/shared/ui/country-combobox';
 import { CurrencySelect } from '@/shared/ui/currency-select';
 import { FieldGroup } from '@/shared/ui/field';
+import { AppUsageModeRadioGroup } from '@/user/ui/app-usage-mode-radio-group';
 import { useFormik } from 'formik';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -22,7 +22,7 @@ export interface IAccountingEntityFormValues {
   appUsageMode: 'power_user' | 'non_power_user';
 }
 
-export interface AccountingEntityOnboardingFormProps {
+export interface AccountingEntityCreationFormProps {
   onSubmit: (values: IAccountingEntityFormValues) => Promise<void> | void;
   loading?: boolean;
 }
@@ -63,7 +63,7 @@ function Step1({
   return (
     <div className="flex flex-col gap-6">
       <FieldGroup>
-        <AccountingEntitySelect
+        <AccountingEntityTypeSelect
           value={formik.values.entityType}
           // NB: only individual is supported for now
           onChange={() => {}}
@@ -201,10 +201,10 @@ function Step3({
   );
 }
 
-function AccountingEntityOnboardingForm({
+function AccountingEntityCreationForm({
   onSubmit,
   loading,
-}: AccountingEntityOnboardingFormProps) {
+}: AccountingEntityCreationFormProps) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
 
@@ -306,4 +306,4 @@ function AccountingEntityOnboardingForm({
   );
 }
 
-export { AccountingEntityOnboardingForm };
+export { AccountingEntityCreationForm };

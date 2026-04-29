@@ -1,4 +1,4 @@
-import { AccountingEntityOnboardingForm } from '@/onboarding/ui/accounting-entity-form';
+import { AccountingEntityCreationForm } from '@/accounting/ui/accounting-entity-creation-form';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
@@ -14,11 +14,11 @@ beforeAll(() => {
   );
 });
 
-describe('AccountingEntityOnboardingForm', () => {
+describe('AccountingEntityCreationForm', () => {
   const setup = () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
-    render(<AccountingEntityOnboardingForm onSubmit={onSubmit} />);
+    render(<AccountingEntityCreationForm onSubmit={onSubmit} />);
     return { onSubmit, user };
   };
 
@@ -84,9 +84,7 @@ describe('AccountingEntityOnboardingForm', () => {
   });
 
   it('renders loading state on the submit button when loading prop is true', async () => {
-    render(
-      <AccountingEntityOnboardingForm onSubmit={vi.fn()} loading={true} />
-    );
+    render(<AccountingEntityCreationForm onSubmit={vi.fn()} loading={true} />);
     const user = userEvent.setup();
 
     // Navigate to step 3

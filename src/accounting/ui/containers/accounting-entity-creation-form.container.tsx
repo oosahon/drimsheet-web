@@ -1,8 +1,8 @@
-import useOnboardIndividualAccountingEntity from '@/onboarding/hooks/use-onboard-individual-accounting-entity';
 import {
-  AccountingEntityOnboardingForm,
+  AccountingEntityCreationForm,
   type IAccountingEntityFormValues,
-} from '@/onboarding/ui/accounting-entity-form';
+} from '@/accounting/ui/accounting-entity-creation-form';
+import useOnboardIndividualAccountingEntity from '@/onboarding/hooks/use-onboard-individual-accounting-entity';
 import {
   Dialog,
   DialogContent,
@@ -14,15 +14,15 @@ import { handleApiError } from '@/shared/utils/api/errors';
 import useProfile from '@/user/hooks/use-profile';
 import { toast } from 'sonner';
 
-interface AccountingOnboardingFormContainerProps {
+interface AccountingEntityCreationFormContainerProps {
   open: boolean;
   done: () => void;
 }
 
-export default function AccountingOnboardingFormContainer({
+export default function AccountingEntityCreationFormContainer({
   open,
   done,
-}: AccountingOnboardingFormContainerProps) {
+}: AccountingEntityCreationFormContainerProps) {
   const { mutateAsync: onboardIndividual, isPending } =
     useOnboardIndividualAccountingEntity();
   const { data: user } = useProfile();
@@ -47,7 +47,7 @@ export default function AccountingOnboardingFormContainer({
             Choose the type of account you want to create.
           </DialogDescription>
         </DialogHeader>
-        <AccountingEntityOnboardingForm
+        <AccountingEntityCreationForm
           loading={isPending}
           onSubmit={handleSubmit}
         />

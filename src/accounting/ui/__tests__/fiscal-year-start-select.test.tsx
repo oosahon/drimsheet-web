@@ -1,4 +1,4 @@
-import { FiscalYearStartSelect } from '@/onboarding/ui/fiscal-year-start-select';
+import { FiscalYearStartSelect } from '@/accounting/ui/fiscal-year-start-select';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';

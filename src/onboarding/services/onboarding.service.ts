@@ -1,4 +1,4 @@
-import type { IAccountingEntityFormValues } from '@/onboarding/ui/accounting-entity-form';
+import type { IAccountingEntityFormValues } from '@/accounting/ui/accounting-entity-creation-form';
 import purpleLedgerApi from '@/shared/utils/api';
 import {
   UAccountingEntityType,

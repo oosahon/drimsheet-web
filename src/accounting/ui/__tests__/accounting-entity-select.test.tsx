@@ -1,9 +1,9 @@
-import { AccountingEntitySelect } from '@/onboarding/ui/accounting-entity-select';
+import { AccountingEntityTypeSelect } from '@/accounting/ui/accounting-entity-type-select';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-describe('AccountingEntitySelect', () => {
+describe('AccountingEntityTypeSelect', () => {
   beforeAll(() => {
     window.HTMLElement.prototype.hasPointerCapture = vi.fn(
       () => false
@@ -18,7 +18,7 @@ describe('AccountingEntitySelect', () => {
 
   it('renders correctly with default state', () => {
     const onChange = vi.fn();
-    render(<AccountingEntitySelect value="" onChange={onChange} />);
+    render(<AccountingEntityTypeSelect value="" onChange={onChange} />);
 
     expect(screen.getByText('Who is this account for?')).toBeInTheDocument();
     expect(screen.getByRole('combobox')).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe('AccountingEntitySelect', () => {
   it('opens the select and chooses an entity', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<AccountingEntitySelect value="" onChange={onChange} />);
+    render(<AccountingEntityTypeSelect value="" onChange={onChange} />);
 
     const trigger = screen.getByRole('combobox');
     await user.click(trigger);
@@ -46,7 +46,7 @@ describe('AccountingEntitySelect', () => {
   it('displays an error when error prop is provided', () => {
     const onChange = vi.fn();
     render(
-      <AccountingEntitySelect
+      <AccountingEntityTypeSelect
         value=""
         onChange={onChange}
         error={[{ message: 'Entity is required' }]}

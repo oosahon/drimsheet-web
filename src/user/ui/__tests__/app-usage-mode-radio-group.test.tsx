@@ -1,4 +1,4 @@
-import { AppUsageModeRadioGroup } from '@/onboarding/ui/app-usage-mode-radio-group';
+import { AppUsageModeRadioGroup } from '@/user/ui/app-usage-mode-radio-group';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

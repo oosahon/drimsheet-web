@@ -1,5 +1,5 @@
-import useAccountingEntities from '@/accounting-entity/hooks/use-accounting-entities';
-import AccountingOnboardingFormContainer from '@/onboarding/ui/containers/accounting-onboarding-form';
+import useAccountingEntities from '@/accounting/hooks/use-accounting-entities';
+import AccountingEntityCreationFormContainer from '@/accounting/ui/containers/accounting-entity-creation-form.container';
 import { useMemo } from 'react';
 
 export default function OnboardingManager() {
@@ -20,7 +20,7 @@ export default function OnboardingManager() {
 
   return (
     <>
-      <AccountingOnboardingFormContainer
+      <AccountingEntityCreationFormContainer
         open={openAccountingOnboardingForm}
         done={refetch}
       />

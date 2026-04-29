@@ -8,17 +8,17 @@ import {
   SelectValue,
 } from '@/shared/ui/select';
 
-export interface AccountingEntitySelectProps {
+export interface AccountingEntityTypeSelectProps {
   value: string;
   onChange: (value: string) => void;
   error?: Array<{ message?: string } | undefined>;
 }
 
-export function AccountingEntitySelect({
+export function AccountingEntityTypeSelect({
   value,
   onChange,
   error,
-}: AccountingEntitySelectProps) {
+}: AccountingEntityTypeSelectProps) {
   return (
     <Field>
       <Label htmlFor="individual-entity">Who is this account for?</Label>

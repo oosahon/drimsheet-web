@@ -1,10 +1,10 @@
-import { AccountingEntityOnboardingForm } from '@/onboarding/ui/accounting-entity-form';
+import { AccountingEntityCreationForm } from '@/accounting/ui/accounting-entity-creation-form';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 
 const meta = {
-  title: 'Onboarding/AccountingEntityOnboardingForm',
-  component: AccountingEntityOnboardingForm,
+  title: 'Accounting/AccountingEntityCreationForm',
+  component: AccountingEntityCreationForm,
   decorators: [
     (Story) => (
       <MemoryRouter>
@@ -19,7 +19,7 @@ const meta = {
   },
   tags: ['autodocs'],
   args: { onSubmit: () => {} },
-} satisfies Meta<typeof AccountingEntityOnboardingForm>;
+} satisfies Meta<typeof AccountingEntityCreationForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -1,8 +1,8 @@
-import { FiscalYearStartSelect } from '@/onboarding/ui/fiscal-year-start-select';
+import { FiscalYearStartSelect } from '@/accounting/ui/fiscal-year-start-select';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Onboarding/FiscalYearStartSelect',
+  title: 'Accounting/FiscalYearStartSelect',
   component: FiscalYearStartSelect,
   parameters: {
     layout: 'centered',

@@ -1,5 +1,5 @@
+import type { IAccountingEntityFormValues } from '@/accounting/ui/accounting-entity-creation-form';
 import onboardingService from '@/onboarding/services/onboarding.service';
-import type { IAccountingEntityFormValues } from '@/onboarding/ui/accounting-entity-form';
 import { useMutation } from '@tanstack/react-query';
 
 export default function useOnboardIndividualAccountingEntity() {

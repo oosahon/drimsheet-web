@@ -1,8 +1,8 @@
-import { AppUsageModeRadioGroup } from '@/onboarding/ui/app-usage-mode-radio-group';
+import { AppUsageModeRadioGroup } from '@/user/ui/app-usage-mode-radio-group';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Onboarding/AppUsageModeRadioGroup',
+  title: 'User/AppUsageModeRadioGroup',
   component: AppUsageModeRadioGroup,
   parameters: {
     layout: 'centered',

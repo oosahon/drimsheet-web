@@ -10,18 +10,158 @@
  * ---------------------------------------------------------------
  */
 
-export enum UExchangeRateType {
-  Official = 'official',
-  Negotiated = 'negotiated',
+export enum UJurisdictionCode {
+  AD = 'AD',
+  AE = 'AE',
+  AR = 'AR',
+  AT = 'AT',
+  AU = 'AU',
+  BD = 'BD',
+  BE = 'BE',
+  BR = 'BR',
+  CA = 'CA',
+  CH = 'CH',
+  CI = 'CI',
+  CL = 'CL',
+  CM = 'CM',
+  CN = 'CN',
+  CO = 'CO',
+  CY = 'CY',
+  CZ = 'CZ',
+  DE = 'DE',
+  DK = 'DK',
+  DZ = 'DZ',
+  EE = 'EE',
+  EG = 'EG',
+  ES = 'ES',
+  FI = 'FI',
+  FR = 'FR',
+  GB = 'GB',
+  GH = 'GH',
+  GR = 'GR',
+  HK = 'HK',
+  HR = 'HR',
+  HU = 'HU',
+  ID = 'ID',
+  IE = 'IE',
+  IL = 'IL',
+  IN = 'IN',
+  IT = 'IT',
+  JP = 'JP',
+  KE = 'KE',
+  KR = 'KR',
+  LT = 'LT',
+  LU = 'LU',
+  LV = 'LV',
+  MA = 'MA',
+  MC = 'MC',
+  MT = 'MT',
+  MX = 'MX',
+  MY = 'MY',
+  NG = 'NG',
+  NL = 'NL',
+  NO = 'NO',
+  NZ = 'NZ',
+  PE = 'PE',
+  PH = 'PH',
+  PK = 'PK',
+  PL = 'PL',
+  PT = 'PT',
+  RO = 'RO',
+  RU = 'RU',
+  SA = 'SA',
+  SE = 'SE',
+  SG = 'SG',
+  SI = 'SI',
+  SK = 'SK',
+  SM = 'SM',
+  SN = 'SN',
+  TH = 'TH',
+  TR = 'TR',
+  TW = 'TW',
+  TZ = 'TZ',
+  UA = 'UA',
+  UG = 'UG',
+  US = 'US',
+  VA = 'VA',
+  VN = 'VN',
+  ZA = 'ZA',
+}
+
+export enum UCurrencyCode {
+  AED = 'AED',
+  ARS = 'ARS',
+  AUD = 'AUD',
+  BDT = 'BDT',
+  BRL = 'BRL',
+  CAD = 'CAD',
+  CHF = 'CHF',
+  CLP = 'CLP',
+  CNY = 'CNY',
+  COP = 'COP',
+  CZK = 'CZK',
+  DKK = 'DKK',
+  DZD = 'DZD',
+  EGP = 'EGP',
+  EUR = 'EUR',
+  GBP = 'GBP',
+  GHS = 'GHS',
+  HKD = 'HKD',
+  HUF = 'HUF',
+  IDR = 'IDR',
+  ILS = 'ILS',
+  INR = 'INR',
+  JPY = 'JPY',
+  KES = 'KES',
+  KRW = 'KRW',
+  MAD = 'MAD',
+  MXN = 'MXN',
+  MYR = 'MYR',
+  NGN = 'NGN',
+  NOK = 'NOK',
+  NZD = 'NZD',
+  PEN = 'PEN',
+  PHP = 'PHP',
+  PKR = 'PKR',
+  PLN = 'PLN',
+  RON = 'RON',
+  RUB = 'RUB',
+  SAR = 'SAR',
+  SEK = 'SEK',
+  SGD = 'SGD',
+  THB = 'THB',
+  TRY = 'TRY',
+  TWD = 'TWD',
+  TZS = 'TZS',
+  UAH = 'UAH',
+  UGX = 'UGX',
+  USD = 'USD',
+  VND = 'VND',
+  XAF = 'XAF',
+  XOF = 'XOF',
+  ZAR = 'ZAR',
+}
+
+export enum UPeriodUnit {
+  Day = 'day',
+  Week = 'week',
+  Month = 'month',
+  Quarter = 'quarter',
+  Year = 'year',
 }
 
 export enum UAccountingEntityType {
   Individual = 'individual',
   SoleTrader = 'sole_trader',
-  Company = 'company',
+  PrivateCompany = 'private_company',
 }
 
-export enum UAppUsageMode {
+export enum UExchangeRateType {
+  Official = 'official',
+  Negotiated = 'negotiated',
+}
+
+export enum UAppUsageModePreference {
   PowerUser = 'power_user',
   NonPowerUser = 'non_power_user',
 }
@@ -38,7 +178,7 @@ export type TEntityId = string & {
 
 export interface IUserAppPreferences {
   theme?: UAppThemePreference | null;
-  appUsageMode?: UAppUsageMode | null;
+  appUsageMode?: UAppUsageModePreference | null;
 }
 
 export interface IUserPreferences {
@@ -73,33 +213,6 @@ export interface IUser {
   updatedAt: string;
   /** @format date-time */
   deletedAt: string | null;
-}
-
-/**
- * Represents the month and day on which an accounting entity's fiscal year ends.
- * Defaults to December 31 for individuals. Companies and sole traders
- * may configure any valid calendar date (e.g., March 31, June 30).
- */
-export interface IFiscalYearStart {
-  /** @format double */
-  month: number;
-  /** @format double */
-  day: number;
-}
-
-export interface IAccountingEntityOnboardingReq {
-  name: string;
-  entityType: UAccountingEntityType;
-  operatingCountryCode: string;
-  functionalCurrencyCode: string;
-  reportingCurrencyCode: string;
-  /**
-   * Represents the month and day on which an accounting entity's fiscal year ends.
-   * Defaults to December 31 for individuals. Companies and sole traders
-   * may configure any valid calendar date (e.g., March 31, June 30).
-   */
-  fiscalYearStart: IFiscalYearStart;
-  appUsageMode: UAppUsageMode;
 }
 
 export interface IUserSignupReq {
@@ -157,47 +270,59 @@ export interface IPettyCashAccountCreationReq {
   openingBalance: IOpeningBalanceDto | null;
 }
 
-/** From T, pick a set of properties whose keys are in the union K */
-export interface PickIAccountingEntityExcludeKeysFunctionalCurrencyOrReportingCurrency {
-  type: UAccountingEntityType;
-  id: TEntityId;
-  name: string;
-  operatingCountryCode: string;
-  ownerId: TEntityId;
-  /**
-   * Represents the month and day on which an accounting entity's fiscal year ends.
-   * Defaults to December 31 for individuals. Companies and sole traders
-   * may configure any valid calendar date (e.g., March 31, June 30).
-   */
-  fiscalYearStart: IFiscalYearStart;
+/** Fiscal year creation DTO */
+export interface IFiscalYearCreationDto {
   /** @format date-time */
-  createdAt: string;
+  startDate: string;
   /** @format date-time */
-  updatedAt: string;
-  /** @format date-time */
-  deletedAt: string;
+  endDate: string;
 }
 
-export interface IAccountingEntityRes {
-  type: UAccountingEntityType;
+export interface IPeriodCreationDto {
+  unit: UPeriodUnit;
+  /** @format double */
+  count: number;
+}
+
+/** Accounting entity onboarding DTO */
+export interface IAccountingEntityCreationDto {
+  name: string;
+  entityType: UAccountingEntityType;
+  jurisdictionCode: string;
+  accountingStandardCode: string;
+  functionalCurrencyCode: string;
+  reportingCurrencyCode: string;
+  /** Fiscal year creation DTO */
+  fiscalYear: IFiscalYearCreationDto;
+  accountingPeriod: IPeriodCreationDto;
+  reportingPeriod: IPeriodCreationDto;
+  appUsageMode: UAppUsageModePreference;
+}
+
+export interface IAccountingStandardDto {
+  individual: string[];
+  sole_trader: string[];
+  private_company: string[];
+}
+
+export interface IJurisdictionDto {
+  code: string;
+  name: string;
+  currencyCode: string;
+  accountingStandards: IAccountingStandardDto;
+}
+
+export interface IAccountingEntity {
   id: TEntityId;
   name: string;
-  operatingCountryCode: string;
+  type: UAccountingEntityType;
   ownerId: TEntityId;
-  /**
-   * Represents the month and day on which an accounting entity's fiscal year ends.
-   * Defaults to December 31 for individuals. Companies and sole traders
-   * may configure any valid calendar date (e.g., March 31, June 30).
-   */
-  fiscalYearStart: IFiscalYearStart;
+  functionalCurrencyCode: UCurrencyCode;
+  jurisdictionCode: UJurisdictionCode;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
   updatedAt: string;
-  /** @format date-time */
-  deletedAt: string;
-  functionalCurrency: string;
-  reportingCurrency: string;
 }
 
 import type {
@@ -426,28 +551,6 @@ export class Api<
         ...params,
       }),
   };
-  onboarding = {
-    /**
-     * @description Onboard an accounting entity
-     *
-     * @tags Onboarding
-     * @name OnboardAccountingEntity
-     * @request POST:/onboarding/accounting-entity
-     * @secure
-     */
-    onboardAccountingEntity: (
-      data: IAccountingEntityOnboardingReq,
-      params: RequestParams = {}
-    ) =>
-      this.request<void, IApiError>({
-        path: `/onboarding/accounting-entity`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-  };
   currencies = {
     /**
      * @description Gets all system currencies
@@ -461,7 +564,58 @@ export class Api<
         {
           name: string;
           symbol: string;
-          code: string;
+          code:
+            | 'AED'
+            | 'ARS'
+            | 'AUD'
+            | 'BDT'
+            | 'BRL'
+            | 'CAD'
+            | 'CHF'
+            | 'CLP'
+            | 'CNY'
+            | 'COP'
+            | 'CZK'
+            | 'DKK'
+            | 'DZD'
+            | 'EGP'
+            | 'EUR'
+            | 'GBP'
+            | 'GHS'
+            | 'HKD'
+            | 'HUF'
+            | 'IDR'
+            | 'ILS'
+            | 'INR'
+            | 'JPY'
+            | 'KES'
+            | 'KRW'
+            | 'MAD'
+            | 'MXN'
+            | 'MYR'
+            | 'NGN'
+            | 'NOK'
+            | 'NZD'
+            | 'PEN'
+            | 'PHP'
+            | 'PKR'
+            | 'PLN'
+            | 'RON'
+            | 'RUB'
+            | 'SAR'
+            | 'SEK'
+            | 'SGD'
+            | 'THB'
+            | 'TRY'
+            | 'TWD'
+            | 'TZS'
+            | 'UAH'
+            | 'UGX'
+            | 'USD'
+            | 'VND'
+            | 'XAF'
+            | 'XOF'
+            | 'ZAR';
           /** @format double */
           minorUnit: number;
         }[],
@@ -571,11 +725,11 @@ export class Api<
      *
      * @tags Auth
      * @name LoginWithGoogle
-     * @request GET:/auth/google
+     * @request GET:/auth/oauth/google
      */
     loginWithGoogle: (params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/auth/google`,
+        path: `/auth/oauth/google`,
         method: 'GET',
         ...params,
       }),
@@ -585,11 +739,11 @@ export class Api<
      *
      * @tags Auth
      * @name LoginWithGoogleCallback
-     * @request GET:/auth/google/callback
+     * @request GET:/auth/oauth/google/callback
      */
     loginWithGoogleCallback: (params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/auth/google/callback`,
+        path: `/auth/oauth/google/callback`,
         method: 'GET',
         ...params,
       }),
@@ -623,37 +777,71 @@ export class Api<
         ...params,
       }),
   };
-  assetAccounts = {
+  ledger = {
     /**
      * @description Create a new petty cash sub account
      *
-     * @tags Asset Accounts
-     * @name CreatePettyCashSubAccount
-     * @request POST:/asset-accounts
+     * @tags Ledger, Asset Account
+     * @name MakePettyCashSubAccount
+     * @request POST:/ledger/asset-accounts
      */
-    createPettyCashSubAccount: (
+    makePettyCashSubAccount: (
       data: IPettyCashAccountCreationReq,
       params: RequestParams = {}
     ) =>
       this.request<void, IApiError>({
-        path: `/asset-accounts`,
+        path: `/ledger/asset-accounts`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
         ...params,
       }),
   };
-  accountingEntities = {
+  accounting = {
     /**
-     * @description Get all accounting entities of an authenticated user
+     * @description Create a new accounting entity
      *
-     * @tags Accounting Entity
-     * @name GetAll
-     * @request GET:/accounting-entities
+     * @tags Accounting
+     * @name CreateAccountingEntity
+     * @request POST:/accounting/accounting-entity
      */
-    getAll: (params: RequestParams = {}) =>
-      this.request<IAccountingEntityRes[], any>({
-        path: `/accounting-entities`,
+    createAccountingEntity: (
+      data: IAccountingEntityCreationDto,
+      params: RequestParams = {}
+    ) =>
+      this.request<void, IApiError>({
+        path: `/accounting/accounting-entity`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description Get jurisdictions
+     *
+     * @tags Accounting
+     * @name GetJurisdictions
+     * @request GET:/accounting/jurisdictions
+     */
+    getJurisdictions: (params: RequestParams = {}) =>
+      this.request<IJurisdictionDto[], any>({
+        path: `/accounting/jurisdictions`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get user accounting entities
+     *
+     * @tags Accounting
+     * @name GetUserAccountingEntities
+     * @request GET:/accounting/accounting-entities
+     */
+    getUserAccountingEntities: (params: RequestParams = {}) =>
+      this.request<IAccountingEntity[], IApiError>({
+        path: `/accounting/accounting-entities`,
         method: 'GET',
         format: 'json',
         ...params,
