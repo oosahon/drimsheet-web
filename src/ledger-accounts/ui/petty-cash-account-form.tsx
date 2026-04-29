@@ -1,3 +1,4 @@
+import useCurrencies from '@/shared/hooks/use-currencies';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { CurrencySelect } from '@/shared/ui/currency-select';
@@ -42,6 +43,7 @@ export function PettyCashAccountForm({
   onSubmit,
   loading,
 }: IPettyCashAccountFormProps) {
+  const { data: currenciesData = [] } = useCurrencies();
   const { handleChange, values, setFieldValue, handleSubmit, errors, touched } =
     useFormik<IPettyCashAccountFormValues>({
       initialValues,
@@ -68,6 +70,7 @@ export function PettyCashAccountForm({
             <CurrencySelect
               label="Currency"
               value={values.currencyCode}
+              currenciesData={currenciesData}
               onChange={(val) => setFieldValue('currencyCode', val)}
               error={getErrorMessage('currencyCode')}
               displayCode

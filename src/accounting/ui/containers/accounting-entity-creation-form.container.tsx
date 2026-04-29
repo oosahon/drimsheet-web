@@ -1,8 +1,10 @@
+import useJurisdictions from '@/accounting/hooks/use-jurisdictions';
 import {
   AccountingEntityCreationForm,
   type IAccountingEntityFormValues,
 } from '@/accounting/ui/accounting-entity-creation-form';
 import useOnboardIndividualAccountingEntity from '@/onboarding/hooks/use-onboard-individual-accounting-entity';
+import useCurrencies from '@/shared/hooks/use-currencies';
 import {
   Dialog,
   DialogContent,
@@ -26,6 +28,8 @@ export default function AccountingEntityCreationFormContainer({
   const { mutateAsync: onboardIndividual, isPending } =
     useOnboardIndividualAccountingEntity();
   const { data: user } = useProfile();
+  const { data: currenciesData = [] } = useCurrencies();
+  const { data: countriesData = [] } = useJurisdictions();
 
   const handleSubmit = async (values: IAccountingEntityFormValues) => {
     try {
@@ -50,6 +54,8 @@ export default function AccountingEntityCreationFormContainer({
         <AccountingEntityCreationForm
           loading={isPending}
           onSubmit={handleSubmit}
+          currenciesData={currenciesData}
+          countriesData={countriesData}
         />
       </DialogContent>
     </Dialog>

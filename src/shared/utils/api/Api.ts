@@ -10,167 +10,179 @@
  * ---------------------------------------------------------------
  */
 
-export enum UJurisdictionCode {
-  AD = 'AD',
-  AE = 'AE',
-  AR = 'AR',
-  AT = 'AT',
-  AU = 'AU',
-  BD = 'BD',
-  BE = 'BE',
-  BR = 'BR',
-  CA = 'CA',
-  CH = 'CH',
-  CI = 'CI',
-  CL = 'CL',
-  CM = 'CM',
-  CN = 'CN',
-  CO = 'CO',
-  CY = 'CY',
-  CZ = 'CZ',
-  DE = 'DE',
-  DK = 'DK',
-  DZ = 'DZ',
-  EE = 'EE',
-  EG = 'EG',
-  ES = 'ES',
-  FI = 'FI',
-  FR = 'FR',
-  GB = 'GB',
-  GH = 'GH',
-  GR = 'GR',
-  HK = 'HK',
-  HR = 'HR',
-  HU = 'HU',
-  ID = 'ID',
-  IE = 'IE',
-  IL = 'IL',
-  IN = 'IN',
-  IT = 'IT',
-  JP = 'JP',
-  KE = 'KE',
-  KR = 'KR',
-  LT = 'LT',
-  LU = 'LU',
-  LV = 'LV',
-  MA = 'MA',
-  MC = 'MC',
-  MT = 'MT',
-  MX = 'MX',
-  MY = 'MY',
-  NG = 'NG',
-  NL = 'NL',
-  NO = 'NO',
-  NZ = 'NZ',
-  PE = 'PE',
-  PH = 'PH',
-  PK = 'PK',
-  PL = 'PL',
-  PT = 'PT',
-  RO = 'RO',
-  RU = 'RU',
-  SA = 'SA',
-  SE = 'SE',
-  SG = 'SG',
-  SI = 'SI',
-  SK = 'SK',
-  SM = 'SM',
-  SN = 'SN',
-  TH = 'TH',
-  TR = 'TR',
-  TW = 'TW',
-  TZ = 'TZ',
-  UA = 'UA',
-  UG = 'UG',
-  US = 'US',
-  VA = 'VA',
-  VN = 'VN',
-  ZA = 'ZA',
-}
+export const EPeriodUnit = {
+  Day: 'day',
+  Week: 'week',
+  Month: 'month',
+  Quarter: 'quarter',
+  Year: 'year',
+} as const;
+export type UPeriodUnit = (typeof EPeriodUnit)[keyof typeof EPeriodUnit];
 
-export enum UCurrencyCode {
-  AED = 'AED',
-  ARS = 'ARS',
-  AUD = 'AUD',
-  BDT = 'BDT',
-  BRL = 'BRL',
-  CAD = 'CAD',
-  CHF = 'CHF',
-  CLP = 'CLP',
-  CNY = 'CNY',
-  COP = 'COP',
-  CZK = 'CZK',
-  DKK = 'DKK',
-  DZD = 'DZD',
-  EGP = 'EGP',
-  EUR = 'EUR',
-  GBP = 'GBP',
-  GHS = 'GHS',
-  HKD = 'HKD',
-  HUF = 'HUF',
-  IDR = 'IDR',
-  ILS = 'ILS',
-  INR = 'INR',
-  JPY = 'JPY',
-  KES = 'KES',
-  KRW = 'KRW',
-  MAD = 'MAD',
-  MXN = 'MXN',
-  MYR = 'MYR',
-  NGN = 'NGN',
-  NOK = 'NOK',
-  NZD = 'NZD',
-  PEN = 'PEN',
-  PHP = 'PHP',
-  PKR = 'PKR',
-  PLN = 'PLN',
-  RON = 'RON',
-  RUB = 'RUB',
-  SAR = 'SAR',
-  SEK = 'SEK',
-  SGD = 'SGD',
-  THB = 'THB',
-  TRY = 'TRY',
-  TWD = 'TWD',
-  TZS = 'TZS',
-  UAH = 'UAH',
-  UGX = 'UGX',
-  USD = 'USD',
-  VND = 'VND',
-  XAF = 'XAF',
-  XOF = 'XOF',
-  ZAR = 'ZAR',
-}
+export const EJurisdictionCode = {
+  AD: 'AD',
+  AE: 'AE',
+  AR: 'AR',
+  AT: 'AT',
+  AU: 'AU',
+  BD: 'BD',
+  BE: 'BE',
+  BR: 'BR',
+  CA: 'CA',
+  CH: 'CH',
+  CI: 'CI',
+  CL: 'CL',
+  CM: 'CM',
+  CN: 'CN',
+  CO: 'CO',
+  CY: 'CY',
+  CZ: 'CZ',
+  DE: 'DE',
+  DK: 'DK',
+  DZ: 'DZ',
+  EE: 'EE',
+  EG: 'EG',
+  ES: 'ES',
+  FI: 'FI',
+  FR: 'FR',
+  GB: 'GB',
+  GH: 'GH',
+  GR: 'GR',
+  HK: 'HK',
+  HR: 'HR',
+  HU: 'HU',
+  ID: 'ID',
+  IE: 'IE',
+  IL: 'IL',
+  IN: 'IN',
+  IT: 'IT',
+  JP: 'JP',
+  KE: 'KE',
+  KR: 'KR',
+  LT: 'LT',
+  LU: 'LU',
+  LV: 'LV',
+  MA: 'MA',
+  MC: 'MC',
+  MT: 'MT',
+  MX: 'MX',
+  MY: 'MY',
+  NG: 'NG',
+  NL: 'NL',
+  NO: 'NO',
+  NZ: 'NZ',
+  PE: 'PE',
+  PH: 'PH',
+  PK: 'PK',
+  PL: 'PL',
+  PT: 'PT',
+  RO: 'RO',
+  RU: 'RU',
+  SA: 'SA',
+  SE: 'SE',
+  SG: 'SG',
+  SI: 'SI',
+  SK: 'SK',
+  SM: 'SM',
+  SN: 'SN',
+  TH: 'TH',
+  TR: 'TR',
+  TW: 'TW',
+  TZ: 'TZ',
+  UA: 'UA',
+  UG: 'UG',
+  US: 'US',
+  VA: 'VA',
+  VN: 'VN',
+  ZA: 'ZA',
+} as const;
+export type UJurisdictionCode =
+  (typeof EJurisdictionCode)[keyof typeof EJurisdictionCode];
 
-export enum UPeriodUnit {
-  Day = 'day',
-  Week = 'week',
-  Month = 'month',
-  Quarter = 'quarter',
-  Year = 'year',
-}
+export const ECurrencyCode = {
+  AED: 'AED',
+  ARS: 'ARS',
+  AUD: 'AUD',
+  BDT: 'BDT',
+  BRL: 'BRL',
+  CAD: 'CAD',
+  CHF: 'CHF',
+  CLP: 'CLP',
+  CNY: 'CNY',
+  COP: 'COP',
+  CZK: 'CZK',
+  DKK: 'DKK',
+  DZD: 'DZD',
+  EGP: 'EGP',
+  EUR: 'EUR',
+  GBP: 'GBP',
+  GHS: 'GHS',
+  HKD: 'HKD',
+  HUF: 'HUF',
+  IDR: 'IDR',
+  ILS: 'ILS',
+  INR: 'INR',
+  JPY: 'JPY',
+  KES: 'KES',
+  KRW: 'KRW',
+  MAD: 'MAD',
+  MXN: 'MXN',
+  MYR: 'MYR',
+  NGN: 'NGN',
+  NOK: 'NOK',
+  NZD: 'NZD',
+  PEN: 'PEN',
+  PHP: 'PHP',
+  PKR: 'PKR',
+  PLN: 'PLN',
+  RON: 'RON',
+  RUB: 'RUB',
+  SAR: 'SAR',
+  SEK: 'SEK',
+  SGD: 'SGD',
+  THB: 'THB',
+  TRY: 'TRY',
+  TWD: 'TWD',
+  TZS: 'TZS',
+  UAH: 'UAH',
+  UGX: 'UGX',
+  USD: 'USD',
+  VND: 'VND',
+  XAF: 'XAF',
+  XOF: 'XOF',
+  ZAR: 'ZAR',
+} as const;
+export type UCurrencyCode = (typeof ECurrencyCode)[keyof typeof ECurrencyCode];
 
-export enum UAccountingEntityType {
-  Individual = 'individual',
-  SoleTrader = 'sole_trader',
-  PrivateCompany = 'private_company',
-}
+export const EAccountingEntityType = {
+  Individual: 'individual',
+  SoleTrader: 'sole_trader',
+  PrivateCompany: 'private_company',
+} as const;
+export type UAccountingEntityType =
+  (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
 
-export enum UExchangeRateType {
-  Official = 'official',
-  Negotiated = 'negotiated',
-}
+export const EExchangeRateType = {
+  Official: 'official',
+  Negotiated: 'negotiated',
+} as const;
+export type UExchangeRateType =
+  (typeof EExchangeRateType)[keyof typeof EExchangeRateType];
 
-export enum UAppUsageModePreference {
-  PowerUser = 'power_user',
-  NonPowerUser = 'non_power_user',
-}
+export const EAppUsageModePreference = {
+  PowerUser: 'power_user',
+  NonPowerUser: 'non_power_user',
+} as const;
+export type UAppUsageModePreference =
+  (typeof EAppUsageModePreference)[keyof typeof EAppUsageModePreference];
 
-export enum UAppThemePreference {
-  Light = 'light',
-  Dark = 'dark',
-  System = 'system',
-}
+export const EAppThemePreference = {
+  Light: 'light',
+  Dark: 'dark',
+  System: 'system',
+} as const;
+export type UAppThemePreference =
+  (typeof EAppThemePreference)[keyof typeof EAppThemePreference];
 
 export type TEntityId = string & {
   __brand: 'uuid';
@@ -213,6 +225,14 @@ export interface IUser {
   updatedAt: string;
   /** @format date-time */
   deletedAt: string | null;
+}
+
+export interface ICurrencyDto {
+  code: string;
+  symbol: string;
+  name: string;
+  /** @format double */
+  minorUnit: number;
 }
 
 export interface IUserSignupReq {
@@ -270,6 +290,19 @@ export interface IPettyCashAccountCreationReq {
   openingBalance: IOpeningBalanceDto | null;
 }
 
+export interface IAccountingEntity {
+  id: TEntityId;
+  name: string;
+  type: UAccountingEntityType;
+  ownerId: TEntityId;
+  functionalCurrencyCode: UCurrencyCode;
+  jurisdictionCode: UJurisdictionCode;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+}
+
 /** Fiscal year creation DTO */
 export interface IFiscalYearCreationDto {
   /** @format date-time */
@@ -310,19 +343,6 @@ export interface IJurisdictionDto {
   name: string;
   currencyCode: string;
   accountingStandards: IAccountingStandardDto;
-}
-
-export interface IAccountingEntity {
-  id: TEntityId;
-  name: string;
-  type: UAccountingEntityType;
-  ownerId: TEntityId;
-  functionalCurrencyCode: UCurrencyCode;
-  jurisdictionCode: UJurisdictionCode;
-  /** @format date-time */
-  createdAt: string;
-  /** @format date-time */
-  updatedAt: string;
 }
 
 import type {
@@ -370,13 +390,14 @@ export interface ApiConfig<SecurityDataType = unknown> extends Omit<
   format?: ResponseType;
 }
 
-export enum ContentType {
-  Json = 'application/json',
-  JsonApi = 'application/vnd.api+json',
-  FormData = 'multipart/form-data',
-  UrlEncoded = 'application/x-www-form-urlencoded',
-  Text = 'text/plain',
-}
+export const EContentType = {
+  Json: 'application/json',
+  JsonApi: 'application/vnd.api+json',
+  FormData: 'multipart/form-data',
+  UrlEncoded: 'application/x-www-form-urlencoded',
+  Text: 'text/plain',
+} as const;
+export type ContentType = (typeof EContentType)[keyof typeof EContentType];
 
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
@@ -473,7 +494,7 @@ export class HttpClient<SecurityDataType = unknown> {
     const responseFormat = format || this.format || undefined;
 
     if (
-      type === ContentType.FormData &&
+      type === EContentType.FormData &&
       body &&
       body !== null &&
       typeof body === 'object'
@@ -482,7 +503,7 @@ export class HttpClient<SecurityDataType = unknown> {
     }
 
     if (
-      type === ContentType.Text &&
+      type === EContentType.Text &&
       body &&
       body !== null &&
       typeof body !== 'string'
@@ -556,71 +577,11 @@ export class Api<
      * @description Gets all system currencies
      *
      * @tags Currency
-     * @name GetCurrencies
+     * @name GetAll
      * @request GET:/currencies
      */
-    getCurrencies: (params: RequestParams = {}) =>
-      this.request<
-        {
-          name: string;
-          symbol: string;
-          code:
-            | 'AED'
-            | 'ARS'
-            | 'AUD'
-            | 'BDT'
-            | 'BRL'
-            | 'CAD'
-            | 'CHF'
-            | 'CLP'
-            | 'CNY'
-            | 'COP'
-            | 'CZK'
-            | 'DKK'
-            | 'DZD'
-            | 'EGP'
-            | 'EUR'
-            | 'GBP'
-            | 'GHS'
-            | 'HKD'
-            | 'HUF'
-            | 'IDR'
-            | 'ILS'
-            | 'INR'
-            | 'JPY'
-            | 'KES'
-            | 'KRW'
-            | 'MAD'
-            | 'MXN'
-            | 'MYR'
-            | 'NGN'
-            | 'NOK'
-            | 'NZD'
-            | 'PEN'
-            | 'PHP'
-            | 'PKR'
-            | 'PLN'
-            | 'RON'
-            | 'RUB'
-            | 'SAR'
-            | 'SEK'
-            | 'SGD'
-            | 'THB'
-            | 'TRY'
-            | 'TWD'
-            | 'TZS'
-            | 'UAH'
-            | 'UGX'
-            | 'USD'
-            | 'VND'
-            | 'XAF'
-            | 'XOF'
-            | 'ZAR';
-          /** @format double */
-          minorUnit: number;
-        }[],
-        any
-      >({
+    getAll: (params: RequestParams = {}) =>
+      this.request<ICurrencyDto[], any>({
         path: `/currencies`,
         method: 'GET',
         format: 'json',
@@ -640,7 +601,7 @@ export class Api<
         path: `/auth/signup-with-email`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         ...params,
       }),
 
@@ -677,7 +638,7 @@ export class Api<
         path: `/auth/login-with-email`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -699,7 +660,7 @@ export class Api<
         path: `/auth/get-password-reset-link`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         ...params,
       }),
 
@@ -715,7 +676,7 @@ export class Api<
         path: `/auth/reset-password`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -725,11 +686,11 @@ export class Api<
      *
      * @tags Auth
      * @name LoginWithGoogle
-     * @request GET:/auth/oauth/google
+     * @request GET:/auth/google
      */
     loginWithGoogle: (params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/auth/oauth/google`,
+        path: `/auth/google`,
         method: 'GET',
         ...params,
       }),
@@ -739,11 +700,11 @@ export class Api<
      *
      * @tags Auth
      * @name LoginWithGoogleCallback
-     * @request GET:/auth/oauth/google/callback
+     * @request GET:/auth/google/callback
      */
     loginWithGoogleCallback: (params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/auth/oauth/google/callback`,
+        path: `/auth/google/callback`,
         method: 'GET',
         ...params,
       }),
@@ -793,7 +754,7 @@ export class Api<
         path: `/ledger/asset-accounts`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         ...params,
       }),
   };
@@ -809,11 +770,12 @@ export class Api<
       data: IAccountingEntityCreationDto,
       params: RequestParams = {}
     ) =>
-      this.request<void, IApiError>({
+      this.request<IAccountingEntity, IApiError>({
         path: `/accounting/accounting-entity`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
+        format: 'json',
         ...params,
       }),
 

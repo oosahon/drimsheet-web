@@ -10,12 +10,14 @@ import {
 import { Field, FieldError } from '@/shared/ui/field';
 import { InputGroupAddon } from '@/shared/ui/input-group';
 import { Label } from '@/shared/ui/label';
+import { type IJurisdictionDto } from '@/shared/utils/api/Api';
 import { GlobeIcon } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export interface CountryComboBoxProps {
   label: string;
   value: string;
+  countriesData: IJurisdictionDto[];
   onChange: (value: string) => void;
   error?: Array<{ message?: string } | undefined>;
 }
@@ -29,12 +31,29 @@ interface ICountry {
 export function CountryComboBox({
   label,
   value,
+  countriesData,
   onChange,
   error,
 }: CountryComboBoxProps) {
-  const [options, setOptions] = useState(countries);
+  const mappedCountries = useMemo(() => {
+    return countriesData.map((c) => {
+      const uiCountry = countries.find((uc) => uc.code === c.code);
+      return {
+        ...c,
+        flag: uiCountry?.flag || '🏳️',
+      };
+    });
+  }, [countriesData]);
 
-  const selectedCountry = countries.find((country) => country.code === value);
+  const [options, setOptions] = useState(mappedCountries);
+
+  useEffect(() => {
+    setOptions(mappedCountries);
+  }, [mappedCountries]);
+
+  const selectedCountry = mappedCountries.find(
+    (country) => country.code === value
+  );
 
   return (
     <Field>
@@ -47,7 +66,7 @@ export function CountryComboBox({
         itemToStringLabel={(item: ICountry | null) => item?.name || ''}
         onInputValueChange={(val) => {
           setOptions(
-            countries.filter((country) =>
+            mappedCountries.filter((country) =>
               country.name.toLowerCase().includes(val.toLowerCase())
             )
           );

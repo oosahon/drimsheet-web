@@ -1,7 +1,16 @@
+import uiCurrencies from '@/shared/config/currencies.json' with { type: 'json' };
 import { CurrencySelect } from '@/shared/ui/currency-select';
+import { ICurrencyDto } from '@/shared/utils/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+
+const dummyCurrenciesData: ICurrencyDto[] = uiCurrencies.map((c) => ({
+  code: c.code,
+  symbol: c.symbol,
+  name: c.name,
+  minorUnit: c.minorUnit,
+}));
 
 describe('CurrencySelect', () => {
   beforeAll(() => {
@@ -17,7 +26,14 @@ describe('CurrencySelect', () => {
   });
   it('renders correctly with no initial value', () => {
     const onChange = vi.fn();
-    render(<CurrencySelect label="Currency" value="" onChange={onChange} />);
+    render(
+      <CurrencySelect
+        label="Currency"
+        value=""
+        onChange={onChange}
+        currenciesData={dummyCurrenciesData}
+      />
+    );
 
     expect(screen.getByText('Currency')).toBeInTheDocument();
     expect(
@@ -27,7 +43,14 @@ describe('CurrencySelect', () => {
 
   it('renders with an initial value and displays the logo', () => {
     const onChange = vi.fn();
-    render(<CurrencySelect label="Currency" value="NGN" onChange={onChange} />);
+    render(
+      <CurrencySelect
+        label="Currency"
+        value="NGN"
+        onChange={onChange}
+        currenciesData={dummyCurrenciesData}
+      />
+    );
 
     // Since NGN is selected, checking for the background image
     const logoDivs = document.querySelectorAll(
@@ -44,7 +67,14 @@ describe('CurrencySelect', () => {
   it('opens the select and chooses a currency', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CurrencySelect label="Currency" value="" onChange={onChange} />);
+    render(
+      <CurrencySelect
+        label="Currency"
+        value=""
+        onChange={onChange}
+        currenciesData={dummyCurrenciesData}
+      />
+    );
 
     const trigger = screen.getByRole('combobox', { name: 'Currency' });
     await user.click(trigger);
@@ -68,6 +98,7 @@ describe('CurrencySelect', () => {
         value=""
         onChange={onChange}
         error={[{ message: 'Currency is required' }]}
+        currenciesData={dummyCurrenciesData}
       />
     );
 
@@ -82,6 +113,7 @@ describe('CurrencySelect', () => {
         value="NGN"
         onChange={onChange}
         displayCode
+        currenciesData={dummyCurrenciesData}
       />
     );
 
@@ -91,7 +123,12 @@ describe('CurrencySelect', () => {
   it('handles invalid initial value gracefully', () => {
     const onChange = vi.fn();
     render(
-      <CurrencySelect label="Currency" value="INVALID" onChange={onChange} />
+      <CurrencySelect
+        label="Currency"
+        value="INVALID"
+        onChange={onChange}
+        currenciesData={dummyCurrenciesData}
+      />
     );
 
     expect(

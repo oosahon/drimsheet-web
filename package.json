@@ -13,7 +13,7 @@
     "test": "vitest",
     "test:e2e": "playwright test --ui",
     "test:e2e:run": "playwright test",
-    "api:gen": "node bin/api-gen.js",
+    "api:gen": "node bin/api-gen.js && node bin/convert-enums.js",
     "format:all": "prettier --write .",
     "format:changed": "lint-staged",
     "prepare": "husky",

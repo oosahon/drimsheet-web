@@ -1,3 +1,5 @@
+import { FISCAL_YEAR_STARTS } from '@/accounting/config/fiscal-year-start.config';
+import { useFiscalYearWarning } from '@/accounting/hooks/use-fiscal-year-warning';
 import { AccountingEntityTypeSelect } from '@/accounting/ui/accounting-entity-type-select';
 import { FiscalYearStartSelect } from '@/accounting/ui/fiscal-year-start-select';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
@@ -6,10 +8,16 @@ import { Button } from '@/shared/ui/button';
 import { CountryComboBox } from '@/shared/ui/country-combobox';
 import { CurrencySelect } from '@/shared/ui/currency-select';
 import { FieldGroup } from '@/shared/ui/field';
+import {
+  type ICurrencyDto,
+  type IJurisdictionDto,
+  type UJurisdictionCode,
+} from '@/shared/utils/api/Api';
+import { formatFiscalDate } from '@/shared/utils/date';
 import { AppUsageModeRadioGroup } from '@/user/ui/app-usage-mode-radio-group';
 import { useFormik } from 'formik';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import * as yup from 'yup';
 
 export interface IAccountingEntityFormValues {
@@ -25,6 +33,8 @@ export interface IAccountingEntityFormValues {
 export interface AccountingEntityCreationFormProps {
   onSubmit: (values: IAccountingEntityFormValues) => Promise<void> | void;
   loading?: boolean;
+  currenciesData?: ICurrencyDto[];
+  countriesData?: IJurisdictionDto[];
 }
 
 const validationSchema = yup.object({
@@ -50,13 +60,35 @@ interface StepProps {
 function Step1({
   formik,
   getErrorMessage,
+  countriesData,
   onNext,
-}: StepProps & { onNext: () => void }) {
+}: StepProps & { countriesData: IJurisdictionDto[]; onNext: () => void }) {
   const isComplete =
     !!formik.values.entityType &&
     !!formik.values.countryCode &&
     !formik.errors.entityType &&
     !formik.errors.countryCode;
+
+  const handleCountryChange = (val: string) => {
+    const selectedCountry = countriesData.find((c) => c.code === val);
+    const expectedStart = FISCAL_YEAR_STARTS[val as UJurisdictionCode] || {
+      month: 1,
+      day: 1,
+    };
+
+    const functionalCurrency =
+      selectedCountry?.currencyCode || formik.values.functionalCurrency;
+    const reportingCurrency =
+      selectedCountry?.currencyCode || formik.values.reportingCurrency;
+
+    formik.setValues({
+      ...formik.values,
+      countryCode: val,
+      functionalCurrency,
+      reportingCurrency,
+      fiscalYearStart: expectedStart,
+    });
+  };
 
   const showTaxWarning = formik.values.countryCode != 'NG';
 
@@ -72,7 +104,8 @@ function Step1({
         <CountryComboBox
           label="Where do you reside?"
           value={formik.values.countryCode}
-          onChange={(val) => formik.setFieldValue('countryCode', val)}
+          countriesData={countriesData}
+          onChange={handleCountryChange}
           error={getErrorMessage('countryCode')}
         />
         {showTaxWarning && (
@@ -98,10 +131,12 @@ function Step2({
   formik,
   getErrorMessage,
   getFiscalYearStartErrorStr,
+  currenciesData,
   onNext,
   onBack,
 }: StepProps & {
   getFiscalYearStartErrorStr: () => string | undefined;
+  currenciesData: ICurrencyDto[];
   onNext: () => void;
   onBack: () => void;
 }) {
@@ -113,12 +148,22 @@ function Step2({
     !formik.errors.reportingCurrency &&
     !getFiscalYearStartErrorStr();
 
-  const { functionalCurrency, reportingCurrency, fiscalYearStart } =
-    formik.values;
+  const {
+    functionalCurrency,
+    reportingCurrency,
+    fiscalYearStart,
+    countryCode,
+  } = formik.values;
 
-  const showFiscalYearWarning = useMemo(() => {
-    return fiscalYearStart.month !== 1 || fiscalYearStart.day !== 1;
-  }, [fiscalYearStart]);
+  const { expectedStart, showFiscalYearWarning } = useFiscalYearWarning(
+    countryCode,
+    fiscalYearStart
+  );
+
+  const formattedExpectedStart = formatFiscalDate(
+    expectedStart.month,
+    expectedStart.day
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -126,6 +171,7 @@ function Step2({
         <CurrencySelect
           label="What currency do you primarily transact in?"
           value={functionalCurrency}
+          currenciesData={currenciesData}
           onChange={(val) => formik.setFieldValue('functionalCurrency', val)}
           error={getErrorMessage('functionalCurrency')}
         />
@@ -133,6 +179,7 @@ function Step2({
         <CurrencySelect
           label="What currency should we use for your reports?"
           value={reportingCurrency}
+          currenciesData={currenciesData}
           onChange={(val) => formik.setFieldValue('reportingCurrency', val)}
           error={getErrorMessage('reportingCurrency')}
         />
@@ -148,7 +195,7 @@ function Step2({
             <AlertCircleIcon />
             <AlertTitle>
               Unless approved by the tax authorities, your fiscal year must
-              start on January 1st.
+              start on {formattedExpectedStart}.
             </AlertTitle>
           </WarningAlert>
         )}
@@ -204,6 +251,8 @@ function Step3({
 function AccountingEntityCreationForm({
   onSubmit,
   loading,
+  currenciesData = [],
+  countriesData = [],
 }: AccountingEntityCreationFormProps) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
@@ -280,6 +329,7 @@ function AccountingEntityCreationForm({
             <Step1
               formik={formik}
               getErrorMessage={getErrorMessage}
+              countriesData={countriesData}
               onNext={() => handleNext(2)}
             />
           )}
@@ -288,6 +338,7 @@ function AccountingEntityCreationForm({
               formik={formik}
               getErrorMessage={getErrorMessage}
               getFiscalYearStartErrorStr={getFiscalYearStartErrorStr}
+              currenciesData={currenciesData}
               onNext={() => handleNext(3)}
               onBack={() => handleBack(1)}
             />
