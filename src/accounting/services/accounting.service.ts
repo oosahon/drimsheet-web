@@ -6,29 +6,41 @@ import {
   EPeriodUnit,
   type IAccountingEntityCreationDto,
 } from '@/shared/utils/api/Api';
+import dateUtils from '@/shared/utils/date';
 
 const accountingService = {
   toCreateAccountingEntityPayload(
     data: IAccountingEntityFormValues
   ): IAccountingEntityCreationDto {
+    if (!data.fiscalYearStart || !data.fiscalYearEnd) {
+      throw new Error('Fiscal year start and end dates are required');
+    }
+
+    const startDateStr = dateUtils.formatDateForApi(data.fiscalYearStart);
+    const endDateStr = dateUtils.formatDateForApi(data.fiscalYearEnd);
+    const periodCount = dateUtils.getDurationInMonths(
+      data.fiscalYearStart,
+      data.fiscalYearEnd
+    );
+
     return {
       name: data.name,
       entityType: EAccountingEntityType.Individual,
       jurisdictionCode: data.countryCode,
-      accountingStandardCode: 'IFRS', // TODO: show a warning for a country that does not support IFRS
+      accountingStandardCode: data.accountingStandardCode,
       functionalCurrencyCode: data.functionalCurrency,
       reportingCurrencyCode: data.reportingCurrency,
       fiscalYear: {
-        startDate: new Date().toISOString(), // TODO: use a date range in the form to get start and end dates.
-        endDate: new Date().toISOString(), // TODO: use a date range in the form to get start and end dates.
+        startDate: startDateStr,
+        endDate: endDateStr,
       },
       accountingPeriod: {
         unit: EPeriodUnit.Month,
-        count: 12, // TODO: get the difference in months between the start and end dates
+        count: periodCount,
       },
       reportingPeriod: {
         unit: EPeriodUnit.Month,
-        count: 12, // TODO: get the difference in months between the start and end dates
+        count: periodCount,
       },
       appUsageMode: data.appUsageMode,
     };

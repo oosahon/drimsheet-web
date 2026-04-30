@@ -5,7 +5,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-const dummyCurrenciesData: ICurrencyDto[] = uiCurrencies.map((c) => ({
+const dummycurrencies: ICurrencyDto[] = uiCurrencies.map((c) => ({
   code: c.code,
   symbol: c.symbol,
   name: c.name,
@@ -31,7 +31,7 @@ describe('CurrencySelect', () => {
         label="Currency"
         value=""
         onChange={onChange}
-        currenciesData={dummyCurrenciesData}
+        currencies={dummycurrencies}
       />
     );
 
@@ -48,7 +48,7 @@ describe('CurrencySelect', () => {
         label="Currency"
         value="NGN"
         onChange={onChange}
-        currenciesData={dummyCurrenciesData}
+        currencies={dummycurrencies}
       />
     );
 
@@ -72,7 +72,7 @@ describe('CurrencySelect', () => {
         label="Currency"
         value=""
         onChange={onChange}
-        currenciesData={dummyCurrenciesData}
+        currencies={dummycurrencies}
       />
     );
 
@@ -98,7 +98,7 @@ describe('CurrencySelect', () => {
         value=""
         onChange={onChange}
         error={[{ message: 'Currency is required' }]}
-        currenciesData={dummyCurrenciesData}
+        currencies={dummycurrencies}
       />
     );
 
@@ -113,7 +113,7 @@ describe('CurrencySelect', () => {
         value="NGN"
         onChange={onChange}
         displayCode
-        currenciesData={dummyCurrenciesData}
+        currencies={dummycurrencies}
       />
     );
 
@@ -127,7 +127,7 @@ describe('CurrencySelect', () => {
         label="Currency"
         value="INVALID"
         onChange={onChange}
-        currenciesData={dummyCurrenciesData}
+        currencies={dummycurrencies}
       />
     );
 

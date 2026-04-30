@@ -3,7 +3,7 @@ import { CountryComboBox } from '@/shared/ui/country-combobox';
 import type { IAccountingStandardDto } from '@/shared/utils/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const dummyCountriesData = uiCountries.map((c) => ({
+const dummyjurisdictions = uiCountries.map((c) => ({
   code: c.code,
   name: c.name,
   currencyCode: c.currencyCode,
@@ -21,5 +21,5 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
-  args: { label: 'Country', value: '', countriesData: dummyCountriesData },
+  args: { label: 'Country', value: '', jurisdictions: dummyjurisdictions },
 };

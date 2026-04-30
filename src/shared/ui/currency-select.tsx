@@ -1,5 +1,5 @@
 import countries from '@/shared/config/countries.json' with { type: 'json' };
-import currencies from '@/shared/config/currencies.json' with { type: 'json' };
+import uiCurrencies from '@/shared/config/currencies.json' with { type: 'json' };
 import {
   Combobox,
   ComboboxContent,
@@ -18,7 +18,7 @@ import { useEffect, useMemo, useState } from 'react';
 export interface CurrencySelectProps {
   label: string;
   value: string;
-  currenciesData: ICurrencyDto[];
+  currencies: ICurrencyDto[];
   onChange: (value: string) => void;
   error?: Array<{ message?: string } | undefined>;
   displayCode?: boolean;
@@ -54,20 +54,20 @@ interface ICurrency {
 export function CurrencySelect({
   label,
   value,
-  currenciesData,
+  currencies,
   onChange,
   error,
   displayCode = false,
 }: CurrencySelectProps) {
   const mappedCurrencies = useMemo(() => {
-    return currenciesData.map((c) => {
-      const uiCurrency = currencies.find((uc) => uc.code === c.code);
+    return currencies.map((c) => {
+      const uiCurrency = uiCurrencies.find((uc) => uc.code === c.code);
       return {
         ...c,
         logo: uiCurrency?.logo || '',
       };
     });
-  }, [currenciesData]);
+  }, [currencies]);
 
   const [options, setOptions] = useState(mappedCurrencies);
 

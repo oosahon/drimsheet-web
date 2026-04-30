@@ -1,0 +1,21 @@
+# Date Handling Architecture
+
+## Core Rule
+**Do NOT import or use `dayjs`, `moment`, or native `Date` functions directly in application services, hooks, or UI components.**
+
+All date manipulation, parsing, and formatting logic MUST be centralized in:
+`src/shared/utils/date.ts`
+
+## Why?
+- **Consistency**: Ensures all dates are formatted using the same locale and options (e.g., handling jurisdiction-specific formats).
+- **Timezone Safety**: Prevents timezone offset bugs caused by native `.toISOString()` when sending dates to APIs.
+- **Maintainability**: If the date library changes (e.g., from `dayjs` to `date-fns`), the changes are localized to `date.ts`.
+
+## Working with APIs
+When formatting dates for API payloads (like `IAccountingEntityCreationDto`), use:
+```typescript
+import dateUtils from '@/shared/utils/date';
+
+// For YYYY-MM-DD
+const dateStr = dateUtils.formatDateForApi(someDate);
+```

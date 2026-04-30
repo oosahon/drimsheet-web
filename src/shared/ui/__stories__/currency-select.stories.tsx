@@ -2,7 +2,7 @@ import uiCurrencies from '@/shared/config/currencies.json' with { type: 'json' }
 import { CurrencySelect } from '@/shared/ui/currency-select';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const dummyCurrenciesData = uiCurrencies.map((c) => ({
+const dummycurrencies = uiCurrencies.map((c) => ({
   code: c.code,
   symbol: c.symbol,
   name: c.name,
@@ -19,5 +19,5 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 export const Default: Story = {
-  args: { label: 'Currency', value: '', currenciesData: dummyCurrenciesData },
+  args: { label: 'Currency', value: '', currencies: dummycurrencies },
 };

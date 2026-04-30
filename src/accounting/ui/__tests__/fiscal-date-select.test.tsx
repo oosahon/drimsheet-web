@@ -1,9 +1,9 @@
-import { FiscalYearStartSelect } from '@/accounting/ui/fiscal-year-start-select';
+import { FiscalDateSelect } from '@/accounting/ui/fiscal-date-select';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-describe('FiscalYearStartSelect', () => {
+describe('FiscalDateSelect', () => {
   beforeAll(() => {
     window.HTMLElement.prototype.hasPointerCapture = vi.fn(
       () => false
@@ -19,8 +19,9 @@ describe('FiscalYearStartSelect', () => {
   it('renders correctly with no initial value', () => {
     const onChange = vi.fn();
     render(
-      <FiscalYearStartSelect
-        value={undefined as unknown as { month: number; day: number }}
+      <FiscalDateSelect
+        label="When does your financial year start?"
+        value={undefined as unknown as Date}
         onChange={onChange}
       />
     );
@@ -33,15 +34,16 @@ describe('FiscalYearStartSelect', () => {
   it('renders correctly with an initial value', () => {
     const onChange = vi.fn();
     render(
-      <FiscalYearStartSelect
-        value={{ month: 4, day: 15 }}
+      <FiscalDateSelect
+        label="When does your financial year start?"
+        value={new Date(2024, 3, 15)}
         onChange={onChange}
       />
     );
 
-    // formatFiscalDate returns something like "April 15th"
+    // formatDateWithJurisdiction returns something like "Apr 15 2024" or "15 Apr 2024"
     expect(
-      screen.getByRole('button', { name: /April 15/i })
+      screen.getByRole('button', { name: /Apr.*15.*2024|15.*Apr.*2024/i })
     ).toBeInTheDocument();
   });
 
@@ -49,24 +51,34 @@ describe('FiscalYearStartSelect', () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <FiscalYearStartSelect value={{ month: 1, day: 1 }} onChange={onChange} />
+      <FiscalDateSelect
+        label="When does your financial year start?"
+        value={new Date(2024, 0, 1)}
+        onChange={onChange}
+      />
     );
 
-    const trigger = screen.getByRole('button', { name: /January 1/i });
+    const trigger = screen.getByRole('button', {
+      name: /Jan.*1.*2024|1.*Jan.*2024/i,
+    });
     await user.click(trigger);
 
     // The calendar should be visible, let's select a different day in the current month (January)
     const day15 = screen.getByText('15');
     await user.click(day15);
 
-    expect(onChange).toHaveBeenCalledWith({ month: 1, day: 15 });
+    expect(onChange).toHaveBeenCalledWith(expect.any(Date));
+    const calledWith = onChange.mock.calls[0][0];
+    expect(calledWith.getMonth()).toBe(0);
+    expect(calledWith.getDate()).toBe(15);
   });
 
   it('displays an error when error prop is provided', () => {
     const onChange = vi.fn();
     render(
-      <FiscalYearStartSelect
-        value={{ month: 1, day: 1 }}
+      <FiscalDateSelect
+        label="When does your financial year start?"
+        value={new Date(2024, 0, 1)}
         onChange={onChange}
         error="Date is required"
       />

@@ -1,3 +1,4 @@
+import { signupFormValidation } from '@/auth/ui/validations/signup-form.validations';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -6,7 +7,6 @@ import { PasswordInput } from '@/shared/ui/password-input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
-import * as yup from 'yup';
 
 export interface ISignupFormValues {
   firstName: string;
@@ -19,24 +19,6 @@ interface ISignupFormProps extends Omit<ComponentProps<'div'>, 'onSubmit'> {
   onSubmit: (values: ISignupFormValues) => void;
   loading: boolean;
 }
-
-const validationSchema = yup.object({
-  firstName: yup.string().required('First Name is required'),
-  lastName: yup.string().required('Last Name is required'),
-  email: yup
-    .string()
-    .email('Enter a valid email')
-    .required('Email is required'),
-  password: yup
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/(?=.*[0-9])/, 'Password must contain at least one number')
-    .matches(
-      /(?=.*[^A-Za-z0-9])/,
-      'Password must contain at least one special character'
-    )
-    .required('Password is required'),
-});
 
 export function SignupForm({
   className,
@@ -51,7 +33,7 @@ export function SignupForm({
       email: '',
       password: '',
     },
-    validationSchema: validationSchema,
+    validationSchema: signupFormValidation,
     onSubmit,
   });
 

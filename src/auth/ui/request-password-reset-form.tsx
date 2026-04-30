@@ -1,4 +1,5 @@
 import { RequestPasswordResetSuccess } from '@/auth/ui/reset-password-request-success';
+import { requestPasswordResetFormValidation } from '@/auth/ui/validations/request-password-reset-form.validations';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -6,7 +7,6 @@ import { Input } from '@/shared/ui/input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
-import * as yup from 'yup';
 
 export interface IRequestPasswordResetFormValues {
   email: string;
@@ -21,13 +21,6 @@ interface IRequestPasswordResetFormProps extends Omit<
   isSuccess: boolean;
 }
 
-const validationSchema = yup.object({
-  email: yup
-    .string()
-    .email('Enter a valid email')
-    .required('Email is required'),
-});
-
 export function RequestPasswordResetForm({
   className,
   onSubmit,
@@ -39,7 +32,7 @@ export function RequestPasswordResetForm({
     initialValues: {
       email: '',
     },
-    validationSchema: validationSchema,
+    validationSchema: requestPasswordResetFormValidation,
     onSubmit,
   });
 

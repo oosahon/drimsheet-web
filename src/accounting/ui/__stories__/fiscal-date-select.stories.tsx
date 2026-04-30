@@ -1,9 +1,9 @@
-import { FiscalYearStartSelect } from '@/accounting/ui/fiscal-year-start-select';
+import { FiscalDateSelect } from '@/accounting/ui/fiscal-date-select';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
-  title: 'Accounting/FiscalYearStartSelect',
-  component: FiscalYearStartSelect,
+  title: 'Accounting/FiscalDateSelect',
+  component: FiscalDateSelect,
   parameters: {
     layout: 'centered',
   },
@@ -16,26 +16,29 @@ const meta = {
   ],
   tags: ['autodocs'],
   args: { onChange: () => {} },
-} satisfies Meta<typeof FiscalYearStartSelect>;
+} satisfies Meta<typeof FiscalDateSelect>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    value: undefined as unknown as { month: number; day: number },
+    label: 'When does your financial year start?',
+    value: undefined as unknown as Date,
   },
 };
 
 export const Selected: Story = {
   args: {
-    value: { month: 1, day: 1 },
+    label: 'When does your financial year start?',
+    value: new Date(2024, 0, 1),
   },
 };
 
 export const WithError: Story = {
   args: {
-    value: undefined as unknown as { month: number; day: number },
+    label: 'When does your financial year start?',
+    value: undefined as unknown as Date,
     error: 'Start date is required',
   },
 };

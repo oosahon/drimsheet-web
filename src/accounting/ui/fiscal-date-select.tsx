@@ -3,40 +3,43 @@ import { Calendar } from '@/shared/ui/calendar';
 import { Field, FieldError } from '@/shared/ui/field';
 import { Label } from '@/shared/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
-import { formatFiscalDate } from '@/shared/utils/date';
+import { formatDateWithJurisdiction } from '@/shared/utils/date';
 import { Calendar1 } from 'lucide-react';
 import { useState } from 'react';
 
-interface FiscalYearStartSelectProps {
-  value: { month: number; day: number };
-  onChange: (value: { month: number; day: number }) => void;
+interface FiscalDateSelectProps {
+  label: string;
+  value: Date | null | undefined;
+  onChange: (value: Date) => void;
   error?: string;
+  countryCode?: string;
 }
 
-function FiscalYearStartSelect({
+function FiscalDateSelect({
+  label,
   value,
   onChange,
   error,
-}: FiscalYearStartSelectProps) {
+  countryCode,
+}: FiscalDateSelectProps) {
   const [showCalendar, setShowCalendar] = useState(false);
 
   const displayValue = value
-    ? formatFiscalDate(value.month, value.day)
-    : 'Select a financial start date';
-  const selectedDate = value
-    ? new Date(2024, value.month - 1, value.day)
-    : undefined;
+    ? formatDateWithJurisdiction(value, countryCode)
+    : 'Select a date';
+
+  const selectedDate = value ? value : undefined;
 
   const handleSelect = (date: Date | undefined) => {
     if (date) {
-      onChange({ month: date.getMonth() + 1, day: date.getDate() });
+      onChange(date);
       setShowCalendar(false);
     }
   };
 
   return (
     <Field>
-      <Label>When does your financial year start?</Label>
+      <Label>{label}</Label>
       <Popover open={showCalendar} onOpenChange={setShowCalendar}>
         <PopoverTrigger asChild>
           <Button
@@ -58,7 +61,10 @@ function FiscalYearStartSelect({
             defaultMonth={selectedDate}
             formatters={{
               formatMonthCaption: (date) =>
-                date.toLocaleString(undefined, { month: 'long' }),
+                date.toLocaleString(undefined, {
+                  month: 'long',
+                  year: 'numeric',
+                }),
             }}
           />
         </PopoverContent>
@@ -68,4 +74,4 @@ function FiscalYearStartSelect({
   );
 }
 
-export { FiscalYearStartSelect, type FiscalYearStartSelectProps };
+export { FiscalDateSelect, type FiscalDateSelectProps };

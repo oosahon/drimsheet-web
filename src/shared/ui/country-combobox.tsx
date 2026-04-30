@@ -17,7 +17,7 @@ import { useEffect, useMemo, useState } from 'react';
 export interface CountryComboBoxProps {
   label: string;
   value: string;
-  countriesData: IJurisdictionDto[];
+  jurisdictions: IJurisdictionDto[];
   onChange: (value: string) => void;
   error?: Array<{ message?: string } | undefined>;
 }
@@ -31,19 +31,19 @@ interface ICountry {
 export function CountryComboBox({
   label,
   value,
-  countriesData,
+  jurisdictions,
   onChange,
   error,
 }: CountryComboBoxProps) {
   const mappedCountries = useMemo(() => {
-    return countriesData.map((c) => {
+    return jurisdictions.map((c) => {
       const uiCountry = countries.find((uc) => uc.code === c.code);
       return {
         ...c,
         flag: uiCountry?.flag || '🏳️',
       };
     });
-  }, [countriesData]);
+  }, [jurisdictions]);
 
   const [options, setOptions] = useState(mappedCountries);
 

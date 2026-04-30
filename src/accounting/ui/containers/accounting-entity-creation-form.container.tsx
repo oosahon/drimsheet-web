@@ -1,9 +1,9 @@
+import useCreateAccountingEntity from '@/accounting/hooks/use-create-accounting-entity';
 import useJurisdictions from '@/accounting/hooks/use-jurisdictions';
 import {
   AccountingEntityCreationForm,
   type IAccountingEntityFormValues,
 } from '@/accounting/ui/accounting-entity-creation-form';
-import useOnboardIndividualAccountingEntity from '@/onboarding/hooks/use-onboard-individual-accounting-entity';
 import useCurrencies from '@/shared/hooks/use-currencies';
 import {
   Dialog,
@@ -25,16 +25,16 @@ export default function AccountingEntityCreationFormContainer({
   open,
   done,
 }: AccountingEntityCreationFormContainerProps) {
-  const { mutateAsync: onboardIndividual, isPending } =
-    useOnboardIndividualAccountingEntity();
+  const { mutateAsync: createAccountingEntity, isPending } =
+    useCreateAccountingEntity();
   const { data: user } = useProfile();
-  const { data: currenciesData = [] } = useCurrencies();
-  const { data: countriesData = [] } = useJurisdictions();
+  const { data: currencies = [] } = useCurrencies();
+  const { data: jurisdictions = [] } = useJurisdictions();
 
   const handleSubmit = async (values: IAccountingEntityFormValues) => {
     try {
       const userName = `${user?.firstName} ${user?.lastName}`;
-      await onboardIndividual({ ...values, name: userName });
+      await createAccountingEntity({ ...values, name: userName });
       toast.success('Welcome to the purple side!');
       done();
     } catch (error) {
@@ -54,8 +54,8 @@ export default function AccountingEntityCreationFormContainer({
         <AccountingEntityCreationForm
           loading={isPending}
           onSubmit={handleSubmit}
-          currenciesData={currenciesData}
-          countriesData={countriesData}
+          currencies={currencies}
+          jurisdictions={jurisdictions}
         />
       </DialogContent>
     </Dialog>

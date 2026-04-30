@@ -8,7 +8,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-const dummyCountriesData: IJurisdictionDto[] = uiCountries.map((c) => ({
+const dummyjurisdictions: IJurisdictionDto[] = uiCountries.map((c) => ({
   code: c.code,
   name: c.name,
   currencyCode: c.currencyCode,
@@ -23,7 +23,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value=""
         onChange={onChange}
-        countriesData={dummyCountriesData}
+        jurisdictions={dummyjurisdictions}
       />
     );
 
@@ -38,7 +38,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value="NG"
         onChange={onChange}
-        countriesData={dummyCountriesData}
+        jurisdictions={dummyjurisdictions}
       />
     );
 
@@ -54,7 +54,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value=""
         onChange={onChange}
-        countriesData={dummyCountriesData}
+        jurisdictions={dummyjurisdictions}
       />
     );
 
@@ -78,7 +78,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value=""
         onChange={onChange}
-        countriesData={dummyCountriesData}
+        jurisdictions={dummyjurisdictions}
       />
     );
 
@@ -103,7 +103,7 @@ describe('CountryComboBox', () => {
         value=""
         onChange={onChange}
         error={[{ message: 'Country is required' }]}
-        countriesData={dummyCountriesData}
+        jurisdictions={dummyjurisdictions}
       />
     );
 
@@ -118,7 +118,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value=""
         onChange={onChange}
-        countriesData={dummyCountriesData}
+        jurisdictions={dummyjurisdictions}
       />
     );
 
@@ -136,7 +136,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value="US"
         onChange={onChange}
-        countriesData={dummyCountriesData}
+        jurisdictions={dummyjurisdictions}
       />
     );
 
@@ -158,7 +158,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value="INVALID"
         onChange={onChange}
-        countriesData={dummyCountriesData}
+        jurisdictions={dummyjurisdictions}
       />
     );
 

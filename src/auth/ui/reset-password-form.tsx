@@ -1,3 +1,4 @@
+import { resetPasswordFormValidation } from '@/auth/ui/validations/reset-password-form.validations';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -6,7 +7,6 @@ import { PasswordInput } from '@/shared/ui/password-input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik, type FormikHelpers } from 'formik';
 import { type ComponentProps } from 'react';
-import * as yup from 'yup';
 
 export interface IResetPasswordFormValues {
   password: string;
@@ -25,22 +25,6 @@ export interface ResetPasswordFormProps extends Omit<
   loading: boolean;
 }
 
-const validationSchema = yup.object({
-  password: yup
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .matches(/(?=.*[0-9])/, 'Password must contain at least one number')
-    .matches(
-      /(?=.*[^A-Za-z0-9])/,
-      'Password must contain at least one special character'
-    )
-    .required('Password is required'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password')], 'Passwords must match')
-    .required('Confirm Password is required'),
-});
-
 export function ResetPasswordForm({
   className,
   email,
@@ -53,7 +37,7 @@ export function ResetPasswordForm({
       password: '',
       confirmPassword: '',
     },
-    validationSchema: validationSchema,
+    validationSchema: resetPasswordFormValidation,
     onSubmit,
   });
 
