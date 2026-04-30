@@ -144,7 +144,7 @@ describe('AccountingEntityCreationForm Validation', () => {
     await expect(
       accountingEntityCreationFormValidation.validate(invalidData)
     ).rejects.toThrow(
-      'The difference between the start and end dates MUST not be more than 23months or less than one month.'
+      'The difference between the start and end dates MUST not be more than 23 months or less than one month.'
     );
   });
 });
