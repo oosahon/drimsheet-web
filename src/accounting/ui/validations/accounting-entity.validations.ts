@@ -25,7 +25,7 @@ export const accountingEntityCreationFormValidation = yup.object({
     .required('Fiscal year end is required')
     .test(
       'is-valid-duration',
-      'The difference between the start and end dates MUST not be more than 23months or less than one month.',
+      'The difference between the start and end dates MUST not be more than 23 months or less than one month.',
       function (value) {
         const { fiscalYearStart } = this.parent;
         if (!fiscalYearStart || !value) return true;

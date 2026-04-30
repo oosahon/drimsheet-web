@@ -581,7 +581,7 @@ export class Api<
      * @request GET:/currencies
      */
     getAll: (params: RequestParams = {}) =>
-      this.request<ICurrencyDto[], any>({
+      this.request<ICurrencyDto[], IApiError>({
         path: `/currencies`,
         method: 'GET',
         format: 'json',
@@ -787,7 +787,7 @@ export class Api<
      * @request GET:/accounting/jurisdictions
      */
     getJurisdictions: (params: RequestParams = {}) =>
-      this.request<IJurisdictionDto[], any>({
+      this.request<IJurisdictionDto[], IApiError>({
         path: `/accounting/jurisdictions`,
         method: 'GET',
         format: 'json',

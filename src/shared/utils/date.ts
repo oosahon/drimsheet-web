@@ -5,6 +5,7 @@ import advancedFormat from 'dayjs/plugin/advancedFormat';
 dayjs.extend(advancedFormat);
 
 export const JS_MONTH_INDEX_OFFSET = 1;
+export const DEFAULT_LOCALE = 'en-US';
 
 export const formatOptions = Object.freeze({
   monthAndDayOnly: 'MMMM Do',
@@ -26,7 +27,11 @@ export function getFiscalYearDateRange(
   day: number
 ): { startDate: Date; endDate: Date } {
   const currentYear = new Date().getFullYear();
-  const startDate = new Date(currentYear, month - 1, day);
+  const isLeapYear =
+    (currentYear % 4 === 0 && currentYear % 100 !== 0) ||
+    currentYear % 400 === 0;
+  const actualDay = month === 2 && day === 29 && !isLeapYear ? 28 : day;
+  const startDate = new Date(currentYear, month - 1, actualDay);
   const endDate = dayjs(startDate).add(1, 'year').subtract(1, 'day').toDate();
   return { startDate, endDate };
 }
@@ -43,12 +48,16 @@ export function formatDateWithJurisdiction(
   date: Date,
   countryCode?: string
 ): string {
-  let locale = 'en-US';
+  let locale = DEFAULT_LOCALE;
   if (countryCode) {
     const country = countries.find((c) => c.code === countryCode);
     if (country && country.locale) {
       locale = country.locale;
     }
+  }
+
+  if (!dayjs(date).isValid()) {
+    return 'Invalid Date';
   }
 
   try {
@@ -60,7 +69,7 @@ export function formatDateWithJurisdiction(
       .format(date)
       .replace(/,/g, '');
   } catch {
-    return new Intl.DateTimeFormat('en-US', {
+    return new Intl.DateTimeFormat(DEFAULT_LOCALE, {
       year: 'numeric',
       month: 'short',
       day: 'numeric',

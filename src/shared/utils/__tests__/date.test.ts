@@ -1,5 +1,8 @@
 import {
+  formatDateForApi,
+  formatDateWithJurisdiction,
   formatFiscalDateWithYear,
+  getDurationInMonths,
   getFiscalYearDateRange,
   isValidFiscalYearDuration,
   shiftDateByDistance,
@@ -106,6 +109,39 @@ describe('date utils', () => {
       // This is a sanity check that it runs.
       expect(startDate).toBeInstanceOf(Date);
       expect(endDate).toBeInstanceOf(Date);
+    });
+  });
+
+  describe('formatDateForApi', () => {
+    it('formats date as YYYY-MM-DD', () => {
+      const date = new Date(2026, 0, 15);
+      expect(formatDateForApi(date)).toBe('2026-01-15');
+    });
+  });
+
+  describe('formatDateWithJurisdiction', () => {
+    it('formats date using default locale if country code is missing', () => {
+      const date = new Date(2026, 0, 15);
+      expect(formatDateWithJurisdiction(date)).toBe('Jan 15 2026');
+    });
+
+    it('returns "Invalid Date" for invalid date', () => {
+      const invalidDate = new Date('invalid');
+      expect(formatDateWithJurisdiction(invalidDate)).toBe('Invalid Date');
+    });
+  });
+
+  describe('getDurationInMonths', () => {
+    it('returns 1 for exact one month duration', () => {
+      const start = new Date(2026, 0, 1);
+      const end = new Date(2026, 0, 31);
+      expect(getDurationInMonths(start, end)).toBe(1);
+    });
+
+    it('returns 12 for typical 12 month duration', () => {
+      const start = new Date(2026, 0, 1);
+      const end = new Date(2026, 11, 31);
+      expect(getDurationInMonths(start, end)).toBe(12);
     });
   });
 });
