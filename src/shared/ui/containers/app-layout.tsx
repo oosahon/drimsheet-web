@@ -1,4 +1,4 @@
-import OnboardingManager from '@/onboarding/ui/containers/onboarding-manager';
+import OnboardingManager from '@/onboarding/ui/containers/onboarding-manager.container';
 import {
   SidebarInset,
   SidebarProvider,

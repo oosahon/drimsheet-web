@@ -1,3 +1,5 @@
+import { pettyCashAccountFormValidation } from '@/ledger-accounts/ui/validations/petty-cash-account-form.validations';
+import useCurrencies from '@/shared/hooks/use-currencies';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { CurrencySelect } from '@/shared/ui/currency-select';
@@ -6,7 +8,6 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { MoneyInput } from '@/shared/ui/money-input';
 import { useFormik } from 'formik';
-import * as yup from 'yup';
 
 export interface IPettyCashAccountFormValues {
   name: string;
@@ -25,27 +26,15 @@ const initialValues: IPettyCashAccountFormValues = {
   openingBalance: 0,
 };
 
-const validationSchema = yup.object({
-  name: yup
-    .string()
-    .required('Account name is required')
-    .min(3, 'Account name must be at least 3 characters')
-    .max(100, 'Account name must not exceed 100 characters'),
-  currencyCode: yup.string().required('Currency is required'),
-  openingBalance: yup
-    .number()
-    .required('Opening balance is required')
-    .min(0, 'Opening balance cannot be negative'),
-});
-
 export function PettyCashAccountForm({
   onSubmit,
   loading,
 }: IPettyCashAccountFormProps) {
+  const { data: currencies = [] } = useCurrencies();
   const { handleChange, values, setFieldValue, handleSubmit, errors, touched } =
     useFormik<IPettyCashAccountFormValues>({
       initialValues,
-      validationSchema,
+      validationSchema: pettyCashAccountFormValidation,
       onSubmit,
     });
 
@@ -68,6 +57,7 @@ export function PettyCashAccountForm({
             <CurrencySelect
               label="Currency"
               value={values.currencyCode}
+              currencies={currencies}
               onChange={(val) => setFieldValue('currencyCode', val)}
               error={getErrorMessage('currencyCode')}
               displayCode

@@ -13,6 +13,7 @@ purpleLedgerApi.instance.defaults.withCredentials = true;
 purpleLedgerApi.instance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = authService.getToken();
+
     const accountingEntityId = localStorageService.getAccountingEntityId();
 
     config.headers.withCredentials = true;

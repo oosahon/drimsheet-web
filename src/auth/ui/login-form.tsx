@@ -1,3 +1,4 @@
+import { loginFormValidation } from '@/auth/ui/validations/login-form.validations';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -7,7 +8,6 @@ import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
 import { Link } from 'react-router-dom';
-import * as yup from 'yup';
 
 export interface ILoginFormValues {
   email: string;
@@ -18,14 +18,6 @@ interface ILoginFormProps extends Omit<ComponentProps<'div'>, 'onSubmit'> {
   onSubmit: (values: ILoginFormValues) => void;
   loading: boolean;
 }
-
-const validationSchema = yup.object({
-  email: yup
-    .string()
-    .email('Enter a valid email')
-    .required('Email is required'),
-  password: yup.string().required('Password is required'),
-});
 
 export function LoginForm({
   className,
@@ -38,7 +30,7 @@ export function LoginForm({
       email: '',
       password: '',
     },
-    validationSchema: validationSchema,
+    validationSchema: loginFormValidation,
     onSubmit,
   });
 

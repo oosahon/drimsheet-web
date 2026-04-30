@@ -10,27 +10,179 @@
  * ---------------------------------------------------------------
  */
 
-export enum UExchangeRateType {
-  Official = 'official',
-  Negotiated = 'negotiated',
-}
+export const EPeriodUnit = {
+  Day: 'day',
+  Week: 'week',
+  Month: 'month',
+  Quarter: 'quarter',
+  Year: 'year',
+} as const;
+export type UPeriodUnit = (typeof EPeriodUnit)[keyof typeof EPeriodUnit];
 
-export enum UAccountingEntityType {
-  Individual = 'individual',
-  SoleTrader = 'sole_trader',
-  Company = 'company',
-}
+export const EJurisdictionCode = {
+  AD: 'AD',
+  AE: 'AE',
+  AR: 'AR',
+  AT: 'AT',
+  AU: 'AU',
+  BD: 'BD',
+  BE: 'BE',
+  BR: 'BR',
+  CA: 'CA',
+  CH: 'CH',
+  CI: 'CI',
+  CL: 'CL',
+  CM: 'CM',
+  CN: 'CN',
+  CO: 'CO',
+  CY: 'CY',
+  CZ: 'CZ',
+  DE: 'DE',
+  DK: 'DK',
+  DZ: 'DZ',
+  EE: 'EE',
+  EG: 'EG',
+  ES: 'ES',
+  FI: 'FI',
+  FR: 'FR',
+  GB: 'GB',
+  GH: 'GH',
+  GR: 'GR',
+  HK: 'HK',
+  HR: 'HR',
+  HU: 'HU',
+  ID: 'ID',
+  IE: 'IE',
+  IL: 'IL',
+  IN: 'IN',
+  IT: 'IT',
+  JP: 'JP',
+  KE: 'KE',
+  KR: 'KR',
+  LT: 'LT',
+  LU: 'LU',
+  LV: 'LV',
+  MA: 'MA',
+  MC: 'MC',
+  MT: 'MT',
+  MX: 'MX',
+  MY: 'MY',
+  NG: 'NG',
+  NL: 'NL',
+  NO: 'NO',
+  NZ: 'NZ',
+  PE: 'PE',
+  PH: 'PH',
+  PK: 'PK',
+  PL: 'PL',
+  PT: 'PT',
+  RO: 'RO',
+  RU: 'RU',
+  SA: 'SA',
+  SE: 'SE',
+  SG: 'SG',
+  SI: 'SI',
+  SK: 'SK',
+  SM: 'SM',
+  SN: 'SN',
+  TH: 'TH',
+  TR: 'TR',
+  TW: 'TW',
+  TZ: 'TZ',
+  UA: 'UA',
+  UG: 'UG',
+  US: 'US',
+  VA: 'VA',
+  VN: 'VN',
+  ZA: 'ZA',
+} as const;
+export type UJurisdictionCode =
+  (typeof EJurisdictionCode)[keyof typeof EJurisdictionCode];
 
-export enum UAppUsageMode {
-  PowerUser = 'power_user',
-  NonPowerUser = 'non_power_user',
-}
+export const ECurrencyCode = {
+  AED: 'AED',
+  ARS: 'ARS',
+  AUD: 'AUD',
+  BDT: 'BDT',
+  BRL: 'BRL',
+  CAD: 'CAD',
+  CHF: 'CHF',
+  CLP: 'CLP',
+  CNY: 'CNY',
+  COP: 'COP',
+  CZK: 'CZK',
+  DKK: 'DKK',
+  DZD: 'DZD',
+  EGP: 'EGP',
+  EUR: 'EUR',
+  GBP: 'GBP',
+  GHS: 'GHS',
+  HKD: 'HKD',
+  HUF: 'HUF',
+  IDR: 'IDR',
+  ILS: 'ILS',
+  INR: 'INR',
+  JPY: 'JPY',
+  KES: 'KES',
+  KRW: 'KRW',
+  MAD: 'MAD',
+  MXN: 'MXN',
+  MYR: 'MYR',
+  NGN: 'NGN',
+  NOK: 'NOK',
+  NZD: 'NZD',
+  PEN: 'PEN',
+  PHP: 'PHP',
+  PKR: 'PKR',
+  PLN: 'PLN',
+  RON: 'RON',
+  RUB: 'RUB',
+  SAR: 'SAR',
+  SEK: 'SEK',
+  SGD: 'SGD',
+  THB: 'THB',
+  TRY: 'TRY',
+  TWD: 'TWD',
+  TZS: 'TZS',
+  UAH: 'UAH',
+  UGX: 'UGX',
+  USD: 'USD',
+  VND: 'VND',
+  XAF: 'XAF',
+  XOF: 'XOF',
+  ZAR: 'ZAR',
+} as const;
+export type UCurrencyCode = (typeof ECurrencyCode)[keyof typeof ECurrencyCode];
 
-export enum UAppThemePreference {
-  Light = 'light',
-  Dark = 'dark',
-  System = 'system',
-}
+export const EAccountingEntityType = {
+  Individual: 'individual',
+  SoleTrader: 'sole_trader',
+  PrivateCompany: 'private_company',
+} as const;
+export type UAccountingEntityType =
+  (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
+
+export const EExchangeRateType = {
+  Official: 'official',
+  Negotiated: 'negotiated',
+} as const;
+export type UExchangeRateType =
+  (typeof EExchangeRateType)[keyof typeof EExchangeRateType];
+
+export const EAppUsageModePreference = {
+  PowerUser: 'power_user',
+  NonPowerUser: 'non_power_user',
+} as const;
+export type UAppUsageModePreference =
+  (typeof EAppUsageModePreference)[keyof typeof EAppUsageModePreference];
+
+export const EAppThemePreference = {
+  Light: 'light',
+  Dark: 'dark',
+  System: 'system',
+} as const;
+export type UAppThemePreference =
+  (typeof EAppThemePreference)[keyof typeof EAppThemePreference];
 
 export type TEntityId = string & {
   __brand: 'uuid';
@@ -38,7 +190,7 @@ export type TEntityId = string & {
 
 export interface IUserAppPreferences {
   theme?: UAppThemePreference | null;
-  appUsageMode?: UAppUsageMode | null;
+  appUsageMode?: UAppUsageModePreference | null;
 }
 
 export interface IUserPreferences {
@@ -75,31 +227,12 @@ export interface IUser {
   deletedAt: string | null;
 }
 
-/**
- * Represents the month and day on which an accounting entity's fiscal year ends.
- * Defaults to December 31 for individuals. Companies and sole traders
- * may configure any valid calendar date (e.g., March 31, June 30).
- */
-export interface IFiscalYearStart {
-  /** @format double */
-  month: number;
-  /** @format double */
-  day: number;
-}
-
-export interface IAccountingEntityOnboardingReq {
+export interface ICurrencyDto {
+  code: string;
+  symbol: string;
   name: string;
-  entityType: UAccountingEntityType;
-  operatingCountryCode: string;
-  functionalCurrencyCode: string;
-  reportingCurrencyCode: string;
-  /**
-   * Represents the month and day on which an accounting entity's fiscal year ends.
-   * Defaults to December 31 for individuals. Companies and sole traders
-   * may configure any valid calendar date (e.g., March 31, June 30).
-   */
-  fiscalYearStart: IFiscalYearStart;
-  appUsageMode: UAppUsageMode;
+  /** @format double */
+  minorUnit: number;
 }
 
 export interface IUserSignupReq {
@@ -157,47 +290,59 @@ export interface IPettyCashAccountCreationReq {
   openingBalance: IOpeningBalanceDto | null;
 }
 
-/** From T, pick a set of properties whose keys are in the union K */
-export interface PickIAccountingEntityExcludeKeysFunctionalCurrencyOrReportingCurrency {
-  type: UAccountingEntityType;
+export interface IAccountingEntity {
   id: TEntityId;
   name: string;
-  operatingCountryCode: string;
+  type: UAccountingEntityType;
   ownerId: TEntityId;
-  /**
-   * Represents the month and day on which an accounting entity's fiscal year ends.
-   * Defaults to December 31 for individuals. Companies and sole traders
-   * may configure any valid calendar date (e.g., March 31, June 30).
-   */
-  fiscalYearStart: IFiscalYearStart;
+  functionalCurrencyCode: UCurrencyCode;
+  jurisdictionCode: UJurisdictionCode;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
   updatedAt: string;
-  /** @format date-time */
-  deletedAt: string;
 }
 
-export interface IAccountingEntityRes {
-  type: UAccountingEntityType;
-  id: TEntityId;
+/** Fiscal year creation DTO */
+export interface IFiscalYearCreationDto {
+  /** @format date-time */
+  startDate: string;
+  /** @format date-time */
+  endDate: string;
+}
+
+export interface IPeriodCreationDto {
+  unit: UPeriodUnit;
+  /** @format double */
+  count: number;
+}
+
+/** Accounting entity onboarding DTO */
+export interface IAccountingEntityCreationDto {
   name: string;
-  operatingCountryCode: string;
-  ownerId: TEntityId;
-  /**
-   * Represents the month and day on which an accounting entity's fiscal year ends.
-   * Defaults to December 31 for individuals. Companies and sole traders
-   * may configure any valid calendar date (e.g., March 31, June 30).
-   */
-  fiscalYearStart: IFiscalYearStart;
-  /** @format date-time */
-  createdAt: string;
-  /** @format date-time */
-  updatedAt: string;
-  /** @format date-time */
-  deletedAt: string;
-  functionalCurrency: string;
-  reportingCurrency: string;
+  entityType: UAccountingEntityType;
+  jurisdictionCode: string;
+  accountingStandardCode: string;
+  functionalCurrencyCode: string;
+  reportingCurrencyCode: string;
+  /** Fiscal year creation DTO */
+  fiscalYear: IFiscalYearCreationDto;
+  accountingPeriod: IPeriodCreationDto;
+  reportingPeriod: IPeriodCreationDto;
+  appUsageMode: UAppUsageModePreference;
+}
+
+export interface IAccountingStandardDto {
+  individual: string[];
+  sole_trader: string[];
+  private_company: string[];
+}
+
+export interface IJurisdictionDto {
+  code: string;
+  name: string;
+  currencyCode: string;
+  accountingStandards: IAccountingStandardDto;
 }
 
 import type {
@@ -245,13 +390,14 @@ export interface ApiConfig<SecurityDataType = unknown> extends Omit<
   format?: ResponseType;
 }
 
-export enum ContentType {
-  Json = 'application/json',
-  JsonApi = 'application/vnd.api+json',
-  FormData = 'multipart/form-data',
-  UrlEncoded = 'application/x-www-form-urlencoded',
-  Text = 'text/plain',
-}
+export const EContentType = {
+  Json: 'application/json',
+  JsonApi: 'application/vnd.api+json',
+  FormData: 'multipart/form-data',
+  UrlEncoded: 'application/x-www-form-urlencoded',
+  Text: 'text/plain',
+} as const;
+export type ContentType = (typeof EContentType)[keyof typeof EContentType];
 
 export class HttpClient<SecurityDataType = unknown> {
   public instance: AxiosInstance;
@@ -348,7 +494,7 @@ export class HttpClient<SecurityDataType = unknown> {
     const responseFormat = format || this.format || undefined;
 
     if (
-      type === ContentType.FormData &&
+      type === EContentType.FormData &&
       body &&
       body !== null &&
       typeof body === 'object'
@@ -357,7 +503,7 @@ export class HttpClient<SecurityDataType = unknown> {
     }
 
     if (
-      type === ContentType.Text &&
+      type === EContentType.Text &&
       body &&
       body !== null &&
       typeof body !== 'string'
@@ -426,47 +572,16 @@ export class Api<
         ...params,
       }),
   };
-  onboarding = {
-    /**
-     * @description Onboard an accounting entity
-     *
-     * @tags Onboarding
-     * @name OnboardAccountingEntity
-     * @request POST:/onboarding/accounting-entity
-     * @secure
-     */
-    onboardAccountingEntity: (
-      data: IAccountingEntityOnboardingReq,
-      params: RequestParams = {}
-    ) =>
-      this.request<void, IApiError>({
-        path: `/onboarding/accounting-entity`,
-        method: 'POST',
-        body: data,
-        secure: true,
-        type: ContentType.Json,
-        ...params,
-      }),
-  };
   currencies = {
     /**
      * @description Gets all system currencies
      *
      * @tags Currency
-     * @name GetCurrencies
+     * @name GetAll
      * @request GET:/currencies
      */
-    getCurrencies: (params: RequestParams = {}) =>
-      this.request<
-        {
-          name: string;
-          symbol: string;
-          code: string;
-          /** @format double */
-          minorUnit: number;
-        }[],
-        any
-      >({
+    getAll: (params: RequestParams = {}) =>
+      this.request<ICurrencyDto[], IApiError>({
         path: `/currencies`,
         method: 'GET',
         format: 'json',
@@ -486,7 +601,7 @@ export class Api<
         path: `/auth/signup-with-email`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         ...params,
       }),
 
@@ -523,7 +638,7 @@ export class Api<
         path: `/auth/login-with-email`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -545,7 +660,7 @@ export class Api<
         path: `/auth/get-password-reset-link`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         ...params,
       }),
 
@@ -561,7 +676,7 @@ export class Api<
         path: `/auth/reset-password`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -623,37 +738,72 @@ export class Api<
         ...params,
       }),
   };
-  assetAccounts = {
+  ledger = {
     /**
      * @description Create a new petty cash sub account
      *
-     * @tags Asset Accounts
-     * @name CreatePettyCashSubAccount
-     * @request POST:/asset-accounts
+     * @tags Ledger, Asset Account
+     * @name MakePettyCashSubAccount
+     * @request POST:/ledger/asset-accounts
      */
-    createPettyCashSubAccount: (
+    makePettyCashSubAccount: (
       data: IPettyCashAccountCreationReq,
       params: RequestParams = {}
     ) =>
       this.request<void, IApiError>({
-        path: `/asset-accounts`,
+        path: `/ledger/asset-accounts`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: EContentType.Json,
         ...params,
       }),
   };
-  accountingEntities = {
+  accounting = {
     /**
-     * @description Get all accounting entities of an authenticated user
+     * @description Create a new accounting entity
      *
-     * @tags Accounting Entity
-     * @name GetAll
-     * @request GET:/accounting-entities
+     * @tags Accounting
+     * @name CreateAccountingEntity
+     * @request POST:/accounting/accounting-entity
      */
-    getAll: (params: RequestParams = {}) =>
-      this.request<IAccountingEntityRes[], any>({
-        path: `/accounting-entities`,
+    createAccountingEntity: (
+      data: IAccountingEntityCreationDto,
+      params: RequestParams = {}
+    ) =>
+      this.request<IAccountingEntity, IApiError>({
+        path: `/accounting/accounting-entity`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get jurisdictions
+     *
+     * @tags Accounting
+     * @name GetJurisdictions
+     * @request GET:/accounting/jurisdictions
+     */
+    getJurisdictions: (params: RequestParams = {}) =>
+      this.request<IJurisdictionDto[], IApiError>({
+        path: `/accounting/jurisdictions`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get user accounting entities
+     *
+     * @tags Accounting
+     * @name GetUserAccountingEntities
+     * @request GET:/accounting/accounting-entities
+     */
+    getUserAccountingEntities: (params: RequestParams = {}) =>
+      this.request<IAccountingEntity[], IApiError>({
+        path: `/accounting/accounting-entities`,
         method: 'GET',
         format: 'json',
         ...params,

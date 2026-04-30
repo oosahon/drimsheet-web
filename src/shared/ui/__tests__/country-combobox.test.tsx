@@ -1,12 +1,31 @@
+import uiCountries from '@/shared/config/countries.json' with { type: 'json' };
 import { CountryComboBox } from '@/shared/ui/country-combobox';
+import type {
+  IAccountingStandardDto,
+  IJurisdictionDto,
+} from '@/shared/utils/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
+const dummyjurisdictions: IJurisdictionDto[] = uiCountries.map((c) => ({
+  code: c.code,
+  name: c.name,
+  currencyCode: c.currencyCode,
+  accountingStandards: {} as IAccountingStandardDto,
+}));
+
 describe('CountryComboBox', () => {
   it('renders correctly with no initial value', () => {
     const onChange = vi.fn();
-    render(<CountryComboBox label="Country" value="" onChange={onChange} />);
+    render(
+      <CountryComboBox
+        label="Country"
+        value=""
+        onChange={onChange}
+        jurisdictions={dummyjurisdictions}
+      />
+    );
 
     expect(screen.getByLabelText('Country')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Select a country')).toBeInTheDocument();
@@ -14,7 +33,14 @@ describe('CountryComboBox', () => {
 
   it('renders with an initial value and displays the correct flag', () => {
     const onChange = vi.fn();
-    render(<CountryComboBox label="Country" value="NG" onChange={onChange} />);
+    render(
+      <CountryComboBox
+        label="Country"
+        value="NG"
+        onChange={onChange}
+        jurisdictions={dummyjurisdictions}
+      />
+    );
 
     // Since Nigeria flag is rendered, we can find it
     expect(screen.getByText('🇳🇬')).toBeInTheDocument();
@@ -23,7 +49,14 @@ describe('CountryComboBox', () => {
   it('opens the combobox and selects a country', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CountryComboBox label="Country" value="" onChange={onChange} />);
+    render(
+      <CountryComboBox
+        label="Country"
+        value=""
+        onChange={onChange}
+        jurisdictions={dummyjurisdictions}
+      />
+    );
 
     const input = screen.getByPlaceholderText('Select a country');
     await user.click(input);
@@ -40,7 +73,14 @@ describe('CountryComboBox', () => {
   it('filters countries when typing', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CountryComboBox label="Country" value="" onChange={onChange} />);
+    render(
+      <CountryComboBox
+        label="Country"
+        value=""
+        onChange={onChange}
+        jurisdictions={dummyjurisdictions}
+      />
+    );
 
     const input = screen.getByPlaceholderText('Select a country');
     await user.type(input, 'cana'); // Should match Canada
@@ -63,6 +103,7 @@ describe('CountryComboBox', () => {
         value=""
         onChange={onChange}
         error={[{ message: 'Country is required' }]}
+        jurisdictions={dummyjurisdictions}
       />
     );
 
@@ -72,7 +113,14 @@ describe('CountryComboBox', () => {
   it('shows empty state when no countries match', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CountryComboBox label="Country" value="" onChange={onChange} />);
+    render(
+      <CountryComboBox
+        label="Country"
+        value=""
+        onChange={onChange}
+        jurisdictions={dummyjurisdictions}
+      />
+    );
 
     const input = screen.getByPlaceholderText('Select a country');
     await user.type(input, 'xyz123');
@@ -83,7 +131,14 @@ describe('CountryComboBox', () => {
   it('calls onChange with empty string if value is cleared', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CountryComboBox label="Country" value="US" onChange={onChange} />);
+    render(
+      <CountryComboBox
+        label="Country"
+        value="US"
+        onChange={onChange}
+        jurisdictions={dummyjurisdictions}
+      />
+    );
 
     const input = screen.getByPlaceholderText('Select a country');
     // Clear the input
@@ -99,7 +154,12 @@ describe('CountryComboBox', () => {
   it('handles invalid initial value gracefully', () => {
     const onChange = vi.fn();
     render(
-      <CountryComboBox label="Country" value="INVALID" onChange={onChange} />
+      <CountryComboBox
+        label="Country"
+        value="INVALID"
+        onChange={onChange}
+        jurisdictions={dummyjurisdictions}
+      />
     );
 
     // Should render the fallback GlobeIcon

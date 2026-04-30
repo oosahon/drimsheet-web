@@ -4,6 +4,10 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
+vi.mock('@/shared/hooks/use-currencies', () => ({
+  default: () => ({ data: [] }),
+}));
+
 describe('PettyCashAccountForm', () => {
   it('renders correctly', () => {
     render(
