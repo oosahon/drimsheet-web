@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 export type TApiErrorKey = keyof typeof apiErrorsJson;
 
-export const isApiErrorKey = (key: string): key is TApiErrorKey => {
+const isApiErrorKey = (key: string): key is TApiErrorKey => {
   return key in apiErrorsJson;
 };
 
