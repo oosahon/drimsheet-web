@@ -1,11 +1,12 @@
 import useSignupWithEmail from '@/auth/hooks/use-signup-with-email';
 import { SignupForm, type ISignupFormValues } from '@/auth/ui/signup-form';
-import { handleApiError } from '@/shared/utils/api/errors';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export function SignupFormContainer() {
+  const handleApiError = useApiErrorHandler();
   const { t } = useTranslation(['auth']);
   const account_created_success_text = t('account_created_success_text');
 

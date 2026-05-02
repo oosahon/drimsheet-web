@@ -4,8 +4,8 @@ import {
   ResetPasswordForm,
   type ResetPasswordFormProps,
 } from '@/auth/ui/reset-password-form';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import type { IApiValidationError } from '@/shared/utils/api/Api';
-import { handleApiError } from '@/shared/utils/api/errors';
 
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 type TSubmitHandler = ResetPasswordFormProps['onSubmit'];
 
 export function ResetPasswordFormContainer() {
+  const handleApiError = useApiErrorHandler();
   const { t } = useTranslation(['auth']);
   const password_reset_success_text = t('password_reset_success_text');
 

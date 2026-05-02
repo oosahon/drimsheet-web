@@ -1,58 +1,20 @@
-import observabilityService from '@/shared/services/observability.service';
-import { toast } from 'sonner';
-
-import authService from '@/auth/services/auth.service';
-import type { IApiValidationError } from '@/shared/utils/api/Api';
+import type { IHttpErrorDto } from '@/shared/utils/api/Api';
 import { type AxiosError } from 'axios';
 
-type TApiError = {
-  code?: number;
-  message?: string;
-  validationErrors: IApiValidationError[];
+export type TApiError = IHttpErrorDto & {
+  code: number;
 };
 
-export const parseApiError = (err: unknown) => {
-  const error = err as AxiosError<TApiError>;
+export const parseApiError = (err: unknown): TApiError => {
+  const error = err as AxiosError<IHttpErrorDto>;
 
   const { response } = error;
 
-  const errorObj: TApiError = {
+  return {
     code: response?.status ?? 500,
-    message: response?.data?.message,
+    name: response?.data?.name ?? 'UnknownError',
+    errorKey: response?.data?.errorKey ?? '',
     validationErrors: response?.data?.validationErrors ?? [],
+    cause: response?.data?.cause,
   };
-
-  return errorObj;
-};
-
-type THandleErrorOptions = {
-  showToast?: boolean;
-  setValidationError?: (validationError: IApiValidationError[]) => void;
-  report?: boolean;
-};
-
-export const handleApiError = (err: unknown, options?: THandleErrorOptions) => {
-  try {
-    const error = parseApiError(err);
-
-    if (error.code === 401) {
-      authService.removeToken();
-      window.location.href = '/auth/signin';
-      return;
-    }
-
-    if (error.code === 500) {
-      observabilityService.report(new Error('Server error'), error);
-    }
-
-    if (options?.showToast) {
-      toast.error(error.message ?? 'An error occurred');
-    }
-
-    options?.setValidationError?.(error.validationErrors);
-
-    return error;
-  } catch (error) {
-    observabilityService.report(error as Error, {});
-  }
 };

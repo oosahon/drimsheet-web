@@ -1,12 +1,13 @@
 import useVerifyEmail from '@/auth/hooks/use-verify-email';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import FullPageLoader from '@/shared/ui/full-page-loader';
-import { handleApiError } from '@/shared/utils/api/errors';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export default function CompleteSignupRoute() {
+  const handleApiError = useApiErrorHandler();
   const { t } = useTranslation('auth');
 
   const navigate = useNavigate();
