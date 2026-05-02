@@ -1,2 +1,3 @@
 yarn test --run
 yarn check-stories
+npm run sync:errors
