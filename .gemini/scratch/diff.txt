@@ -1,0 +1,2065 @@
+diff --git a/.agent/shared/rules/artifact-creation.rule.md b/.agent/shared/rules/artifact-creation.rule.md
+new file mode 100644
+index 0000000..19b42d4
+--- /dev/null
++++ b/.agent/shared/rules/artifact-creation.rule.md
+@@ -0,0 +1,10 @@
++# Artifact Creation Rules
++
++## 1. Intentionality and Organization
++
++If you create files for the sole purpose of working with me as an agent, they must be created in the .agent/created_artifacts directory.
++You must not pollute the codebase with these files.
++
++## 2. Permission-Based Creation
++
++If you need to create new files, you must ask for permission first.
+diff --git a/.agent/shared/rules/component-anatomy.rule.md b/.agent/shared/rules/component-anatomy.rule.md
+new file mode 100644
+index 0000000..63cf049
+--- /dev/null
++++ b/.agent/shared/rules/component-anatomy.rule.md
+@@ -0,0 +1,32 @@
++# Component Anatomy Rule
++
++Inside every component function, order variables, hooks and event handlers in the following order. Note that this is a guide, not a hard and fast rule. Exceptions are acceptable when necessary (e.g., initializing `useState` with a custom hook's return value).
++
++- third party library hooks (eg, `useNavigate`, `useQuery`, `useMutation`, `useTranslation`)
++- React's useState
++- React's useRef
++- React's useReducer
++- React's useMemo (for derived state or complex calculations)
++- custom hooks (eg `useGetUser`, `useCreateEntity`, etc)
++- formik hooks (eg `useFormik`, `useField`, `useFormikContext`, etc)
++- event handlers (e.g, `handleSubmit`, `handleChange`, etc) - Note: `useCallback`-wrapped handlers should be collocated here.
++- useEffect
++- early returns / guard clauses (e.g., `if (isLoading) return <Loader />`)
++- destructures and UI related variable declarations (specifically data needed for the UI)
++- translations extraction (eg `const sign_in_text = t('auth:sign_in_text')`)
++- ui element rendering
++
++**Notes:**
++
++- **Translations in Handlers:** If an event handler needs a translated string (e.g., for a toast notification), you can extract it inline inside the handler or instantiate the translation text just before the notification.
++
++## Anti-Pattern: Avoid `useEffect`
++
++> [!WARNING]
++> **Agent Instruction:** Do NOT use `useEffect` unless absolutely necessary. Think carefully before adding an effect.
++
++Before reaching for a `useEffect`, ask yourself if it can be avoided:
++
++- **Derived State:** If you are calculating a value based on props or existing state, do it directly during render (or use `useMemo`). Do not use an effect to synchronize state.
++- **User Events:** If you are handling a user action (e.g., submitting a form, clicking a button), the logic belongs directly in the event handler, not in an effect.
++- **When to use it:** Only use `useEffect` for synchronizing with external systems (e.g., setting up subscriptions, direct DOM manipulation, or integrating with non-React libraries).
+diff --git a/.agent/shared/rules/i18n.rule.md b/.agent/shared/rules/i18n.rule.md
+new file mode 100644
+index 0000000..e4b8e69
+--- /dev/null
++++ b/.agent/shared/rules/i18n.rule.md
+@@ -0,0 +1,32 @@
++# i18n Rules
++
++## Translation Keys
++
++- Use `snake_case` for all translation keys within the JSON locale files.
++
++## Namespaces
++
++- Create translations based on domains, meaning each domain should have its own JSON file (e.g., `<domain>.json` such as `auth.json`, `onboarding.json`).
++
++NB:
++Every top-level directory in the `src` is a domain. Non-domain top-level directories are prefixed with `_` (e.g., `_app_`,)
++
++## React Components Usage
++
++- Texts should be easily visible. Instead of using `t()` directly inside React elements, you must extract the translated text into a variable at the top of the component or render function.
++- **Variable Naming:** Extracted variables should follow the `snake_case_text` convention to clearly identify them as translation strings (e.g., `or_text`, `no_account_text`).
++
++**Incorrect:**
++
++```tsx
++<FieldSeparator>{t('common:or')}</FieldSeparator>
++```
++
++**Correct:**
++
++```tsx
++const or_text = t('common:or');
++
++// ...
++<FieldSeparator>{or_text}</FieldSeparator>;
++```
+diff --git a/.agent/shared/rules/module-sharing.rule.md b/.agent/shared/rules/module-sharing.rule.md
+new file mode 100644
+index 0000000..5dd84cd
+--- /dev/null
++++ b/.agent/shared/rules/module-sharing.rule.md
+@@ -0,0 +1,10 @@
++# Module Sharing Rule
++
++## Exports
++
++- Prefer default exports over named exports
++- For pure UI components in `**/ui/*.tsx`, use named exports. Do not confuse this for `**/ui/*/*.tsx` which must use default exports.
++
++## Imports
++
++- Always use absolute paths when importing from `@/`
+diff --git a/.agent/shared/skills/contributor.skill.md b/.agent/shared/skills/contributor.skill.md
+new file mode 100644
+index 0000000..5d8b31b
+--- /dev/null
++++ b/.agent/shared/skills/contributor.skill.md
+@@ -0,0 +1,3 @@
++# Contributor Skill
++
++- You understand how to contribute to this project by reading [CONTRIBUTING.md](/CONTRIBUTING.md).
+diff --git a/.agent/shared/skills/pair-programmer.skill.md b/.agent/shared/skills/pair-programmer.skill.md
+new file mode 100644
+index 0000000..9d6aa23
+--- /dev/null
++++ b/.agent/shared/skills/pair-programmer.skill.md
+@@ -0,0 +1,21 @@
++# Pair Programmer Skill
++
++## Before Making Changes
++
++- Never make changes to any file without consulting the user first.
++- Always think carefully about the changes you are about to make.
++- Ensure that we are aligned on every single detail of the implementation.
++
++## When You Don't Understand
++
++If the skills provided to you do not fully clarify your understanding about what I want, ask me.
++
++## Mandatory Skills
++
++- [Contributor](./contributor.skill.md)
++
++## Mandatory Rules
++
++- [Artifact Creation Rules](./../rules/artifact-creation.rule.md)
++- [Module Sharing Rules](./../rules/module-sharing.rule.md)
++- [i18n Rules](./../rules/i18n.rule.md)
+diff --git a/.agent/shared/skills/pr-reviewer.skill.md b/.agent/shared/skills/pr-reviewer.skill.md
+new file mode 100644
+index 0000000..9690d55
+--- /dev/null
++++ b/.agent/shared/skills/pr-reviewer.skill.md
+@@ -0,0 +1,43 @@
++# PR Reviewer Skill
++
++Your goal is to review code changes and provide constructive feedback to ensure that the code meets the project's standards for correctness, maintainability, and performance.
++
++## Code Review Guidelines
++
++1. **Correctness**:
++   - Verify that the code implements the intended logic correctly.
++   - Check for edge cases and potential errors.
++   - Ensure that the code compiles and runs without errors.
++
++2. **Maintainability**:
++   - Check for code duplication and suggest refactoring where needed.
++   - Verify that the code follows the project's coding style guidelines.
++   - Ensure that the code is well-documented and easy to understand.
++   - Use the [Contributor Skill](./contributor.skill.md) for more information on the project's coding style guidelines.
++
++3. **Performance**:
++   - Check for potential performance issues and suggest optimizations.
++   - Verify that the code uses appropriate data structures and algorithms.
++
++4. **Security**:
++   - Check for potential security vulnerabilities.
++   - Ensure that the code follows security best practices.
++
++5. **Testing**:
++   - Verify that the code has adequate test coverage.
++   - Ensure that the tests follow the project's testing guidelines.
++
++## PR Reviewing Workflow
++
++1. **Understand the Changes**:
++   - Check [ticket-description.md](/ticket-description.md) to understand the requirements.
++   - If the ticket description is empty, prompt me to update the description.
++   - Review the code changes and identify the files that have been modified.
++
++2. **Code Review**:
++   - Apply the Code Review Guidelines to the code changes.
++   - Provide constructive feedback and suggestions for improvement.
++
++3. **PR Review Conclusion**:
++   - After completing the code review, provide a summary of your findings.
++   - Suggest any further actions that need to be taken.
+diff --git a/.agent/workflow/pr-review.workflow.md b/.agent/workflow/pr-review.workflow.md
+deleted file mode 100644
+index cc86501..0000000
+--- a/.agent/workflow/pr-review.workflow.md
++++ /dev/null
+@@ -1,43 +0,0 @@
+-# PR Review Workflow
+-
+-When requested to review a Pull Request or a set of branch changes, you must strictly follow this reporting format. Your goal is to provide a comprehensive, constructive, and highly accurate analysis of the code changes.
+-
+-**IMPORTANT: You must output the final report under the `## Agent Feedback` heading in the `pr-review-report.md` file. DO NOT overwrite the entire file or modify the original ticket details at the top of the file. Simply append or insert your report under the existing `## Agent Feedback` heading.**
+-
+-## Reporting Format
+-
+-Generate the PR review report using the exact headings below:
+-
+-### 1. What we are doing well
+-
+-Highlight positive aspects of the changes. Focus on:
+-
+-- Good architectural decisions or clean refactoring.
+-- Effective use of design patterns or adherence to project conventions.
+-- Improvements to performance, security, or error handling.
+-- Well-structured test coverage.
+-
+-### 2. What we could improve
+-
+-Identify areas for enhancement that aren't strictly bugs but affect code quality, maintainability, or long-term stability. Focus on:
+-
+-- **Use of `any`**: You MUST always flag the use of the `any` keyword in TypeScript. Strict typing should be enforced.
+-- **Uncovered Test Cases**: You MUST always flag untested edge cases, missing unit tests, or logic that lacks sufficient coverage.
+-- Code duplication or opportunities for abstraction.
+-- Magic strings, hardcoded values, or unused/dead code.
+-- Non-adherence to established project rules or repository patterns.
+-
+-### 3. Bugs and their severity
+-
+-Report actual bugs, logic errors, or regressions introduced by the changes. For each bug, provide:
+-
+-- **Severity**: (Low, Medium, High, Critical)
+-- **Location**: The file and context where the bug occurs.
+-- **Description**: What the exact bug is and why it happens.
+-- **Impact**: The potential consequence of the bug on the system or user.
+-
+-## General Review Guidelines
+-
+-- Be concise but thorough.
+-- Base your review strictly on the provided code diffs and repository context.
+-- Prioritize providing actionable feedback.
+diff --git a/.gitignore b/.gitignore
+index fd23bec..d216f2e 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -47,4 +47,6 @@ e2e/test-results/
+ /playwright/.cache/
+ /playwright/.auth/
+ 
+-pr-review-report.md
+\ No newline at end of file
++pr-review-report.md
++
++ticket-description.md
+\ No newline at end of file
+diff --git a/package-lock.json b/package-lock.json
+index 644c30c..9e1d571 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -22,6 +22,8 @@
+         "date-fns": "^4.1.0",
+         "dayjs": "^1.11.20",
+         "formik": "^2.4.9",
++        "i18next": "^26.0.8",
++        "i18next-browser-languagedetector": "^8.2.1",
+         "jwt-decode": "^4.0.0",
+         "lucide-react": "^1.7.0",
+         "next-themes": "^0.4.6",
+@@ -29,6 +31,7 @@
+         "react": "^19.2.4",
+         "react-day-picker": "^9.14.0",
+         "react-dom": "^19.2.4",
++        "react-i18next": "^17.0.6",
+         "react-router-dom": "^7.14.0",
+         "shadcn": "^4.1.2",
+         "sonner": "^2.0.7",
+@@ -8273,6 +8276,15 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/html-parse-stringify": {
++      "version": "3.0.1",
++      "resolved": "https://registry.npmjs.org/html-parse-stringify/-/html-parse-stringify-3.0.1.tgz",
++      "integrity": "sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==",
++      "license": "MIT",
++      "dependencies": {
++        "void-elements": "3.1.0"
++      }
++    },
+     "node_modules/htmlparser2": {
+       "version": "10.1.0",
+       "resolved": "https://registry.npmjs.org/htmlparser2/-/htmlparser2-10.1.0.tgz",
+@@ -8369,6 +8381,43 @@
+         "url": "https://github.com/sponsors/typicode"
+       }
+     },
++    "node_modules/i18next": {
++      "version": "26.0.8",
++      "resolved": "https://registry.npmjs.org/i18next/-/i18next-26.0.8.tgz",
++      "integrity": "sha512-BRzLom0mhDhV9v0QhgUUHWQJuwFmnr1194xEcNLYD6ym8y8s542n4jXUvRLnhNTbh9PmpU6kGZamyuGHQMsGjw==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://www.locize.com/i18next"
++        },
++        {
++          "type": "individual",
++          "url": "https://www.i18next.com/how-to/faq#i18next-is-awesome.-how-can-i-support-the-project"
++        },
++        {
++          "type": "individual",
++          "url": "https://www.locize.com"
++        }
++      ],
++      "license": "MIT",
++      "peerDependencies": {
++        "typescript": "^5 || ^6"
++      },
++      "peerDependenciesMeta": {
++        "typescript": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/i18next-browser-languagedetector": {
++      "version": "8.2.1",
++      "resolved": "https://registry.npmjs.org/i18next-browser-languagedetector/-/i18next-browser-languagedetector-8.2.1.tgz",
++      "integrity": "sha512-bZg8+4bdmaOiApD7N7BPT9W8MLZG+nPTOFlLiJiT8uzKXFjhxw4v2ierCXOwB5sFDMtuA5G4kgYZ0AznZxQ/cw==",
++      "license": "MIT",
++      "dependencies": {
++        "@babel/runtime": "^7.23.2"
++      }
++    },
+     "node_modules/iconv-lite": {
+       "version": "0.7.2",
+       "resolved": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.7.2.tgz",
+@@ -10941,6 +10990,33 @@
+       "integrity": "sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==",
+       "license": "MIT"
+     },
++    "node_modules/react-i18next": {
++      "version": "17.0.6",
++      "resolved": "https://registry.npmjs.org/react-i18next/-/react-i18next-17.0.6.tgz",
++      "integrity": "sha512-WzJ6SMKF+GTD7JZZqxSR1AKKmXjaSu39sClUrNlwxS4Tl7a99O+ltFy6yhPMO+wgZuxpQjJ2PZkfrQKmAqrLhw==",
++      "license": "MIT",
++      "dependencies": {
++        "@babel/runtime": "^7.29.2",
++        "html-parse-stringify": "^3.0.1",
++        "use-sync-external-store": "^1.6.0"
++      },
++      "peerDependencies": {
++        "i18next": ">= 26.0.1",
++        "react": ">= 16.8.0",
++        "typescript": "^5 || ^6"
++      },
++      "peerDependenciesMeta": {
++        "react-dom": {
++          "optional": true
++        },
++        "react-native": {
++          "optional": true
++        },
++        "typescript": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/react-is": {
+       "version": "16.13.1",
+       "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz",
+@@ -12914,6 +12990,15 @@
+         }
+       }
+     },
++    "node_modules/void-elements": {
++      "version": "3.1.0",
++      "resolved": "https://registry.npmjs.org/void-elements/-/void-elements-3.1.0.tgz",
++      "integrity": "sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==",
++      "license": "MIT",
++      "engines": {
++        "node": ">=0.10.0"
++      }
++    },
+     "node_modules/w3c-xmlserializer": {
+       "version": "5.0.0",
+       "resolved": "https://registry.npmjs.org/w3c-xmlserializer/-/w3c-xmlserializer-5.0.0.tgz",
+diff --git a/package.json b/package.json
+index 42cd4d2..e470b0c 100644
+--- a/package.json
++++ b/package.json
+@@ -35,6 +35,8 @@
+     "date-fns": "^4.1.0",
+     "dayjs": "^1.11.20",
+     "formik": "^2.4.9",
++    "i18next": "^26.0.8",
++    "i18next-browser-languagedetector": "^8.2.1",
+     "jwt-decode": "^4.0.0",
+     "lucide-react": "^1.7.0",
+     "next-themes": "^0.4.6",
+@@ -42,6 +44,7 @@
+     "react": "^19.2.4",
+     "react-day-picker": "^9.14.0",
+     "react-dom": "^19.2.4",
++    "react-i18next": "^17.0.6",
+     "react-router-dom": "^7.14.0",
+     "shadcn": "^4.1.2",
+     "sonner": "^2.0.7",
+diff --git a/setup-test.ts b/setup-test.ts
+index 7b0828b..51d2f07 100644
+--- a/setup-test.ts
++++ b/setup-test.ts
+@@ -1 +1,2 @@
++import '@/shared/i18n/config';
+ import '@testing-library/jest-dom';
+diff --git a/src/accounting/ui/containers/accounting-entity-creation-form.container.tsx b/src/accounting/ui/containers/accounting-entity-creation-form.container.tsx
+index ad4d3a9..e391502 100644
+--- a/src/accounting/ui/containers/accounting-entity-creation-form.container.tsx
++++ b/src/accounting/ui/containers/accounting-entity-creation-form.container.tsx
+@@ -14,6 +14,7 @@ import {
+ } from '@/shared/ui/dialog';
+ import { handleApiError } from '@/shared/utils/api/errors';
+ import useProfile from '@/user/hooks/use-profile';
++import { useTranslation } from 'react-i18next';
+ import { toast } from 'sonner';
+ 
+ interface AccountingEntityCreationFormContainerProps {
+@@ -25,6 +26,11 @@ export default function AccountingEntityCreationFormContainer({
+   open,
+   done,
+ }: AccountingEntityCreationFormContainerProps) {
++  const { t } = useTranslation(['accounting']);
++  const welcome_to_the_purple_side_text = t(
++    'accounting:welcome_to_the_purple_side_text'
++  );
++
+   const { mutateAsync: createAccountingEntity, isPending } =
+     useCreateAccountingEntity();
+   const { data: user } = useProfile();
+@@ -35,7 +41,7 @@ export default function AccountingEntityCreationFormContainer({
+     try {
+       const userName = `${user?.firstName} ${user?.lastName}`;
+       await createAccountingEntity({ ...values, name: userName });
+-      toast.success('Welcome to the purple side!');
++      toast.success(welcome_to_the_purple_side_text);
+       done();
+     } catch (error) {
+       handleApiError(error, { showToast: true });
+diff --git a/src/auth/hooks/__tests__/use-login-form-validation.test.ts b/src/auth/hooks/__tests__/use-login-form-validation.test.ts
+new file mode 100644
+index 0000000..d902d7b
+--- /dev/null
++++ b/src/auth/hooks/__tests__/use-login-form-validation.test.ts
+@@ -0,0 +1,54 @@
++import useLoginFormValidation from '@/auth/hooks/use-login-form-validation';
++import { renderHook } from '@testing-library/react';
++import { describe, expect, it, vi } from 'vitest';
++
++// Mock react-i18next to return the key as the translation string for predictable testing
++vi.mock('react-i18next', () => ({
++  useTranslation: () => ({
++    t: (key: string) => key.split(':').pop(),
++  }),
++}));
++
++describe('useLoginFormValidation', () => {
++  it('validates a correct form', async () => {
++    const { result } = renderHook(() => useLoginFormValidation());
++    const validData = {
++      email: 'test@example.com',
++      password: 'password123',
++    };
++    await expect(result.current.validate(validData)).resolves.toEqual(
++      validData
++    );
++  });
++
++  it('fails when email is missing', async () => {
++    const { result } = renderHook(() => useLoginFormValidation());
++    const invalidData = {
++      password: 'password123',
++    };
++    await expect(result.current.validate(invalidData)).rejects.toThrow(
++      'email_required_text'
++    );
++  });
++
++  it('fails when email is invalid', async () => {
++    const { result } = renderHook(() => useLoginFormValidation());
++    const invalidData = {
++      email: 'not-an-email',
++      password: 'password123',
++    };
++    await expect(result.current.validate(invalidData)).rejects.toThrow(
++      'valid_email_text'
++    );
++  });
++
++  it('fails when password is missing', async () => {
++    const { result } = renderHook(() => useLoginFormValidation());
++    const invalidData = {
++      email: 'test@example.com',
++    };
++    await expect(result.current.validate(invalidData)).rejects.toThrow(
++      'password_required_text'
++    );
++  });
++});
+diff --git a/src/auth/hooks/use-access-token-manager.ts b/src/auth/hooks/use-access-token-manager.ts
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/src/auth/hooks/use-login-form-validation.ts b/src/auth/hooks/use-login-form-validation.ts
+new file mode 100644
+index 0000000..9a56cdb
+--- /dev/null
++++ b/src/auth/hooks/use-login-form-validation.ts
+@@ -0,0 +1,15 @@
++import { useTranslation } from 'react-i18next';
++import * as yup from 'yup';
++
++export default function useLoginFormValidation() {
++  const { t } = useTranslation(['auth']);
++
++  const valid_email_text = t('auth:valid_email_text');
++  const email_required_text = t('auth:email_required_text');
++  const password_required_text = t('auth:password_required_text');
++
++  return yup.object({
++    email: yup.string().email(valid_email_text).required(email_required_text),
++    password: yup.string().required(password_required_text),
++  });
++}
+diff --git a/src/auth/hooks/use-request-password-reset-form-validation.ts b/src/auth/hooks/use-request-password-reset-form-validation.ts
+new file mode 100644
+index 0000000..a3a9255
+--- /dev/null
++++ b/src/auth/hooks/use-request-password-reset-form-validation.ts
+@@ -0,0 +1,13 @@
++import { useTranslation } from 'react-i18next';
++import * as yup from 'yup';
++
++export default function useRequestPasswordResetFormValidation() {
++  const { t } = useTranslation(['auth']);
++
++  const valid_email_text = t('auth:valid_email_text');
++  const email_required_text = t('auth:email_required_text');
++
++  return yup.object({
++    email: yup.string().email(valid_email_text).required(email_required_text),
++  });
++}
+diff --git a/src/auth/hooks/use-reset-password-form-validation.ts b/src/auth/hooks/use-reset-password-form-validation.ts
+new file mode 100644
+index 0000000..2fe58e3
+--- /dev/null
++++ b/src/auth/hooks/use-reset-password-form-validation.ts
+@@ -0,0 +1,30 @@
++import { useTranslation } from 'react-i18next';
++import * as yup from 'yup';
++
++export default function useResetPasswordFormValidation() {
++  const { t } = useTranslation(['auth']);
++
++  const password_min_length_text = t('auth:password_min_length_text');
++  const password_number_text = t('auth:password_number_text');
++  const password_special_character_text = t(
++    'auth:password_special_character_text'
++  );
++  const password_required_text = t('auth:password_required_text');
++  const passwords_match_text = t('auth:passwords_match_text');
++  const confirm_password_required_text = t(
++    'auth:confirm_password_required_text'
++  );
++
++  return yup.object({
++    password: yup
++      .string()
++      .min(8, password_min_length_text)
++      .matches(/(?=.*[0-9])/, password_number_text)
++      .matches(/(?=.*[^A-Za-z0-9])/, password_special_character_text)
++      .required(password_required_text),
++    confirmPassword: yup
++      .string()
++      .oneOf([yup.ref('password')], passwords_match_text)
++      .required(confirm_password_required_text),
++  });
++}
+diff --git a/src/auth/hooks/use-signup-form-validation.ts b/src/auth/hooks/use-signup-form-validation.ts
+new file mode 100644
+index 0000000..5629348
+--- /dev/null
++++ b/src/auth/hooks/use-signup-form-validation.ts
+@@ -0,0 +1,29 @@
++import { useTranslation } from 'react-i18next';
++import * as yup from 'yup';
++
++export default function useSignupFormValidation() {
++  const { t } = useTranslation(['auth']);
++
++  const first_name_required_text = t('auth:first_name_required_text');
++  const last_name_required_text = t('auth:last_name_required_text');
++  const valid_email_text = t('auth:valid_email_text');
++  const email_required_text = t('auth:email_required_text');
++  const password_min_length_text = t('auth:password_min_length_text');
++  const password_number_text = t('auth:password_number_text');
++  const password_special_character_text = t(
++    'auth:password_special_character_text'
++  );
++  const password_required_text = t('auth:password_required_text');
++
++  return yup.object({
++    firstName: yup.string().required(first_name_required_text),
++    lastName: yup.string().required(last_name_required_text),
++    email: yup.string().email(valid_email_text).required(email_required_text),
++    password: yup
++      .string()
++      .min(8, password_min_length_text)
++      .matches(/(?=.*[0-9])/, password_number_text)
++      .matches(/(?=.*[^A-Za-z0-9])/, password_special_character_text)
++      .required(password_required_text),
++  });
++}
+diff --git a/src/auth/routes/complete-signup.route.tsx b/src/auth/routes/complete-signup.route.tsx
+index 5ad7462..3cb40a4 100644
+--- a/src/auth/routes/complete-signup.route.tsx
++++ b/src/auth/routes/complete-signup.route.tsx
+@@ -2,16 +2,19 @@ import useVerifyEmail from '@/auth/hooks/use-verify-email';
+ import FullPageLoader from '@/shared/ui/full-page-loader';
+ import { handleApiError } from '@/shared/utils/api/errors';
+ import { useEffect, useRef } from 'react';
++import { useTranslation } from 'react-i18next';
+ import { useNavigate } from 'react-router-dom';
+ import { toast } from 'sonner';
+ 
+ export default function CompleteSignupRoute() {
+-  const { mutateAsync: verifyEmail } = useVerifyEmail();
++  const { t } = useTranslation(['auth']);
++
+   const navigate = useNavigate();
+ 
+-  // NB: put here to prevent double trigger in development
+   const hasCalled = useRef(false);
+ 
++  const { mutateAsync: verifyEmail } = useVerifyEmail();
++
+   useEffect(() => {
+     const handleVerifyEmail = async () => {
+       if (hasCalled.current) return;
+@@ -21,7 +24,11 @@ export default function CompleteSignupRoute() {
+       if (token) {
+         try {
+           await verifyEmail(token);
+-          toast.success('Email verified successfully');
++
++          const email_verified_success_text = t(
++            'auth:email_verified_success_text'
++          );
++          toast.success(email_verified_success_text);
+           navigate('/dashboard');
+         } catch (error) {
+           handleApiError(error, { showToast: true });
+@@ -31,7 +38,7 @@ export default function CompleteSignupRoute() {
+     };
+ 
+     handleVerifyEmail();
+-  }, [verifyEmail, navigate]);
++  }, [verifyEmail, navigate, t]);
+ 
+   return <FullPageLoader />;
+ }
+diff --git a/src/auth/routes/login.route.tsx b/src/auth/routes/login.route.tsx
+index 52de9f1..7e00bc1 100644
+--- a/src/auth/routes/login.route.tsx
++++ b/src/auth/routes/login.route.tsx
+@@ -2,9 +2,18 @@ import { AuthConsent } from '@/auth/ui/auth-consent';
+ import { GoogleAuthButton } from '@/auth/ui/containers/google-auth-button';
+ import { LoginFormContainer } from '@/auth/ui/containers/login-form-container';
+ import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
++import { useTranslation } from 'react-i18next';
+ import { Link } from 'react-router-dom';
+ 
+ export default function LoginRoute() {
++  const { t } = useTranslation(['auth', 'shared']);
++
++  const or_text = t('auth:or_text');
++  const no_account_text = t('auth:no_account_text');
++  const sign_up_text = t('auth:sign_up_text');
++  const logging_in_action_text = t('auth:logging_in_action_text');
++  const purple_ledger_limited = t('shared:purple_ledger_limited');
++
+   return (
+     <div className="flex h-screen items-center justify-center">
+       <div className="flex w-full max-w-sm flex-col gap-6">
+@@ -13,11 +22,11 @@ export default function LoginRoute() {
+             <div className="flex size-8 items-center justify-center rounded-md">
+               <img
+                 src="/logo.svg"
+-                alt="Purple Ledger Limited"
++                alt={purple_ledger_limited}
+                 className="mb-6 min-w-12 rounded-2xl"
+               />
+             </div>
+-            <span className="sr-only">Purple Ledger Limited.</span>
++            <span className="sr-only">{purple_ledger_limited}.</span>
+           </Link>
+         </div>
+ 
+@@ -25,21 +34,21 @@ export default function LoginRoute() {
+           <GoogleAuthButton />
+         </div>
+ 
+-        <FieldSeparator className="my-4">Or</FieldSeparator>
++        <FieldSeparator className="my-4">{or_text}</FieldSeparator>
+ 
+         <LoginFormContainer />
+ 
+         <FieldDescription className="text-center">
+-          Don't have an account?{' '}
++          {no_account_text}{' '}
+           <Link
+             to="/auth/signup"
+             className="text-purple-400 hover:text-purple-200"
+           >
+-            Sign up
++            {sign_up_text}
+           </Link>
+         </FieldDescription>
+ 
+-        <AuthConsent actionText="logging in" />
++        <AuthConsent actionText={logging_in_action_text} />
+       </div>
+     </div>
+   );
+diff --git a/src/auth/routes/request-password-reset.route.tsx b/src/auth/routes/request-password-reset.route.tsx
+index 516513d..9c77dea 100644
+--- a/src/auth/routes/request-password-reset.route.tsx
++++ b/src/auth/routes/request-password-reset.route.tsx
+@@ -1,7 +1,14 @@
+ import { RequestPasswordResetFormContainer } from '@/auth/ui/containers/request-password-reset-form-container';
++import { useTranslation } from 'react-i18next';
+ import { Link } from 'react-router-dom';
+ 
+ export default function RequestPasswordResetRoute() {
++  const { t } = useTranslation(['auth', 'shared']);
++
++  const reset_password_title = t('auth:reset_password_title');
++  const reset_password_description = t('auth:reset_password_description');
++  const purple_ledger_limited = t('shared:purple_ledger_limited');
++
+   return (
+     <div className="flex h-screen w-full max-w-xs items-center justify-center">
+       <div className="flex flex-col gap-6">
+@@ -10,20 +17,19 @@ export default function RequestPasswordResetRoute() {
+             <div className="flex size-8 items-center justify-center rounded-md mb-1">
+               <img
+                 src="/logo.svg"
+-                alt="Purple Ledger Limited"
++                alt={purple_ledger_limited}
+                 className="min-w-12 rounded-2xl"
+               />
+             </div>
+-            <span className="sr-only">Purple Ledger Limited.</span>
++            <span className="sr-only">{purple_ledger_limited}.</span>
+           </Link>
+         </div>
+         <div>
+           <h1 className="text-2xl/4 font-bold tracking-tight">
+-            Reset your password
++            {reset_password_title}
+           </h1>
+           <p className="text-sm/6 text-muted-foreground">
+-            A password reset link will be sent to the email address associated
+-            with your account.
++            {reset_password_description}
+           </p>
+         </div>
+         <div>
+diff --git a/src/auth/routes/reset-password.route.tsx b/src/auth/routes/reset-password.route.tsx
+index c6a111a..8fab41e 100644
+--- a/src/auth/routes/reset-password.route.tsx
++++ b/src/auth/routes/reset-password.route.tsx
+@@ -1,7 +1,13 @@
+ import { ResetPasswordFormContainer } from '@/auth/ui/containers/reset-password-form-container';
++import { useTranslation } from 'react-i18next';
+ import { Link } from 'react-router-dom';
+ 
+ export default function ResetPasswordRoute() {
++  const { t } = useTranslation(['auth', 'shared']);
++
++  const reset_password_title = t('auth:reset_password_title');
++  const purple_ledger_limited = t('shared:purple_ledger_limited');
++
+   return (
+     <div className="flex h-screen items-center justify-center">
+       <div className="flex w-full min-w-xs flex-col gap-6">
+@@ -10,15 +16,15 @@ export default function ResetPasswordRoute() {
+             <div className="flex size-8 items-center justify-center rounded-md">
+               <img
+                 src="/logo.svg"
+-                alt="Purple Ledger Limited"
++                alt={purple_ledger_limited}
+                 className="mb-6 min-w-12 rounded-2xl"
+               />
+             </div>
+-            <span className="sr-only">Purple Ledger Limited.</span>
++            <span className="sr-only">{purple_ledger_limited}.</span>
+           </Link>
+         </div>
+         <h1 className="text-2xl/4 font-bold tracking-tight">
+-          Reset your password
++          {reset_password_title}
+         </h1>
+         <div>
+           <ResetPasswordFormContainer />
+diff --git a/src/auth/routes/signup.route.tsx b/src/auth/routes/signup.route.tsx
+index f607cb2..cfb89c9 100644
+--- a/src/auth/routes/signup.route.tsx
++++ b/src/auth/routes/signup.route.tsx
+@@ -1,32 +1,43 @@
+ import { AuthConsent } from '@/auth/ui/auth-consent';
+ import { GoogleAuthButton } from '@/auth/ui/containers/google-auth-button';
+ import { SignupFormContainer } from '@/auth/ui/containers/signup-form';
++import emailSentImg from '@/shared/assets/email-sent.svg';
++import logoImg from '@/shared/assets/logo.svg';
+ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
+ import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
+ import { useMemo } from 'react';
+-
+-import emailSentImg from '@/shared/assets/email-sent.svg';
+-import logoImg from '@/shared/assets/logo.svg';
++import { useTranslation } from 'react-i18next';
+ import { Link, useSearchParams } from 'react-router-dom';
+ 
+ export default function SignupRoute() {
+   const [searchParams] = useSearchParams();
++  const { t } = useTranslation(['auth', 'shared']);
+ 
+   const success = useMemo(
+     () => searchParams.get('success') === 'true',
+     [searchParams]
+   );
+ 
++  const account_created_success_title = t('auth:account_created_success_title');
++  const check_email_verification_text = t('auth:check_email_verification_text');
++  const or_text = t('auth:or_text');
++  const already_have_account_text = t('auth:already_have_account_text');
++  const sign_in_link_text = t('auth:sign_in_link_text');
++  const creating_an_account_action_text = t(
++    'auth:creating_an_account_action_text'
++  );
++  const purple_ledger_limited = t('shared:purple_ledger_limited');
++
+   if (success) {
+     return (
+       <div className="flex h-screen items-center justify-center">
+         <Card>
+           <CardHeader className="flex flex-col items-center gap-4">
+             <img src={emailSentImg} alt="Email Sent" />
+-            <CardTitle>Account created successfully!</CardTitle>
++            <CardTitle>{account_created_success_title}</CardTitle>
+           </CardHeader>
+           <CardContent className="flex flex-col items-center gap-4">
+-            <p>Please check your email for a verification link</p>
++            <p>{check_email_verification_text}</p>
+           </CardContent>
+         </Card>
+       </div>
+@@ -41,11 +52,11 @@ export default function SignupRoute() {
+             <div className="flex size-8 items-center justify-center rounded-md">
+               <img
+                 src={logoImg}
+-                alt="Purple Ledger Limited"
++                alt={purple_ledger_limited}
+                 className="mb-6 min-w-12 rounded-2xl"
+               />
+             </div>
+-            <span className="sr-only">Purple Ledger Limited.</span>
++            <span className="sr-only">{purple_ledger_limited}.</span>
+           </Link>
+         </div>
+ 
+@@ -53,21 +64,21 @@ export default function SignupRoute() {
+           <GoogleAuthButton />
+         </div>
+ 
+-        <FieldSeparator className="my-4">Or</FieldSeparator>
++        <FieldSeparator className="my-4">{or_text}</FieldSeparator>
+ 
+         <SignupFormContainer />
+ 
+         <FieldDescription className="text-center">
+-          Already have an account?{' '}
++          {already_have_account_text}{' '}
+           <Link
+             to="/auth/signin"
+             className="text-purple-600 hover:text-purple-500"
+           >
+-            Sign in
++            {sign_in_link_text}
+           </Link>
+         </FieldDescription>
+ 
+-        <AuthConsent actionText="creating an account" />
++        <AuthConsent actionText={creating_an_account_action_text} />
+       </div>
+     </div>
+   );
+diff --git a/src/auth/ui/auth-consent.tsx b/src/auth/ui/auth-consent.tsx
+index 0ebcbae..1801bde 100644
+--- a/src/auth/ui/auth-consent.tsx
++++ b/src/auth/ui/auth-consent.tsx
+@@ -1,4 +1,5 @@
+ import { FieldDescription } from '@/shared/ui/field';
++import { useTranslation } from 'react-i18next';
+ 
+ interface IAuthConsentProps {
+   actionText?: string;
+@@ -7,16 +8,24 @@ interface IAuthConsentProps {
+ export function AuthConsent({
+   actionText = 'creating an account',
+ }: IAuthConsentProps) {
+-  const consentText = `By ${actionText}, you agree to our`;
++  const { t } = useTranslation(['auth']);
++
++  const consent_text = t('auth:by_action_you_agree_to_our_text', {
++    action: actionText,
++  });
++  const terms_of_service_text = t('auth:terms_of_service_text');
++  const and_text = t('auth:and_text');
++  const privacy_policy_text = t('auth:privacy_policy_text');
++
+   return (
+     <FieldDescription className="px-6 text-center text-xs">
+-      {consentText}{' '}
++      {consent_text}{' '}
+       <a href="/terms-of-service" className="text-xs hover:text-purple-500">
+-        Terms of Service
++        {terms_of_service_text}
+       </a>{' '}
+-      and{' '}
++      {and_text}{' '}
+       <a href="/privacy-policy" className="text-xs hover:text-purple-500">
+-        Privacy Policy
++        {privacy_policy_text}
+       </a>
+       .
+     </FieldDescription>
+diff --git a/src/auth/ui/containers/google-auth-button.tsx b/src/auth/ui/containers/google-auth-button.tsx
+index f10e926..d4c7dc7 100644
+--- a/src/auth/ui/containers/google-auth-button.tsx
++++ b/src/auth/ui/containers/google-auth-button.tsx
+@@ -2,14 +2,18 @@ import useGoogleOAuth from '@/auth/hooks/use-google-oauth';
+ import { Button } from '@/shared/ui/button';
+ import { GoogleIcon } from '@/shared/ui/icons/google';
+ import { type ComponentProps } from 'react';
++import { useTranslation } from 'react-i18next';
+ 
+ export function GoogleAuthButton({ ...props }: ComponentProps<typeof Button>) {
++  const { t } = useTranslation();
+   const { mutate } = useGoogleOAuth();
+ 
++  const continue_with_google_text = t('auth:continue_with_google_text');
++
+   return (
+     <Button variant="outline" type="button" {...props} onClick={() => mutate()}>
+       <GoogleIcon />
+-      Continue with Google
++      {continue_with_google_text}
+     </Button>
+   );
+ }
+diff --git a/src/auth/ui/containers/logout-confirmation-dialog.tsx b/src/auth/ui/containers/logout-confirmation-dialog.tsx
+index 0d4478c..2217e2f 100644
+--- a/src/auth/ui/containers/logout-confirmation-dialog.tsx
++++ b/src/auth/ui/containers/logout-confirmation-dialog.tsx
+@@ -2,6 +2,7 @@ import useLogout from '@/auth/hooks/use-logout';
+ import { handleApiError } from '@/shared/utils/api/errors';
+ import { LogOutIcon } from 'lucide-react';
+ import { type ReactNode, useState } from 'react';
++import { useTranslation } from 'react-i18next';
+ 
+ import {
+   AlertDialog,
+@@ -25,6 +26,7 @@ export function LogoutConfirmationDialog({
+   children,
+ }: LogoutConfirmationDialogProps) {
+   const navigate = useNavigate();
++  const { t } = useTranslation();
+   const [open, setOpen] = useState(false);
+   const { mutateAsync: logout, isPending } = useLogout();
+ 
+@@ -39,6 +41,12 @@ export function LogoutConfirmationDialog({
+     }
+   };
+ 
++  const are_you_sure_logout_text = t('auth:are_you_sure_logout_text');
++  const will_need_to_log_back_in_text = t('auth:will_need_to_log_back_in_text');
++  const cancel_text = t('auth:cancel_text');
++  const logging_out_text = t('auth:logging_out_text');
++  const log_out_text = t('auth:log_out_text');
++
+   return (
+     <AlertDialog open={open} onOpenChange={setOpen}>
+       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+@@ -47,19 +55,21 @@ export function LogoutConfirmationDialog({
+           <AlertDialogMedia>
+             <LogOutIcon className="text-destructive" />
+           </AlertDialogMedia>
+-          <AlertDialogTitle>Are you sure you want to log out?</AlertDialogTitle>
++          <AlertDialogTitle>{are_you_sure_logout_text}</AlertDialogTitle>
+           <AlertDialogDescription>
+-            You will need to log back in to access your account.
++            {will_need_to_log_back_in_text}
+           </AlertDialogDescription>
+         </AlertDialogHeader>
+         <AlertDialogFooter>
+-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
++          <AlertDialogCancel disabled={isPending}>
++            {cancel_text}
++          </AlertDialogCancel>
+           <AlertDialogAction
+             onClick={handleLogout}
+             variant="destructive"
+             disabled={isPending}
+           >
+-            {isPending ? 'Logging out...' : 'Log out'}
++            {isPending ? logging_out_text : log_out_text}
+           </AlertDialogAction>
+         </AlertDialogFooter>
+       </AlertDialogContent>
+diff --git a/src/auth/ui/containers/request-password-reset-form-container.tsx b/src/auth/ui/containers/request-password-reset-form-container.tsx
+index ae0314c..c3d5fc9 100644
+--- a/src/auth/ui/containers/request-password-reset-form-container.tsx
++++ b/src/auth/ui/containers/request-password-reset-form-container.tsx
+@@ -4,9 +4,13 @@ import {
+   type IRequestPasswordResetFormValues,
+ } from '@/auth/ui/request-password-reset-form';
+ import { handleApiError } from '@/shared/utils/api/errors';
++import { useTranslation } from 'react-i18next';
+ import { toast } from 'sonner';
+ 
+ export function RequestPasswordResetFormContainer() {
++  const { t } = useTranslation(['auth']);
++  const password_reset_link_sent_text = t('auth:password_reset_link_sent_text');
++
+   const {
+     mutateAsync: requestPasswordReset,
+     isPending,
+@@ -18,7 +22,7 @@ export function RequestPasswordResetFormContainer() {
+   ) => {
+     try {
+       await requestPasswordReset(values.email);
+-      toast.success('A password reset link was sent to your email.');
++      toast.success(password_reset_link_sent_text);
+     } catch (error) {
+       handleApiError(error, {
+         showToast: true,
+diff --git a/src/auth/ui/containers/reset-password-form-container.tsx b/src/auth/ui/containers/reset-password-form-container.tsx
+index 519fde3..f2e93d9 100644
+--- a/src/auth/ui/containers/reset-password-form-container.tsx
++++ b/src/auth/ui/containers/reset-password-form-container.tsx
+@@ -8,19 +8,26 @@ import type { IApiValidationError } from '@/shared/utils/api/Api';
+ import { handleApiError } from '@/shared/utils/api/errors';
+ 
+ import { useMemo } from 'react';
++import { useTranslation } from 'react-i18next';
+ import { useNavigate, useSearchParams } from 'react-router-dom';
+ import { toast } from 'sonner';
+ 
+ type TSubmitHandler = ResetPasswordFormProps['onSubmit'];
+ 
+ export function ResetPasswordFormContainer() {
++  const { t } = useTranslation(['auth']);
++  const password_reset_success_text = t('auth:password_reset_success_text');
++
+   const { mutateAsync: resetPassword, isPending } = useResetPassword();
+   const navigate = useNavigate();
+ 
+   const [searchParams] = useSearchParams();
+-  const token = searchParams.get('token');
++  const token = searchParams.get('token') ?? '';
+ 
+-  const email = useMemo(() => authService.decodeToken(token)?.email, [token]);
++  const email = useMemo(
++    () => authService.decodeToken(token)?.email ?? '',
++    [token]
++  );
+ 
+   const handleSubmit: TSubmitHandler = async (values, helpers) => {
+     try {
+@@ -28,7 +35,7 @@ export function ResetPasswordFormContainer() {
+         ...values,
+         token,
+       });
+-      toast.success('Password has been reset successfully.');
++      toast.success(password_reset_success_text);
+       navigate('/dashboard');
+     } catch (error) {
+       const setValidationError = (errors: IApiValidationError[]) => {
+diff --git a/src/auth/ui/containers/signup-form.tsx b/src/auth/ui/containers/signup-form.tsx
+index ed44dcc..f3075c1 100644
+--- a/src/auth/ui/containers/signup-form.tsx
++++ b/src/auth/ui/containers/signup-form.tsx
+@@ -1,10 +1,14 @@
+ import useSignupWithEmail from '@/auth/hooks/use-signup-with-email';
+ import { SignupForm, type ISignupFormValues } from '@/auth/ui/signup-form';
+ import { handleApiError } from '@/shared/utils/api/errors';
++import { useTranslation } from 'react-i18next';
+ import { useSearchParams } from 'react-router-dom';
+ import { toast } from 'sonner';
+ 
+ export function SignupFormContainer() {
++  const { t } = useTranslation(['auth']);
++  const account_created_success_text = t('auth:account_created_success_text');
++
+   const [, setSearchParams] = useSearchParams();
+ 
+   const { mutateAsync: signup, isPending } = useSignupWithEmail();
+@@ -12,7 +16,7 @@ export function SignupFormContainer() {
+   const handleSignup = async (values: ISignupFormValues) => {
+     try {
+       await signup(values);
+-      toast.success('Account created successfully');
++      toast.success(account_created_success_text);
+       setSearchParams({ success: 'true' });
+     } catch (error) {
+       handleApiError(error, { showToast: true });
+diff --git a/src/auth/ui/login-form.tsx b/src/auth/ui/login-form.tsx
+index 34c951b..08cdfca 100644
+--- a/src/auth/ui/login-form.tsx
++++ b/src/auth/ui/login-form.tsx
+@@ -1,4 +1,4 @@
+-import { loginFormValidation } from '@/auth/ui/validations/login-form.validations';
++import useLoginFormValidation from '@/auth/hooks/use-login-form-validation';
+ import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+ import { Button } from '@/shared/ui/button';
+ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+@@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
+ import { cn } from '@/shared/ui/utils';
+ import { useFormik } from 'formik';
+ import type { ComponentProps } from 'react';
++import { useTranslation } from 'react-i18next';
+ import { Link } from 'react-router-dom';
+ 
+ export interface ILoginFormValues {
+@@ -25,12 +26,16 @@ export function LoginForm({
+   loading,
+   ...props
+ }: ILoginFormProps) {
++  const { t } = useTranslation();
++
++  const validationSchema = useLoginFormValidation();
++
+   const formik = useFormik<ILoginFormValues>({
+     initialValues: {
+       email: '',
+       password: '',
+     },
+-    validationSchema: loginFormValidation,
++    validationSchema,
+     onSubmit,
+   });
+ 
+@@ -39,6 +44,11 @@ export function LoginForm({
+     touched: formik.touched,
+   });
+ 
++  const email_label = t('auth:email_label');
++  const password_label = t('auth:password_label');
++  const forgot_password_text = t('auth:forgot_password_text');
++  const sign_in_text = t('auth:sign_in_text');
++
+   return (
+     <div
+       className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+@@ -48,7 +58,7 @@ export function LoginForm({
+         <FieldGroup>
+           <Field>
+             <div>
+-              <FieldLabel htmlFor="email">Email</FieldLabel>
++              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
+               <Input
+                 id="email"
+                 name="email"
+@@ -65,7 +75,7 @@ export function LoginForm({
+                 htmlFor="password"
+                 className="col-start-1 row-start-1"
+               >
+-                Password
++                {password_label}
+               </FieldLabel>
+               <div className="col-span-2 row-start-2 mt-2">
+                 <PasswordInput
+@@ -81,7 +91,7 @@ export function LoginForm({
+                 to="/auth/forgot-password"
+                 className="col-start-2 row-start-1 justify-self-end text-xs font-medium hover:text-purple-200"
+               >
+-                Forgot password?
++                {forgot_password_text}
+               </Link>
+             </div>
+           </Field>
+@@ -91,7 +101,7 @@ export function LoginForm({
+               data-testid="login-submit-btn"
+               loading={loading}
+             >
+-              Sign In
++              {sign_in_text}
+             </Button>
+           </Field>
+         </FieldGroup>
+diff --git a/src/auth/ui/request-password-reset-form.tsx b/src/auth/ui/request-password-reset-form.tsx
+index 9f7bd26..491be08 100644
+--- a/src/auth/ui/request-password-reset-form.tsx
++++ b/src/auth/ui/request-password-reset-form.tsx
+@@ -1,5 +1,5 @@
++import useRequestPasswordResetFormValidation from '@/auth/hooks/use-request-password-reset-form-validation';
+ import { RequestPasswordResetSuccess } from '@/auth/ui/reset-password-request-success';
+-import { requestPasswordResetFormValidation } from '@/auth/ui/validations/request-password-reset-form.validations';
+ import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+ import { Button } from '@/shared/ui/button';
+ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+@@ -7,6 +7,7 @@ import { Input } from '@/shared/ui/input';
+ import { cn } from '@/shared/ui/utils';
+ import { useFormik } from 'formik';
+ import type { ComponentProps } from 'react';
++import { useTranslation } from 'react-i18next';
+ 
+ export interface IRequestPasswordResetFormValues {
+   email: string;
+@@ -28,11 +29,15 @@ export function RequestPasswordResetForm({
+   isSuccess,
+   ...props
+ }: IRequestPasswordResetFormProps) {
++  const { t } = useTranslation();
++
++  const validationSchema = useRequestPasswordResetFormValidation();
++
+   const formik = useFormik<IRequestPasswordResetFormValues>({
+     initialValues: {
+       email: '',
+     },
+-    validationSchema: requestPasswordResetFormValidation,
++    validationSchema,
+     onSubmit,
+   });
+ 
+@@ -41,6 +46,9 @@ export function RequestPasswordResetForm({
+     touched: formik.touched,
+   });
+ 
++  const email_label = t('auth:email_label');
++  const get_password_reset_link_text = t('auth:get_password_reset_link_text');
++
+   if (isSuccess) {
+     return (
+       <RequestPasswordResetSuccess
+@@ -59,7 +67,7 @@ export function RequestPasswordResetForm({
+         <FieldGroup>
+           <Field>
+             <div>
+-              <FieldLabel htmlFor="email">Email</FieldLabel>
++              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
+               <Input
+                 id="email"
+                 name="email"
+@@ -73,7 +81,7 @@ export function RequestPasswordResetForm({
+           </Field>
+           <Field className="mt-2">
+             <Button type="submit" loading={loading} className="w-full">
+-              Get password reset link
++              {get_password_reset_link_text}
+             </Button>
+           </Field>
+         </FieldGroup>
+diff --git a/src/auth/ui/reset-password-form.tsx b/src/auth/ui/reset-password-form.tsx
+index 5576134..99c3c3c 100644
+--- a/src/auth/ui/reset-password-form.tsx
++++ b/src/auth/ui/reset-password-form.tsx
+@@ -1,4 +1,4 @@
+-import { resetPasswordFormValidation } from '@/auth/ui/validations/reset-password-form.validations';
++import useResetPasswordFormValidation from '@/auth/hooks/use-reset-password-form-validation';
+ import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+ import { Button } from '@/shared/ui/button';
+ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+@@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
+ import { cn } from '@/shared/ui/utils';
+ import { useFormik, type FormikHelpers } from 'formik';
+ import { type ComponentProps } from 'react';
++import { useTranslation } from 'react-i18next';
+ 
+ export interface IResetPasswordFormValues {
+   password: string;
+@@ -32,12 +33,16 @@ export function ResetPasswordForm({
+   loading,
+   ...props
+ }: ResetPasswordFormProps) {
++  const { t } = useTranslation();
++
++  const validationSchema = useResetPasswordFormValidation();
++
+   const formik = useFormik<IResetPasswordFormValues>({
+     initialValues: {
+       password: '',
+       confirmPassword: '',
+     },
+-    validationSchema: resetPasswordFormValidation,
++    validationSchema,
+     onSubmit,
+   });
+ 
+@@ -46,6 +51,11 @@ export function ResetPasswordForm({
+     touched: formik.touched,
+   });
+ 
++  const email_label = t('auth:email_label');
++  const new_password_label = t('auth:new_password_label');
++  const confirm_password_label = t('auth:confirm_password_label');
++  const reset_password_text = t('auth:reset_password_text');
++
+   return (
+     <div
+       className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+@@ -55,7 +65,7 @@ export function ResetPasswordForm({
+         <FieldGroup>
+           <Field>
+             <div>
+-              <FieldLabel htmlFor="email">Email</FieldLabel>
++              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
+               <Input
+                 id="email"
+                 name="email"
+@@ -66,7 +76,7 @@ export function ResetPasswordForm({
+             </div>
+ 
+             <div className="mt-2">
+-              <FieldLabel htmlFor="password">New Password</FieldLabel>
++              <FieldLabel htmlFor="password">{new_password_label}</FieldLabel>
+               <PasswordInput
+                 id="password"
+                 name="password"
+@@ -79,7 +89,7 @@ export function ResetPasswordForm({
+ 
+             <div className="mt-2">
+               <FieldLabel htmlFor="confirmPassword">
+-                Confirm Password
++                {confirm_password_label}
+               </FieldLabel>
+               <PasswordInput
+                 id="confirmPassword"
+@@ -93,7 +103,7 @@ export function ResetPasswordForm({
+           </Field>
+           <Field className="mt-2">
+             <Button type="submit" loading={loading} className="w-full">
+-              Reset password
++              {reset_password_text}
+             </Button>
+           </Field>
+         </FieldGroup>
+diff --git a/src/auth/ui/reset-password-request-success.tsx b/src/auth/ui/reset-password-request-success.tsx
+index 77c20d2..26cb4f0 100644
+--- a/src/auth/ui/reset-password-request-success.tsx
++++ b/src/auth/ui/reset-password-request-success.tsx
+@@ -1,5 +1,6 @@
+ import { Button } from '@/shared/ui/button';
+ import { useEffect, useState } from 'react';
++import { useTranslation } from 'react-i18next';
+ import { Link } from 'react-router-dom';
+ 
+ interface RequestPasswordResetSuccessProps {
+@@ -11,8 +12,15 @@ export const RequestPasswordResetSuccess = ({
+   retry,
+   loading,
+ }: RequestPasswordResetSuccessProps) => {
++  const { t } = useTranslation(['auth']);
++
+   const [countdown, setCountdown] = useState<number>(30);
+ 
++  const handleRetryClick = () => {
++    retry();
++    setCountdown(30);
++  };
++
+   useEffect(() => {
+     if (countdown > 0) {
+       const timer = setInterval(() => {
+@@ -22,15 +30,14 @@ export const RequestPasswordResetSuccess = ({
+     }
+   }, [countdown]);
+ 
+-  const handleRetryClick = () => {
+-    retry();
+-    setCountdown(30);
+-  };
++  const didnt_receive_it_text = t('auth:didnt_receive_it_text');
++  const retry_text = t('auth:retry_text');
++  const back_to_sign_in_text = t('auth:back_to_sign_in_text');
+ 
+   return (
+     <div className="flex flex-col gap-4 text-center max-w-sm">
+       <div className="flex flex-col gap-2">
+-        <p className="text-sm text-muted-foreground">Didn't receive it?</p>
++        <p className="text-sm text-muted-foreground">{didnt_receive_it_text}</p>
+         <Button
+           type="button"
+           onClick={handleRetryClick}
+@@ -38,7 +45,7 @@ export const RequestPasswordResetSuccess = ({
+           disabled={countdown > 0}
+           className="w-full"
+         >
+-          {countdown > 0 ? `Retry in ${countdown}s` : 'Retry'}
++          {countdown > 0 ? t('auth:retry_in_text', { countdown }) : retry_text}
+         </Button>
+       </div>
+ 
+@@ -46,7 +53,7 @@ export const RequestPasswordResetSuccess = ({
+         to="/auth/signin"
+         className="text-sm font-medium text-purple-400 hover:text-purple-200"
+       >
+-        Back to sign in
++        {back_to_sign_in_text}
+       </Link>
+     </div>
+   );
+diff --git a/src/auth/ui/signup-form.tsx b/src/auth/ui/signup-form.tsx
+index 52868fd..7ed65cb 100644
+--- a/src/auth/ui/signup-form.tsx
++++ b/src/auth/ui/signup-form.tsx
+@@ -1,4 +1,4 @@
+-import { signupFormValidation } from '@/auth/ui/validations/signup-form.validations';
++import useSignupFormValidation from '@/auth/hooks/use-signup-form-validation';
+ import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+ import { Button } from '@/shared/ui/button';
+ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+@@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
+ import { cn } from '@/shared/ui/utils';
+ import { useFormik } from 'formik';
+ import type { ComponentProps } from 'react';
++import { useTranslation } from 'react-i18next';
+ 
+ export interface ISignupFormValues {
+   firstName: string;
+@@ -26,6 +27,10 @@ export function SignupForm({
+   loading,
+   ...props
+ }: ISignupFormProps) {
++  const { t } = useTranslation();
++
++  const validationSchema = useSignupFormValidation();
++
+   const formik = useFormik<ISignupFormValues>({
+     initialValues: {
+       firstName: '',
+@@ -33,7 +38,7 @@ export function SignupForm({
+       email: '',
+       password: '',
+     },
+-    validationSchema: signupFormValidation,
++    validationSchema,
+     onSubmit,
+   });
+ 
+@@ -42,6 +47,12 @@ export function SignupForm({
+     touched: formik.touched,
+   });
+ 
++  const first_name_label = t('auth:first_name_label');
++  const last_name_label = t('auth:last_name_label');
++  const email_label = t('auth:email_label');
++  const password_label = t('auth:password_label');
++  const create_account_text = t('auth:create_account_text');
++
+   return (
+     <div
+       className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+@@ -51,7 +62,7 @@ export function SignupForm({
+         <FieldGroup>
+           <Field className="grid grid-cols-2 gap-4">
+             <div className="flex flex-col">
+-              <FieldLabel htmlFor="firstName">First name</FieldLabel>
++              <FieldLabel htmlFor="firstName">{first_name_label}</FieldLabel>
+               <Input
+                 id="firstName"
+                 name="firstName"
+@@ -64,7 +75,7 @@ export function SignupForm({
+               <FieldError errors={getErrorMessage('firstName')} />
+             </div>
+             <div className="flex flex-col">
+-              <FieldLabel htmlFor="lastName">Last name</FieldLabel>
++              <FieldLabel htmlFor="lastName">{last_name_label}</FieldLabel>
+               <Input
+                 id="lastName"
+                 name="lastName"
+@@ -80,7 +91,7 @@ export function SignupForm({
+ 
+           <Field>
+             <div>
+-              <FieldLabel htmlFor="email">Email</FieldLabel>
++              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
+               <Input
+                 id="email"
+                 name="email"
+@@ -94,7 +105,7 @@ export function SignupForm({
+             </div>
+ 
+             <div className="mt-2">
+-              <FieldLabel htmlFor="password">Password</FieldLabel>
++              <FieldLabel htmlFor="password">{password_label}</FieldLabel>
+               <PasswordInput
+                 id="password"
+                 name="password"
+@@ -108,7 +119,7 @@ export function SignupForm({
+           </Field>
+           <Field className="mt-2">
+             <Button type="submit" loading={loading}>
+-              Create account
++              {create_account_text}
+             </Button>
+           </Field>
+         </FieldGroup>
+diff --git a/src/auth/ui/validations/__tests__/login-form.validations.test.ts b/src/auth/ui/validations/__tests__/login-form.validations.test.ts
+deleted file mode 100644
+index 5a5002d..0000000
+--- a/src/auth/ui/validations/__tests__/login-form.validations.test.ts
++++ /dev/null
+@@ -1,42 +0,0 @@
+-import { loginFormValidation } from '@/auth/ui/validations/login-form.validations';
+-import { describe, expect, it } from 'vitest';
+-
+-describe('loginFormValidation', () => {
+-  it('validates a correct form', async () => {
+-    const validData = {
+-      email: 'test@example.com',
+-      password: 'password123',
+-    };
+-    await expect(loginFormValidation.validate(validData)).resolves.toEqual(
+-      validData
+-    );
+-  });
+-
+-  it('fails when email is missing', async () => {
+-    const invalidData = {
+-      password: 'password123',
+-    };
+-    await expect(loginFormValidation.validate(invalidData)).rejects.toThrow(
+-      'Email is required'
+-    );
+-  });
+-
+-  it('fails when email is invalid', async () => {
+-    const invalidData = {
+-      email: 'not-an-email',
+-      password: 'password123',
+-    };
+-    await expect(loginFormValidation.validate(invalidData)).rejects.toThrow(
+-      'Enter a valid email'
+-    );
+-  });
+-
+-  it('fails when password is missing', async () => {
+-    const invalidData = {
+-      email: 'test@example.com',
+-    };
+-    await expect(loginFormValidation.validate(invalidData)).rejects.toThrow(
+-      'Password is required'
+-    );
+-  });
+-});
+diff --git a/src/auth/ui/validations/login-form.validations.ts b/src/auth/ui/validations/login-form.validations.ts
+deleted file mode 100644
+index df8af58..0000000
+--- a/src/auth/ui/validations/login-form.validations.ts
++++ /dev/null
+@@ -1,9 +0,0 @@
+-import * as yup from 'yup';
+-
+-export const loginFormValidation = yup.object({
+-  email: yup
+-    .string()
+-    .email('Enter a valid email')
+-    .required('Email is required'),
+-  password: yup.string().required('Password is required'),
+-});
+diff --git a/src/auth/ui/validations/request-password-reset-form.validations.ts b/src/auth/ui/validations/request-password-reset-form.validations.ts
+deleted file mode 100644
+index c1daf3d..0000000
+--- a/src/auth/ui/validations/request-password-reset-form.validations.ts
++++ /dev/null
+@@ -1,8 +0,0 @@
+-import * as yup from 'yup';
+-
+-export const requestPasswordResetFormValidation = yup.object({
+-  email: yup
+-    .string()
+-    .email('Enter a valid email')
+-    .required('Email is required'),
+-});
+diff --git a/src/auth/ui/validations/reset-password-form.validations.ts b/src/auth/ui/validations/reset-password-form.validations.ts
+deleted file mode 100644
+index acdc747..0000000
+--- a/src/auth/ui/validations/reset-password-form.validations.ts
++++ /dev/null
+@@ -1,17 +0,0 @@
+-import * as yup from 'yup';
+-
+-export const resetPasswordFormValidation = yup.object({
+-  password: yup
+-    .string()
+-    .min(8, 'Password must be at least 8 characters')
+-    .matches(/(?=.*[0-9])/, 'Password must contain at least one number')
+-    .matches(
+-      /(?=.*[^A-Za-z0-9])/,
+-      'Password must contain at least one special character'
+-    )
+-    .required('Password is required'),
+-  confirmPassword: yup
+-    .string()
+-    .oneOf([yup.ref('password')], 'Passwords must match')
+-    .required('Confirm Password is required'),
+-});
+diff --git a/src/auth/ui/validations/signup-form.validations.ts b/src/auth/ui/validations/signup-form.validations.ts
+deleted file mode 100644
+index 10206be..0000000
+--- a/src/auth/ui/validations/signup-form.validations.ts
++++ /dev/null
+@@ -1,19 +0,0 @@
+-import * as yup from 'yup';
+-
+-export const signupFormValidation = yup.object({
+-  firstName: yup.string().required('First Name is required'),
+-  lastName: yup.string().required('Last Name is required'),
+-  email: yup
+-    .string()
+-    .email('Enter a valid email')
+-    .required('Email is required'),
+-  password: yup
+-    .string()
+-    .min(8, 'Password must be at least 8 characters')
+-    .matches(/(?=.*[0-9])/, 'Password must contain at least one number')
+-    .matches(
+-      /(?=.*[^A-Za-z0-9])/,
+-      'Password must contain at least one special character'
+-    )
+-    .required('Password is required'),
+-});
+diff --git a/src/ledger-accounts/hooks/use-petty-cash-account-form-validation.ts b/src/ledger-accounts/hooks/use-petty-cash-account-form-validation.ts
+new file mode 100644
+index 0000000..05b9ad5
+--- /dev/null
++++ b/src/ledger-accounts/hooks/use-petty-cash-account-form-validation.ts
+@@ -0,0 +1,36 @@
++import { useTranslation } from 'react-i18next';
++import * as yup from 'yup';
++
++export default function usePettyCashAccountFormValidation() {
++  const { t } = useTranslation(['ledger-accounts']);
++
++  const account_name_required_text = t(
++    'ledger-accounts:account_name_required_text'
++  );
++  const account_name_min_length_text = t(
++    'ledger-accounts:account_name_min_length_text'
++  );
++  const account_name_max_length_text = t(
++    'ledger-accounts:account_name_max_length_text'
++  );
++  const currency_required_text = t('ledger-accounts:currency_required_text');
++  const opening_balance_required_text = t(
++    'ledger-accounts:opening_balance_required_text'
++  );
++  const opening_balance_negative_text = t(
++    'ledger-accounts:opening_balance_negative_text'
++  );
++
++  return yup.object({
++    name: yup
++      .string()
++      .required(account_name_required_text)
++      .min(3, account_name_min_length_text)
++      .max(100, account_name_max_length_text),
++    currencyCode: yup.string().required(currency_required_text),
++    openingBalance: yup
++      .number()
++      .required(opening_balance_required_text)
++      .min(0, opening_balance_negative_text),
++  });
++}
+diff --git a/src/ledger-accounts/ui/petty-cash-account-form.tsx b/src/ledger-accounts/ui/petty-cash-account-form.tsx
+index ed30e71..e7ad106 100644
+--- a/src/ledger-accounts/ui/petty-cash-account-form.tsx
++++ b/src/ledger-accounts/ui/petty-cash-account-form.tsx
+@@ -1,4 +1,4 @@
+-import { pettyCashAccountFormValidation } from '@/ledger-accounts/ui/validations/petty-cash-account-form.validations';
++import usePettyCashAccountFormValidation from '@/ledger-accounts/hooks/use-petty-cash-account-form-validation';
+ import useCurrencies from '@/shared/hooks/use-currencies';
+ import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+ import { Button } from '@/shared/ui/button';
+@@ -8,6 +8,7 @@ import { Input } from '@/shared/ui/input';
+ import { Label } from '@/shared/ui/label';
+ import { MoneyInput } from '@/shared/ui/money-input';
+ import { useFormik } from 'formik';
++import { useTranslation } from 'react-i18next';
+ 
+ export interface IPettyCashAccountFormValues {
+   name: string;
+@@ -31,10 +32,12 @@ export function PettyCashAccountForm({
+   loading,
+ }: IPettyCashAccountFormProps) {
+   const { data: currencies = [] } = useCurrencies();
++  const validationSchema = usePettyCashAccountFormValidation();
++
+   const { handleChange, values, setFieldValue, handleSubmit, errors, touched } =
+     useFormik<IPettyCashAccountFormValues>({
+       initialValues,
+-      validationSchema: pettyCashAccountFormValidation,
++      validationSchema,
+       onSubmit,
+     });
+ 
+@@ -43,19 +46,25 @@ export function PettyCashAccountForm({
+     touched,
+   });
+ 
++  const { t } = useTranslation(['ledger-accounts']);
++  const petty_cash_name_label = t('ledger-accounts:petty_cash_name_label');
++  const currency_label = t('ledger-accounts:currency_label');
++  const starting_balance_label = t('ledger-accounts:starting_balance_label');
++  const save_cash_account_text = t('ledger-accounts:save_cash_account_text');
++
+   return (
+     <div className="w-xs max-w-full">
+       <form onSubmit={handleSubmit}>
+         <FieldGroup>
+           <Field>
+-            <Label htmlFor="name">Petty Cash Name</Label>
++            <Label htmlFor="name">{petty_cash_name_label}</Label>
+             <Input id="name" onChange={handleChange} value={values.name} />
+             <FieldError errors={getErrorMessage('name')} />
+           </Field>
+ 
+           <div className="grid grid-cols-[2fr_3fr]  gap-x-3">
+             <CurrencySelect
+-              label="Currency"
++              label={currency_label}
+               value={values.currencyCode}
+               currencies={currencies}
+               onChange={(val) => setFieldValue('currencyCode', val)}
+@@ -64,7 +73,7 @@ export function PettyCashAccountForm({
+             />
+ 
+             <Field>
+-              <Label htmlFor="openingBalance">Starting balance</Label>
++              <Label htmlFor="openingBalance">{starting_balance_label}</Label>
+               <MoneyInput
+                 id="openingBalance"
+                 currencyCode={values.currencyCode}
+@@ -77,7 +86,7 @@ export function PettyCashAccountForm({
+ 
+           <Field className="mt-2">
+             <Button type="submit" loading={loading}>
+-              Save cash account
++              {save_cash_account_text}
+             </Button>
+           </Field>
+         </FieldGroup>
+diff --git a/src/ledger-accounts/ui/validations/petty-cash-account-form.validations.ts b/src/ledger-accounts/ui/validations/petty-cash-account-form.validations.ts
+deleted file mode 100644
+index 448fac3..0000000
+--- a/src/ledger-accounts/ui/validations/petty-cash-account-form.validations.ts
++++ /dev/null
+@@ -1,14 +0,0 @@
+-import * as yup from 'yup';
+-
+-export const pettyCashAccountFormValidation = yup.object({
+-  name: yup
+-    .string()
+-    .required('Account name is required')
+-    .min(3, 'Account name must be at least 3 characters')
+-    .max(100, 'Account name must not exceed 100 characters'),
+-  currencyCode: yup.string().required('Currency is required'),
+-  openingBalance: yup
+-    .number()
+-    .required('Opening balance is required')
+-    .min(0, 'Opening balance cannot be negative'),
+-});
+diff --git a/src/main.tsx b/src/main.tsx
+index b4db82a..69e29f0 100644
+--- a/src/main.tsx
++++ b/src/main.tsx
+@@ -1,5 +1,6 @@
+ import App from '@/_app/index';
+ import '@/_app/index.css';
++import '@/shared/i18n/config';
+ import * as Sentry from '@sentry/react';
+ import { StrictMode } from 'react';
+ import { createRoot } from 'react-dom/client';
+diff --git a/src/shared/i18n/config.ts b/src/shared/i18n/config.ts
+new file mode 100644
+index 0000000..ac89b9b
+--- /dev/null
++++ b/src/shared/i18n/config.ts
+@@ -0,0 +1,31 @@
++import i18n from 'i18next';
++import LanguageDetector from 'i18next-browser-languagedetector';
++import { initReactI18next } from 'react-i18next';
++
++import accountingEn from '@/shared/i18n/locales/en/accounting.json';
++import authEn from '@/shared/i18n/locales/en/auth.json';
++import ledgerAccountsEn from '@/shared/i18n/locales/en/ledger-accounts.json';
++import sharedEn from '@/shared/i18n/locales/en/shared.json';
++
++const resources = {
++  en: {
++    auth: authEn,
++    shared: sharedEn,
++    'ledger-accounts': ledgerAccountsEn,
++    accounting: accountingEn,
++  },
++} as const;
++
++i18n
++  .use(LanguageDetector)
++  .use(initReactI18next)
++  .init({
++    resources,
++    fallbackLng: 'en',
++    defaultNS: 'shared',
++    interpolation: {
++      escapeValue: false, // React already safe from xss
++    },
++  });
++
++export default i18n;
+diff --git a/src/shared/i18n/locales/en/accounting.json b/src/shared/i18n/locales/en/accounting.json
+new file mode 100644
+index 0000000..c45b7fb
+--- /dev/null
++++ b/src/shared/i18n/locales/en/accounting.json
+@@ -0,0 +1,3 @@
++{
++  "welcome_to_the_purple_side_text": "Welcome to the purple side!"
++}
+diff --git a/src/shared/i18n/locales/en/auth.json b/src/shared/i18n/locales/en/auth.json
+new file mode 100644
+index 0000000..5d1e23d
+--- /dev/null
++++ b/src/shared/i18n/locales/en/auth.json
+@@ -0,0 +1,53 @@
++{
++  "email_label": "Email",
++  "password_label": "Password",
++  "forgot_password_text": "Forgot password?",
++  "sign_in_text": "Sign In",
++  "first_name_label": "First name",
++  "last_name_label": "Last name",
++  "create_account_text": "Create account",
++  "account_created_success_title": "Account created successfully!",
++  "check_email_verification_text": "Please check your email for a verification link",
++  "already_have_account_text": "Already have an account?",
++  "sign_in_link_text": "Sign in",
++  "continue_with_google_text": "Continue with Google",
++  "get_password_reset_link_text": "Get password reset link",
++  "new_password_label": "New Password",
++  "confirm_password_label": "Confirm Password",
++  "reset_password_text": "Reset password",
++  "reset_password_title": "Reset your password",
++  "reset_password_description": "A password reset link will be sent to the email address associated with your account.",
++  "didnt_receive_it_text": "Didn't receive it?",
++  "retry_in_text": "Retry in {{countdown}}s",
++  "retry_text": "Retry",
++  "back_to_sign_in_text": "Back to sign in",
++  "are_you_sure_logout_text": "Are you sure you want to log out?",
++  "will_need_to_log_back_in_text": "You will need to log back in to access your account.",
++  "cancel_text": "Cancel",
++  "logging_out_text": "Logging out...",
++  "log_out_text": "Log out",
++  "email_verified_success_text": "Email verified successfully",
++  "by_action_you_agree_to_our_text": "By {{action}}, you agree to our",
++  "terms_of_service_text": "Terms of Service",
++  "and_text": "and",
++  "privacy_policy_text": "Privacy Policy",
++  "logging_in_action_text": "logging in",
++  "creating_an_account_action_text": "creating an account",
++  "welcome_text": "Welcome to Purple Ledger",
++  "or_text": "Or",
++  "no_account_text": "Don't have an account?",
++  "sign_up_text": "Sign up",
++  "valid_email_text": "Enter a valid email",
++  "email_required_text": "Email is required",
++  "password_required_text": "Password is required",
++  "password_min_length_text": "Password must be at least 8 characters",
++  "password_number_text": "Password must contain at least one number",
++  "password_special_character_text": "Password must contain at least one special character",
++  "passwords_match_text": "Passwords must match",
++  "confirm_password_required_text": "Confirm Password is required",
++  "first_name_required_text": "First Name is required",
++  "last_name_required_text": "Last Name is required",
++  "password_reset_link_sent_text": "A password reset link was sent to your email.",
++  "password_reset_success_text": "Password has been reset successfully.",
++  "account_created_success_text": "Account created successfully"
++}
+diff --git a/src/shared/i18n/locales/en/ledger-accounts.json b/src/shared/i18n/locales/en/ledger-accounts.json
+new file mode 100644
+index 0000000..e8b2149
+--- /dev/null
++++ b/src/shared/i18n/locales/en/ledger-accounts.json
+@@ -0,0 +1,12 @@
++{
++  "petty_cash_name_label": "Petty Cash Name",
++  "currency_label": "Currency",
++  "starting_balance_label": "Starting balance",
++  "save_cash_account_text": "Save cash account",
++  "account_name_required_text": "Account name is required",
++  "account_name_min_length_text": "Account name must be at least 3 characters",
++  "account_name_max_length_text": "Account name must not exceed 100 characters",
++  "currency_required_text": "Currency is required",
++  "opening_balance_required_text": "Opening balance is required",
++  "opening_balance_negative_text": "Opening balance cannot be negative"
++}
+diff --git a/src/shared/i18n/locales/en/shared.json b/src/shared/i18n/locales/en/shared.json
+new file mode 100644
+index 0000000..12fea5d
+--- /dev/null
++++ b/src/shared/i18n/locales/en/shared.json
+@@ -0,0 +1,3 @@
++{
++  "purple_ledger_limited": "Purple Ledger Limited"
++}
+diff --git a/src/shared/types/i18next.d.ts b/src/shared/types/i18next.d.ts
+new file mode 100644
+index 0000000..8e8e66a
+--- /dev/null
++++ b/src/shared/types/i18next.d.ts
+@@ -0,0 +1,15 @@
++import authEn from '@/shared/i18n/locales/en/auth.json';
++import sharedEn from '@/shared/i18n/locales/en/shared.json';
++import 'i18next';
++
++declare module 'i18next' {
++  interface CustomTypeOptions {
++    defaultNS: 'shared';
++    resources: {
++      auth: typeof authEn;
++      shared: typeof sharedEn;
++      'ledger-accounts': typeof ledgerAccountsEn;
++      accounting: typeof accountingEn;
++    };
++  }
++}
+diff --git a/test-i18n.ts b/test-i18n.ts
+new file mode 100644
+index 0000000..29e1611
+--- /dev/null
++++ b/test-i18n.ts
+@@ -0,0 +1,5 @@
++import { useTranslation } from 'react-i18next';
++export function Test() {
++  const { t } = useTranslation();
++  t('user:manual_desc');
++}
+diff --git a/test-type.tsx b/test-type.tsx
+new file mode 100644
+index 0000000..0552fa4
+--- /dev/null
++++ b/test-type.tsx
+@@ -0,0 +1,7 @@
++import { useTranslation } from 'react-i18next';
++
++export function Test() {
++  const { t } = useTranslation(['auth', 'common']);
++  t('auth:retry_in_text', { countdown: 30 });
++  t('auth:by_action_you_agree_to_our_text', { action: 'creating' });
++}
+diff --git a/yarn.lock b/yarn.lock
+index f672a5c..89c77a2 100644
+--- a/yarn.lock
++++ b/yarn.lock
+@@ -272,7 +272,7 @@
+     "@babel/plugin-transform-modules-commonjs" "^7.27.1"
+     "@babel/plugin-transform-typescript" "^7.28.5"
+ 
+-"@babel/runtime@^7.12.5", "@babel/runtime@^7.28.6":
++"@babel/runtime@^7.12.5", "@babel/runtime@^7.23.2", "@babel/runtime@^7.28.6", "@babel/runtime@^7.29.2":
+   version "7.29.2"
+   resolved "https://registry.npmjs.org/@babel/runtime/-/runtime-7.29.2.tgz"
+   integrity sha512-JiDShH45zKHWyGe4ZNVRrCjBz8Nh9TMmZG1kh4QTK8hCBTWBi8Da+i7s1fJw7/lYpM4ccepSNfqzZ/QvABBi5g==
+@@ -3717,6 +3717,13 @@ html-escaper@^2.0.0:
+   resolved "https://registry.npmjs.org/html-escaper/-/html-escaper-2.0.2.tgz"
+   integrity sha512-H2iMtd0I4Mt5eYiapRdIDjp+XzelXQ0tFE4JS7YFwFevXXMmOp9myNrUvCg0D6ws8iqkRPBfKHgbwig1SmlLfg==
+ 
++html-parse-stringify@^3.0.1:
++  version "3.0.1"
++  resolved "https://registry.npmjs.org/html-parse-stringify/-/html-parse-stringify-3.0.1.tgz"
++  integrity sha512-KknJ50kTInJ7qIScF3jeaFRpMpE8/lfiTdzf/twXyPBLAGrLRTmkz3AdTnKeh40X8k9L2fdYwEp/42WGXIRGcg==
++  dependencies:
++    void-elements "3.1.0"
++
+ htmlparser2@^10.1.0:
+   version "10.1.0"
+   resolved "https://registry.npmjs.org/htmlparser2/-/htmlparser2-10.1.0.tgz"
+@@ -3766,6 +3773,18 @@ husky@^9.1.7:
+   resolved "https://registry.npmjs.org/husky/-/husky-9.1.7.tgz"
+   integrity sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==
+ 
++i18next-browser-languagedetector@^8.2.1:
++  version "8.2.1"
++  resolved "https://registry.npmjs.org/i18next-browser-languagedetector/-/i18next-browser-languagedetector-8.2.1.tgz"
++  integrity sha512-bZg8+4bdmaOiApD7N7BPT9W8MLZG+nPTOFlLiJiT8uzKXFjhxw4v2ierCXOwB5sFDMtuA5G4kgYZ0AznZxQ/cw==
++  dependencies:
++    "@babel/runtime" "^7.23.2"
++
++i18next@^26.0.8, "i18next@>= 26.0.1":
++  version "26.0.8"
++  resolved "https://registry.npmjs.org/i18next/-/i18next-26.0.8.tgz"
++  integrity sha512-BRzLom0mhDhV9v0QhgUUHWQJuwFmnr1194xEcNLYD6ym8y8s542n4jXUvRLnhNTbh9PmpU6kGZamyuGHQMsGjw==
++
+ iconv-lite@^0.6.3:
+   version "0.6.3"
+   resolved "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.6.3.tgz"
+@@ -5074,6 +5093,15 @@ react-fast-compare@^2.0.1:
+   resolved "https://registry.npmjs.org/react-fast-compare/-/react-fast-compare-2.0.4.tgz"
+   integrity sha512-suNP+J1VU1MWFKcyt7RtjiSWUjvidmQSlqu+eHslq+342xCbGTYmC0mEhPCOHxlW0CywylOC1u2DFAT+bv4dBw==
+ 
++react-i18next@^17.0.6:
++  version "17.0.6"
++  resolved "https://registry.npmjs.org/react-i18next/-/react-i18next-17.0.6.tgz"
++  integrity sha512-WzJ6SMKF+GTD7JZZqxSR1AKKmXjaSu39sClUrNlwxS4Tl7a99O+ltFy6yhPMO+wgZuxpQjJ2PZkfrQKmAqrLhw==
++  dependencies:
++    "@babel/runtime" "^7.29.2"
++    html-parse-stringify "^3.0.1"
++    use-sync-external-store "^1.6.0"
++
+ react-is@^16.7.0:
+   version "16.13.1"
+   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
+@@ -5126,7 +5154,7 @@ react-style-singleton@^2.2.2, react-style-singleton@^2.2.3:
+     get-nonce "^1.0.0"
+     tslib "^2.0.0"
+ 
+-"react@^16.14.0 || 17.x || 18.x || 19.x", "react@^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc", "react@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^17 || ^18 || ^19", "react@^18 || ^19", "react@^18.0.0 || ^19.0.0", "react@^18.0.0 || ^19.0.0 || ^19.0.0-rc", react@^19.2.4, react@>=16, react@>=16.8.0, react@>=18:
++"react@^16.14.0 || 17.x || 18.x || 19.x", "react@^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc", "react@^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc", "react@^17 || ^18 || ^19", "react@^18 || ^19", "react@^18.0.0 || ^19.0.0", "react@^18.0.0 || ^19.0.0 || ^19.0.0-rc", react@^19.2.4, "react@>= 16.8.0", react@>=16, react@>=16.8.0, react@>=18:
+   version "19.2.4"
+   resolved "https://registry.npmjs.org/react/-/react-19.2.4.tgz"
+   integrity sha512-9nfp2hYpCwOjAN+8TZFGhtWEwgvWHXqESH8qT89AT/lWklpLON22Lc8pEtnpsZz7VmawabSU0gCjnj8aC0euHQ==
+@@ -5927,7 +5955,7 @@ typescript-eslint@^8.58.0:
+     "@typescript-eslint/typescript-estree" "8.58.0"
+     "@typescript-eslint/utils" "8.58.0"
+ 
+-"typescript@>= 4.3.x", "typescript@>= 4.8.x", "typescript@>= 4.9.x", typescript@>=2.9, typescript@>=4.8.4, "typescript@>=4.8.4 <6.1.0", typescript@>=4.9.5, typescript@~6.0.2:
++"typescript@^5 || ^6", "typescript@>= 4.3.x", "typescript@>= 4.8.x", "typescript@>= 4.9.x", typescript@>=2.9, typescript@>=4.8.4, "typescript@>=4.8.4 <6.1.0", typescript@>=4.9.5, typescript@~6.0.2:
+   version "6.0.2"
+   resolved "https://registry.npmjs.org/typescript/-/typescript-6.0.2.tgz"
+   integrity sha512-bGdAIrZ0wiGDo5l8c++HWtbaNCWTS4UTv7RaTH/ThVIgjkveJt83m74bBHMJkuCbslY8ixgLBVZJIOiQlQTjfQ==
+@@ -6061,6 +6089,11 @@ vite@*, "vite@^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0", "vite@^
+     vite "^6.0.0 || ^7.0.0 || ^8.0.0"
+     why-is-node-running "^2.3.0"
+ 
++void-elements@3.1.0:
++  version "3.1.0"
++  resolved "https://registry.npmjs.org/void-elements/-/void-elements-3.1.0.tgz"
++  integrity sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==
++
+ w3c-xmlserializer@^5.0.0:
+   version "5.0.0"
+   resolved "https://registry.npmjs.org/w3c-xmlserializer/-/w3c-xmlserializer-5.0.0.tgz"

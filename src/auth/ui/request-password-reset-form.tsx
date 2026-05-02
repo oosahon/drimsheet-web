@@ -1,5 +1,5 @@
+import useRequestPasswordResetFormValidation from '@/auth/hooks/use-request-password-reset-form-validation';
 import { RequestPasswordResetSuccess } from '@/auth/ui/reset-password-request-success';
-import { requestPasswordResetFormValidation } from '@/auth/ui/validations/request-password-reset-form.validations';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -7,6 +7,7 @@ import { Input } from '@/shared/ui/input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface IRequestPasswordResetFormValues {
   email: string;
@@ -28,11 +29,15 @@ export function RequestPasswordResetForm({
   isSuccess,
   ...props
 }: IRequestPasswordResetFormProps) {
+  const { t } = useTranslation();
+
+  const validationSchema = useRequestPasswordResetFormValidation();
+
   const formik = useFormik<IRequestPasswordResetFormValues>({
     initialValues: {
       email: '',
     },
-    validationSchema: requestPasswordResetFormValidation,
+    validationSchema,
     onSubmit,
   });
 
@@ -40,6 +45,9 @@ export function RequestPasswordResetForm({
     errors: formik.errors,
     touched: formik.touched,
   });
+
+  const email_label = t('auth:email_label');
+  const get_password_reset_link_text = t('auth:get_password_reset_link_text');
 
   if (isSuccess) {
     return (
@@ -59,7 +67,7 @@ export function RequestPasswordResetForm({
         <FieldGroup>
           <Field>
             <div>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
               <Input
                 id="email"
                 name="email"
@@ -73,7 +81,7 @@ export function RequestPasswordResetForm({
           </Field>
           <Field className="mt-2">
             <Button type="submit" loading={loading} className="w-full">
-              Get password reset link
+              {get_password_reset_link_text}
             </Button>
           </Field>
         </FieldGroup>

@@ -1,0 +1,12 @@
+{
+  "petty_cash_name_label": "Petty Cash Name",
+  "currency_label": "Currency",
+  "starting_balance_label": "Starting balance",
+  "save_cash_account_text": "Save cash account",
+  "account_name_required_text": "Account name is required",
+  "account_name_min_length_text": "Account name must be at least 3 characters",
+  "account_name_max_length_text": "Account name must not exceed 100 characters",
+  "currency_required_text": "Currency is required",
+  "opening_balance_required_text": "Opening balance is required",
+  "opening_balance_negative_text": "Opening balance cannot be negative"
+}

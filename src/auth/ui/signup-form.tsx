@@ -1,4 +1,4 @@
-import { signupFormValidation } from '@/auth/ui/validations/signup-form.validations';
+import useSignupFormValidation from '@/auth/hooks/use-signup-form-validation';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface ISignupFormValues {
   firstName: string;
@@ -26,6 +27,10 @@ export function SignupForm({
   loading,
   ...props
 }: ISignupFormProps) {
+  const { t } = useTranslation();
+
+  const validationSchema = useSignupFormValidation();
+
   const formik = useFormik<ISignupFormValues>({
     initialValues: {
       firstName: '',
@@ -33,7 +38,7 @@ export function SignupForm({
       email: '',
       password: '',
     },
-    validationSchema: signupFormValidation,
+    validationSchema,
     onSubmit,
   });
 
@@ -41,6 +46,12 @@ export function SignupForm({
     errors: formik.errors,
     touched: formik.touched,
   });
+
+  const first_name_label = t('auth:first_name_label');
+  const last_name_label = t('auth:last_name_label');
+  const email_label = t('auth:email_label');
+  const password_label = t('auth:password_label');
+  const create_account_text = t('auth:create_account_text');
 
   return (
     <div
@@ -51,7 +62,7 @@ export function SignupForm({
         <FieldGroup>
           <Field className="grid grid-cols-2 gap-4">
             <div className="flex flex-col">
-              <FieldLabel htmlFor="firstName">First name</FieldLabel>
+              <FieldLabel htmlFor="firstName">{first_name_label}</FieldLabel>
               <Input
                 id="firstName"
                 name="firstName"
@@ -64,7 +75,7 @@ export function SignupForm({
               <FieldError errors={getErrorMessage('firstName')} />
             </div>
             <div className="flex flex-col">
-              <FieldLabel htmlFor="lastName">Last name</FieldLabel>
+              <FieldLabel htmlFor="lastName">{last_name_label}</FieldLabel>
               <Input
                 id="lastName"
                 name="lastName"
@@ -80,7 +91,7 @@ export function SignupForm({
 
           <Field>
             <div>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
               <Input
                 id="email"
                 name="email"
@@ -94,7 +105,7 @@ export function SignupForm({
             </div>
 
             <div className="mt-2">
-              <FieldLabel htmlFor="password">Password</FieldLabel>
+              <FieldLabel htmlFor="password">{password_label}</FieldLabel>
               <PasswordInput
                 id="password"
                 name="password"
@@ -108,7 +119,7 @@ export function SignupForm({
           </Field>
           <Field className="mt-2">
             <Button type="submit" loading={loading}>
-              Create account
+              {create_account_text}
             </Button>
           </Field>
         </FieldGroup>

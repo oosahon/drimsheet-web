@@ -1,4 +1,4 @@
-import { pettyCashAccountFormValidation } from '@/ledger-accounts/ui/validations/petty-cash-account-form.validations';
+import usePettyCashAccountFormValidation from '@/ledger-accounts/hooks/use-petty-cash-account-form-validation';
 import useCurrencies from '@/shared/hooks/use-currencies';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
@@ -8,6 +8,7 @@ import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { MoneyInput } from '@/shared/ui/money-input';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 
 export interface IPettyCashAccountFormValues {
   name: string;
@@ -31,10 +32,12 @@ export function PettyCashAccountForm({
   loading,
 }: IPettyCashAccountFormProps) {
   const { data: currencies = [] } = useCurrencies();
+  const validationSchema = usePettyCashAccountFormValidation();
+
   const { handleChange, values, setFieldValue, handleSubmit, errors, touched } =
     useFormik<IPettyCashAccountFormValues>({
       initialValues,
-      validationSchema: pettyCashAccountFormValidation,
+      validationSchema,
       onSubmit,
     });
 
@@ -43,19 +46,25 @@ export function PettyCashAccountForm({
     touched,
   });
 
+  const { t } = useTranslation(['ledger-accounts']);
+  const petty_cash_name_label = t('ledger-accounts:petty_cash_name_label');
+  const currency_label = t('ledger-accounts:currency_label');
+  const starting_balance_label = t('ledger-accounts:starting_balance_label');
+  const save_cash_account_text = t('ledger-accounts:save_cash_account_text');
+
   return (
     <div className="w-xs max-w-full">
       <form onSubmit={handleSubmit}>
         <FieldGroup>
           <Field>
-            <Label htmlFor="name">Petty Cash Name</Label>
+            <Label htmlFor="name">{petty_cash_name_label}</Label>
             <Input id="name" onChange={handleChange} value={values.name} />
             <FieldError errors={getErrorMessage('name')} />
           </Field>
 
           <div className="grid grid-cols-[2fr_3fr]  gap-x-3">
             <CurrencySelect
-              label="Currency"
+              label={currency_label}
               value={values.currencyCode}
               currencies={currencies}
               onChange={(val) => setFieldValue('currencyCode', val)}
@@ -64,7 +73,7 @@ export function PettyCashAccountForm({
             />
 
             <Field>
-              <Label htmlFor="openingBalance">Starting balance</Label>
+              <Label htmlFor="openingBalance">{starting_balance_label}</Label>
               <MoneyInput
                 id="openingBalance"
                 currencyCode={values.currencyCode}
@@ -77,7 +86,7 @@ export function PettyCashAccountForm({
 
           <Field className="mt-2">
             <Button type="submit" loading={loading}>
-              Save cash account
+              {save_cash_account_text}
             </Button>
           </Field>
         </FieldGroup>

@@ -1,4 +1,4 @@
-import { resetPasswordFormValidation } from '@/auth/ui/validations/reset-password-form.validations';
+import useResetPasswordFormValidation from '@/auth/hooks/use-reset-password-form-validation';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik, type FormikHelpers } from 'formik';
 import { type ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface IResetPasswordFormValues {
   password: string;
@@ -32,12 +33,16 @@ export function ResetPasswordForm({
   loading,
   ...props
 }: ResetPasswordFormProps) {
+  const { t } = useTranslation();
+
+  const validationSchema = useResetPasswordFormValidation();
+
   const formik = useFormik<IResetPasswordFormValues>({
     initialValues: {
       password: '',
       confirmPassword: '',
     },
-    validationSchema: resetPasswordFormValidation,
+    validationSchema,
     onSubmit,
   });
 
@@ -45,6 +50,11 @@ export function ResetPasswordForm({
     errors: formik.errors,
     touched: formik.touched,
   });
+
+  const email_label = t('auth:email_label');
+  const new_password_label = t('auth:new_password_label');
+  const confirm_password_label = t('auth:confirm_password_label');
+  const reset_password_text = t('auth:reset_password_text');
 
   return (
     <div
@@ -55,7 +65,7 @@ export function ResetPasswordForm({
         <FieldGroup>
           <Field>
             <div>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
               <Input
                 id="email"
                 name="email"
@@ -66,7 +76,7 @@ export function ResetPasswordForm({
             </div>
 
             <div className="mt-2">
-              <FieldLabel htmlFor="password">New Password</FieldLabel>
+              <FieldLabel htmlFor="password">{new_password_label}</FieldLabel>
               <PasswordInput
                 id="password"
                 name="password"
@@ -79,7 +89,7 @@ export function ResetPasswordForm({
 
             <div className="mt-2">
               <FieldLabel htmlFor="confirmPassword">
-                Confirm Password
+                {confirm_password_label}
               </FieldLabel>
               <PasswordInput
                 id="confirmPassword"
@@ -93,7 +103,7 @@ export function ResetPasswordForm({
           </Field>
           <Field className="mt-2">
             <Button type="submit" loading={loading} className="w-full">
-              Reset password
+              {reset_password_text}
             </Button>
           </Field>
         </FieldGroup>

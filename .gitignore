@@ -48,3 +48,5 @@ e2e/test-results/
 /playwright/.auth/
 
 pr-review-report.md
+
+ticket-description.md
