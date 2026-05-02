@@ -207,10 +207,16 @@ export interface IApiValidationError {
   message: string;
 }
 
-export interface IApiError {
-  message: string;
+/** Construct a type with a set of properties K of type T */
+export type RecordStringUnknown = Record<string, any>;
+
+export type TErrorCause = RecordStringUnknown;
+
+export interface IHttpErrorDto {
+  name: string;
+  errorKey: string;
   validationErrors?: IApiValidationError[];
-  cause?: any;
+  cause?: TErrorCause;
 }
 
 export interface IUser {
@@ -547,7 +553,7 @@ export class Api<
      * @secure
      */
     getUserPreferences: (params: RequestParams = {}) =>
-      this.request<IUserPreferences, IApiError>({
+      this.request<IUserPreferences, IHttpErrorDto>({
         path: `/users/preferences`,
         method: 'GET',
         secure: true,
@@ -564,7 +570,7 @@ export class Api<
      * @secure
      */
     getAuthUserProfile: (params: RequestParams = {}) =>
-      this.request<IUser, IApiError>({
+      this.request<IUser, IHttpErrorDto>({
         path: `/users/profile`,
         method: 'GET',
         secure: true,
@@ -581,7 +587,7 @@ export class Api<
      * @request GET:/currencies
      */
     getAll: (params: RequestParams = {}) =>
-      this.request<ICurrencyDto[], IApiError>({
+      this.request<ICurrencyDto[], any>({
         path: `/currencies`,
         method: 'GET',
         format: 'json',
@@ -597,7 +603,7 @@ export class Api<
      * @request POST:/auth/signup-with-email
      */
     signupWithEmail: (data: IUserSignupReq, params: RequestParams = {}) =>
-      this.request<void, IApiError>({
+      this.request<void, IHttpErrorDto>({
         path: `/auth/signup-with-email`,
         method: 'POST',
         body: data,
@@ -618,7 +624,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<IAccessToken, IApiError>({
+      this.request<IAccessToken, IHttpErrorDto>({
         path: `/auth/signup/complete`,
         method: 'POST',
         query: query,
@@ -634,7 +640,7 @@ export class Api<
      * @request POST:/auth/login-with-email
      */
     loginWithEmail: (data: IEmailLoginReq, params: RequestParams = {}) =>
-      this.request<IAccessToken, IApiError>({
+      this.request<IAccessToken, IHttpErrorDto>({
         path: `/auth/login-with-email`,
         method: 'POST',
         body: data,
@@ -656,7 +662,7 @@ export class Api<
       },
       params: RequestParams = {}
     ) =>
-      this.request<void, IApiError>({
+      this.request<void, IHttpErrorDto>({
         path: `/auth/get-password-reset-link`,
         method: 'POST',
         body: data,
@@ -672,7 +678,7 @@ export class Api<
      * @request POST:/auth/reset-password
      */
     resetPassword: (data: IResetPasswordReq, params: RequestParams = {}) =>
-      this.request<IAccessToken, IApiError>({
+      this.request<IAccessToken, IHttpErrorDto>({
         path: `/auth/reset-password`,
         method: 'POST',
         body: data,
@@ -717,7 +723,7 @@ export class Api<
      * @request POST:/auth/refresh-access-token
      */
     refreshAccessToken: (params: RequestParams = {}) =>
-      this.request<IAccessToken, IApiError>({
+      this.request<IAccessToken, IHttpErrorDto>({
         path: `/auth/refresh-access-token`,
         method: 'POST',
         format: 'json',
@@ -750,7 +756,7 @@ export class Api<
       data: IPettyCashAccountCreationReq,
       params: RequestParams = {}
     ) =>
-      this.request<void, IApiError>({
+      this.request<void, IHttpErrorDto>({
         path: `/ledger/asset-accounts`,
         method: 'POST',
         body: data,
@@ -770,7 +776,7 @@ export class Api<
       data: IAccountingEntityCreationDto,
       params: RequestParams = {}
     ) =>
-      this.request<IAccountingEntity, IApiError>({
+      this.request<IAccountingEntity, IHttpErrorDto>({
         path: `/accounting/accounting-entity`,
         method: 'POST',
         body: data,
@@ -787,7 +793,7 @@ export class Api<
      * @request GET:/accounting/jurisdictions
      */
     getJurisdictions: (params: RequestParams = {}) =>
-      this.request<IJurisdictionDto[], IApiError>({
+      this.request<IJurisdictionDto[], any>({
         path: `/accounting/jurisdictions`,
         method: 'GET',
         format: 'json',
@@ -802,7 +808,7 @@ export class Api<
      * @request GET:/accounting/accounting-entities
      */
     getUserAccountingEntities: (params: RequestParams = {}) =>
-      this.request<IAccountingEntity[], IApiError>({
+      this.request<IAccountingEntity[], IHttpErrorDto>({
         path: `/accounting/accounting-entities`,
         method: 'GET',
         format: 'json',
