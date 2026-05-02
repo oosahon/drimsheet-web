@@ -1,7 +1,7 @@
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import observabilityService from '@/shared/services/observability.service';
 import { Button } from '@/shared/ui/button';
 import FullPageLoader from '@/shared/ui/full-page-loader';
-import { handleApiError } from '@/shared/utils/api/errors';
 import { ErrorBoundary as SentryErrorBoundary } from '@sentry/react';
 import { isAxiosError } from 'axios';
 import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
@@ -64,6 +64,8 @@ export const DefaultErrorBoundary = ({
   children,
   fallback,
 }: DefaultErrorBoundaryProps) => {
+  const handleApiError = useApiErrorHandler();
+
   return (
     <SentryErrorBoundary
       fallback={fallback || DefaultErrorFallback}

@@ -4,6 +4,7 @@ import {
   AccountingEntityCreationForm,
   type IAccountingEntityFormValues,
 } from '@/accounting/ui/accounting-entity-creation-form';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import useCurrencies from '@/shared/hooks/use-currencies';
 import {
   Dialog,
@@ -12,7 +13,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/ui/dialog';
-import { handleApiError } from '@/shared/utils/api/errors';
 import useProfile from '@/user/hooks/use-profile';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -27,7 +27,7 @@ export default function AccountingEntityCreationFormContainer({
   done,
 }: AccountingEntityCreationFormContainerProps) {
   const { t } = useTranslation('accounting');
-  const welcome_to_the_purple_side_text = t('welcome_to_the_purple_side_text');
+  const handleApiError = useApiErrorHandler();
 
   const { mutateAsync: createAccountingEntity, isPending } =
     useCreateAccountingEntity();
@@ -39,7 +39,8 @@ export default function AccountingEntityCreationFormContainer({
     try {
       const userName = `${user?.firstName} ${user?.lastName}`;
       await createAccountingEntity({ ...values, name: userName });
-      toast.success(welcome_to_the_purple_side_text);
+
+      toast.success(t('welcome_to_the_purple_side_text'));
       done();
     } catch (error) {
       handleApiError(error, { showToast: true });

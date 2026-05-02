@@ -1,9 +1,10 @@
 import useLoginWithEmail from '@/auth/hooks/use-login-with-email';
 import { LoginForm, type ILoginFormValues } from '@/auth/ui/login-form';
-import { handleApiError } from '@/shared/utils/api/errors';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useNavigate } from 'react-router-dom';
 
 export function LoginFormContainer() {
+  const handleApiError = useApiErrorHandler();
   const { mutateAsync: loginWithEmail, isPending } = useLoginWithEmail();
   const navigate = useNavigate();
 

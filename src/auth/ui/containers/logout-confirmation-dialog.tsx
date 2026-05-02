@@ -1,5 +1,5 @@
 import useLogout from '@/auth/hooks/use-logout';
-import { handleApiError } from '@/shared/utils/api/errors';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { LogOutIcon } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +27,7 @@ export function LogoutConfirmationDialog({
 }: LogoutConfirmationDialogProps) {
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
+  const handleApiError = useApiErrorHandler();
   const [open, setOpen] = useState(false);
   const { mutateAsync: logout, isPending } = useLogout();
 

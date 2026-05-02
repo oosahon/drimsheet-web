@@ -3,11 +3,12 @@ import {
   RequestPasswordResetForm,
   type IRequestPasswordResetFormValues,
 } from '@/auth/ui/request-password-reset-form';
-import { handleApiError } from '@/shared/utils/api/errors';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 export function RequestPasswordResetFormContainer() {
+  const handleApiError = useApiErrorHandler();
   const { t } = useTranslation(['auth']);
   const password_reset_link_sent_text = t('password_reset_link_sent_text');
 
