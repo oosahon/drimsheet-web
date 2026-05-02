@@ -4,9 +4,13 @@ import {
   type IRequestPasswordResetFormValues,
 } from '@/auth/ui/request-password-reset-form';
 import { handleApiError } from '@/shared/utils/api/errors';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 export function RequestPasswordResetFormContainer() {
+  const { t } = useTranslation(['auth']);
+  const password_reset_link_sent_text = t('password_reset_link_sent_text');
+
   const {
     mutateAsync: requestPasswordReset,
     isPending,
@@ -18,7 +22,7 @@ export function RequestPasswordResetFormContainer() {
   ) => {
     try {
       await requestPasswordReset(values.email);
-      toast.success('A password reset link was sent to your email.');
+      toast.success(password_reset_link_sent_text);
     } catch (error) {
       handleApiError(error, {
         showToast: true,

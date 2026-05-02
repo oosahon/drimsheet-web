@@ -2,15 +2,18 @@ import useVerifyEmail from '@/auth/hooks/use-verify-email';
 import FullPageLoader from '@/shared/ui/full-page-loader';
 import { handleApiError } from '@/shared/utils/api/errors';
 import { useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export default function CompleteSignupRoute() {
-  const { mutateAsync: verifyEmail } = useVerifyEmail();
+  const { t } = useTranslation('auth');
+
   const navigate = useNavigate();
 
-  // NB: put here to prevent double trigger in development
   const hasCalled = useRef(false);
+
+  const { mutateAsync: verifyEmail } = useVerifyEmail();
 
   useEffect(() => {
     const handleVerifyEmail = async () => {
@@ -21,7 +24,9 @@ export default function CompleteSignupRoute() {
       if (token) {
         try {
           await verifyEmail(token);
-          toast.success('Email verified successfully');
+
+          const email_verified_success_text = t('email_verified_success_text');
+          toast.success(email_verified_success_text);
           navigate('/dashboard');
         } catch (error) {
           handleApiError(error, { showToast: true });
@@ -31,7 +36,7 @@ export default function CompleteSignupRoute() {
     };
 
     handleVerifyEmail();
-  }, [verifyEmail, navigate]);
+  }, [verifyEmail, navigate, t]);
 
   return <FullPageLoader />;
 }

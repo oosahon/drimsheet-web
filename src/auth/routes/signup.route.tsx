@@ -1,21 +1,31 @@
 import { AuthConsent } from '@/auth/ui/auth-consent';
 import { GoogleAuthButton } from '@/auth/ui/containers/google-auth-button';
 import { SignupFormContainer } from '@/auth/ui/containers/signup-form';
+import emailSentImg from '@/shared/assets/email-sent.svg';
+import logoImg from '@/shared/assets/logo.svg';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
 import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
 import { useMemo } from 'react';
-
-import emailSentImg from '@/shared/assets/email-sent.svg';
-import logoImg from '@/shared/assets/logo.svg';
+import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 
 export default function SignupRoute() {
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation('auth');
+  const { t: tShared } = useTranslation('shared');
 
   const success = useMemo(
     () => searchParams.get('success') === 'true',
     [searchParams]
   );
+
+  const account_created_success_title = t('account_created_success_title');
+  const check_email_verification_text = t('check_email_verification_text');
+  const or_text = t('or_text');
+  const already_have_account_text = t('already_have_account_text');
+  const sign_in_link_text = t('sign_in_link_text');
+  const creating_an_account_action_text = t('creating_an_account_action_text');
+  const purple_ledger_limited = tShared('purple_ledger_limited');
 
   if (success) {
     return (
@@ -23,10 +33,10 @@ export default function SignupRoute() {
         <Card>
           <CardHeader className="flex flex-col items-center gap-4">
             <img src={emailSentImg} alt="Email Sent" />
-            <CardTitle>Account created successfully!</CardTitle>
+            <CardTitle>{account_created_success_title}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4">
-            <p>Please check your email for a verification link</p>
+            <p>{check_email_verification_text}</p>
           </CardContent>
         </Card>
       </div>
@@ -41,11 +51,11 @@ export default function SignupRoute() {
             <div className="flex size-8 items-center justify-center rounded-md">
               <img
                 src={logoImg}
-                alt="Purple Ledger Limited"
+                alt={purple_ledger_limited}
                 className="mb-6 min-w-12 rounded-2xl"
               />
             </div>
-            <span className="sr-only">Purple Ledger Limited.</span>
+            <span className="sr-only">{purple_ledger_limited}.</span>
           </Link>
         </div>
 
@@ -53,21 +63,21 @@ export default function SignupRoute() {
           <GoogleAuthButton />
         </div>
 
-        <FieldSeparator className="my-4">Or</FieldSeparator>
+        <FieldSeparator className="my-4">{or_text}</FieldSeparator>
 
         <SignupFormContainer />
 
         <FieldDescription className="text-center">
-          Already have an account?{' '}
+          {already_have_account_text}{' '}
           <Link
             to="/auth/signin"
             className="text-purple-600 hover:text-purple-500"
           >
-            Sign in
+            {sign_in_link_text}
           </Link>
         </FieldDescription>
 
-        <AuthConsent actionText="creating an account" />
+        <AuthConsent actionText={creating_an_account_action_text} />
       </div>
     </div>
   );

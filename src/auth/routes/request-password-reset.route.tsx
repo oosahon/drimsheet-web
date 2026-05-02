@@ -1,7 +1,15 @@
 import { RequestPasswordResetFormContainer } from '@/auth/ui/containers/request-password-reset-form-container';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 export default function RequestPasswordResetRoute() {
+  const { t } = useTranslation('auth');
+  const { t: tShared } = useTranslation('shared');
+
+  const reset_password_title = t('reset_password_title');
+  const reset_password_description = t('reset_password_description');
+  const purple_ledger_limited = tShared('purple_ledger_limited');
+
   return (
     <div className="flex h-screen w-full max-w-xs items-center justify-center">
       <div className="flex flex-col gap-6">
@@ -10,20 +18,19 @@ export default function RequestPasswordResetRoute() {
             <div className="flex size-8 items-center justify-center rounded-md mb-1">
               <img
                 src="/logo.svg"
-                alt="Purple Ledger Limited"
+                alt={purple_ledger_limited}
                 className="min-w-12 rounded-2xl"
               />
             </div>
-            <span className="sr-only">Purple Ledger Limited.</span>
+            <span className="sr-only">{purple_ledger_limited}.</span>
           </Link>
         </div>
         <div>
           <h1 className="text-2xl/4 font-bold tracking-tight">
-            Reset your password
+            {reset_password_title}
           </h1>
           <p className="text-sm/6 text-muted-foreground">
-            A password reset link will be sent to the email address associated
-            with your account.
+            {reset_password_description}
           </p>
         </div>
         <div>

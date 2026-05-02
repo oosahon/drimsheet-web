@@ -1,4 +1,4 @@
-import { loginFormValidation } from '@/auth/ui/validations/login-form.validations';
+import useLoginFormValidation from '@/auth/hooks/use-login-form-validation';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
@@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
 import { cn } from '@/shared/ui/utils';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 export interface ILoginFormValues {
@@ -25,12 +26,16 @@ export function LoginForm({
   loading,
   ...props
 }: ILoginFormProps) {
+  const { t } = useTranslation('auth');
+
+  const validationSchema = useLoginFormValidation();
+
   const formik = useFormik<ILoginFormValues>({
     initialValues: {
       email: '',
       password: '',
     },
-    validationSchema: loginFormValidation,
+    validationSchema,
     onSubmit,
   });
 
@@ -38,6 +43,11 @@ export function LoginForm({
     errors: formik.errors,
     touched: formik.touched,
   });
+
+  const email_label = t('email_label');
+  const password_label = t('password_label');
+  const forgot_password_text = t('forgot_password_text');
+  const sign_in_text = t('sign_in_text');
 
   return (
     <div
@@ -48,7 +58,7 @@ export function LoginForm({
         <FieldGroup>
           <Field>
             <div>
-              <FieldLabel htmlFor="email">Email</FieldLabel>
+              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
               <Input
                 id="email"
                 name="email"
@@ -65,7 +75,7 @@ export function LoginForm({
                 htmlFor="password"
                 className="col-start-1 row-start-1"
               >
-                Password
+                {password_label}
               </FieldLabel>
               <div className="col-span-2 row-start-2 mt-2">
                 <PasswordInput
@@ -81,7 +91,7 @@ export function LoginForm({
                 to="/auth/forgot-password"
                 className="col-start-2 row-start-1 justify-self-end text-xs font-medium hover:text-purple-200"
               >
-                Forgot password?
+                {forgot_password_text}
               </Link>
             </div>
           </Field>
@@ -91,7 +101,7 @@ export function LoginForm({
               data-testid="login-submit-btn"
               loading={loading}
             >
-              Sign In
+              {sign_in_text}
             </Button>
           </Field>
         </FieldGroup>
