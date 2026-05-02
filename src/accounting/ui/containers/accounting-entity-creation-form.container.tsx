@@ -26,10 +26,8 @@ export default function AccountingEntityCreationFormContainer({
   open,
   done,
 }: AccountingEntityCreationFormContainerProps) {
-  const { t } = useTranslation();
-  const welcome_to_the_purple_side_text = t(
-    'accounting:welcome_to_the_purple_side_text'
-  );
+  const { t } = useTranslation('accounting');
+  const welcome_to_the_purple_side_text = t('welcome_to_the_purple_side_text');
 
   const { mutateAsync: createAccountingEntity, isPending } =
     useCreateAccountingEntity();

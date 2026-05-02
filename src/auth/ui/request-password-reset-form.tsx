@@ -29,7 +29,7 @@ export function RequestPasswordResetForm({
   isSuccess,
   ...props
 }: IRequestPasswordResetFormProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
 
   const validationSchema = useRequestPasswordResetFormValidation();
 
@@ -46,8 +46,8 @@ export function RequestPasswordResetForm({
     touched: formik.touched,
   });
 
-  const email_label = t('auth:email_label');
-  const get_password_reset_link_text = t('auth:get_password_reset_link_text');
+  const email_label = t('email_label');
+  const get_password_reset_link_text = t('get_password_reset_link_text');
 
   if (isSuccess) {
     return (

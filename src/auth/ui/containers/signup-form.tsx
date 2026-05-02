@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 
 export function SignupFormContainer() {
   const { t } = useTranslation(['auth']);
-  const account_created_success_text = t('auth:account_created_success_text');
+  const account_created_success_text = t('account_created_success_text');
 
   const [, setSearchParams] = useSearchParams();
 

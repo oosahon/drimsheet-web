@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 export default function CompleteSignupRoute() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
 
   const navigate = useNavigate();
 
@@ -25,9 +25,7 @@ export default function CompleteSignupRoute() {
         try {
           await verifyEmail(token);
 
-          const email_verified_success_text = t(
-            'auth:email_verified_success_text'
-          );
+          const email_verified_success_text = t('email_verified_success_text');
           toast.success(email_verified_success_text);
           navigate('/dashboard');
         } catch (error) {

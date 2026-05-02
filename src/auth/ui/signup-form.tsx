@@ -27,7 +27,7 @@ export function SignupForm({
   loading,
   ...props
 }: ISignupFormProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
 
   const validationSchema = useSignupFormValidation();
 
@@ -47,11 +47,11 @@ export function SignupForm({
     touched: formik.touched,
   });
 
-  const first_name_label = t('auth:first_name_label');
-  const last_name_label = t('auth:last_name_label');
-  const email_label = t('auth:email_label');
-  const password_label = t('auth:password_label');
-  const create_account_text = t('auth:create_account_text');
+  const first_name_label = t('first_name_label');
+  const last_name_label = t('last_name_label');
+  const email_label = t('email_label');
+  const password_label = t('password_label');
+  const create_account_text = t('create_account_text');
 
   return (
     <div

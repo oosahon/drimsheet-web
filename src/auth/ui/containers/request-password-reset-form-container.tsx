@@ -9,7 +9,7 @@ import { toast } from 'sonner';
 
 export function RequestPasswordResetFormContainer() {
   const { t } = useTranslation(['auth']);
-  const password_reset_link_sent_text = t('auth:password_reset_link_sent_text');
+  const password_reset_link_sent_text = t('password_reset_link_sent_text');
 
   const {
     mutateAsync: requestPasswordReset,

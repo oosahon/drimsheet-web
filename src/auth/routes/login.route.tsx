@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 export default function LoginRoute() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
+  const { t: tShared } = useTranslation('shared');
 
-  const or_text = t('auth:or_text');
-  const no_account_text = t('auth:no_account_text');
-  const sign_up_text = t('auth:sign_up_text');
-  const logging_in_action_text = t('auth:logging_in_action_text');
-  const purple_ledger_limited = t('shared:purple_ledger_limited');
+  const or_text = t('or_text');
+  const no_account_text = t('no_account_text');
+  const sign_up_text = t('sign_up_text');
+  const logging_in_action_text = t('logging_in_action_text');
+  const purple_ledger_limited = tShared('purple_ledger_limited');
 
   return (
     <div className="flex h-screen items-center justify-center">

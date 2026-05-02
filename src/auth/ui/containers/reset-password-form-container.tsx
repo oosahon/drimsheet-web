@@ -16,7 +16,7 @@ type TSubmitHandler = ResetPasswordFormProps['onSubmit'];
 
 export function ResetPasswordFormContainer() {
   const { t } = useTranslation(['auth']);
-  const password_reset_success_text = t('auth:password_reset_success_text');
+  const password_reset_success_text = t('password_reset_success_text');
 
   const { mutateAsync: resetPassword, isPending } = useResetPassword();
   const navigate = useNavigate();

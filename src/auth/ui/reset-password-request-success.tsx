@@ -30,9 +30,9 @@ export const RequestPasswordResetSuccess = ({
     }
   }, [countdown]);
 
-  const didnt_receive_it_text = t('auth:didnt_receive_it_text');
-  const retry_text = t('auth:retry_text');
-  const back_to_sign_in_text = t('auth:back_to_sign_in_text');
+  const didnt_receive_it_text = t('didnt_receive_it_text');
+  const retry_text = t('retry_text');
+  const back_to_sign_in_text = t('back_to_sign_in_text');
   const retry_in_text = t('auth:retry_in_text', { countdown });
 
   return (

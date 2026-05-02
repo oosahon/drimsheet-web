@@ -11,22 +11,21 @@ import { Link, useSearchParams } from 'react-router-dom';
 
 export default function SignupRoute() {
   const [searchParams] = useSearchParams();
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
+  const { t: tShared } = useTranslation('shared');
 
   const success = useMemo(
     () => searchParams.get('success') === 'true',
     [searchParams]
   );
 
-  const account_created_success_title = t('auth:account_created_success_title');
-  const check_email_verification_text = t('auth:check_email_verification_text');
-  const or_text = t('auth:or_text');
-  const already_have_account_text = t('auth:already_have_account_text');
-  const sign_in_link_text = t('auth:sign_in_link_text');
-  const creating_an_account_action_text = t(
-    'auth:creating_an_account_action_text'
-  );
-  const purple_ledger_limited = t('shared:purple_ledger_limited');
+  const account_created_success_title = t('account_created_success_title');
+  const check_email_verification_text = t('check_email_verification_text');
+  const or_text = t('or_text');
+  const already_have_account_text = t('already_have_account_text');
+  const sign_in_link_text = t('sign_in_link_text');
+  const creating_an_account_action_text = t('creating_an_account_action_text');
+  const purple_ledger_limited = tShared('purple_ledger_limited');
 
   if (success) {
     return (

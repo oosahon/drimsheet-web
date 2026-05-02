@@ -47,10 +47,10 @@ export function PettyCashAccountForm({
   });
 
   const { t } = useTranslation(['ledger-accounts']);
-  const petty_cash_name_label = t('ledger-accounts:petty_cash_name_label');
-  const currency_label = t('ledger-accounts:currency_label');
-  const starting_balance_label = t('ledger-accounts:starting_balance_label');
-  const save_cash_account_text = t('ledger-accounts:save_cash_account_text');
+  const petty_cash_name_label = t('petty_cash_name_label');
+  const currency_label = t('currency_label');
+  const starting_balance_label = t('starting_balance_label');
+  const save_cash_account_text = t('save_cash_account_text');
 
   return (
     <div className="w-xs max-w-full">

@@ -3,24 +3,14 @@ import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
 export default function usePettyCashAccountFormValidation() {
-  const { t } = useTranslation();
+  const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
 
-  const account_name_required_text = t(
-    'ledger-accounts:account_name_required_text'
-  );
-  const account_name_min_length_text = t(
-    'ledger-accounts:account_name_min_length_text'
-  );
-  const account_name_max_length_text = t(
-    'ledger-accounts:account_name_max_length_text'
-  );
-  const currency_required_text = t('ledger-accounts:currency_required_text');
-  const opening_balance_required_text = t(
-    'ledger-accounts:opening_balance_required_text'
-  );
-  const opening_balance_negative_text = t(
-    'ledger-accounts:opening_balance_negative_text'
-  );
+  const account_name_required_text = t('account_name_required_text');
+  const account_name_min_length_text = t('account_name_min_length_text');
+  const account_name_max_length_text = t('account_name_max_length_text');
+  const currency_required_text = t('currency_required_text');
+  const opening_balance_required_text = t('opening_balance_required_text');
+  const opening_balance_negative_text = t('opening_balance_negative_text');
 
   return useMemo(
     () =>

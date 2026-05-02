@@ -1,6 +1,6 @@
 import uiCurrencies from '@/shared/config/currencies.json' with { type: 'json' };
 import { CurrencySelect } from '@/shared/ui/currency-select';
-import { ICurrencyDto } from '@/shared/utils/api/Api';
+import type { ICurrencyDto } from '@/shared/utils/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';

@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 export default function RequestPasswordResetRoute() {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
+  const { t: tShared } = useTranslation('shared');
 
-  const reset_password_title = t('auth:reset_password_title');
-  const reset_password_description = t('auth:reset_password_description');
-  const purple_ledger_limited = t('shared:purple_ledger_limited');
+  const reset_password_title = t('reset_password_title');
+  const reset_password_description = t('reset_password_description');
+  const purple_ledger_limited = tShared('purple_ledger_limited');
 
   return (
     <div className="flex h-screen w-full max-w-xs items-center justify-center">

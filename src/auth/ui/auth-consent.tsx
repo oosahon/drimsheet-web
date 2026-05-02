@@ -14,9 +14,9 @@ export function AuthConsent({
     action: actionText,
   });
 
-  const terms_of_service_text = t('auth:terms_of_service_text');
-  const and_text = t('auth:and_text');
-  const privacy_policy_text = t('auth:privacy_policy_text');
+  const terms_of_service_text = t('terms_of_service_text');
+  const and_text = t('and_text');
+  const privacy_policy_text = t('privacy_policy_text');
 
   return (
     <FieldDescription className="px-6 text-center text-xs">

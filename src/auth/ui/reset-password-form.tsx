@@ -33,7 +33,7 @@ export function ResetPasswordForm({
   loading,
   ...props
 }: ResetPasswordFormProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
 
   const validationSchema = useResetPasswordFormValidation();
 
@@ -51,10 +51,10 @@ export function ResetPasswordForm({
     touched: formik.touched,
   });
 
-  const email_label = t('auth:email_label');
-  const new_password_label = t('auth:new_password_label');
-  const confirm_password_label = t('auth:confirm_password_label');
-  const reset_password_text = t('auth:reset_password_text');
+  const email_label = t('email_label');
+  const new_password_label = t('new_password_label');
+  const confirm_password_label = t('confirm_password_label');
+  const reset_password_text = t('reset_password_text');
 
   return (
     <div

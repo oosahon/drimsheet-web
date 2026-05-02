@@ -26,7 +26,7 @@ export function LoginForm({
   loading,
   ...props
 }: ILoginFormProps) {
-  const { t } = useTranslation();
+  const { t } = useTranslation('auth');
 
   const validationSchema = useLoginFormValidation();
 
@@ -44,10 +44,10 @@ export function LoginForm({
     touched: formik.touched,
   });
 
-  const email_label = t('auth:email_label');
-  const password_label = t('auth:password_label');
-  const forgot_password_text = t('auth:forgot_password_text');
-  const sign_in_text = t('auth:sign_in_text');
+  const email_label = t('email_label');
+  const password_label = t('password_label');
+  const forgot_password_text = t('forgot_password_text');
+  const sign_in_text = t('sign_in_text');
 
   return (
     <div
