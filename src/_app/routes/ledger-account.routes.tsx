@@ -1,6 +1,6 @@
+import PettyCashAccountPage from '@/ledger-accounts/ui/pages/petty-cash-account.page';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
-import AppLayout from '@/shared/ui/containers/app-layout';
-import PettyCashAccountRoute from './petty-cash-account.route';
+import AppLayout from '@/shared/ui/layouts/app-layout';
 
 const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {
   return {
@@ -9,7 +9,7 @@ const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {
     children: [
       {
         path: 'petty-cash',
-        element: <PettyCashAccountRoute />,
+        element: <PettyCashAccountPage />,
       },
     ],
   };

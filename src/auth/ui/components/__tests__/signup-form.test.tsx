@@ -1,4 +1,4 @@
-import { SignupForm } from '@/auth/ui/signup-form';
+import { SignupForm } from '@/auth/ui/components/signup-form';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';

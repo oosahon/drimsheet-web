@@ -6,7 +6,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-} from '@/shared/ui/sidebar';
+} from '@/shared/ui/components/sidebar';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

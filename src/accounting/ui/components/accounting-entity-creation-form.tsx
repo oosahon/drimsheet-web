@@ -1,8 +1,8 @@
 import { FISCAL_YEAR_STARTS } from '@/accounting/config/fiscal-year-start.config';
-import { useFiscalYearWarning } from '@/accounting/hooks/use-fiscal-year-warning';
-import { AccountingEntityTypeSelect } from '@/accounting/ui/accounting-entity-type-select';
-import { FiscalDateSelect } from '@/accounting/ui/fiscal-date-select';
-import { accountingEntityCreationFormValidation } from '@/accounting/ui/validations/accounting-entity.validations';
+import { accountingEntityCreationFormValidation } from '@/accounting/hooks/ui/accounting-entity.validations';
+import { useFiscalYearWarning } from '@/accounting/hooks/ui/use-fiscal-year-warning';
+import { AccountingEntityTypeSelect } from '@/accounting/ui/components/accounting-entity-type-select';
+import { FiscalDateSelect } from '@/accounting/ui/components/fiscal-date-select';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { AlertTitle, WarningAlert } from '@/shared/ui/components/alert';
 import { Button } from '@/shared/ui/components/button';

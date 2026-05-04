@@ -5,7 +5,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/shared/ui/breadcrumb';
+} from '@/shared/ui/components/breadcrumb';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

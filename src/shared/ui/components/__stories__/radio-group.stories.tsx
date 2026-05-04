@@ -1,5 +1,5 @@
 import { Label } from '@/shared/ui/components/label';
-import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '@/shared/ui/components/radio-group';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

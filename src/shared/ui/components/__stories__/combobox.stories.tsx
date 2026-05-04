@@ -4,7 +4,7 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from '@/shared/ui/combobox';
+} from '@/shared/ui/components/combobox';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

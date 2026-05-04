@@ -1,4 +1,4 @@
-import { FiscalDateSelect } from '@/accounting/ui/fiscal-date-select';
+import { FiscalDateSelect } from '@/accounting/ui/components/fiscal-date-select';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';

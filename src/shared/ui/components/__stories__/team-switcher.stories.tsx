@@ -1,5 +1,5 @@
-import { SidebarProvider } from '@/shared/ui/sidebar';
-import { TeamSwitcher } from '@/shared/ui/team-switcher';
+import { SidebarProvider } from '@/shared/ui/components/sidebar';
+import { TeamSwitcher } from '@/shared/ui/components/team-switcher';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Home } from 'lucide-react';
 

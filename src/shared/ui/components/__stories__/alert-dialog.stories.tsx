@@ -8,7 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/shared/ui/alert-dialog';
+} from '@/shared/ui/components/alert-dialog';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

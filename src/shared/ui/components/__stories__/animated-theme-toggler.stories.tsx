@@ -1,4 +1,4 @@
-import { AnimatedThemeToggler } from '@/shared/ui/animated-theme-toggler';
+import { AnimatedThemeToggler } from '@/shared/ui/components/animated-theme-toggler';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

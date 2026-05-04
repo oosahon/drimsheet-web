@@ -1,5 +1,5 @@
-import useAuthRoutes from '@/auth/routes/auth.routes';
-import useLedgerAccountRoutes from '@/ledger-accounts/routes/ledger-account.routes';
+import useAuthRoutes from '@/_app/routes/auth.routes';
+import useLedgerAccountRoutes from '@/_app/routes/ledger-account.routes';
 import useReportingRoutes from '@/reporting/routes/reporting.routes';
 import { useRoutes } from 'react-router-dom';
 

@@ -5,7 +5,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@/shared/ui/sheet';
+} from '@/shared/ui/components/sheet';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

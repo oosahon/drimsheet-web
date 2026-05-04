@@ -1,4 +1,4 @@
-import { Toaster } from '@/shared/ui/sonner';
+import { Toaster } from '@/shared/ui/components/sonner';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

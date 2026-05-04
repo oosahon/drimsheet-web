@@ -3,7 +3,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/shared/ui/tooltip';
+} from '@/shared/ui/components/tooltip';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

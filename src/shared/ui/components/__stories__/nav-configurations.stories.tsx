@@ -1,5 +1,5 @@
-import { NavConfigurations } from '@/shared/ui/nav-configurations';
-import { SidebarProvider } from '@/shared/ui/sidebar';
+import { NavConfigurations } from '@/shared/ui/components/nav-configurations';
+import { SidebarProvider } from '@/shared/ui/components/sidebar';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Settings } from 'lucide-react';
 

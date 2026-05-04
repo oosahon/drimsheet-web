@@ -1,4 +1,4 @@
-import { MoneyInput } from '@/shared/ui/money-input';
+import { MoneyInput } from '@/shared/ui/components/money-input';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 

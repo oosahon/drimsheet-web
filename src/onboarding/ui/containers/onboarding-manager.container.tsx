@@ -1,4 +1,4 @@
-import useAccountingEntities from '@/accounting/hooks/use-accounting-entities';
+import useAccountingEntities from '@/accounting/hooks/api/use-accounting-entities';
 import AccountingEntityCreationFormContainer from '@/accounting/ui/containers/accounting-entity-creation-form.container';
 import { useMemo } from 'react';
 

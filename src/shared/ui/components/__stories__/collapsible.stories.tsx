@@ -2,7 +2,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from '@/shared/ui/collapsible';
+} from '@/shared/ui/components/collapsible';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

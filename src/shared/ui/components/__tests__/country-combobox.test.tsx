@@ -1,5 +1,5 @@
 import uiCountries from '@/shared/config/countries.json' with { type: 'json' };
-import { CountryComboBox } from '@/shared/ui/country-combobox';
+import { CountryComboBox } from '@/shared/ui/components/country-combobox';
 import type {
   IAccountingStandardDto,
   IJurisdictionDto,
@@ -8,7 +8,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
-const dummyjurisdictions: IJurisdictionDto[] = uiCountries.map((c) => ({
+const dummyJurisdictions: IJurisdictionDto[] = uiCountries.map((c) => ({
   code: c.code,
   name: c.name,
   currencyCode: c.currencyCode,
@@ -23,7 +23,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value=""
         onChange={onChange}
-        jurisdictions={dummyjurisdictions}
+        jurisdictions={dummyJurisdictions}
       />
     );
 
@@ -38,7 +38,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value="NG"
         onChange={onChange}
-        jurisdictions={dummyjurisdictions}
+        jurisdictions={dummyJurisdictions}
       />
     );
 
@@ -54,7 +54,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value=""
         onChange={onChange}
-        jurisdictions={dummyjurisdictions}
+        jurisdictions={dummyJurisdictions}
       />
     );
 
@@ -78,7 +78,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value=""
         onChange={onChange}
-        jurisdictions={dummyjurisdictions}
+        jurisdictions={dummyJurisdictions}
       />
     );
 
@@ -103,7 +103,7 @@ describe('CountryComboBox', () => {
         value=""
         onChange={onChange}
         error={[{ message: 'Country is required' }]}
-        jurisdictions={dummyjurisdictions}
+        jurisdictions={dummyJurisdictions}
       />
     );
 
@@ -118,7 +118,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value=""
         onChange={onChange}
-        jurisdictions={dummyjurisdictions}
+        jurisdictions={dummyJurisdictions}
       />
     );
 
@@ -136,7 +136,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value="US"
         onChange={onChange}
-        jurisdictions={dummyjurisdictions}
+        jurisdictions={dummyJurisdictions}
       />
     );
 
@@ -158,7 +158,7 @@ describe('CountryComboBox', () => {
         label="Country"
         value="INVALID"
         onChange={onChange}
-        jurisdictions={dummyjurisdictions}
+        jurisdictions={dummyJurisdictions}
       />
     );
 

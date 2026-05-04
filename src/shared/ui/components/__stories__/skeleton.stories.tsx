@@ -1,4 +1,4 @@
-import { Skeleton } from '@/shared/ui/skeleton';
+import { Skeleton } from '@/shared/ui/components/skeleton';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

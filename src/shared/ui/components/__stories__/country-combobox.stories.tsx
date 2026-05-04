@@ -1,5 +1,5 @@
 import uiCountries from '@/shared/config/countries.json' with { type: 'json' };
-import { CountryComboBox } from '@/shared/ui/country-combobox';
+import { CountryComboBox } from '@/shared/ui/components/country-combobox';
 import type { IAccountingStandardDto } from '@/shared/utils/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 

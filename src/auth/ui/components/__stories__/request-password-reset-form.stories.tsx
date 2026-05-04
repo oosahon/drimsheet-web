@@ -1,4 +1,4 @@
-import { RequestPasswordResetForm } from '@/auth/ui/request-password-reset-form';
+import { RequestPasswordResetForm } from '@/auth/ui/components/request-password-reset-form';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 

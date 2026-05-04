@@ -1,4 +1,8 @@
-import { Alert, AlertDescription, AlertTitle } from '@/shared/ui/alert';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from '@/shared/ui/components/alert';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AlertCircleIcon } from 'lucide-react';
 

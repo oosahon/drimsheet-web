@@ -1,5 +1,5 @@
-import { AccountingEntityCreationForm } from '@/accounting/ui/accounting-entity-creation-form';
-import { accountingEntityCreationFormValidation } from '@/accounting/ui/validations/accounting-entity.validations';
+import { accountingEntityCreationFormValidation } from '@/accounting/hooks/ui/accounting-entity.validations';
+import { AccountingEntityCreationForm } from '@/accounting/ui/components/accounting-entity-creation-form';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import dayjs from 'dayjs';

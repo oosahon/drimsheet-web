@@ -1,4 +1,4 @@
-import type { IAccountingEntityFormValues } from '@/accounting/ui/accounting-entity-creation-form';
+import type { IAccountingEntityFormValues } from '@/accounting/ui/components/accounting-entity-creation-form';
 import localStorageService from '@/shared/services/local-storage.service';
 import purpleLedgerApi from '@/shared/utils/api';
 import {

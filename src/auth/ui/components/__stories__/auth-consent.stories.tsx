@@ -1,4 +1,4 @@
-import { AuthConsent } from '@/auth/ui/auth-consent';
+import { AuthConsent } from '@/auth/ui/components/auth-consent';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 

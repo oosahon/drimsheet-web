@@ -1,5 +1,5 @@
 import uiCurrencies from '@/shared/config/currencies.json' with { type: 'json' };
-import { CurrencySelect } from '@/shared/ui/currency-select';
+import { CurrencySelect } from '@/shared/ui/components/currency-select';
 import type { ICurrencyDto } from '@/shared/utils/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

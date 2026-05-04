@@ -1,4 +1,4 @@
-import { LoginForm } from '@/auth/ui/login-form';
+import { LoginForm } from '@/auth/ui/components/login-form';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 

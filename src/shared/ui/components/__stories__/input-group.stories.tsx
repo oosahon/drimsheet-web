@@ -1,5 +1,5 @@
-import { Input } from '@/shared/ui/input';
-import { InputGroup } from '@/shared/ui/input-group';
+import { Input } from '@/shared/ui/components/input';
+import { InputGroup } from '@/shared/ui/components/input-group';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

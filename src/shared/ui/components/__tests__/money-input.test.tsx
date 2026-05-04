@@ -1,4 +1,4 @@
-import { MoneyInput } from '@/shared/ui/money-input';
+import { MoneyInput } from '@/shared/ui/components/money-input';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';

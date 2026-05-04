@@ -1,4 +1,4 @@
-import useCreatePettyCashAccount from '@/ledger-accounts/hooks/use-create-petty-cash-account';
+import useCreatePettyCashAccount from '@/ledger-accounts/hooks/api/use-create-petty-cash-account';
 import {
   PettyCashAccountForm,
   type IPettyCashAccountFormValues,

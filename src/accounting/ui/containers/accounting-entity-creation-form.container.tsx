@@ -1,9 +1,9 @@
-import useCreateAccountingEntity from '@/accounting/hooks/use-create-accounting-entity';
-import useJurisdictions from '@/accounting/hooks/use-jurisdictions';
+import useCreateAccountingEntity from '@/accounting/hooks/api/use-create-accounting-entity';
+import useJurisdictions from '@/accounting/hooks/api/use-jurisdictions';
 import {
   AccountingEntityCreationForm,
   type IAccountingEntityFormValues,
-} from '@/accounting/ui/accounting-entity-creation-form';
+} from '@/accounting/ui/components/accounting-entity-creation-form';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import useCurrencies from '@/shared/hooks/use-currencies';
 import {
@@ -12,7 +12,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/shared/ui/dialog';
+} from '@/shared/ui/components/dialog';
 import useProfile from '@/user/hooks/use-profile';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

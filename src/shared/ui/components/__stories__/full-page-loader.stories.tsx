@@ -1,4 +1,4 @@
-import FullPageLoader from '@/shared/ui/full-page-loader';
+import { FullPageLoader } from '@/shared/ui/components/full-page-loader';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

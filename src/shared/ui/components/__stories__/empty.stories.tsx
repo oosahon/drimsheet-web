@@ -6,7 +6,7 @@ import {
   EmptyHeader,
   EmptyMedia,
   EmptyTitle,
-} from '@/shared/ui/empty';
+} from '@/shared/ui/components/empty';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { FileQuestion, SearchX } from 'lucide-react';
 

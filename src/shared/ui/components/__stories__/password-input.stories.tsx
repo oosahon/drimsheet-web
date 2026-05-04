@@ -1,4 +1,4 @@
-import { PasswordInput } from '@/shared/ui/password-input';
+import { PasswordInput } from '@/shared/ui/components/password-input';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

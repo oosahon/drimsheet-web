@@ -4,7 +4,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/shared/ui/select';
+} from '@/shared/ui/components/select';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

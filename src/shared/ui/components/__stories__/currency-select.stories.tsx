@@ -1,5 +1,5 @@
 import uiCurrencies from '@/shared/config/currencies.json' with { type: 'json' };
-import { CurrencySelect } from '@/shared/ui/currency-select';
+import { CurrencySelect } from '@/shared/ui/components/currency-select';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const dummycurrencies = uiCurrencies.map((c) => ({

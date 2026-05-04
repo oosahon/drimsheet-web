@@ -1,4 +1,4 @@
-import { RequestPasswordResetSuccess } from '@/auth/ui/reset-password-request-success';
+import { RequestPasswordResetSuccess } from '@/auth/ui/components/reset-password-request-success';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 

@@ -5,7 +5,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu';
+} from '@/shared/ui/components/dropdown-menu';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

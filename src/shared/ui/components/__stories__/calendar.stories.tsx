@@ -1,4 +1,4 @@
-import { Calendar } from '@/shared/ui/calendar';
+import { Calendar } from '@/shared/ui/components/calendar';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

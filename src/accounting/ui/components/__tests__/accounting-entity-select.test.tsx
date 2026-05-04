@@ -1,4 +1,4 @@
-import { AccountingEntityTypeSelect } from '@/accounting/ui/accounting-entity-type-select';
+import { AccountingEntityTypeSelect } from '@/accounting/ui/components/accounting-entity-type-select';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';

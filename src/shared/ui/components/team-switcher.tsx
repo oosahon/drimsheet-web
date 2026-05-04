@@ -9,12 +9,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/shared/ui/dropdown-menu';
+} from '@/shared/ui/components/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/shared/ui/sidebar';
+} from '@/shared/ui/components/sidebar';
 import { ChevronsUpDownIcon, PlusIcon } from 'lucide-react';
 
 export function TeamSwitcher({

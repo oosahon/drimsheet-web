@@ -1,4 +1,8 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/shared/ui/avatar';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@/shared/ui/components/avatar';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

@@ -1,4 +1,4 @@
-import { NavUser } from '@/shared/ui/nav-user';
+import { NavUser } from '@/shared/ui/components/nav-user';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 

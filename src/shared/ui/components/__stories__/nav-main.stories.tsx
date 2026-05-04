@@ -1,4 +1,4 @@
-import { NavMain } from '@/shared/ui/nav-main';
+import { NavMain } from '@/shared/ui/components/nav-main';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Home, Settings } from 'lucide-react';
 import React from 'react';

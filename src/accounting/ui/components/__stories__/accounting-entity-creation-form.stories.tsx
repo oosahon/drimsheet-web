@@ -1,4 +1,4 @@
-import { AccountingEntityCreationForm } from '@/accounting/ui/accounting-entity-creation-form';
+import { AccountingEntityCreationForm } from '@/accounting/ui/components/accounting-entity-creation-form';
 import {
   EAccountingEntityType,
   type ICurrencyDto,

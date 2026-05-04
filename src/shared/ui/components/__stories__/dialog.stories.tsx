@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/shared/ui/dialog';
+} from '@/shared/ui/components/dialog';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

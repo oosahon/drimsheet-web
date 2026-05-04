@@ -1,4 +1,4 @@
-import { RequestPasswordResetSuccess } from '@/auth/ui/reset-password-request-success';
+import { RequestPasswordResetSuccess } from '@/auth/ui/components/reset-password-request-success';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';

@@ -5,7 +5,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/shared/ui/card';
+} from '@/shared/ui/components/card';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
