@@ -7,7 +7,7 @@ import {
   FieldTitle,
 } from '@/shared/ui/components/field';
 import { Label } from '@/shared/ui/components/label';
-import { RadioGroup, RadioGroupItem } from '@/shared/ui/radio-group';
+import { RadioGroup, RadioGroupItem } from '@/shared/ui/components/radio-group';
 
 export interface AppUsageModeRadioGroupProps {
   value: string;

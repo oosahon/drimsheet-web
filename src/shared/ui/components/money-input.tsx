@@ -1,6 +1,6 @@
 import countries from '@/shared/config/countries.json';
 import currencies from '@/shared/config/currencies.json';
-import { Input } from '@/shared/ui/input';
+import { Input } from '@/shared/ui/components/input';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
 
 export interface MoneyInputProps extends Omit<

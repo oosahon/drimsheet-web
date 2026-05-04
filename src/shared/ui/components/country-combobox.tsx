@@ -6,10 +6,10 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from '@/shared/ui/combobox';
+} from '@/shared/ui/components/combobox';
 import { Field, FieldError } from '@/shared/ui/components/field';
+import { InputGroupAddon } from '@/shared/ui/components/input-group';
 import { Label } from '@/shared/ui/components/label';
-import { InputGroupAddon } from '@/shared/ui/input-group';
 import { type IJurisdictionDto } from '@/shared/utils/api/Api';
 import { GlobeIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';

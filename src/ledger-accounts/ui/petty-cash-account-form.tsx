@@ -2,11 +2,11 @@ import usePettyCashAccountFormValidation from '@/ledger-accounts/hooks/use-petty
 import useCurrencies from '@/shared/hooks/use-currencies';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/components/button';
+import { CurrencySelect } from '@/shared/ui/components/currency-select';
 import { Field, FieldError, FieldGroup } from '@/shared/ui/components/field';
+import { Input } from '@/shared/ui/components/input';
 import { Label } from '@/shared/ui/components/label';
-import { CurrencySelect } from '@/shared/ui/currency-select';
-import { Input } from '@/shared/ui/input';
-import { MoneyInput } from '@/shared/ui/money-input';
+import { MoneyInput } from '@/shared/ui/components/money-input';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 
