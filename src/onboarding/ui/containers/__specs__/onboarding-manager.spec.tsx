@@ -1,4 +1,4 @@
-import useAccountingEntities from '@/accounting/hooks/use-accounting-entities';
+import useAccountingEntities from '@/accounting/hooks/api/use-accounting-entities';
 import OnboardingManager from '@/onboarding/ui/containers/onboarding-manager.container';
 import type { IAccountingEntity } from '@/shared/utils/api/Api';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -17,7 +17,7 @@ vi.mock(
   }
 );
 
-vi.mock('@/accounting/hooks/use-accounting-entities', () => {
+vi.mock('@/accounting/hooks/api/use-accounting-entities', () => {
   return {
     __esModule: true,
     default: vi.fn(),

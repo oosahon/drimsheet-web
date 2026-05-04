@@ -675,7 +675,7 @@ index 52de9f1..7e00bc1 100644
 @@ -2,9 +2,18 @@ import { AuthConsent } from '@/auth/ui/auth-consent';
  import { GoogleAuthButton } from '@/auth/ui/containers/google-auth-button';
  import { LoginFormContainer } from '@/auth/ui/containers/login-form-container';
- import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
+ import { FieldDescription, FieldSeparator } from '@/shared/ui/components/field';
 +import { useTranslation } from 'react-i18next';
  import { Link } from 'react-router-dom';
  
@@ -823,7 +823,7 @@ index f607cb2..cfb89c9 100644
 +import emailSentImg from '@/shared/assets/email-sent.svg';
 +import logoImg from '@/shared/assets/logo.svg';
  import { Card, CardContent, CardHeader, CardTitle } from '@/shared/ui/card';
- import { FieldDescription, FieldSeparator } from '@/shared/ui/field';
+ import { FieldDescription, FieldSeparator } from '@/shared/ui/components/field';
  import { useMemo } from 'react';
 -
 -import emailSentImg from '@/shared/assets/email-sent.svg';
@@ -910,7 +910,7 @@ index 0ebcbae..1801bde 100644
 --- a/src/auth/ui/auth-consent.tsx
 +++ b/src/auth/ui/auth-consent.tsx
 @@ -1,4 +1,5 @@
- import { FieldDescription } from '@/shared/ui/field';
+ import { FieldDescription } from '@/shared/ui/components/field';
 +import { useTranslation } from 'react-i18next';
  
  interface IAuthConsentProps {
@@ -950,7 +950,7 @@ index f10e926..d4c7dc7 100644
 --- a/src/auth/ui/containers/google-auth-button.tsx
 +++ b/src/auth/ui/containers/google-auth-button.tsx
 @@ -2,14 +2,18 @@ import useGoogleOAuth from '@/auth/hooks/use-google-oauth';
- import { Button } from '@/shared/ui/button';
+ import { Button } from '@/shared/ui/components/button';
  import { GoogleIcon } from '@/shared/ui/icons/google';
  import { type ComponentProps } from 'react';
 +import { useTranslation } from 'react-i18next';
@@ -1133,10 +1133,10 @@ index 34c951b..08cdfca 100644
 -import { loginFormValidation } from '@/auth/ui/validations/login-form.validations';
 +import useLoginFormValidation from '@/auth/hooks/use-login-form-validation';
  import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
- import { Button } from '@/shared/ui/button';
- import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+ import { Button } from '@/shared/ui/components/button';
+ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/components/field';
 @@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
- import { cn } from '@/shared/ui/utils';
+ import { cn } from '@/shared/ui/components/utils';
  import { useFormik } from 'formik';
  import type { ComponentProps } from 'react';
 +import { useTranslation } from 'react-i18next';
@@ -1218,10 +1218,10 @@ index 9f7bd26..491be08 100644
  import { RequestPasswordResetSuccess } from '@/auth/ui/reset-password-request-success';
 -import { requestPasswordResetFormValidation } from '@/auth/ui/validations/request-password-reset-form.validations';
  import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
- import { Button } from '@/shared/ui/button';
- import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+ import { Button } from '@/shared/ui/components/button';
+ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/components/field';
 @@ -7,6 +7,7 @@ import { Input } from '@/shared/ui/input';
- import { cn } from '@/shared/ui/utils';
+ import { cn } from '@/shared/ui/components/utils';
  import { useFormik } from 'formik';
  import type { ComponentProps } from 'react';
 +import { useTranslation } from 'react-i18next';
@@ -1281,10 +1281,10 @@ index 5576134..99c3c3c 100644
 -import { resetPasswordFormValidation } from '@/auth/ui/validations/reset-password-form.validations';
 +import useResetPasswordFormValidation from '@/auth/hooks/use-reset-password-form-validation';
  import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
- import { Button } from '@/shared/ui/button';
- import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+ import { Button } from '@/shared/ui/components/button';
+ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/components/field';
 @@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
- import { cn } from '@/shared/ui/utils';
+ import { cn } from '@/shared/ui/components/utils';
  import { useFormik, type FormikHelpers } from 'formik';
  import { type ComponentProps } from 'react';
 +import { useTranslation } from 'react-i18next';
@@ -1362,7 +1362,7 @@ index 77c20d2..26cb4f0 100644
 --- a/src/auth/ui/reset-password-request-success.tsx
 +++ b/src/auth/ui/reset-password-request-success.tsx
 @@ -1,5 +1,6 @@
- import { Button } from '@/shared/ui/button';
+ import { Button } from '@/shared/ui/components/button';
  import { useEffect, useState } from 'react';
 +import { useTranslation } from 'react-i18next';
  import { Link } from 'react-router-dom';
@@ -1430,10 +1430,10 @@ index 52868fd..7ed65cb 100644
 -import { signupFormValidation } from '@/auth/ui/validations/signup-form.validations';
 +import useSignupFormValidation from '@/auth/hooks/use-signup-form-validation';
  import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
- import { Button } from '@/shared/ui/button';
- import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/field';
+ import { Button } from '@/shared/ui/components/button';
+ import { Field, FieldError, FieldGroup, FieldLabel } from '@/shared/ui/components/field';
 @@ -7,6 +7,7 @@ import { PasswordInput } from '@/shared/ui/password-input';
- import { cn } from '@/shared/ui/utils';
+ import { cn } from '@/shared/ui/components/utils';
  import { useFormik } from 'formik';
  import type { ComponentProps } from 'react';
 +import { useTranslation } from 'react-i18next';
@@ -1694,9 +1694,9 @@ index ed30e71..e7ad106 100644
 +import usePettyCashAccountFormValidation from '@/ledger-accounts/hooks/use-petty-cash-account-form-validation';
  import useCurrencies from '@/shared/hooks/use-currencies';
  import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
- import { Button } from '@/shared/ui/button';
+ import { Button } from '@/shared/ui/components/button';
 @@ -8,6 +8,7 @@ import { Input } from '@/shared/ui/input';
- import { Label } from '@/shared/ui/label';
+ import { Label } from '@/shared/ui/components/label';
  import { MoneyInput } from '@/shared/ui/money-input';
  import { useFormik } from 'formik';
 +import { useTranslation } from 'react-i18next';

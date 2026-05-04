@@ -1,4 +1,4 @@
-import type { ISignupFormValues } from '@/auth/ui/signup-form';
+import type { ISignupFormValues } from '@/auth/ui/components/signup-form';
 import purpleLedgerApi from '@/shared/utils/api';
 import type {
   IEmailLoginReq,

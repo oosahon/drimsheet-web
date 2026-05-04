@@ -1,4 +1,4 @@
-import type { IPettyCashAccountFormValues } from '@/ledger-accounts/ui/petty-cash-account-form';
+import type { IPettyCashAccountFormValues } from '@/ledger-accounts/ui/components/petty-cash-account-form';
 import purpleLedgerApi from '@/shared/utils/api';
 import type { IPettyCashAccountCreationReq } from '@/shared/utils/api/Api';
 

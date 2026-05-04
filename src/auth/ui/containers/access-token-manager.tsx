@@ -1,5 +1,5 @@
 import authService from '@/auth/services/auth.service';
-import FullPageLoader from '@/shared/ui/full-page-loader';
+import { FullPageLoader } from '@/shared/ui/components/full-page-loader';
 import { useEffect, useRef, useState, type PropsWithChildren } from 'react';
 
 export default function AccessTokenManager({ children }: PropsWithChildren) {

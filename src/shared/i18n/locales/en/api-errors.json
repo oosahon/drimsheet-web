@@ -123,5 +123,11 @@
   "user_error_user_value_object_invalid_format": "Invalid format",
   "user_error_user_value_object_invalid_type": "Invalid type",
   "user_error_user_value_object_too_long": "Too long",
-  "user_error_user_value_object_too_short": "Too short"
+  "user_error_user_value_object_too_short": "Too short",
+  "app_error_ledger_invalid_sub_type": "Invalid sub type",
+  "pagination_error_invalid_limit": "Invalid limit",
+  "pagination_error_invalid_offset": "Invalid offset",
+  "pagination_error_invalid_search": "Invalid search",
+  "pagination_error_invalid_sort_by": "Invalid sort by",
+  "pagination_error_invalid_sort_order": "Invalid sort order"
 }

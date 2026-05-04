@@ -1,8 +1,8 @@
-import useCreatePettyCashAccount from '@/ledger-accounts/hooks/use-create-petty-cash-account';
+import useCreatePettyCashAccount from '@/ledger-accounts/hooks/api/use-create-petty-cash-account';
 import {
   PettyCashAccountForm,
   type IPettyCashAccountFormValues,
-} from '@/ledger-accounts/ui/petty-cash-account-form';
+} from '@/ledger-accounts/ui/components/petty-cash-account-form';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 
 export default function PettyCashAccountFormContainer() {

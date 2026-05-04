@@ -1,5 +1,8 @@
-import useSignupWithEmail from '@/auth/hooks/use-signup-with-email';
-import { SignupForm, type ISignupFormValues } from '@/auth/ui/signup-form';
+import useSignupWithEmail from '@/auth/hooks/api/use-signup-with-email';
+import {
+  SignupForm,
+  type ISignupFormValues,
+} from '@/auth/ui/components/signup-form';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';

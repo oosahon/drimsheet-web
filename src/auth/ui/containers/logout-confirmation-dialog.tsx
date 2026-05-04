@@ -1,9 +1,5 @@
-import useLogout from '@/auth/hooks/use-logout';
+import useLogout from '@/auth/hooks/api/use-logout';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
-import { LogOutIcon } from 'lucide-react';
-import { type ReactNode, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +11,10 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/shared/ui/alert-dialog';
+} from '@/shared/ui/components/alert-dialog';
+import { LogOutIcon } from 'lucide-react';
+import { type ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 interface LogoutConfirmationDialogProps {
@@ -62,12 +61,13 @@ export function LogoutConfirmationDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>
+          <AlertDialogCancel variant="outline" disabled={isPending} size="sm">
             {cancel_text}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleLogout}
             variant="destructive"
+            size="sm"
             disabled={isPending}
           >
             {isPending ? logging_out_text : log_out_text}
