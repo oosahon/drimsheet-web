@@ -169,6 +169,110 @@ export const EExchangeRateType = {
 export type UExchangeRateType =
   (typeof EExchangeRateType)[keyof typeof EExchangeRateType];
 
+export const EPaginationSortDirection = {
+  Asc: 'asc',
+  Desc: 'desc',
+} as const;
+export type UPaginationSortDirection =
+  (typeof EPaginationSortDirection)[keyof typeof EPaginationSortDirection];
+
+export const ELedgerAccountSortBy = {
+  AccountName: 'accountName',
+  CreatedAt: 'createdAt',
+  Balance: 'balance',
+} as const;
+export type ULedgerAccountSortBy =
+  (typeof ELedgerAccountSortBy)[keyof typeof ELedgerAccountSortBy];
+
+export const ELedgerAccountSubType = {
+  CashAndCashEquivalent: 'cash_and_cash_equivalent',
+  ShortTermInvestment: 'short_term_investment',
+  Receivables: 'receivables',
+  Inventory: 'inventory',
+  AccruedIncome: 'accrued_income',
+  Prepayments: 'prepayments',
+  LongTermInvestment: 'long_term_investment',
+  PropertyPlantAndEquipment: 'property_plant_and_equipment',
+  IntangibleAssets: 'intangible_assets',
+  RightOfUseAssets: 'right_of_use_assets',
+  Goodwill: 'goodwill',
+  Suspense: 'suspense',
+  ShortTermDebt: 'short_term_debt',
+  Payable: 'payable',
+  AccruedExpense: 'accrued_expense',
+  DeferredRevenue: 'deferred_revenue',
+  LongTermLoan: 'long_term_loan',
+  LeaseLiability: 'lease_liability',
+  Provision: 'provision',
+  Capital: 'capital',
+  RetainedEarnings: 'retained_earnings',
+  Reserve: 'reserve',
+  OpeningBalance: 'opening_balance',
+  Sales: 'sales',
+  Services: 'services',
+  Subscriptions: 'subscriptions',
+  EmploymentIncome: 'employment_income',
+  InterestIncome: 'interest_income',
+  GainOnAssetSale: 'gain_on_asset_sale',
+  UnrealizedGains: 'unrealized_gains',
+  DirectCosts: 'direct_costs',
+  PayrollAndPersonnel: 'payroll_and_personnel',
+  RentAndUtilities: 'rent_and_utilities',
+  AdminAndGeneral: 'admin_and_general',
+  MarketingAndSelling: 'marketing_and_selling',
+  ResearchAndDevelopment: 'research_and_development',
+  DepreciationAndAmortization: 'depreciation_and_amortization',
+  InterestAndFinanceCharges: 'interest_and_finance_charges',
+  IncomeTaxExpense: 'income_tax_expense',
+  UnrealizedLoss: 'unrealized_loss',
+  LossOnAssetDisposal: 'loss_on_asset_disposal',
+  ImpairmentLosses: 'impairment_losses',
+  OtherLosses: 'other_losses',
+} as const;
+export type ULedgerAccountSubType =
+  (typeof ELedgerAccountSubType)[keyof typeof ELedgerAccountSubType];
+
+export const EAdjunctAccountRule = {
+  AdjunctPermitted: 'adjunct_permitted',
+  AdjunctNotPermitted: 'adjunct_not_permitted',
+  AdjunctOnly: 'adjunct_only',
+  AdjunctNotApplicable: 'adjunct_not_applicable',
+} as const;
+export type UAdjunctAccountRule =
+  (typeof EAdjunctAccountRule)[keyof typeof EAdjunctAccountRule];
+
+export const EContraAccountRule = {
+  ContraPermitted: 'contra_permitted',
+  ContraNotPermitted: 'contra_not_permitted',
+  ContraOnly: 'contra_only',
+  ContraNotApplicable: 'contra_not_applicable',
+} as const;
+export type UContraAccountRule =
+  (typeof EContraAccountRule)[keyof typeof EContraAccountRule];
+
+export const ELedgerAccountStatus = {
+  Active: 'active',
+  Archived: 'archived',
+} as const;
+export type ULedgerAccountStatus =
+  (typeof ELedgerAccountStatus)[keyof typeof ELedgerAccountStatus];
+
+export const ENormalBalance = {
+  Debit: 'debit',
+  Credit: 'credit',
+} as const;
+export type UNormalBalance =
+  (typeof ENormalBalance)[keyof typeof ENormalBalance];
+
+export const ELedgerType = {
+  Asset: 'asset',
+  Liability: 'liability',
+  Revenue: 'revenue',
+  Expense: 'expense',
+  Equity: 'equity',
+} as const;
+export type ULedgerType = (typeof ELedgerType)[keyof typeof ELedgerType];
+
 export const EAppUsageModePreference = {
   PowerUser: 'power_user',
   NonPowerUser: 'non_power_user',
@@ -233,6 +337,83 @@ export interface IUser {
   deletedAt: string | null;
 }
 
+/** Construct a type with a set of properties K of type T */
+export type RecordStringString = Record<string, string>;
+
+export interface IMoneyDto {
+  /** @format double */
+  amount: number;
+  currencyCode: string;
+  isMinorUnit: boolean;
+}
+
+export interface ILedgerAccountDto {
+  id: TEntityId;
+  code: string;
+  materializedPath: string;
+  accountingEntityId: TEntityId;
+  type: ULedgerType;
+  normalBalance: UNormalBalance;
+  subType: string;
+  behavior: string;
+  isControlAccount: boolean;
+  controlAccountId?: TEntityId;
+  name: string;
+  status: ULedgerAccountStatus;
+  contraAccountRule: UContraAccountRule;
+  adjunctAccountRule: UAdjunctAccountRule;
+  /** Construct a type with a set of properties K of type T */
+  meta?: RecordStringString;
+  createdBy: TEntityId;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  /** @format date-time */
+  deletedAt?: string;
+  balance: IMoneyDto;
+  functionalBalance: IMoneyDto;
+}
+
+export interface IPaginationResponseMeta {
+  /** @format double */
+  page: number;
+  /** @format double */
+  limit: number;
+  /** @format double */
+  total: number;
+  /** @format double */
+  totalPages: number;
+}
+
+export interface IPaginatedResponseILedgerAccountDto {
+  data: ILedgerAccountDto[];
+  meta: IPaginationResponseMeta;
+}
+
+/** From T, pick a set of properties whose keys are in the union K */
+export interface PickIPaginationParamsExcludeKeysOffset {
+  /** @format double */
+  limit?: number;
+  orderBy?: string;
+  sortDirection?: UPaginationSortDirection;
+  search?: string;
+}
+
+export interface IGetLedgerAccountsQuery {
+  /** @format double */
+  limit?: number;
+  orderBy?: ULedgerAccountSortBy;
+  sortDirection?: UPaginationSortDirection;
+  search?: string;
+  /** @format double */
+  page?: number;
+  type?: ULedgerType;
+  subType?: ULedgerAccountSubType;
+  behavior?: string;
+  isControlAccount?: boolean;
+}
+
 export interface ICurrencyDto {
   code: string;
   symbol: string;
@@ -261,13 +442,6 @@ export interface IResetPasswordReq {
   token: string;
   password: string;
   confirmPassword: string;
-}
-
-export interface IMoneyDto {
-  /** @format double */
-  amount: number;
-  currencyCode: string;
-  isMinorUnit: boolean;
 }
 
 export interface IExchangeRateDto {
@@ -578,6 +752,57 @@ export class Api<
         ...params,
       }),
   };
+  ledger = {
+    /**
+     * @description Get paginated ledger accounts with optional filters
+     *
+     * @tags Ledger Accounts
+     * @name GetLedgerAccounts
+     * @request GET:/ledger/accounts
+     */
+    getLedgerAccounts: (
+      query?: {
+        /** @format double */
+        limit?: number;
+        orderBy?: ULedgerAccountSortBy;
+        sortDirection?: UPaginationSortDirection;
+        search?: string;
+        /** @format double */
+        page?: number;
+        type?: ULedgerType;
+        subType?: ULedgerAccountSubType;
+        behavior?: string;
+        isControlAccount?: boolean;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<IPaginatedResponseILedgerAccountDto, IHttpErrorDto>({
+        path: `/ledger/accounts`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a new petty cash sub account
+     *
+     * @tags Ledger Accounts, Asset Account
+     * @name MakePettyCashSubAccount
+     * @request POST:/ledger/asset-accounts
+     */
+    makePettyCashSubAccount: (
+      data: IPettyCashAccountCreationReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<void, IHttpErrorDto>({
+        path: `/ledger/asset-accounts`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        ...params,
+      }),
+  };
   currencies = {
     /**
      * @description Gets all system currencies
@@ -741,26 +966,6 @@ export class Api<
       this.request<void, any>({
         path: `/auth/logout`,
         method: 'POST',
-        ...params,
-      }),
-  };
-  ledger = {
-    /**
-     * @description Create a new petty cash sub account
-     *
-     * @tags Ledger, Asset Account
-     * @name MakePettyCashSubAccount
-     * @request POST:/ledger/asset-accounts
-     */
-    makePettyCashSubAccount: (
-      data: IPettyCashAccountCreationReq,
-      params: RequestParams = {}
-    ) =>
-      this.request<void, IHttpErrorDto>({
-        path: `/ledger/asset-accounts`,
-        method: 'POST',
-        body: data,
-        type: EContentType.Json,
         ...params,
       }),
   };
