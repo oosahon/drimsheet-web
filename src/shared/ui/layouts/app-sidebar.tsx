@@ -8,6 +8,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  SidebarTrigger,
 } from '@/shared/ui/components/sidebar';
 import {
   Calculator,
@@ -111,4 +112,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarRail />
     </Sidebar>
   );
+}
+
+export function AppHeader({
+  children,
+  ...props
+}: React.ComponentProps<'header'>) {
+  return (
+    <header {...props}>
+      <div className="flex flex-wrap items-center gap-4">
+        <SidebarTrigger />
+        {children}
+      </div>
+    </header>
+  );
+}
+
+export function AppHeaderTitle({
+  className,
+  ...props
+}: React.ComponentProps<'h1'>) {
+  return <h1 {...props} className={`text-3xl font-semibold ${className}`} />;
 }

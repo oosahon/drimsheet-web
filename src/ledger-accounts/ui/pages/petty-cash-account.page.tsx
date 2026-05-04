@@ -1,13 +1,9 @@
-import PettyCashAccountFormContainer from '@/ledger-accounts/ui/containers/petty-cash-account-form-container';
-import { GradientBox } from '@/shared/ui/components/gradient-box';
+import LedgerAccountPageLayout from '@/ledger-accounts/ui/layout/ledger-account.layout';
 
 export default function PettyCashAccountRoute() {
   return (
-    <div>
-      <GradientBox variant="warning" className="max-w-xs min-h-[100px]">
-        Foo
-      </GradientBox>
-      <PettyCashAccountFormContainer />
-    </div>
+    <LedgerAccountPageLayout title="Petty cash account">
+      <div className="h-[1000px]">sasas</div>
+    </LedgerAccountPageLayout>
   );
 }
