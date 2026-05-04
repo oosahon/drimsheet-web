@@ -1,4 +1,4 @@
-import { PettyCashAccountForm } from '@/ledger-accounts/ui/petty-cash-account-form';
+import { PettyCashAccountForm } from '@/ledger-accounts/ui/components/petty-cash-account-form';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import DashboardRoute from '@/reporting/routes/dashboard.route';
+import DashboardRoute from '@/reporting/ui/routes/dashboard.route';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
 import AppLayout from '@/shared/ui/layouts/app-layout';
 import { Navigate } from 'react-router-dom';

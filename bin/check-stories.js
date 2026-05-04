@@ -21,12 +21,11 @@ function findMissingStories(dir) {
         const parts = filePath.split(path.sep);
 
         // Ensure file is in an exact 'ui' directory, or a subfolder of 'ui', but not in '__stories__'
-        const isInUI = parts.includes('ui');
+        const isInUI = parts.includes('components');
         const isNotStory = !parts.includes('__stories__');
         const isNotTest = !parts.includes('__tests__');
-        const isNotContainer = !parts.includes('containers');
 
-        if (isInUI && isNotStory && isNotTest && isNotContainer) {
+        if (isInUI && isNotStory && isNotTest) {
           const dirname = path.dirname(filePath);
           const basename = path.basename(entry.name, '.tsx');
 

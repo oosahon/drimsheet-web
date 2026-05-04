@@ -1,4 +1,4 @@
-import AuthLayout from '@/auth/ui/layout/auth-layout';
+import AuthLayout from '@/auth/ui/layouts/auth-layout';
 import CompleteSignupPage from '@/auth/ui/pages/complete-signup.page';
 import LoginPage from '@/auth/ui/pages/login.page';
 import OAuthConfirmationPage from '@/auth/ui/pages/oauth-confirmation.page';

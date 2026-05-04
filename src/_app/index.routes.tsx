@@ -1,6 +1,6 @@
-import useAuthRoutes from '@/_app/routes/auth.routes';
-import useLedgerAccountRoutes from '@/_app/routes/ledger-account.routes';
-import useReportingRoutes from '@/reporting/routes/reporting.routes';
+import useAuthRoutes from '@/auth/ui/routes/auth.routes';
+import useLedgerAccountRoutes from '@/ledger-accounts/ui/routes/ledger-account.routes';
+import useReportingRoutes from '@/reporting/ui/routes/reporting.routes';
 import { useRoutes } from 'react-router-dom';
 
 export default function AppRoutes() {
