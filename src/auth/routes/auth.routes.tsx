@@ -1,10 +1,10 @@
-import CompleteSignupRoute from '@/auth/routes/complete-signup.route';
-import LoginRoute from '@/auth/routes/login.route';
-import RequestPasswordResetRoute from '@/auth/routes/request-password-reset.route';
-import ResetPasswordRoute from '@/auth/routes/reset-password.route';
-import SignupRoute from '@/auth/routes/signup.route';
-import AuthLayout from '@/auth/ui/containers/auth-layout';
-import OAuthConfirmation from '@/auth/ui/containers/oauth-confirmation';
+import AuthLayout from '@/auth/ui/layout/auth-layout';
+import CompleteSignupPage from '@/auth/ui/pages/complete-signup.page';
+import LoginPage from '@/auth/ui/pages/login.page';
+import OAuthConfirmationPage from '@/auth/ui/pages/oauth-confirmation.page';
+import RequestPasswordResetPage from '@/auth/ui/pages/request-password-reset.page';
+import ResetPasswordPage from '@/auth/ui/pages/reset-password.page';
+import SignupPage from '@/auth/ui/pages/signup.page';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
 
 const useAuthRoutes: TModuleRoutes = (basePath) => {
@@ -12,12 +12,12 @@ const useAuthRoutes: TModuleRoutes = (basePath) => {
     path: basePath,
     element: <AuthLayout />,
     children: [
-      { path: 'signin', element: <LoginRoute /> },
-      { path: 'signup', element: <SignupRoute /> },
-      { path: 'signup/complete', element: <CompleteSignupRoute /> },
-      { path: 'forgot-password', element: <RequestPasswordResetRoute /> },
-      { path: 'reset-password', element: <ResetPasswordRoute /> },
-      { path: 'oauth-confirmation', element: <OAuthConfirmation /> },
+      { path: 'signin', element: <LoginPage /> },
+      { path: 'signup', element: <SignupPage /> },
+      { path: 'signup/complete', element: <CompleteSignupPage /> },
+      { path: 'forgot-password', element: <RequestPasswordResetPage /> },
+      { path: 'reset-password', element: <ResetPasswordPage /> },
+      { path: 'oauth-confirmation', element: <OAuthConfirmationPage /> },
     ],
   };
 };

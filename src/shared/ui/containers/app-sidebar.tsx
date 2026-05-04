@@ -1,14 +1,14 @@
-import { Badge } from '@/shared/ui/badge';
-import { NavConfigurations } from '@/shared/ui/nav-configurations';
-import { NavMain } from '@/shared/ui/nav-main';
-import { NavUser } from '@/shared/ui/nav-user';
+import { Badge } from '@/shared/ui/components/badge';
+import { NavConfigurations } from '@/shared/ui/components/nav-configurations';
+import { NavMain } from '@/shared/ui/components/nav-main';
+import { NavUser } from '@/shared/ui/components/nav-user';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from '@/shared/ui/sidebar';
+} from '@/shared/ui/components/sidebar';
 import {
   Calculator,
   CircleMinus,

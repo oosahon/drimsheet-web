@@ -1,9 +1,9 @@
-import useResetPassword from '@/auth/hooks/use-reset-password';
+import useResetPassword from '@/auth/hooks/api/use-reset-password';
 import authService from '@/auth/services/auth.service';
 import {
   ResetPasswordForm,
   type ResetPasswordFormProps,
-} from '@/auth/ui/reset-password-form';
+} from '@/auth/ui/components/reset-password-form';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import type { IApiValidationError } from '@/shared/utils/api/Api';
 

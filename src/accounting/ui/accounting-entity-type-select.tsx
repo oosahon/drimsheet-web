@@ -1,5 +1,5 @@
-import { Field, FieldError } from '@/shared/ui/field';
-import { Label } from '@/shared/ui/label';
+import { Field, FieldError } from '@/shared/ui/components/field';
+import { Label } from '@/shared/ui/components/label';
 import {
   Select,
   SelectContent,

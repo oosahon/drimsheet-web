@@ -1,5 +1,8 @@
-import useLoginWithEmail from '@/auth/hooks/use-login-with-email';
-import { LoginForm, type ILoginFormValues } from '@/auth/ui/login-form';
+import useLoginWithEmail from '@/auth/hooks/api/use-login-with-email';
+import {
+  LoginForm,
+  type ILoginFormValues,
+} from '@/auth/ui/components/login-form';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useNavigate } from 'react-router-dom';
 

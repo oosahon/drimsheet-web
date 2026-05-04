@@ -1,8 +1,8 @@
-import useRequestPasswordReset from '@/auth/hooks/use-request-password-reset';
+import useRequestPasswordReset from '@/auth/hooks/api/use-request-password-reset';
 import {
   RequestPasswordResetForm,
   type IRequestPasswordResetFormValues,
-} from '@/auth/ui/request-password-reset-form';
+} from '@/auth/ui/components/request-password-reset-form';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';

@@ -1,5 +1,5 @@
-import useGoogleOAuth from '@/auth/hooks/use-google-oauth';
-import { Button } from '@/shared/ui/button';
+import useGoogleOAuth from '@/auth/hooks/api/use-google-oauth';
+import { Button } from '@/shared/ui/components/button';
 import { GoogleIcon } from '@/shared/ui/icons/google';
 import { type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';

@@ -1,5 +1,5 @@
 import PettyCashAccountFormContainer from '@/ledger-accounts/ui/containers/petty-cash-account-form-container';
-import { GradientBox } from '@/shared/ui/gradient-box';
+import { GradientBox } from '@/shared/ui/components/gradient-box';
 
 export default function PettyCashAccountRoute() {
   return (

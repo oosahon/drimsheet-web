@@ -1,8 +1,8 @@
 import AppRoutes from '@/_app/index.routes';
 import AccessTokenManager from '@/auth/ui/containers/access-token-manager';
+import { Toaster } from '@/shared/ui/components/sonner';
+import { TooltipProvider } from '@/shared/ui/components/tooltip';
 import { DefaultErrorBoundary } from '@/shared/ui/containers/error-boundary';
-import { Toaster } from '@/shared/ui/sonner';
-import { TooltipProvider } from '@/shared/ui/tooltip';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter } from 'react-router-dom';

@@ -1,8 +1,12 @@
-import { Button } from '@/shared/ui/button';
-import { Calendar } from '@/shared/ui/calendar';
-import { Field, FieldError } from '@/shared/ui/field';
-import { Label } from '@/shared/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/shared/ui/popover';
+import { Button } from '@/shared/ui/components/button';
+import { Calendar } from '@/shared/ui/components/calendar';
+import { Field, FieldError } from '@/shared/ui/components/field';
+import { Label } from '@/shared/ui/components/label';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/shared/ui/components/popover';
 import { formatDateWithJurisdiction } from '@/shared/utils/date';
 import { Calendar1 } from 'lucide-react';
 import { useState } from 'react';

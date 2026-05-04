@@ -5,10 +5,10 @@ import { FiscalDateSelect } from '@/accounting/ui/fiscal-date-select';
 import { accountingEntityCreationFormValidation } from '@/accounting/ui/validations/accounting-entity.validations';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { AlertTitle, WarningAlert } from '@/shared/ui/alert';
-import { Button } from '@/shared/ui/button';
+import { Button } from '@/shared/ui/components/button';
+import { FieldError, FieldGroup, FieldSet } from '@/shared/ui/components/field';
 import { CountryComboBox } from '@/shared/ui/country-combobox';
 import { CurrencySelect } from '@/shared/ui/currency-select';
-import { FieldError, FieldGroup, FieldSet } from '@/shared/ui/field';
 import {
   EAccountingEntityType,
   type ICurrencyDto,
