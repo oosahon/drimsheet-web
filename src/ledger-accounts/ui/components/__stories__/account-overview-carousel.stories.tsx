@@ -1,3 +1,7 @@
+import {
+  AccountCarouselItem,
+  AccountOverviewCarousel,
+} from '@/ledger-accounts/ui/components/account-overview-carousel';
 import type {
   ILedgerAccountDto,
   TEntityId,
@@ -9,10 +13,6 @@ import type {
 } from '@/shared/utils/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import {
-  AccountCarouselItem,
-  AccountOverviewCarousel,
-} from './account-overview-carousel';
 
 const createMockAccount = (
   id: string,

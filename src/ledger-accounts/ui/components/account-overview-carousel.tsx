@@ -59,10 +59,13 @@ export function AccountOverviewCarousel({
   accounts,
 }: AccountOverviewCarouselProps) {
   return (
-    <Carousel className="w-full max-w-[1000px] m-auto">
+    <Carousel className="w-full max-w-[1000px]">
       <CarouselContent>
         {accounts?.map((account) => (
-          <CarouselItem key={account.id} className="basis-1/3">
+          <CarouselItem
+            key={account.id}
+            className="basis-full sm:basis-1/2 lg:basis-1/3"
+          >
             <AccountCarouselItem account={account} />
           </CarouselItem>
         ))}
