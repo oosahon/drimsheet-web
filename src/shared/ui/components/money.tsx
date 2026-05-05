@@ -3,7 +3,7 @@ import currencyService from '@/shared/services/currency.service';
 import type { IMoneyDto } from '@/shared/utils/api/Api';
 import type { ComponentProps } from 'react';
 
-interface MoneyProps extends ComponentProps<'p'> {
+interface MoneyProps extends ComponentProps<'span'> {
   value: IMoneyDto;
   hide?: boolean;
 }
@@ -36,5 +36,5 @@ export default function Money({ value, hide, ...props }: MoneyProps) {
     currency: value.currencyCode,
   }).format(getMoneyDisplayAmount(value));
 
-  return <p {...props}>{hide ? '******' : formatted}</p>;
+  return <span {...props}>{hide ? '******' : formatted}</span>;
 }

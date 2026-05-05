@@ -33,7 +33,7 @@ export function AccountCarouselItem({ account }: AccountCarouselItemProps) {
     <Link to="/auth/signup">
       <Item
         variant="outline"
-        className="cursor-pointer w-80 max-w-full rounded-2xl py-1"
+        className="cursor-pointer w-full rounded-2xl py-1"
       >
         <ItemMedia>
           <CurrencyLogo
@@ -59,19 +59,21 @@ export function AccountOverviewCarousel({
   accounts,
 }: AccountOverviewCarouselProps) {
   return (
-    <Carousel className="w-full max-w-[1000px]">
-      <CarouselContent>
-        {accounts?.map((account) => (
-          <CarouselItem
-            key={account.id}
-            className="basis-full sm:basis-1/2 lg:basis-1/3"
-          >
-            <AccountCarouselItem account={account} />
-          </CarouselItem>
-        ))}
-      </CarouselContent>
-      <CarouselPrevious />
-      <CarouselNext />
-    </Carousel>
+    <div className="w-full px-12">
+      <Carousel className="w-full" opts={{ align: 'start' }}>
+        <CarouselContent>
+          {accounts?.map((account) => (
+            <CarouselItem
+              key={account.id}
+              className="basis-full sm:basis-1/2 lg:basis-1/3"
+            >
+              <AccountCarouselItem account={account} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
+    </div>
   );
 }
