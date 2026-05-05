@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 
 import logoImg from '@/shared/assets/logo.svg';
+import { cn } from '@/shared/ui/components/utils';
 
 const data = {
   navMain: [
@@ -132,5 +133,10 @@ export function AppHeaderTitle({
   className,
   ...props
 }: React.ComponentProps<'h1'>) {
-  return <h1 {...props} className={`text-3xl font-semibold ${className}`} />;
+  return (
+    <h1
+      {...props}
+      className={cn('text-3xl text-primary font-semibold', className)}
+    />
+  );
 }

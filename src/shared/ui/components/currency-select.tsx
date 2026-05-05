@@ -12,8 +12,8 @@ import { Field, FieldError } from '@/shared/ui/components/field';
 import { InputGroupAddon } from '@/shared/ui/components/input-group';
 import { Label } from '@/shared/ui/components/label';
 import { type ICurrencyDto } from '@/shared/utils/api/Api';
-import { CoinsIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
+import { CurrencyLogo } from './currency-logo';
 
 export interface CurrencySelectProps {
   label: string;
@@ -22,25 +22,6 @@ export interface CurrencySelectProps {
   onChange: (value: string) => void;
   error?: Array<{ message?: string } | undefined>;
   displayCode?: boolean;
-}
-
-function CurrencyLogo({ url }: { url?: string }) {
-  if (!url) {
-    return <CoinsIcon />;
-  }
-  return (
-    <div
-      style={{
-        backgroundImage: `url(${url})`,
-        backgroundSize: '200%',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        borderRadius: '200px',
-        width: '24px',
-        height: '24px',
-      }}
-    />
-  );
 }
 
 interface ICurrency {

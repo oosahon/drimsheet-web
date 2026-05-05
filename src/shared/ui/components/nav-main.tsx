@@ -14,21 +14,26 @@ import {
   SidebarMenuSubItem,
 } from '@/shared/ui/components/sidebar';
 import { ChevronRightIcon } from 'lucide-react';
+import type { PropsWithChildren } from 'react';
+import { Link } from 'react-router-dom';
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string;
-    url: string;
-    icon?: React.ReactNode;
-    isActive?: boolean;
-    items?: {
-      title: string;
-      url: string;
-    }[];
-  }[];
-}) {
+interface NavSubItem {
+  title: string;
+  url: string;
+}
+
+interface NavItem {
+  title: string;
+  url: string;
+  icon?: React.ReactNode;
+  isActive?: boolean;
+  items?: NavSubItem[];
+}
+
+interface NavMainProps extends PropsWithChildren {
+  items: NavItem[];
+}
+export function NavMain({ items }: NavMainProps) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Accounting</SidebarGroupLabel>
@@ -42,10 +47,10 @@ export function NavMain({
                   tooltip={item.title}
                   isActive={item.isActive}
                 >
-                  <a href={item.url}>
+                  <Link to={item.url}>
                     {item.icon}
                     <span>{item.title}</span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
@@ -74,9 +79,9 @@ export function NavMain({
                     {item.items.map((subItem) => (
                       <SidebarMenuSubItem key={subItem.title}>
                         <SidebarMenuSubButton asChild>
-                          <a href={subItem.url}>
+                          <Link to={subItem.url}>
                             <span>{subItem.title}</span>
-                          </a>
+                          </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                     ))}
