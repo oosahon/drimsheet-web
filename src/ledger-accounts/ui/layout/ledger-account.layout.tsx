@@ -20,9 +20,9 @@ export default function LedgerAccountPageLayout({
   children,
 }: LedgerAccountPageLayoutProps) {
   return (
-    <div className="flex w-full flex-col pt-0">
-      <AppHeader className="sticky top-0 py-2 z-10 w-full bg-background pb-4">
-        <div className="flex items-baseline gap-4">
+    <div className="flex w-full flex-col pt-0 max-w-full">
+      <AppHeader className="sticky top-0 py-2 z-10 w-full  bg-background pb-4">
+        <div className="flex items-center gap-4">
           <AppHeaderTitle className="m-0 leading-none">{title}</AppHeaderTitle>
           <Button size="xs" onClick={onAddClick}>
             <PlusIcon /> Add

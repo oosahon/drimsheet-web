@@ -1,3 +1,10 @@
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/shared/ui/components/carousel';
 import { CurrencyLogo } from '@/shared/ui/components/currency-logo';
 import {
   Item,
@@ -13,16 +20,20 @@ import { getCurrencyLogo } from '@/shared/utils/get-currency-logo';
 import { ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-interface AccountListItemProps {
+interface AccountCarouselItemProps {
   account: ILedgerAccountDto;
 }
 
-export function AccountListItem({ account }: AccountListItemProps) {
+interface AccountOverviewCarouselProps {
+  accounts: ILedgerAccountDto[];
+}
+
+export function AccountCarouselItem({ account }: AccountCarouselItemProps) {
   return (
     <Link to="/auth/signup">
       <Item
         variant="outline"
-        className="cursor-pointer w-80 max-w-full rounded-2xl py-2"
+        className="cursor-pointer w-80 max-w-full rounded-2xl py-1"
       >
         <ItemMedia>
           <CurrencyLogo
@@ -41,5 +52,23 @@ export function AccountListItem({ account }: AccountListItemProps) {
         </ItemActions>
       </Item>
     </Link>
+  );
+}
+
+export function AccountOverviewCarousel({
+  accounts,
+}: AccountOverviewCarouselProps) {
+  return (
+    <Carousel className="w-full max-w-[1000px] m-auto">
+      <CarouselContent>
+        {accounts?.map((account) => (
+          <CarouselItem key={account.id} className="basis-1/3">
+            <AccountCarouselItem account={account} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselPrevious />
+      <CarouselNext />
+    </Carousel>
   );
 }
