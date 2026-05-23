@@ -8,5 +8,6 @@
   "account_name_max_length_text": "Account name must not exceed 100 characters",
   "currency_required_text": "Currency is required",
   "opening_balance_required_text": "Opening balance is required",
-  "opening_balance_negative_text": "Opening balance cannot be negative"
+  "opening_balance_negative_text": "Opening balance cannot be negative",
+  "petty_cash_account_created_success_text": "Petty cash account created successfully"
 }
