@@ -1,4 +1,4 @@
-import { Ellipsis, EqualApproximately } from 'lucide-react';
+import { Ellipsis, EqualApproximately, Plus } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,18 +31,20 @@ export interface LedgerAccountsTableProps {
   pagination?: IPaginationResponseMeta;
   onPageChange?: (page: number) => void;
   stickyHeader?: boolean;
-  onSortChange?: (
+  onSortChange: (
     key: keyof ILedgerAccountDto,
     direction: 'asc' | 'desc' | null
   ) => void;
-  onFilterChange?: (filters: Record<string, (string | number)[]>) => void;
+  onFilterChange: (filters: Record<string, (string | number)[]>) => void;
   currentSortKey?: string;
   currentSortDirection?: 'asc' | 'desc' | null;
   className?: string;
   'data-testid'?: string;
   searchValue?: string;
-  onSearchChange?: (value: string) => void;
-  filters?: Record<string, (string | number)[]>;
+  onSearchChange: (value: string) => void;
+  filters: Record<string, (string | number)[]>;
+
+  onAddAccount: () => void;
 }
 
 export function LedgerAccountsTable({
@@ -63,6 +65,8 @@ export function LedgerAccountsTable({
   searchValue = '',
   onSearchChange,
   filters,
+
+  onAddAccount,
 }: LedgerAccountsTableProps) {
   const { t } = useTranslation(['ledger-accounts', 'shared']);
 
@@ -160,10 +164,11 @@ export function LedgerAccountsTable({
   }, [t]);
 
   const search_placeholder_text = t('ledger-accounts:search_placeholder');
+  const add_account_text = t('ledger-accounts:add_account');
 
   return (
     <div className="flex flex-col gap-4 w-full">
-      {onSearchChange && (
+      <div className="flex items-center justify-between">
         <div className="w-full max-w-sm">
           <SearchField
             type="search"
@@ -172,7 +177,13 @@ export function LedgerAccountsTable({
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </div>
-      )}
+
+        <Button onClick={onAddAccount}>
+          <Plus />
+          {add_account_text}
+        </Button>
+      </div>
+
       <DataTable
         columns={columns}
         data={data}

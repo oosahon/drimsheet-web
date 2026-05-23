@@ -44,10 +44,12 @@ export default function PettyCashAccountsDashboardPage() {
           description={accounts_count_text}
         />
 
-        <LedgerAccountsTableContainer />
+        <LedgerAccountsTableContainer
+          onAddAccount={() => setShowCreationForm(true)}
+        />
 
         <Dialog open={showCreationForm} onOpenChange={setShowCreationForm}>
-          <DialogContent className="sm:max-w-md bg-card border-border/80 shadow-2xl backdrop-blur-md">
+          <DialogContent className="w-sm bg-card border-border/80 shadow-2xl backdrop-blur-md">
             <DialogHeader>
               <DialogTitle className="text-xl font-semibold tracking-tight text-foreground font-heading">
                 {create_petty_cash_account_text}

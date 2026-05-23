@@ -10,7 +10,13 @@ import {
 } from '@/shared/utils/api/Api';
 import { useMemo, useState } from 'react';
 
-export default function LedgerAccountsTableContainer() {
+interface LedgerAccountsTableContainerProps {
+  onAddAccount: () => void;
+}
+
+export default function LedgerAccountsTableContainer({
+  onAddAccount,
+}: LedgerAccountsTableContainerProps) {
   const tableQuery = useTableQueryParams<keyof ILedgerAccountDto, 'status'>({
     filterKeys: ['status'],
   });
@@ -65,6 +71,7 @@ export default function LedgerAccountsTableContainer() {
 
   return (
     <LedgerAccountsTable
+      onAddAccount={onAddAccount}
       data={filteredAccounts}
       loading={isLoading}
       selectable

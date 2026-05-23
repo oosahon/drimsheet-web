@@ -109,7 +109,6 @@
     --border: var(--color-gray-300);
     --code-bg: #f4f3ec;
     --accent: oklch(0.21 0.006 285.885);
-    --brand-purple: #aa3bff;
     --accent-bg: rgba(170, 59, 255, 0.1);
     --accent-border: rgba(170, 59, 255, 0.5);
     --social-bg: rgba(244, 243, 236, 0.5);
@@ -258,7 +257,6 @@
   --color-warning: #ffd60a;
   --color-error: var(--destructive);
   --color-neutral: var(--muted-foreground);
-  --color-primary: var(--brand-purple);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-foreground: var(--foreground);
