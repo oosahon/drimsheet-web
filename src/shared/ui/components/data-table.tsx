@@ -75,11 +75,11 @@ export interface TableProps<T extends IDataWithId> {
   stickyProps?: IStickyProps;
   responsive?: boolean;
   'data-testid'?: string;
-  // Selection
+
   selectable?: boolean;
   selectedRowIds?: (string | number)[];
   onRowSelectionChange?: (selectedIds: (string | number)[]) => void;
-  // External callbacks
+
   onSortChange?: (key: keyof T, direction: 'asc' | 'desc' | null) => void;
   onFilterChange?: (filters: Record<string, (string | number)[]>) => void;
   className?: string;
@@ -227,14 +227,12 @@ export function DataTableHeaderCell<T extends IDataWithId>({
   const isSorted = currentSortKey === column.dataIndex;
   const sortDir = isSorted ? currentSortDirection : null;
 
-  // Title Content
   const headerContent = column.headerRender
     ? column.headerRender(column)
     : column.renderHeader
       ? column.renderHeader(column)
       : column.title;
 
-  // Memoized filter handlers
   const handleSelectFilter = useCallback(
     (val: string | number) => {
       const currentSelected =
@@ -377,14 +375,11 @@ export function DataTableRow<T extends IDataWithId>({
   isSelected = false,
   onSelectRow,
 }: DataTableRowProps<T>) {
-  // 5. third party library hooks
   const { t } = useTranslation(['shared']);
 
-  // 16. translations extraction
   const deselect_row_text = t('shared:deselect_row', { id: row.id });
   const select_row_text = t('shared:select_row', { id: row.id });
 
-  // 17. ui element rendering
   return (
     <TableRow
       data-state={isSelected ? 'selected' : undefined}
@@ -439,10 +434,8 @@ export function DataTableActiveFilters<T extends IDataWithId>({
   filters,
   onFilterChange,
 }: DataTableActiveFiltersProps<T>) {
-  // 5. third party library hooks
   const { t } = useTranslation(['shared']);
 
-  // 9. React's useMemo
   const activeChips = useMemo(() => {
     if (!filters) return [];
 
@@ -475,7 +468,6 @@ export function DataTableActiveFilters<T extends IDataWithId>({
     return chips;
   }, [filters, columns]);
 
-  // 12. event handlers (callbacks)
   const handleRemoveChip = useCallback(
     (columnKey: string, valueToRemove: string | number) => {
       if (!onFilterChange || !filters) return;
@@ -499,11 +491,9 @@ export function DataTableActiveFilters<T extends IDataWithId>({
     onFilterChange({});
   }, [onFilterChange]);
 
-  // 16. translations extraction
   const active_filters_label = t('shared:active_filters');
   const clear_all_text = t('shared:clear_all');
 
-  // 17. ui element rendering
   if (activeChips.length === 0) return null;
 
   return (
@@ -572,18 +562,15 @@ export function DataTable<T extends IDataWithId>({
 }: TableProps<T>) {
   const { t } = useTranslation(['shared']);
 
-  // Row Selection Set (derived directly from controlled prop)
   const selectedSet = useMemo(
     () => new Set(selectedRowIds || []),
     [selectedRowIds]
   );
 
-  // Get active columns (excluding hidden ones)
   const visibleColumns = useMemo(() => {
     return columns.filter((col) => !col.hidden);
   }, [columns]);
 
-  // Handle row selection
   const handleSelectRow = useCallback(
     (id: string | number) => {
       const newSelection = new Set(selectedRowIds || []);
@@ -597,7 +584,6 @@ export function DataTable<T extends IDataWithId>({
     [selectedRowIds, onRowSelectionChange]
   );
 
-  // Handle select/deselect all rows
   const handleSelectAll = useCallback(() => {
     const selectedSet = new Set(selectedRowIds || []);
     const allSelected =
@@ -612,7 +598,6 @@ export function DataTable<T extends IDataWithId>({
     onRowSelectionChange?.(Array.from(newSelection));
   }, [data, selectedRowIds, onRowSelectionChange]);
 
-  // Handle Sorting Toggles
   const handleSort = useCallback(
     (key: keyof T) => {
       let direction: 'asc' | 'desc' | null = 'asc';
@@ -630,7 +615,6 @@ export function DataTable<T extends IDataWithId>({
     [currentSortKey, currentSortDirection, onSortChange]
   );
 
-  // Header Select All details
   const isAllSelected =
     data.length > 0 && data.every((row) => selectedSet.has(row.id));
   const isSomeSelected =
@@ -638,7 +622,6 @@ export function DataTable<T extends IDataWithId>({
     data.some((row) => selectedSet.has(row.id)) &&
     !isAllSelected;
 
-  // Sticky settings helper
   const getStickyStyles = (index: number) => {
     if (!stickyHeader && _.isEmpty(stickyProps)) return undefined;
     return {

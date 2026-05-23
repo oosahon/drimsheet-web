@@ -35,13 +35,10 @@ export function TableFilter({
   onSelectAll,
   trigger,
 }: TableFilterProps) {
-  // 5. third party library hooks
   const { t } = useTranslation(['shared']);
 
-  // 6. React's useState
   const [searchQuery, setSearchQuery] = React.useState('');
 
-  // 9. React's useMemo
   const filteredOptions = React.useMemo(() => {
     if (!searchQuery) return options;
     return options.filter((option) =>
@@ -49,13 +46,11 @@ export function TableFilter({
     );
   }, [options, searchQuery]);
 
-  // 12. event handlers (callbacks)
   const handleSelectAll = React.useCallback(() => {
     const allOptionValues = filteredOptions.map((option) => option.value);
     if (onSelectAll) {
       onSelectAll(allOptionValues);
     } else {
-      // Default: select all filtered options
       filteredOptions.forEach((option) => {
         if (!selectedValues.includes(option.value)) {
           onSelect(option.value);
@@ -64,7 +59,6 @@ export function TableFilter({
     }
   }, [filteredOptions, selectedValues, onSelect, onSelectAll]);
 
-  // 16. translations extraction
   const filter_label = title
     ? t('shared:filter_by', { title })
     : t('shared:filter');
@@ -74,7 +68,6 @@ export function TableFilter({
   const select_all_label = t('shared:select_all');
   const clear_all_label = t('shared:clear_all');
 
-  // 17. ui element rendering
   return (
     <Popover>
       <PopoverTrigger asChild>

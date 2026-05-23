@@ -13,13 +13,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function PettyCashAccountsDashboardPage() {
-  // 5. third party library hooks
   const { t } = useTranslation(['ledger-accounts', 'shared']);
 
-  // 6. React's useState
   const [showCreationForm, setShowCreationForm] = useState(false);
 
-  // 16. translations extraction
   const accounts_label = t('shared:accounts');
   const petty_cash_label = t('shared:petty_cash');
   const total_vault_balance_label = t('ledger-accounts:total_vault_balance');
@@ -30,7 +27,6 @@ export default function PettyCashAccountsDashboardPage() {
     'ledger-accounts:create_petty_cash_account'
   );
 
-  // 17. ui element rendering
   return (
     <>
       <AppHeader

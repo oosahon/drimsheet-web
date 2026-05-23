@@ -18,18 +18,14 @@ interface PageBreadCrumbsProps {
 }
 
 function PageBreadCrumbs({ accountName, isLoading }: PageBreadCrumbsProps) {
-  // 5. third party library hooks
   const { t } = useTranslation(['shared']);
 
-  // 14. early returns / guard clauses
   if (isLoading) {
     return <Skeleton className="w-25 h-3" />;
   }
 
-  // 16. translations extraction
   const petty_cash_label = t('shared:petty_cash');
 
-  // 17. ui element rendering
   return (
     <Breadcrumb>
       <BreadcrumbList>

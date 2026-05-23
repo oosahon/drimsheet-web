@@ -253,15 +253,12 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
 
-  /* Semantic Design System Colors mapped from brand theme */
-  --color-success: #10b981; /* Emerald Green for Revenue */
-  --color-info: #4da3ff; /* Sky Blue for Assets */
-  --color-warning: #ffd60a; /* Bright Yellow for Liabilities */
-  --color-error: var(--destructive); /* Red for destructive actions / errors */
-  --color-neutral: var(--muted-foreground); /* Grey for neutral states */
-  --color-primary: var(
-    --brand-purple
-  ); /* Purple for brand theme primary actions */
+  --color-success: #10b981;
+  --color-info: #4da3ff;
+  --color-warning: #ffd60a;
+  --color-error: var(--destructive);
+  --color-neutral: var(--muted-foreground);
+  --color-primary: var(--brand-purple);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-foreground: var(--foreground);

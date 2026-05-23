@@ -41,7 +41,6 @@ export function LedgerAccountOverview({
         className
       )}
     >
-      {/* Left Section: Icon and Titles */}
       <div className="flex items-center gap-4">
         <LedgerTypeIcon type={type} />
         <div className="flex flex-col gap-0.5">
@@ -54,7 +53,6 @@ export function LedgerAccountOverview({
         </div>
       </div>
 
-      {/* Right Section: Balance and Description */}
       <div className="flex flex-col items-end gap-0.5">
         <Money
           className="text-xl sm:text-2xl font-bold font-heading text-foreground tracking-tight leading-none"

@@ -11,7 +11,7 @@ const currencyService = {
     const jurisdiction = countries.find(
       (country) => country.currencyCode === currencyCode
     );
-    return jurisdiction?.locale ?? 'en-US';
+    return jurisdiction?.locale ?? 'en-NG';
   },
 };
 
