@@ -1,5 +1,5 @@
 {
-  "petty_cash_name_label": "Petty Cash Name",
+  "petty_cash_name_label": "Petty cash name",
   "currency_label": "Currency",
   "starting_balance_label": "Starting balance",
   "save_cash_account_text": "Save cash account",
@@ -8,5 +8,12 @@
   "account_name_max_length_text": "Account name must not exceed 100 characters",
   "currency_required_text": "Currency is required",
   "opening_balance_required_text": "Opening balance is required",
-  "opening_balance_negative_text": "Opening balance cannot be negative"
+  "opening_balance_negative_text": "Opening balance cannot be negative",
+  "petty_cash_account_created_success_text": "Petty cash account created successfully",
+  "total_vault_balance": "Total vault balance",
+  "accounts_count": "{{count}} accounts",
+  "create_petty_cash_account": "Create petty cash account",
+  "account_name": "Account name",
+  "search_placeholder": "Search by name...",
+  "add_account": "Add account"
 }

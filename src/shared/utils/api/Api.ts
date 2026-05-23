@@ -354,7 +354,7 @@ export interface ILedgerAccountDto {
   accountingEntityId: TEntityId;
   type: ULedgerType;
   normalBalance: UNormalBalance;
-  subType: string;
+  subType: any;
   behavior: string;
   isControlAccount: boolean;
   controlAccountId?: TEntityId;
@@ -780,6 +780,21 @@ export class Api<
         path: `/ledger/accounts`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get a single ledger account by id
+     *
+     * @tags Ledger Accounts
+     * @name GetLedgerAccount
+     * @request GET:/ledger/accounts/{accountId}
+     */
+    getLedgerAccount: (accountId: string, params: RequestParams = {}) =>
+      this.request<ILedgerAccountDto, IHttpErrorDto>({
+        path: `/ledger/accounts/${accountId}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

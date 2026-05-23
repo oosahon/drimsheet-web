@@ -15,10 +15,10 @@
   "menuColor": "default",
   "menuAccent": "bold",
   "aliases": {
-    "components": "@/shared/ui",
-    "utils": "@/shared/utils",
-    "ui": "@/shared/ui",
-    "lib": "@/shared/ui",
+    "components": "@/shared/ui/components",
+    "utils": "@/shared/ui/components/utils",
+    "ui": "@/shared/ui/components",
+    "lib": "@/shared/ui/components",
     "hooks": "@/shared/hooks"
   },
   "registries": {

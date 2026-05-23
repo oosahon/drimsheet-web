@@ -1,12 +1,4 @@
-import {
-  formatDateForApi,
-  formatDateWithJurisdiction,
-  formatFiscalDateWithYear,
-  getDurationInMonths,
-  getFiscalYearDateRange,
-  isValidFiscalYearDuration,
-  shiftDateByDistance,
-} from '@/shared/utils/date';
+import dateUtils from '@/shared/utils/date';
 import { describe, expect, it } from 'vitest';
 
 describe('date utils', () => {
@@ -18,7 +10,7 @@ describe('date utils', () => {
 
       // New: Feb 2nd
       const newStart = new Date(2024, 1, 2);
-      const result = shiftDateByDistance(newStart, oldStart, oldEnd);
+      const result = dateUtils.shiftDateByDistance(newStart, oldStart, oldEnd);
 
       // Feb 2nd + 11 months = Jan 2nd 2025.
       // Jan 2nd + 30 days = Jan 31st 2025 (Jan has 31 days).
@@ -38,7 +30,7 @@ describe('date utils', () => {
       const oldEnd = new Date(2025, 1, 28); // Feb 28 2025 (1 year later)
       const newStart = new Date(2023, 1, 28); // Feb 28 2023
 
-      const result = shiftDateByDistance(newStart, oldStart, oldEnd);
+      const result = dateUtils.shiftDateByDistance(newStart, oldStart, oldEnd);
       // Diff: 11 months, 30 days.
       // Feb 28 + 11 months = Jan 28. + 30 days = Feb 27 2024.
       expect(result.getFullYear()).toBe(2024);
@@ -49,45 +41,45 @@ describe('date utils', () => {
     it('returns true for exact 1 month duration', () => {
       const start = new Date(2024, 0, 1); // Jan 1
       const end = new Date(2024, 0, 31); // Jan 31
-      expect(isValidFiscalYearDuration(start, end)).toBe(true);
+      expect(dateUtils.isValidFiscalYearDuration(start, end)).toBe(true);
     });
 
     it('returns false for less than 1 month duration', () => {
       const start = new Date(2024, 0, 1); // Jan 1
       const end = new Date(2024, 0, 30); // Jan 30
-      expect(isValidFiscalYearDuration(start, end)).toBe(false);
+      expect(dateUtils.isValidFiscalYearDuration(start, end)).toBe(false);
     });
 
     it('returns true for exact 23 month duration', () => {
       const start = new Date(2024, 0, 1); // Jan 1 2024
       // + 23 months = Dec 1 2025.
       const end = new Date(2025, 11, 1);
-      expect(isValidFiscalYearDuration(start, end)).toBe(true);
+      expect(dateUtils.isValidFiscalYearDuration(start, end)).toBe(true);
     });
 
     it('returns false for more than 23 month duration', () => {
       const start = new Date(2024, 0, 1); // Jan 1 2024
       const end = new Date(2025, 11, 2); // Dec 2 2025
-      expect(isValidFiscalYearDuration(start, end)).toBe(false);
+      expect(dateUtils.isValidFiscalYearDuration(start, end)).toBe(false);
     });
 
     it('returns true for typical 12 month duration', () => {
       const start = new Date(2024, 0, 1); // Jan 1 2024
       const end = new Date(2024, 11, 31); // Dec 31 2024
-      expect(isValidFiscalYearDuration(start, end)).toBe(true);
+      expect(dateUtils.isValidFiscalYearDuration(start, end)).toBe(true);
     });
   });
 
   describe('formatFiscalDateWithYear', () => {
     it('formats date with year and month only', () => {
       const date = new Date(2026, 0, 1); // Jan 1 2026
-      expect(formatFiscalDateWithYear(date)).toBe('Jan 2026');
+      expect(dateUtils.formatFiscalDateWithYear(date)).toBe('Jan 2026');
     });
   });
 
   describe('getFiscalYearDateRange', () => {
     it('returns a 1 year minus 1 day date range starting from the current year', () => {
-      const { startDate, endDate } = getFiscalYearDateRange(1, 1);
+      const { startDate, endDate } = dateUtils.getFiscalYearDateRange(1, 1);
       const currentYear = new Date().getFullYear();
 
       expect(startDate.getFullYear()).toBe(currentYear);
@@ -100,7 +92,7 @@ describe('date utils', () => {
     });
 
     it('handles leap years internally', () => {
-      const { startDate, endDate } = getFiscalYearDateRange(2, 29);
+      const { startDate, endDate } = dateUtils.getFiscalYearDateRange(2, 29);
       const currentYear = new Date().getFullYear();
 
       expect(startDate.getFullYear()).toBe(currentYear);
@@ -115,19 +107,21 @@ describe('date utils', () => {
   describe('formatDateForApi', () => {
     it('formats date as YYYY-MM-DD', () => {
       const date = new Date(2026, 0, 15);
-      expect(formatDateForApi(date)).toBe('2026-01-15');
+      expect(dateUtils.formatDateForApi(date)).toBe('2026-01-15');
     });
   });
 
-  describe('formatDateWithJurisdiction', () => {
+  describe('formatWithJurisdiction', () => {
     it('formats date using default locale if country code is missing', () => {
       const date = new Date(2026, 0, 15);
-      expect(formatDateWithJurisdiction(date)).toBe('Jan 15 2026');
+      expect(dateUtils.formatWithJurisdiction(date)).toBe('15 Jan 2026');
     });
 
     it('returns "Invalid Date" for invalid date', () => {
       const invalidDate = new Date('invalid');
-      expect(formatDateWithJurisdiction(invalidDate)).toBe('Invalid Date');
+      expect(dateUtils.formatWithJurisdiction(invalidDate)).toBe(
+        'Invalid Date'
+      );
     });
   });
 
@@ -135,13 +129,13 @@ describe('date utils', () => {
     it('returns 1 for exact one month duration', () => {
       const start = new Date(2026, 0, 1);
       const end = new Date(2026, 0, 31);
-      expect(getDurationInMonths(start, end)).toBe(1);
+      expect(dateUtils.getDurationInMonths(start, end)).toBe(1);
     });
 
     it('returns 12 for typical 12 month duration', () => {
       const start = new Date(2026, 0, 1);
       const end = new Date(2026, 11, 31);
-      expect(getDurationInMonths(start, end)).toBe(12);
+      expect(dateUtils.getDurationInMonths(start, end)).toBe(12);
     });
   });
 });

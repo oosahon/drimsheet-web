@@ -41,7 +41,6 @@ describe('FiscalDateSelect', () => {
       />
     );
 
-    // formatDateWithJurisdiction returns something like "Apr 15 2024" or "15 Apr 2024"
     expect(
       screen.getByRole('button', { name: /Apr.*15.*2024|15.*Apr.*2024/i })
     ).toBeInTheDocument();
@@ -63,7 +62,6 @@ describe('FiscalDateSelect', () => {
     });
     await user.click(trigger);
 
-    // The calendar should be visible, let's select a different day in the current month (January)
     const day15 = screen.getByText('15');
     await user.click(day15);
 

@@ -18,9 +18,15 @@ function getPettyBaseCashFilters(): IGetLedgerAccountsQuery {
   };
 }
 
+async function getLedgerAccount(id: string) {
+  const res = await purpleLedgerApi.ledger.getLedgerAccount(id);
+  return res.data;
+}
+
 const ledgerAccountService = Object.freeze({
   getLedgerAccounts,
   getPettyBaseCashFilters,
+  getLedgerAccount,
 });
 
 export default ledgerAccountService;

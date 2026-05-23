@@ -1,13 +1,65 @@
-import PettyCashAccountFormContainer from '@/ledger-accounts/ui/containers/petty-cash-account-form-container';
+import useLedgerAccount from '@/ledger-accounts/hooks/api/use-ledger-account';
+import { AppHeader } from '@/shared/ui/components/app';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbSeparator,
+} from '@/shared/ui/components/breadcrumb';
 import { GradientBox } from '@/shared/ui/components/gradient-box';
+import { Skeleton } from '@/shared/ui/components/skeleton';
+import { Link, useParams } from 'react-router-dom';
 
-export default function PettyCashAccountRoute() {
+import { useTranslation } from 'react-i18next';
+
+interface PageBreadCrumbsProps {
+  accountName: string;
+  isLoading?: boolean;
+}
+
+function PageBreadCrumbs({ accountName, isLoading }: PageBreadCrumbsProps) {
+  const { t } = useTranslation(['shared']);
+
+  if (isLoading) {
+    return <Skeleton className="w-25 h-3" />;
+  }
+
+  const petty_cash_label = t('shared:petty_cash');
+
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        <BreadcrumbItem>
+          <Link to="/accounts/petty-cash">{petty_cash_label}</Link>
+        </BreadcrumbItem>
+        <BreadcrumbSeparator />
+
+        <BreadcrumbItem>
+          <Link to="#">{accountName}</Link>
+        </BreadcrumbItem>
+      </BreadcrumbList>
+    </Breadcrumb>
+  );
+}
+
+export default function PettyCashAccountPage() {
+  const { accountId } = useParams();
+
+  const { data: account, isLoading } = useLedgerAccount(accountId);
+
+  const accountName = account?.name ?? '';
+
   return (
     <div>
-      <GradientBox variant="warning" className="max-w-xs min-h-[100px]">
-        Foo
-      </GradientBox>
-      <PettyCashAccountFormContainer />
+      <AppHeader>
+        <PageBreadCrumbs accountName={accountName} isLoading={isLoading} />
+      </AppHeader>
+
+      <div className="mt-6">
+        <GradientBox className="max-w-xs">
+          <div>{accountName}</div>
+        </GradientBox>
+      </div>
     </div>
   );
 }

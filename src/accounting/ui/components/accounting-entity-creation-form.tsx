@@ -15,11 +15,7 @@ import {
   type IJurisdictionDto,
   type UJurisdictionCode,
 } from '@/shared/utils/api/Api';
-import {
-  formatFiscalDate,
-  getFiscalYearDateRange,
-  shiftDateByDistance,
-} from '@/shared/utils/date';
+import dateUtils from '@/shared/utils/date';
 import { AppUsageModeRadioGroup } from '@/user/ui/app-usage-mode-radio-group';
 import { useFormik } from 'formik';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -77,7 +73,7 @@ function Step1({
     const reportingCurrency =
       selectedCountry?.currencyCode || formik.values.reportingCurrency;
 
-    const { startDate, endDate } = getFiscalYearDateRange(
+    const { startDate, endDate } = dateUtils.getFiscalYearDateRange(
       expectedStart.month,
       expectedStart.day
     );
@@ -184,7 +180,7 @@ function Step2({
     fiscalYearStart
   );
 
-  const formattedExpectedStart = formatFiscalDate(
+  const formattedExpectedStart = dateUtils.formatFiscalDate(
     expectedStart.month,
     expectedStart.day
   );
@@ -224,7 +220,11 @@ function Step2({
                 formik.setFieldTouched('fiscalYearStart', true);
                 formik.setFieldValue('fiscalYearStart', val);
                 if (oldStart && oldEnd) {
-                  const newEnd = shiftDateByDistance(val, oldStart, oldEnd);
+                  const newEnd = dateUtils.shiftDateByDistance(
+                    val,
+                    oldStart,
+                    oldEnd
+                  );
                   formik.setFieldValue('fiscalYearEnd', newEnd);
                 }
               }}
@@ -331,8 +331,8 @@ function AccountingEntityCreationForm({
       countryCode: 'NG',
       functionalCurrency: 'NGN',
       reportingCurrency: 'NGN',
-      fiscalYearStart: getFiscalYearDateRange(1, 1).startDate,
-      fiscalYearEnd: getFiscalYearDateRange(1, 1).endDate,
+      fiscalYearStart: dateUtils.getFiscalYearDateRange(1, 1).startDate,
+      fiscalYearEnd: dateUtils.getFiscalYearDateRange(1, 1).endDate,
       appUsageMode: 'non_power_user',
       accountingStandardCode: 'IFRS',
     },

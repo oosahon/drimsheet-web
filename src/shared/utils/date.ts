@@ -4,16 +4,16 @@ import advancedFormat from 'dayjs/plugin/advancedFormat';
 
 dayjs.extend(advancedFormat);
 
-export const JS_MONTH_INDEX_OFFSET = 1;
-export const DEFAULT_LOCALE = 'en-US';
+const JS_MONTH_INDEX_OFFSET = 1;
+const DEFAULT_LOCALE = 'en-NG';
 
-export const formatOptions = Object.freeze({
+const formatOptions = Object.freeze({
   monthAndDayOnly: 'MMMM Do',
   monthAndYear: 'MMM YYYY',
   apiDate: 'YYYY-MM-DD',
 });
 
-export function formatFiscalDate(month: number, day: number) {
+function formatFiscalDate(month: number, day: number) {
   // Use a fixed leap year (2024) to support February 29th
   return dayjs()
     .year(2024)
@@ -22,7 +22,7 @@ export function formatFiscalDate(month: number, day: number) {
     .format(formatOptions.monthAndDayOnly);
 }
 
-export function getFiscalYearDateRange(
+function getFiscalYearDateRange(
   month: number,
   day: number
 ): { startDate: Date; endDate: Date } {
@@ -36,18 +36,15 @@ export function getFiscalYearDateRange(
   return { startDate, endDate };
 }
 
-export function formatFiscalDateWithYear(date: Date) {
+function formatFiscalDateWithYear(date: Date) {
   return dayjs(date).format(formatOptions.monthAndYear);
 }
 
-export function formatDateForApi(date: Date | string | number): string {
+function formatDateForApi(date: Date | string | number): string {
   return dayjs(date).format(formatOptions.apiDate);
 }
 
-export function formatDateWithJurisdiction(
-  date: Date,
-  countryCode?: string
-): string {
+function formatWithJurisdiction(date: Date, countryCode?: string): string {
   let locale = DEFAULT_LOCALE;
   if (countryCode) {
     const country = countries.find((c) => c.code === countryCode);
@@ -79,7 +76,7 @@ export function formatDateWithJurisdiction(
   }
 }
 
-export function shiftDateByDistance(
+function shiftDateByDistance(
   newStart: Date,
   oldStart: Date,
   oldEnd: Date
@@ -95,7 +92,7 @@ export function shiftDateByDistance(
   return newStartD.add(monthsDiff, 'month').add(daysDiff, 'day').toDate();
 }
 
-export function isValidFiscalYearDuration(start: Date, end: Date): boolean {
+function isValidFiscalYearDuration(start: Date, end: Date): boolean {
   const startD = dayjs(start);
   const endD = dayjs(end);
 
@@ -108,7 +105,7 @@ export function isValidFiscalYearDuration(start: Date, end: Date): boolean {
   );
 }
 
-export function getDurationInMonths(start: Date, end: Date): number {
+function getDurationInMonths(start: Date, end: Date): number {
   return Math.round(dayjs(end).add(1, 'day').diff(dayjs(start), 'month', true));
 }
 
@@ -132,10 +129,13 @@ const dateUtils = Object.freeze({
   getFiscalYearDateRange,
   formatFiscalDateWithYear,
   formatDateForApi,
-  formatDateWithJurisdiction,
+  formatWithJurisdiction,
   shiftDateByDistance,
   isValidFiscalYearDuration,
   getDurationInMonths,
+  formatOptions,
 });
 
 export default dateUtils;
+
+export { JS_MONTH_INDEX_OFFSET };
