@@ -2,7 +2,7 @@ import { Ellipsis, EqualApproximately } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Badge } from '@/shared/ui/components/badge';
+import ledgerAccountMapper from '@/ledger-accounts/mappers/account.mapper';
 import { Button } from '@/shared/ui/components/button';
 import {
   DataTable,
@@ -10,6 +10,7 @@ import {
 } from '@/shared/ui/components/data-table';
 import Money from '@/shared/ui/components/money';
 import { SearchField } from '@/shared/ui/components/search-field';
+import { StatusBadge } from '@/shared/ui/components/status-badge';
 import {
   ELedgerAccountStatus,
   type ILedgerAccountDto,
@@ -63,14 +64,12 @@ export function LedgerAccountsTable({
   onSearchChange,
   filters,
 }: LedgerAccountsTableProps) {
-  // 5. third party library hooks
   const { t } = useTranslation(['ledger-accounts', 'shared']);
 
-  // 9. React's useMemo
   const columns = useMemo<ITableColumn<ILedgerAccountDto>[]>(() => {
     const account_name_label = t('ledger-accounts:account_name');
-    const balance_label = t('shared:balance');
-    const status_label = t('shared:status');
+    const balance_text = t('shared:balance');
+    const status_text = t('shared:status');
     const active_label = t('shared:active');
     const archived_label = t('shared:archived');
     const created_on_label = t('shared:created_on');
@@ -91,9 +90,8 @@ export function LedgerAccountsTable({
       },
       {
         dataIndex: 'functionalBalance',
-        title: balance_label,
+        title: balance_text,
         sortable: true,
-        // TODO: render the balance at the top and the functional balance at the bottom in smaller text, to avoid confusion on accounts with a different currency than the functional currency
         render: (value, row) => (
           <>
             <Money
@@ -116,7 +114,7 @@ export function LedgerAccountsTable({
       },
       {
         dataIndex: 'status',
-        title: status_label,
+        title: status_text,
         sortable: true,
         filterable: true,
         filterOptions: [
@@ -125,11 +123,10 @@ export function LedgerAccountsTable({
         ],
         render: (value) => {
           const statusVal = value as ULedgerAccountStatus;
-          const isArchived = statusVal === ELedgerAccountStatus.Archived;
           return (
-            <Badge variant={isArchived ? 'secondary' : 'default'}>
-              {isArchived ? archived_label : active_label}
-            </Badge>
+            <StatusBadge
+              {...ledgerAccountMapper.mapStatusToBadgeProps(statusVal)}
+            />
           );
         },
       },
@@ -166,10 +163,8 @@ export function LedgerAccountsTable({
     ];
   }, [t]);
 
-  // 16. translations extraction
   const search_placeholder_text = t('ledger-accounts:search_placeholder');
 
-  // 17. ui element rendering
   return (
     <div className="flex flex-col gap-4 w-full">
       {onSearchChange && (

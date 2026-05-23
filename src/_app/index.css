@@ -257,6 +257,11 @@
   --color-success: #10b981; /* Emerald Green for Revenue */
   --color-info: #4da3ff; /* Sky Blue for Assets */
   --color-warning: #ffd60a; /* Bright Yellow for Liabilities */
+  --color-error: var(--destructive); /* Red for destructive actions / errors */
+  --color-neutral: var(--muted-foreground); /* Grey for neutral states */
+  --color-primary: var(
+    --brand-purple
+  ); /* Purple for brand theme primary actions */
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-foreground: var(--foreground);
