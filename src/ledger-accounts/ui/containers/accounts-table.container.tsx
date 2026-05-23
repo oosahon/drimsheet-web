@@ -87,6 +87,7 @@ export default function LedgerAccountsTableContainer() {
       currentSortDirection={sortDirection}
       searchValue={searchQuery}
       onSearchChange={setSearchQuery}
+      filters={filters}
     />
   );
 }

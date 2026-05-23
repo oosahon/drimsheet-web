@@ -40,6 +40,7 @@ export interface LedgerAccountsTableProps {
   'data-testid'?: string;
   searchValue?: string;
   onSearchChange?: (value: string) => void;
+  filters?: Record<string, (string | number)[]>;
 }
 
 export function LedgerAccountsTable({
@@ -59,6 +60,7 @@ export function LedgerAccountsTable({
   'data-testid': dataTestId = 'ledger-accounts-table',
   searchValue = '',
   onSearchChange,
+  filters,
 }: LedgerAccountsTableProps) {
   const columns = useMemo<ITableColumn<ILedgerAccountDto>[]>(
     () => [
@@ -183,6 +185,7 @@ export function LedgerAccountsTable({
         currentSortDirection={currentSortDirection}
         className={className}
         data-testid={dataTestId}
+        filters={filters}
       />
     </div>
   );

@@ -21,7 +21,7 @@ export interface TableFilterProps {
   selectedValues: (string | number)[];
   onSelect: (value: string | number) => void;
   onClear: () => void;
-  onSelectAll?: () => void;
+  onSelectAll?: (values: (string | number)[]) => void;
   trigger?: React.ReactNode;
 }
 
@@ -44,8 +44,9 @@ export function TableFilter({
   }, [options, searchQuery]);
 
   const handleSelectAll = React.useCallback(() => {
+    const allOptionValues = filteredOptions.map((option) => option.value);
     if (onSelectAll) {
-      onSelectAll();
+      onSelectAll(allOptionValues);
     } else {
       // Default: select all filtered options
       filteredOptions.forEach((option) => {

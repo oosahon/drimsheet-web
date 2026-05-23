@@ -240,4 +240,47 @@ describe('DataTable', () => {
     // Should render skeletons instead of the empty state
     expect(screen.queryByText('No records found')).not.toBeInTheDocument();
   });
+
+  it('renders active filter chips and handles individual removal or clear all', async () => {
+    const user = userEvent.setup();
+    const onFilterChange = vi.fn();
+
+    const { rerender } = render(
+      <DataTable
+        columns={columns}
+        data={mockData}
+        filters={{ category: ['Fruit'] }}
+        onFilterChange={onFilterChange}
+      />
+    );
+
+    // Verify filter chip is rendered
+    expect(screen.getByText('Active filters:')).toBeInTheDocument();
+    expect(screen.getByText('Category:')).toBeInTheDocument();
+    expect(screen.getAllByText('Fruit').length).toBeGreaterThan(0);
+
+    // Click remove button of the chip
+    const removeBtn = screen.getByLabelText(/remove filter category is fruit/i);
+    await user.click(removeBtn);
+
+    expect(onFilterChange).toHaveBeenCalledWith({});
+
+    // Test with multiple filters to verify Clear All button
+    rerender(
+      <DataTable
+        columns={columns}
+        data={mockData}
+        filters={{ category: ['Fruit', 'Vegetable'] }}
+        onFilterChange={onFilterChange}
+      />
+    );
+
+    expect(screen.getAllByText('Fruit').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Vegetable').length).toBeGreaterThan(0);
+
+    const clearAllBtn = screen.getByRole('button', { name: /clear all/i });
+    await user.click(clearAllBtn);
+
+    expect(onFilterChange).toHaveBeenLastCalledWith({});
+  });
 });
