@@ -28,7 +28,8 @@ import {
   UsersRound,
 } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
-import { Fragment } from 'react';
+import { Fragment, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 import logoImg from '@/shared/assets/logo.svg';
@@ -128,65 +129,73 @@ export function AppHeaderTitle({
 // 4. AppSidebar
 // ==========================================
 
-const sidebarData = {
-  navMain: [
-    {
-      title: 'Dashboard',
-      url: '#',
-      icon: <LayoutDashboard />,
-      isActive: true,
-    },
-    {
-      title: 'Accounts',
-      url: '/accounts',
-      icon: <Landmark />,
-      items: [
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { t } = useTranslation(['shared']);
+
+  const sidebarData = useMemo(
+    () => ({
+      navMain: [
         {
-          title: 'Bank Accounts',
-          url: '/accounts/bank',
+          title: t('shared:dashboard'),
+          url: '#',
+          icon: <LayoutDashboard />,
+          isActive: true,
         },
         {
-          title: 'Petty Cash Accounts',
-          url: '/accounts/petty-cash',
+          title: t('shared:accounts'),
+          url: '/accounts',
+          icon: <Landmark />,
+          items: [
+            {
+              title: t('shared:bank_accounts'),
+              url: '/accounts/bank',
+            },
+            {
+              title: t('shared:petty_cash_accounts'),
+              url: '/accounts/petty-cash',
+            },
+          ],
+        },
+        {
+          title: t('shared:income'),
+          url: '#',
+          icon: <TrendingUp />,
+        },
+        {
+          title: t('shared:expenses'),
+          url: '#',
+          icon: <TrendingDown />,
+        },
+        {
+          title: t('shared:liabilities'),
+          url: '#',
+          icon: <CircleMinus />,
         },
       ],
-    },
-    {
-      title: 'Income',
-      url: '#',
-      icon: <TrendingUp />,
-    },
-    {
-      title: 'Expenses',
-      url: '#',
-      icon: <TrendingDown />,
-    },
-    {
-      title: 'Liabilities',
-      url: '#',
-      icon: <CircleMinus />,
-    },
-  ],
-  projects: [
-    {
-      name: 'Third Parties',
-      url: '#',
-      icon: <UsersRound />,
-    },
-    {
-      name: 'Categories',
-      url: '#',
-      icon: <Tags />,
-    },
-    {
-      name: 'Tax',
-      url: '#',
-      icon: <Calculator />,
-    },
-  ],
-};
+      projects: [
+        {
+          name: t('shared:third_parties'),
+          url: '#',
+          icon: <UsersRound />,
+        },
+        {
+          name: t('shared:categories'),
+          url: '#',
+          icon: <Tags />,
+        },
+        {
+          name: t('shared:tax'),
+          url: '#',
+          icon: <Calculator />,
+        },
+      ],
+    }),
+    [t]
+  );
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const purple_ledger_text = t('shared:purple_ledger');
+  const beta_text = t('shared:beta');
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -196,12 +205,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             width={40}
             height={40}
             className="rounded-lg"
-            alt="Purple Ledger"
+            alt={purple_ledger_text}
           />
           <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-            <p className="text-sm font-semibold">Purple Ledger</p>
+            <p className="text-sm font-semibold">{purple_ledger_text}</p>
             <Badge variant="outline" className="w-fit">
-              Beta
+              {beta_text}
             </Badge>
           </div>
         </div>

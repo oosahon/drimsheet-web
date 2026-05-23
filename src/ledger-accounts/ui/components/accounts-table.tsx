@@ -1,5 +1,6 @@
 import { Ellipsis, EqualApproximately } from 'lucide-react';
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/shared/ui/components/badge';
 import { Button } from '@/shared/ui/components/button';
@@ -62,11 +63,22 @@ export function LedgerAccountsTable({
   onSearchChange,
   filters,
 }: LedgerAccountsTableProps) {
-  const columns = useMemo<ITableColumn<ILedgerAccountDto>[]>(
-    () => [
+  // 5. third party library hooks
+  const { t } = useTranslation(['ledger-accounts', 'shared']);
+
+  // 9. React's useMemo
+  const columns = useMemo<ITableColumn<ILedgerAccountDto>[]>(() => {
+    const account_name_label = t('ledger-accounts:account_name');
+    const balance_label = t('shared:balance');
+    const status_label = t('shared:status');
+    const active_label = t('shared:active');
+    const archived_label = t('shared:archived');
+    const created_on_label = t('shared:created_on');
+
+    return [
       {
         dataIndex: 'name',
-        title: 'Account Name',
+        title: account_name_label,
         sortable: true,
         render: (value, row) => (
           <Link
@@ -79,7 +91,7 @@ export function LedgerAccountsTable({
       },
       {
         dataIndex: 'functionalBalance',
-        title: 'Balance',
+        title: balance_label,
         sortable: true,
         // TODO: render the balance at the top and the functional balance at the bottom in smaller text, to avoid confusion on accounts with a different currency than the functional currency
         render: (value, row) => (
@@ -104,26 +116,26 @@ export function LedgerAccountsTable({
       },
       {
         dataIndex: 'status',
-        title: 'Status',
+        title: status_label,
         sortable: true,
         filterable: true,
         filterOptions: [
-          { label: 'Active', value: ELedgerAccountStatus.Active },
-          { label: 'Archived', value: ELedgerAccountStatus.Archived },
+          { label: active_label, value: ELedgerAccountStatus.Active },
+          { label: archived_label, value: ELedgerAccountStatus.Archived },
         ],
         render: (value) => {
-          const status = value as ULedgerAccountStatus;
-          const isArchived = status === ELedgerAccountStatus.Archived;
+          const statusVal = value as ULedgerAccountStatus;
+          const isArchived = statusVal === ELedgerAccountStatus.Archived;
           return (
             <Badge variant={isArchived ? 'secondary' : 'default'}>
-              {isArchived ? 'Archived' : 'Active'}
+              {isArchived ? archived_label : active_label}
             </Badge>
           );
         },
       },
       {
         dataIndex: 'createdAt',
-        title: 'Created On',
+        title: created_on_label,
         sortable: true,
         render: (value) => {
           if (!value) return '';
@@ -151,17 +163,20 @@ export function LedgerAccountsTable({
           );
         },
       },
-    ],
-    []
-  );
+    ];
+  }, [t]);
 
+  // 16. translations extraction
+  const search_placeholder_text = t('ledger-accounts:search_placeholder');
+
+  // 17. ui element rendering
   return (
     <div className="flex flex-col gap-4 w-full">
       {onSearchChange && (
         <div className="w-full max-w-sm">
           <SearchField
             type="search"
-            placeholder="Search by code or name..."
+            placeholder={search_placeholder_text}
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
           />

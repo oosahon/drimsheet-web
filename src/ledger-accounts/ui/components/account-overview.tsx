@@ -3,6 +3,7 @@ import Money from '@/shared/ui/components/money';
 import { cn } from '@/shared/ui/components/utils';
 import type { IMoneyDto } from '@/shared/utils/api/Api';
 import { ELedgerType, type ULedgerType } from '@/shared/utils/api/Api';
+import { useTranslation } from 'react-i18next';
 
 export interface LedgerAccountOverviewProps {
   type: ULedgerType;
@@ -12,14 +13,6 @@ export interface LedgerAccountOverviewProps {
   className?: string;
 }
 
-const LEDGER_TYPE_LABELS: Record<ULedgerType, string> = {
-  [ELedgerType.Revenue]: 'Revenue',
-  [ELedgerType.Expense]: 'Expense',
-  [ELedgerType.Asset]: 'Asset',
-  [ELedgerType.Liability]: 'Liability',
-  [ELedgerType.Equity]: 'Equity',
-};
-
 export function LedgerAccountOverview({
   type,
   title,
@@ -27,7 +20,17 @@ export function LedgerAccountOverview({
   description,
   className,
 }: LedgerAccountOverviewProps) {
-  const ledgerTypeLabel = LEDGER_TYPE_LABELS[type] || type;
+  const { t } = useTranslation(['shared']);
+
+  const ledgerTypeLabels: Record<ULedgerType, string> = {
+    [ELedgerType.Revenue]: t('shared:revenue'),
+    [ELedgerType.Expense]: t('shared:expense'),
+    [ELedgerType.Asset]: t('shared:asset'),
+    [ELedgerType.Liability]: t('shared:liability'),
+    [ELedgerType.Equity]: t('shared:equity'),
+  };
+
+  const ledgerTypeLabel = ledgerTypeLabels[type] || type;
 
   return (
     <div

@@ -1,5 +1,6 @@
 import { Check, Filter, Search, X } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/shared/ui/components/button';
 import { Input } from '@/shared/ui/components/input';
@@ -34,8 +35,13 @@ export function TableFilter({
   onSelectAll,
   trigger,
 }: TableFilterProps) {
+  // 5. third party library hooks
+  const { t } = useTranslation(['shared']);
+
+  // 6. React's useState
   const [searchQuery, setSearchQuery] = React.useState('');
 
+  // 9. React's useMemo
   const filteredOptions = React.useMemo(() => {
     if (!searchQuery) return options;
     return options.filter((option) =>
@@ -43,6 +49,7 @@ export function TableFilter({
     );
   }, [options, searchQuery]);
 
+  // 12. event handlers (callbacks)
   const handleSelectAll = React.useCallback(() => {
     const allOptionValues = filteredOptions.map((option) => option.value);
     if (onSelectAll) {
@@ -57,6 +64,17 @@ export function TableFilter({
     }
   }, [filteredOptions, selectedValues, onSelect, onSelectAll]);
 
+  // 16. translations extraction
+  const filter_label = title
+    ? t('shared:filter_by', { title })
+    : t('shared:filter');
+  const clear_label = t('shared:clear');
+  const search_placeholder_text = t('shared:search');
+  const no_results_text = t('shared:no_results_found');
+  const select_all_label = t('shared:select_all');
+  const clear_all_label = t('shared:clear_all');
+
+  // 17. ui element rendering
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -87,7 +105,7 @@ export function TableFilter({
         {/* Header */}
         <div className="flex items-center justify-between px-3 py-2.5 border-b border-border bg-muted/30">
           <span className="text-xs font-semibold text-foreground">
-            Filter {title ? `by ${title}` : ''}
+            {filter_label}
           </span>
           {selectedValues.length > 0 && (
             <Button
@@ -96,7 +114,7 @@ export function TableFilter({
               onClick={onClear}
               className="h-6 px-1.5 text-xs text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 font-medium transition-colors"
             >
-              Clear
+              {clear_label}
             </Button>
           )}
         </div>
@@ -106,7 +124,7 @@ export function TableFilter({
           <div className="p-2 border-b border-border flex items-center gap-1.5 relative bg-muted/10">
             <Search className="size-3.5 text-muted-foreground absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <Input
-              placeholder="Search..."
+              placeholder={search_placeholder_text}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-8 pl-8 pr-7 text-xs bg-background border-input focus-visible:ring-primary/20 rounded-lg w-full"
@@ -126,7 +144,7 @@ export function TableFilter({
         <div className="max-h-48 overflow-y-auto p-1.5 space-y-0.5 custom-scrollbar">
           {filteredOptions.length === 0 ? (
             <div className="text-center py-4 px-2 text-xs text-muted-foreground italic">
-              No results found
+              {no_results_text}
             </div>
           ) : (
             filteredOptions.map((option) => {
@@ -167,7 +185,7 @@ export function TableFilter({
             onClick={handleSelectAll}
             className="flex-1 h-7 text-xs font-semibold rounded-lg bg-background hover:bg-muted"
           >
-            Select All
+            {select_all_label}
           </Button>
           {selectedValues.length > 0 && (
             <Button
@@ -176,7 +194,7 @@ export function TableFilter({
               onClick={onClear}
               className="flex-1 h-7 text-xs font-semibold rounded-lg border-destructive/20 text-destructive bg-background hover:bg-destructive/5 hover:border-destructive/30"
             >
-              Clear All
+              {clear_all_label}
             </Button>
           )}
         </div>

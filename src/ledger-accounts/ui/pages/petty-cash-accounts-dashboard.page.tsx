@@ -10,22 +10,42 @@ import {
 } from '@/shared/ui/components/dialog';
 import { ELedgerType } from '@/shared/utils/api/Api';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function PettyCashAccountsDashboardPage() {
+  // 5. third party library hooks
+  const { t } = useTranslation(['ledger-accounts', 'shared']);
+
+  // 6. React's useState
   const [showCreationForm, setShowCreationForm] = useState(false);
 
+  // 16. translations extraction
+  const accounts_label = t('shared:accounts');
+  const petty_cash_label = t('shared:petty_cash');
+  const total_vault_balance_label = t('ledger-accounts:total_vault_balance');
+  const accounts_count_text = t('ledger-accounts:accounts_count', {
+    count: 12,
+  });
+  const create_petty_cash_account_text = t(
+    'ledger-accounts:create_petty_cash_account'
+  );
+
+  // 17. ui element rendering
   return (
     <>
       <AppHeader
-        breadcrumbs={[{ label: 'Accounts', to: '#' }, { label: 'Petty Cash' }]}
+        breadcrumbs={[
+          { label: accounts_label, to: '#' },
+          { label: petty_cash_label },
+        ]}
       />
 
       <AppBody>
         <LedgerAccountOverview
           type={ELedgerType.Asset}
-          title="Total Vault Balance"
+          title={total_vault_balance_label}
           balance={{ amount: 12500, currencyCode: 'USD', isMinorUnit: true }}
-          description={`12 accounts`}
+          description={accounts_count_text}
         />
 
         <LedgerAccountsTableContainer />
@@ -34,7 +54,7 @@ export default function PettyCashAccountsDashboardPage() {
           <DialogContent className="sm:max-w-md bg-card border-border/80 shadow-2xl backdrop-blur-md">
             <DialogHeader>
               <DialogTitle className="text-xl font-semibold tracking-tight text-foreground font-heading">
-                Create Petty Cash Account
+                {create_petty_cash_account_text}
               </DialogTitle>
             </DialogHeader>
             <div className="mt-4 flex justify-center">

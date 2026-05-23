@@ -33,6 +33,7 @@ import {
 } from '@/shared/ui/components/tooltip';
 import { cn } from '@/shared/ui/components/utils';
 import { useCallback, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { TableFilter, type TableFilterOption } from './table-filter';
 
 export interface IDataWithId {
@@ -282,7 +283,7 @@ export function DataTableHeaderCell<T extends IDataWithId>({
     <TableHead
       style={getStickyStyles(idx + 1)}
       className={cn(
-        'h-11 px-4 text-left align-middle font-semibold text-foreground text-xs tracking-wider transition-colors',
+        'h-11 px-4 text-left align-middle font-bold text-foreground text-xs tracking-wider transition-colors',
         column.sortable && 'select-none cursor-pointer hover:bg-muted/40'
       )}
       onClick={() => column.sortable && handleSort(column.dataIndex)}
@@ -332,6 +333,10 @@ export function DataTableEmptyState({
   columnsCount,
   emptyStateNode,
 }: DataTableEmptyStateProps) {
+  const { t } = useTranslation(['shared']);
+  const no_records_found = t('shared:no_records_found');
+  const no_records_description = t('shared:no_records_description');
+
   return (
     <TableRow className="hover:bg-transparent">
       <TableCell colSpan={columnsCount} className="p-0 border-none">
@@ -343,11 +348,10 @@ export function DataTableEmptyState({
                   <Inbox className="size-6 text-muted-foreground" />
                 </EmptyMedia>
                 <EmptyTitle className="text-foreground">
-                  No records found
+                  {no_records_found}
                 </EmptyTitle>
                 <EmptyDescription className="text-muted-foreground text-xs">
-                  There are no matching items to display. Try adjusting your
-                  search query or column filters.
+                  {no_records_description}
                 </EmptyDescription>
               </EmptyHeader>
             </Empty>
@@ -373,6 +377,14 @@ export function DataTableRow<T extends IDataWithId>({
   isSelected = false,
   onSelectRow,
 }: DataTableRowProps<T>) {
+  // 5. third party library hooks
+  const { t } = useTranslation(['shared']);
+
+  // 16. translations extraction
+  const deselect_row_text = t('shared:deselect_row', { id: row.id });
+  const select_row_text = t('shared:select_row', { id: row.id });
+
+  // 17. ui element rendering
   return (
     <TableRow
       data-state={isSelected ? 'selected' : undefined}
@@ -390,9 +402,7 @@ export function DataTableRow<T extends IDataWithId>({
               e.stopPropagation();
               onSelectRow?.(row.id);
             }}
-            aria-label={
-              isSelected ? `Deselect row ${row.id}` : `Select row ${row.id}`
-            }
+            aria-label={isSelected ? deselect_row_text : select_row_text}
           />
         </TableCell>
       )}
@@ -429,6 +439,10 @@ export function DataTableActiveFilters<T extends IDataWithId>({
   filters,
   onFilterChange,
 }: DataTableActiveFiltersProps<T>) {
+  // 5. third party library hooks
+  const { t } = useTranslation(['shared']);
+
+  // 9. React's useMemo
   const activeChips = useMemo(() => {
     if (!filters) return [];
 
@@ -461,6 +475,7 @@ export function DataTableActiveFilters<T extends IDataWithId>({
     return chips;
   }, [filters, columns]);
 
+  // 12. event handlers (callbacks)
   const handleRemoveChip = useCallback(
     (columnKey: string, valueToRemove: string | number) => {
       if (!onFilterChange || !filters) return;
@@ -484,40 +499,52 @@ export function DataTableActiveFilters<T extends IDataWithId>({
     onFilterChange({});
   }, [onFilterChange]);
 
+  // 16. translations extraction
+  const active_filters_label = t('shared:active_filters');
+  const clear_all_text = t('shared:clear_all');
+
+  // 17. ui element rendering
   if (activeChips.length === 0) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-1.5 px-4 py-2.5 border-b border-border/60 bg-muted/10">
       <span className="text-xs font-semibold text-muted-foreground/80 mr-1 select-none">
-        Active filters:
+        {active_filters_label}
       </span>
-      {activeChips.map((chip) => (
-        <Badge
-          key={`${chip.columnKey}-${chip.value}`}
-          variant="secondary"
-          className="pl-2.5 pr-1.5 h-6 text-xs gap-1 border border-border/50 bg-secondary/40 hover:bg-secondary/60 text-foreground transition-all duration-200"
-        >
-          <span className="text-muted-foreground/80 font-medium">
-            {chip.columnTitle}:
-          </span>
-          <span className="font-semibold">{chip.label}</span>
-          <button
-            type="button"
-            onClick={() => handleRemoveChip(chip.columnKey, chip.value)}
-            className="flex items-center justify-center rounded-full size-3.5 hover:bg-muted-foreground/20 text-muted-foreground/80 hover:text-foreground transition-all ml-0.5 outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
-            aria-label={`Remove filter ${chip.columnTitle} is ${chip.label}`}
+      {activeChips.map((chip) => {
+        const remove_filter_text = t('shared:remove_filter', {
+          column: chip.columnTitle,
+          label: chip.label,
+        });
+
+        return (
+          <Badge
+            key={`${chip.columnKey}-${chip.value}`}
+            variant="secondary"
+            className="pl-2.5 pr-1.5 h-6 text-xs gap-1 border border-border/50 bg-secondary/40 hover:bg-secondary/60 text-foreground transition-all duration-200"
           >
-            <X className="size-2.5 stroke-[2.5]" />
-          </button>
-        </Badge>
-      ))}
+            <span className="text-muted-foreground/80 font-medium">
+              {chip.columnTitle}:
+            </span>
+            <span className="font-semibold">{chip.label}</span>
+            <button
+              type="button"
+              onClick={() => handleRemoveChip(chip.columnKey, chip.value)}
+              className="flex items-center justify-center rounded-full size-3.5 hover:bg-muted-foreground/20 text-muted-foreground/80 hover:text-foreground transition-all ml-0.5 outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
+              aria-label={remove_filter_text}
+            >
+              <X className="size-2.5 stroke-[2.5]" />
+            </button>
+          </Badge>
+        );
+      })}
       <Button
         variant="ghost"
         size="xs"
         onClick={handleClearAllFilters}
         className="h-6 px-2 text-xs font-medium text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 transition-all rounded-md cursor-pointer ml-auto"
       >
-        Clear all
+        {clear_all_text}
       </Button>
     </div>
   );
@@ -543,6 +570,8 @@ export function DataTable<T extends IDataWithId>({
   stickyHeader = false,
   filters,
 }: TableProps<T>) {
+  const { t } = useTranslation(['shared']);
+
   // Row Selection Set (derived directly from controlled prop)
   const selectedSet = useMemo(
     () => new Set(selectedRowIds || []),
@@ -653,7 +682,9 @@ export function DataTable<T extends IDataWithId>({
                     indeterminate={isSomeSelected}
                     onClick={handleSelectAll}
                     aria-label={
-                      isAllSelected ? 'Deselect all rows' : 'Select all rows'
+                      isAllSelected
+                        ? t('shared:deselect_all_rows')
+                        : t('shared:select_all_rows')
                     }
                   />
                 </TableHead>

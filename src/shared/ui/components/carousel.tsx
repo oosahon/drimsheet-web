@@ -1,5 +1,6 @@
 import useEmblaCarousel from 'embla-carousel-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import CarouselContext from '@/shared/context/carousel-context';
 import useCarousel from '@/shared/hooks/ui/use-carousel';
@@ -143,6 +144,10 @@ function CarouselPrevious({
   size = 'icon-sm',
   ...props
 }: React.ComponentProps<typeof Button>) {
+  // 5. third party library hooks
+  const { t } = useTranslation(['shared']);
+
+  // 10. custom hooks
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();
 
   return (
@@ -162,7 +167,7 @@ function CarouselPrevious({
       {...props}
     >
       <ChevronLeftIcon />
-      <span className="sr-only">Previous slide</span>
+      <span className="sr-only">{t('shared:previous_slide')}</span>
     </Button>
   );
 }
@@ -173,6 +178,10 @@ function CarouselNext({
   size = 'icon-sm',
   ...props
 }: React.ComponentProps<typeof Button>) {
+  // 5. third party library hooks
+  const { t } = useTranslation(['shared']);
+
+  // 10. custom hooks
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
   return (
@@ -192,7 +201,7 @@ function CarouselNext({
       {...props}
     >
       <ChevronRightIcon />
-      <span className="sr-only">Next slide</span>
+      <span className="sr-only">{t('shared:next_slide')}</span>
     </Button>
   );
 }
