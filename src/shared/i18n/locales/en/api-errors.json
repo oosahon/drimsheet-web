@@ -129,5 +129,6 @@
   "pagination_error_invalid_offset": "Invalid offset",
   "pagination_error_invalid_search": "Invalid search",
   "pagination_error_invalid_sort_by": "Invalid sort by",
-  "pagination_error_invalid_sort_order": "Invalid sort order"
+  "pagination_error_invalid_sort_order": "Invalid sort order",
+  "ledger_error_invalid_id": "Invalid ledger id"
 }
