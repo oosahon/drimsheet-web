@@ -418,6 +418,111 @@ export function DataTableRow<T extends IDataWithId>({
   );
 }
 
+export interface DataTableActiveFiltersProps<T extends IDataWithId> {
+  columns: ITableColumn<T>[];
+  filters?: Record<string, (string | number)[]>;
+  onFilterChange?: (filters: Record<string, (string | number)[]>) => void;
+}
+
+export function DataTableActiveFilters<T extends IDataWithId>({
+  columns,
+  filters,
+  onFilterChange,
+}: DataTableActiveFiltersProps<T>) {
+  const activeChips = useMemo(() => {
+    if (!filters) return [];
+
+    const chips: {
+      columnKey: string;
+      columnTitle: string;
+      value: string | number;
+      label: string;
+    }[] = [];
+
+    Object.entries(filters).forEach(([columnKey, values]) => {
+      if (!values || values.length === 0) return;
+      const column = columns.find((col) => String(col.dataIndex) === columnKey);
+      if (!column) return;
+
+      const columnTitle = column.title || columnKey;
+
+      values.forEach((val) => {
+        const option = column.filterOptions?.find((opt) => opt.value === val);
+        const label = option ? option.label : String(val);
+        chips.push({
+          columnKey,
+          columnTitle,
+          value: val,
+          label,
+        });
+      });
+    });
+
+    return chips;
+  }, [filters, columns]);
+
+  const handleRemoveChip = useCallback(
+    (columnKey: string, valueToRemove: string | number) => {
+      if (!onFilterChange || !filters) return;
+      const currentValues = filters[columnKey] || [];
+      const newValues = currentValues.filter((v) => v !== valueToRemove);
+
+      const newFilters = { ...filters };
+      if (newValues.length === 0) {
+        delete newFilters[columnKey];
+      } else {
+        newFilters[columnKey] = newValues;
+      }
+
+      onFilterChange(newFilters);
+    },
+    [filters, onFilterChange]
+  );
+
+  const handleClearAllFilters = useCallback(() => {
+    if (!onFilterChange) return;
+    onFilterChange({});
+  }, [onFilterChange]);
+
+  if (activeChips.length === 0) return null;
+
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 px-4 py-2.5 border-b border-border/60 bg-muted/10">
+      <span className="text-xs font-semibold text-muted-foreground/80 mr-1 select-none">
+        Active filters:
+      </span>
+      {activeChips.map((chip) => (
+        <Badge
+          key={`${chip.columnKey}-${chip.value}`}
+          variant="secondary"
+          className="pl-2.5 pr-1.5 h-6 text-xs gap-1 border border-border/50 bg-secondary/40 hover:bg-secondary/60 text-foreground transition-all duration-200"
+        >
+          <span className="text-muted-foreground/80 font-medium">
+            {chip.columnTitle}:
+          </span>
+          <span className="font-semibold">{chip.label}</span>
+          <button
+            type="button"
+            onClick={() => handleRemoveChip(chip.columnKey, chip.value)}
+            className="flex items-center justify-center rounded-full size-3.5 hover:bg-muted-foreground/20 text-muted-foreground/80 hover:text-foreground transition-all ml-0.5 outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
+            aria-label={`Remove filter ${chip.columnTitle} is ${chip.label}`}
+          >
+            <X className="size-2.5 stroke-[2.5]" />
+          </button>
+        </Badge>
+      ))}
+      <Button
+        variant="ghost"
+        size="xs"
+        onClick={handleClearAllFilters}
+        className="h-6 px-2 text-xs font-medium text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 transition-all rounded-md cursor-pointer ml-auto"
+      >
+        Clear all
+      </Button>
+    </div>
+  );
+}
+
 export function DataTable<T extends IDataWithId>({
   columns,
   data,
@@ -514,64 +619,6 @@ export function DataTable<T extends IDataWithId>({
     };
   };
 
-  // Active Filter Chips
-  const activeChips = useMemo(() => {
-    if (!filters) return [];
-
-    const chips: {
-      columnKey: string;
-      columnTitle: string;
-      value: string | number;
-      label: string;
-    }[] = [];
-
-    Object.entries(filters).forEach(([columnKey, values]) => {
-      if (!values || values.length === 0) return;
-      const column = columns.find((col) => String(col.dataIndex) === columnKey);
-      if (!column) return;
-
-      const columnTitle = column.title || columnKey;
-
-      values.forEach((val) => {
-        const option = column.filterOptions?.find((opt) => opt.value === val);
-        const label = option ? option.label : String(val);
-        chips.push({
-          columnKey,
-          columnTitle,
-          value: val,
-          label,
-        });
-      });
-    });
-
-    return chips;
-  }, [filters, columns]);
-
-  // Remove individual filter chip
-  const handleRemoveChip = useCallback(
-    (columnKey: string, valueToRemove: string | number) => {
-      if (!onFilterChange || !filters) return;
-      const currentValues = filters[columnKey] || [];
-      const newValues = currentValues.filter((v) => v !== valueToRemove);
-
-      const newFilters = { ...filters };
-      if (newValues.length === 0) {
-        delete newFilters[columnKey];
-      } else {
-        newFilters[columnKey] = newValues;
-      }
-
-      onFilterChange(newFilters);
-    },
-    [filters, onFilterChange]
-  );
-
-  // Clear all filters
-  const handleClearAllFilters = useCallback(() => {
-    if (!onFilterChange) return;
-    onFilterChange({});
-  }, [onFilterChange]);
-
   return (
     <div
       className={cn(
@@ -580,43 +627,11 @@ export function DataTable<T extends IDataWithId>({
       )}
       data-testid={dataTestId}
     >
-      {activeChips.length > 0 && (
-        <div className="flex flex-wrap items-center gap-1.5 px-4 py-2.5 border-b border-border/60 bg-muted/10">
-          <span className="text-xs font-semibold text-muted-foreground/80 mr-1 select-none">
-            Active filters:
-          </span>
-          {activeChips.map((chip) => (
-            <Badge
-              key={`${chip.columnKey}-${chip.value}`}
-              variant="secondary"
-              className="pl-2.5 pr-1.5 h-6 text-xs gap-1 border border-border/50 bg-secondary/40 hover:bg-secondary/60 text-foreground transition-all duration-200"
-            >
-              <span className="text-muted-foreground/80 font-medium">
-                {chip.columnTitle}:
-              </span>
-              <span className="font-semibold">{chip.label}</span>
-              <button
-                type="button"
-                onClick={() => handleRemoveChip(chip.columnKey, chip.value)}
-                className="flex items-center justify-center rounded-full size-3.5 hover:bg-muted-foreground/20 text-muted-foreground/80 hover:text-foreground transition-all ml-0.5 outline-none focus-visible:ring-1 focus-visible:ring-primary cursor-pointer"
-                aria-label={`Remove filter ${chip.columnTitle} is ${chip.label}`}
-              >
-                <X className="size-2.5 stroke-[2.5]" />
-              </button>
-            </Badge>
-          ))}
-          {activeChips.length > 0 && (
-            <Button
-              variant="ghost"
-              size="xs"
-              onClick={handleClearAllFilters}
-              className="h-6 px-2 text-xs font-medium text-destructive hover:bg-destructive/10 dark:hover:bg-destructive/20 transition-all rounded-md cursor-pointer ml-auto"
-            >
-              Clear all
-            </Button>
-          )}
-        </div>
-      )}
+      <DataTableActiveFilters
+        columns={columns}
+        filters={filters}
+        onFilterChange={onFilterChange}
+      />
       <div
         className={cn(
           'w-full',

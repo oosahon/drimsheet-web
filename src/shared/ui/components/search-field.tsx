@@ -1,0 +1,25 @@
+import { FieldLabel } from '@/shared/ui/components/field';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from '@/shared/ui/components/input-group';
+import { Search } from 'lucide-react';
+
+interface SearchFieldProps extends React.ComponentProps<'input'> {
+  fieldLabelProps?: React.ComponentProps<typeof FieldLabel>;
+}
+
+export function SearchField({ ...inputProps }: SearchFieldProps) {
+  return (
+    <InputGroup>
+      <InputGroupAddon>
+        <InputGroupAddon>
+          <Search />
+        </InputGroupAddon>
+      </InputGroupAddon>
+
+      <InputGroupInput {...inputProps} />
+    </InputGroup>
+  );
+}

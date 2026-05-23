@@ -1,4 +1,4 @@
-import { Ellipsis, EqualApproximately, Search } from 'lucide-react';
+import { Ellipsis, EqualApproximately } from 'lucide-react';
 import { useMemo } from 'react';
 
 import { Badge } from '@/shared/ui/components/badge';
@@ -7,8 +7,8 @@ import {
   DataTable,
   type ITableColumn,
 } from '@/shared/ui/components/data-table';
-import { Input } from '@/shared/ui/components/input';
 import Money from '@/shared/ui/components/money';
+import { SearchField } from '@/shared/ui/components/search-field';
 import {
   ELedgerAccountStatus,
   type ILedgerAccountDto,
@@ -85,7 +85,7 @@ export function LedgerAccountsTable({
         render: (value, row) => (
           <>
             <Money
-              className="font-bold text-foreground text-sm font-heading"
+              className="text-foreground text-sm font-heading"
               value={value as IMoneyDto}
             />
 
@@ -158,17 +158,13 @@ export function LedgerAccountsTable({
   return (
     <div className="flex flex-col gap-4 w-full">
       {onSearchChange && (
-        <div className="flex items-center justify-between gap-4">
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search by code or name..."
-              className="pl-9 bg-background/50 backdrop-blur-xs focus-visible:bg-background"
-              value={searchValue}
-              onChange={(e) => onSearchChange(e.target.value)}
-            />
-          </div>
+        <div className="w-full max-w-sm">
+          <SearchField
+            type="search"
+            placeholder="Search by code or name..."
+            value={searchValue}
+            onChange={(e) => onSearchChange(e.target.value)}
+          />
         </div>
       )}
       <DataTable

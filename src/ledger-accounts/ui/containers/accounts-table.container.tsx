@@ -25,15 +25,15 @@ export default function LedgerAccountsTableContainer() {
 
   // 1. Build Query for Fetching Petty Cash Accounts
   const query = useMemo<IGetLedgerAccountsQuery>(() => {
-    let orderBy: ULedgerAccountSortBy | undefined = undefined;
+    const sortKeyMap: Partial<
+      Record<keyof ILedgerAccountDto, ULedgerAccountSortBy>
+    > = {
+      name: 'accountName',
+      createdAt: 'createdAt',
+      balance: 'balance',
+    };
 
-    if (sortKey === 'name') {
-      orderBy = 'accountName';
-    } else if (sortKey === 'createdAt') {
-      orderBy = 'createdAt';
-    } else if (sortKey === 'balance') {
-      orderBy = 'balance';
-    }
+    const orderBy = sortKey ? sortKeyMap[sortKey] : undefined;
 
     const baseFilters = ledgerAccountService.getPettyBaseCashFilters();
 
