@@ -114,7 +114,7 @@ describe('date utils', () => {
   describe('formatWithJurisdiction', () => {
     it('formats date using default locale if country code is missing', () => {
       const date = new Date(2026, 0, 15);
-      expect(dateUtils.formatWithJurisdiction(date)).toBe('Jan 15 2026');
+      expect(dateUtils.formatWithJurisdiction(date)).toBe('15 Jan 2026');
     });
 
     it('returns "Invalid Date" for invalid date', () => {

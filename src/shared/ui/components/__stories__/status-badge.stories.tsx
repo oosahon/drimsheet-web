@@ -24,7 +24,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Success: Story = {
   args: {
-    children: 'Success',
+    label: 'Success',
     variant: 'success',
     showDot: true,
   },
@@ -32,7 +32,7 @@ export const Success: Story = {
 
 export const Info: Story = {
   args: {
-    children: 'Info',
+    label: 'Info',
     variant: 'info',
     showDot: true,
   },
@@ -40,7 +40,7 @@ export const Info: Story = {
 
 export const Warning: Story = {
   args: {
-    children: 'Warning',
+    label: 'Warning',
     variant: 'warning',
     showDot: true,
   },
@@ -48,7 +48,7 @@ export const Warning: Story = {
 
 export const Error: Story = {
   args: {
-    children: 'Error',
+    label: 'Error',
     variant: 'error',
     showDot: true,
   },
@@ -56,7 +56,7 @@ export const Error: Story = {
 
 export const Neutral: Story = {
   args: {
-    children: 'Neutral',
+    label: 'Neutral',
     variant: 'neutral',
     showDot: true,
   },
@@ -64,7 +64,7 @@ export const Neutral: Story = {
 
 export const Primary: Story = {
   args: {
-    children: 'Primary',
+    label: 'Primary',
     variant: 'primary',
     showDot: true,
   },
@@ -72,7 +72,7 @@ export const Primary: Story = {
 
 export const WithoutDot: Story = {
   args: {
-    children: 'No Dot Badge',
+    label: 'No Dot Badge',
     variant: 'primary',
     showDot: false,
   },
