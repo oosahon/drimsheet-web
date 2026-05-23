@@ -8,13 +8,16 @@ import {
   DataTable,
   type ITableColumn,
 } from '@/shared/ui/components/data-table';
+import { FormattedDate } from '@/shared/ui/components/date';
 import Money from '@/shared/ui/components/money';
 import { SearchField } from '@/shared/ui/components/search-field';
 import { StatusBadge } from '@/shared/ui/components/status-badge';
+import { TablePagination } from '@/shared/ui/components/table-pagination';
 import {
   ELedgerAccountStatus,
   type ILedgerAccountDto,
   type IMoneyDto,
+  type IPaginationResponseMeta,
   type ULedgerAccountStatus,
 } from '@/shared/utils/api/Api';
 import { Link } from 'react-router-dom';
@@ -25,11 +28,8 @@ export interface LedgerAccountsTableProps {
   selectable?: boolean;
   selectedRowIds?: (string | number)[];
   onRowSelectionChange?: (selectedIds: (string | number)[]) => void;
-  pagination?: {
-    total: number;
-    loadNext: () => Promise<void> | void;
-  };
-  paginationLoading?: boolean;
+  pagination?: IPaginationResponseMeta;
+  onPageChange?: (page: number) => void;
   stickyHeader?: boolean;
   onSortChange?: (
     key: keyof ILedgerAccountDto,
@@ -51,8 +51,8 @@ export function LedgerAccountsTable({
   selectable = false,
   selectedRowIds,
   onRowSelectionChange,
-  // pagination,
-  // paginationLoading = false,
+  pagination,
+  onPageChange,
   stickyHeader = false,
   onSortChange,
   onFilterChange,
@@ -139,11 +139,7 @@ export function LedgerAccountsTable({
           const date = new Date(String(value));
           return (
             <span className="text-xs text-muted-foreground font-medium">
-              {date.toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'short',
-                day: 'numeric',
-              })}
+              <FormattedDate value={date} />
             </span>
           );
         },
@@ -193,6 +189,13 @@ export function LedgerAccountsTable({
         data-testid={dataTestId}
         filters={filters}
       />
+      {pagination && onPageChange && (
+        <TablePagination
+          meta={pagination}
+          onPageChange={onPageChange}
+          className="mx-0 w-auto justify-end"
+        />
+      )}
     </div>
   );
 }

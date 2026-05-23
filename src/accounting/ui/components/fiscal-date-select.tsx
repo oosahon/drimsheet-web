@@ -7,7 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/shared/ui/components/popover';
-import { formatDateWithJurisdiction } from '@/shared/utils/date';
+import dateUtils from '@/shared/utils/date';
 import { Calendar1 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -28,8 +28,9 @@ function FiscalDateSelect({
 }: FiscalDateSelectProps) {
   const [showCalendar, setShowCalendar] = useState(false);
 
+  // TODO: translate text
   const displayValue = value
-    ? formatDateWithJurisdiction(value, countryCode)
+    ? dateUtils.formatWithJurisdiction(value, countryCode)
     : 'Select a date';
 
   const selectedDate = value ? value : undefined;

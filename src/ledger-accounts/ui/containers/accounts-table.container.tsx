@@ -2,6 +2,7 @@ import useLedgerAccounts from '@/ledger-accounts/hooks/api/use-ledger-accounts';
 import ledgerAccountService from '@/ledger-accounts/services/ledger-account.service';
 import { LedgerAccountsTable } from '@/ledger-accounts/ui/components/accounts-table';
 import useDebounce from '@/shared/hooks/ui/use-debounce';
+import { useTableQueryParams } from '@/shared/hooks/ui/use-table-query-params';
 import {
   type IGetLedgerAccountsQuery,
   type ILedgerAccountDto,
@@ -10,20 +11,14 @@ import {
 import { useMemo, useState } from 'react';
 
 export default function LedgerAccountsTableContainer() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const debouncedSearchQuery = useDebounce(searchQuery, 300);
-  const [selectedRowIds, setSelectedRowIds] = useState<(string | number)[]>([]);
-  const [sortKey, setSortKey] = useState<keyof ILedgerAccountDto | undefined>(
-    undefined
-  );
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(
-    null
-  );
-  const [filters, setFilters] = useState<Record<string, (string | number)[]>>(
-    {}
-  );
+  const tableQuery = useTableQueryParams<keyof ILedgerAccountDto, 'status'>({
+    filterKeys: ['status'],
+  });
 
-  // 1. Build Query for Fetching Petty Cash Accounts
+  const debouncedSearchQuery = useDebounce(tableQuery.searchQuery, 300);
+  const [selectedRowIds, setSelectedRowIds] = useState<(string | number)[]>([]);
+  const limit = 10;
+
   const query = useMemo<IGetLedgerAccountsQuery>(() => {
     const sortKeyMap: Partial<
       Record<keyof ILedgerAccountDto, ULedgerAccountSortBy>
@@ -33,7 +28,9 @@ export default function LedgerAccountsTableContainer() {
       balance: 'balance',
     };
 
-    const orderBy = sortKey ? sortKeyMap[sortKey] : undefined;
+    const orderBy = tableQuery.sortKey
+      ? sortKeyMap[tableQuery.sortKey]
+      : undefined;
 
     const baseFilters = ledgerAccountService.getPettyBaseCashFilters();
 
@@ -41,38 +38,30 @@ export default function LedgerAccountsTableContainer() {
       ...baseFilters,
       search: debouncedSearchQuery || undefined,
       orderBy,
-      sortDirection: sortDirection || undefined,
+      sortDirection: tableQuery.sortDirection || undefined,
+      page: tableQuery.page,
+      limit,
     };
-  }, [debouncedSearchQuery, sortKey, sortDirection]);
+  }, [
+    debouncedSearchQuery,
+    tableQuery.sortKey,
+    tableQuery.sortDirection,
+    tableQuery.page,
+  ]);
 
-  // 2. Fetch data via standard hook
   const { data: accountsData, isLoading } = useLedgerAccounts(query);
 
-  // 3. Client-side filtering (e.g. for status filters which may not be mapped on backend endpoint query)
   const filteredAccounts = useMemo(() => {
     let list = accountsData?.data ?? [];
 
-    if (filters.status && filters.status.length > 0) {
-      list = list.filter((item) => filters.status.includes(item.status));
+    if (tableQuery.filters.status && tableQuery.filters.status.length > 0) {
+      list = list.filter((item) =>
+        tableQuery.filters.status.includes(item.status)
+      );
     }
 
     return list;
-  }, [accountsData?.data, filters]);
-
-  // 5. Handlers
-  const handleSortChange = (
-    key: keyof ILedgerAccountDto,
-    direction: 'asc' | 'desc' | null
-  ) => {
-    setSortKey(key);
-    setSortDirection(direction);
-  };
-
-  const handleFilterChange = (
-    newFilters: Record<string, (string | number)[]>
-  ) => {
-    setFilters(newFilters);
-  };
+  }, [accountsData?.data, tableQuery.filters]);
 
   return (
     <LedgerAccountsTable
@@ -81,13 +70,15 @@ export default function LedgerAccountsTableContainer() {
       selectable
       selectedRowIds={selectedRowIds}
       onRowSelectionChange={setSelectedRowIds}
-      onSortChange={handleSortChange}
-      onFilterChange={handleFilterChange}
-      currentSortKey={sortKey as string}
-      currentSortDirection={sortDirection}
-      searchValue={searchQuery}
-      onSearchChange={setSearchQuery}
-      filters={filters}
+      onSortChange={tableQuery.handleSortChange}
+      onFilterChange={tableQuery.handleFilterChange}
+      currentSortKey={tableQuery.sortKey as string}
+      currentSortDirection={tableQuery.sortDirection}
+      searchValue={tableQuery.searchQuery}
+      onSearchChange={tableQuery.handleSearchChange}
+      filters={tableQuery.filters}
+      pagination={accountsData?.meta}
+      onPageChange={tableQuery.handlePageChange}
     />
   );
 }

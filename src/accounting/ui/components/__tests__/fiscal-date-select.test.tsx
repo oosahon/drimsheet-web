@@ -41,7 +41,7 @@ describe('FiscalDateSelect', () => {
       />
     );
 
-    // formatDateWithJurisdiction returns something like "Apr 15 2024" or "15 Apr 2024"
+    // formatWithJurisdiction returns something like "Apr 15 2024" or "15 Apr 2024"
     expect(
       screen.getByRole('button', { name: /Apr.*15.*2024|15.*Apr.*2024/i })
     ).toBeInTheDocument();

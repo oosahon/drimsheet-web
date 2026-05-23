@@ -1,4 +1,4 @@
-import { isValidFiscalYearDuration } from '@/shared/utils/date';
+import dateUtils from '@/shared/utils/date';
 import dayjs from 'dayjs';
 import * as yup from 'yup';
 
@@ -29,7 +29,7 @@ export const accountingEntityCreationFormValidation = yup.object({
       function (value) {
         const { fiscalYearStart } = this.parent;
         if (!fiscalYearStart || !value) return true;
-        return isValidFiscalYearDuration(
+        return dateUtils.isValidFiscalYearDuration(
           fiscalYearStart as Date,
           value as Date
         );
