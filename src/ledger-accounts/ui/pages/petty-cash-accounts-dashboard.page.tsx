@@ -1,4 +1,4 @@
-import { LedgerAccountOverview } from '@/ledger-accounts/ui/components/account-overview';
+import { LedgerAccountsOverview } from '@/ledger-accounts/ui/components/accounts-overview';
 import LedgerAccountsTableContainer from '@/ledger-accounts/ui/containers/accounts-table.container';
 import PettyCashAccountFormContainer from '@/ledger-accounts/ui/containers/petty-cash-account-form.container';
 import { AppBody, AppHeader } from '@/shared/ui/components/app';
@@ -37,7 +37,7 @@ export default function PettyCashAccountsDashboardPage() {
       />
 
       <AppBody>
-        <LedgerAccountOverview
+        <LedgerAccountsOverview
           type={ELedgerType.Asset}
           title={total_vault_balance_label}
           balance={{ amount: 12500, currencyCode: 'USD', isMinorUnit: true }}

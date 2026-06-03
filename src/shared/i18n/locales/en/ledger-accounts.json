@@ -15,5 +15,7 @@
   "create_petty_cash_account": "Create petty cash account",
   "account_name": "Account name",
   "search_placeholder": "Search by name...",
-  "add_account": "Add account"
+  "add_account": "Add account",
+  "select_account_placeholder": "Select an account",
+  "no_accounts_found": "No accounts found."
 }

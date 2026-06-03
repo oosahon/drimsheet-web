@@ -9,7 +9,7 @@ export default function AppLayout() {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <div className="flex flex-1 flex-col gap-4 p-4 pt-0 min-w-full">
+          <div className="flex flex-1 flex-col gap-4 p-4 pt-0 mb-8 min-w-full">
             <Outlet />
           </div>
         </SidebarInset>
