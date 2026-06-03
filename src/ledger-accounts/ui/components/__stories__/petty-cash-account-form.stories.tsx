@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 
 const meta = {
-  title: 'LedgerAccounts/PettyCashAccountForm',
+  title: 'Ledger Accounts/PettyCashAccountForm',
   component: PettyCashAccountForm,
   decorators: [
     (Story) => (

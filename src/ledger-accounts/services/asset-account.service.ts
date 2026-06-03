@@ -11,7 +11,7 @@ const assetAccountService = {
         amount: {
           amount: payload.openingBalance,
           currencyCode: payload.currencyCode,
-          isMinorUnit: true,
+          isMinorUnit: false,
         },
         exchangeRate: null,
       },

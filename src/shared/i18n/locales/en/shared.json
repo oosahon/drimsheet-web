@@ -40,5 +40,16 @@
   "expense": "Expense",
   "asset": "Asset",
   "liability": "Liability",
-  "equity": "Equity"
+  "equity": "Equity",
+  "transactions": "Transactions",
+  "new_transaction": "New transaction",
+  "file_type_images": "Images",
+  "file_type_pdfs": "PDFs",
+  "file_type_svg": "SVG",
+  "file_type_jpegs": "JPEGs",
+  "file_type_pngs": "PNGs",
+  "file_upload_accepts": "{{types}} only",
+  "save": "Save",
+  "settings": "Settings",
+  "or_text": "Or"
 }

@@ -1,88 +1,116 @@
-import { LedgerTypeIcon } from '@/ledger-accounts/ui/components/ledger-type-icon';
+import mapAccountTypeToIcon from '@/ledger-accounts/mappers/account-to-icon.mapper';
+import { Button } from '@/shared/ui/components/button';
 import Money from '@/shared/ui/components/money';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/shared/ui/components/tooltip';
 import { cn } from '@/shared/ui/components/utils';
-import type { IMoneyDto } from '@/shared/utils/api/Api';
-import { ELedgerType, type ULedgerType } from '@/shared/utils/api/Api';
+import { type ILedgerAccountDto } from '@/shared/utils/api/Api';
+import { Plus, Settings } from 'lucide-react';
+import { createElement } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export interface LedgerAccountOverviewProps {
-  type: ULedgerType;
-  title: string;
-  balance: IMoneyDto;
-  description: string;
-  className?: string;
+export interface AccountOverviewProps extends React.HTMLAttributes<HTMLDivElement> {
+  account: ILedgerAccountDto;
+  actionButtonText: string;
+  hideIcon?: boolean;
+  onActionButtonClick?: () => void;
+  onSettingsClick?: () => void;
+  settingsTooltipLabel?: string;
 }
 
-export function LedgerAccountOverview({
-  type,
-  title,
-  balance,
-  description,
+function AccountOverview({
+  account,
+  actionButtonText,
+  hideIcon = false,
+  onActionButtonClick,
+  onSettingsClick,
+  settingsTooltipLabel,
   className,
-}: LedgerAccountOverviewProps) {
+  ...props
+}: AccountOverviewProps) {
   const { t } = useTranslation(['shared']);
-
-  const ledgerTypeLabels: Record<ULedgerType, string> = {
-    [ELedgerType.Revenue]: t('shared:revenue'),
-    [ELedgerType.Expense]: t('shared:expense'),
-    [ELedgerType.Asset]: t('shared:asset'),
-    [ELedgerType.Liability]: t('shared:liability'),
-    [ELedgerType.Equity]: t('shared:equity'),
-  };
-
-  const ledgerTypeLabel = ledgerTypeLabels[type] || type;
+  const AccountIcon = mapAccountTypeToIcon(account);
+  const accountIcon = createElement(AccountIcon, {
+    className: 'size-5',
+    'aria-hidden': true,
+  });
+  const settingsLabel = settingsTooltipLabel ?? t('shared:settings');
+  const shouldShowFunctionalBalance =
+    account.functionalBalance.currencyCode !== account.balance.currencyCode;
 
   return (
     <div
       className={cn(
-        'flex items-center justify-between p-5 sm:p-5 border border-border bg-card text-card-foreground rounded-2xl shadow-xs',
-        'hover:-translate-y-0.5 hover:shadow-md hover:border-primary/20 hover:bg-muted/10',
-        'transition-all duration-300 ease-in-out cursor-pointer select-none',
+        'grid w-full grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-3 bg-background p-4 text-foreground sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:grid-rows-2 sm:gap-x-4 sm:gap-y-2 sm:p-6',
+        hideIcon &&
+          'grid-cols-[minmax(0,1fr)] sm:grid-cols-[minmax(0,1fr)_auto]',
         className
       )}
+      {...props}
     >
-      <div className="flex items-center gap-4">
-        <LedgerTypeIcon type={type} />
-        <div className="flex flex-col gap-0.5">
-          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
-            {ledgerTypeLabel}
-          </span>
-          <span className="text-base font-semibold text-foreground font-heading leading-tight">
-            {title}
-          </span>
+      {!hideIcon && (
+        <div className="row-span-2 flex size-12 shrink-0 self-center items-center justify-center rounded-lg border border-foreground bg-background text-foreground">
+          {accountIcon}
         </div>
+      )}
+
+      <div className="min-w-0 self-center truncate font-heading text-xl font-medium leading-none text-muted-foreground">
+        {account.name}
       </div>
 
-      <div className="flex flex-col items-end gap-0.5">
+      <div className="flex items-baseline gap-x-2 self-center">
         <Money
-          className="text-xl sm:text-2xl font-bold font-heading text-foreground tracking-tight leading-none"
-          value={balance}
+          className="min-w-0 font-heading text-4xl font-bold leading-none tracking-normal text-foreground"
+          value={account.balance}
         />
-        <span className="text-xs sm:text-sm text-muted-foreground text-right leading-normal mt-0.5">
-          {description}
-        </span>
+
+        {shouldShowFunctionalBalance && (
+          <span className="flex min-w-0 items-baseline gap-1 font-heading text-sm font-semibold leading-none text-muted-foreground">
+            <span aria-hidden="true">≈</span>
+            <Money className="truncate" value={account.functionalBalance} />
+          </span>
+        )}
+      </div>
+
+      <div
+        className={cn(
+          'col-span-2 flex items-center justify-between gap-3 sm:col-span-1 sm:col-start-3 sm:row-span-2 sm:row-start-1 sm:grid sm:grid-rows-subgrid sm:justify-items-end',
+          hideIcon && 'col-span-1 sm:col-start-2'
+        )}
+      >
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={settingsLabel}
+                onClick={onSettingsClick}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Settings className="size-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{settingsLabel}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <Button
+          type="button"
+          onClick={onActionButtonClick}
+          className="rounded-xl font-heading font-semibold sm:self-end"
+        >
+          <Plus />
+          {actionButtonText}
+        </Button>
       </div>
     </div>
   );
 }
 
-export function LedgerAccountOverviewSkeleton() {
-  return (
-    <div className="flex items-center justify-between p-5 sm:p-5 border border-border bg-card text-card-foreground rounded-2xl shadow-xs animate-pulse">
-      {/* Left Section: Icon and Titles */}
-      <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-full bg-muted" />
-        <div className="flex flex-col gap-0.5">
-          <span className="w-16 h-3 rounded bg-muted" />
-          <span className="w-24 h-5 rounded bg-muted mt-1" />
-        </div>
-      </div>
-
-      {/* Right Section: Balance and Description */}
-      <div className="flex flex-col items-end gap-0.5">
-        <span className="w-20 h-6 rounded bg-muted" />
-        <span className="w-32 h-3 rounded bg-muted mt-1" />
-      </div>
-    </div>
-  );
-}
+export { AccountOverview };

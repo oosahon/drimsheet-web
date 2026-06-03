@@ -1,65 +1,50 @@
 import useLedgerAccount from '@/ledger-accounts/hooks/api/use-ledger-account';
-import { AppHeader } from '@/shared/ui/components/app';
+import { AccountOverview } from '@/ledger-accounts/ui/components/account-overview';
+import { AppBody, AppHeader } from '@/shared/ui/components/app';
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbSeparator,
-} from '@/shared/ui/components/breadcrumb';
-import { GradientBox } from '@/shared/ui/components/gradient-box';
-import { Skeleton } from '@/shared/ui/components/skeleton';
-import { Link, useParams } from 'react-router-dom';
+  type IPageBreadcrumb,
+  PageBreadcrumbs,
+} from '@/shared/ui/components/page-breadcrumbs';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useTranslation } from 'react-i18next';
 
-interface PageBreadCrumbsProps {
-  accountName: string;
-  isLoading?: boolean;
-}
-
-function PageBreadCrumbs({ accountName, isLoading }: PageBreadCrumbsProps) {
-  const { t } = useTranslation(['shared']);
-
-  if (isLoading) {
-    return <Skeleton className="w-25 h-3" />;
-  }
-
-  const petty_cash_label = t('shared:petty_cash');
-
-  return (
-    <Breadcrumb>
-      <BreadcrumbList>
-        <BreadcrumbItem>
-          <Link to="/accounts/petty-cash">{petty_cash_label}</Link>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-
-        <BreadcrumbItem>
-          <Link to="#">{accountName}</Link>
-        </BreadcrumbItem>
-      </BreadcrumbList>
-    </Breadcrumb>
-  );
-}
-
 export default function PettyCashAccountPage() {
+  const { t } = useTranslation(['shared']);
   const { accountId } = useParams();
-
+  const navigate = useNavigate();
   const { data: account, isLoading } = useLedgerAccount(accountId);
 
+  const petty_cash_label = t('shared:petty_cash');
+  const new_transaction_label = t('shared:new_transaction');
+
   const accountName = account?.name ?? '';
+
+  const breadcrumb: IPageBreadcrumb = {
+    label: petty_cash_label,
+    link: '/accounts/petty-cash',
+    next: {
+      label: accountName,
+      link: '#',
+    },
+  };
 
   return (
     <div>
       <AppHeader>
-        <PageBreadCrumbs accountName={accountName} isLoading={isLoading} />
+        <PageBreadcrumbs breadcrumb={breadcrumb} isLoading={isLoading} />
       </AppHeader>
 
-      <div className="mt-6">
-        <GradientBox className="max-w-xs">
-          <div>{accountName}</div>
-        </GradientBox>
-      </div>
+      <AppBody>
+        {account && (
+          <AccountOverview
+            account={account}
+            hideIcon
+            actionButtonText={new_transaction_label}
+            onActionButtonClick={() => navigate('transactions/new')}
+          />
+        )}
+      </AppBody>
     </div>
   );
 }

@@ -1,107 +1,105 @@
-import { LedgerAccountOverview } from '@/ledger-accounts/ui/components/account-overview';
-import { ELedgerType } from '@/shared/utils/api/Api';
+import { AccountOverview } from '@/ledger-accounts/ui/components/account-overview';
+import {
+  EAdjunctAccountRule,
+  EContraAccountRule,
+  ELedgerAccountStatus,
+  ELedgerAccountSubType,
+  ELedgerType,
+  ENormalBalance,
+  type ILedgerAccountDto,
+  type TEntityId,
+} from '@/shared/utils/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+const baseAccount: ILedgerAccountDto = {
+  id: 'account-1' as TEntityId,
+  code: '1000',
+  materializedPath: '',
+  accountingEntityId: 'entity-1' as TEntityId,
+  type: ELedgerType.Asset,
+  normalBalance: ENormalBalance.Debit,
+  subType: ELedgerAccountSubType.CashAndCashEquivalent,
+  behavior: 'bank',
+  isControlAccount: true,
+  name: 'Account name',
+  status: ELedgerAccountStatus.Active,
+  contraAccountRule: EContraAccountRule.ContraNotApplicable,
+  adjunctAccountRule: EAdjunctAccountRule.AdjunctNotApplicable,
+  createdBy: 'user-1' as TEntityId,
+  createdAt: '2026-06-03T08:00:00Z',
+  updatedAt: '2026-06-03T08:00:00Z',
+  balance: { amount: 4000, currencyCode: 'USD', isMinorUnit: false },
+  functionalBalance: {
+    amount: 345000,
+    currencyCode: 'NGN',
+    isMinorUnit: false,
+  },
+};
+
 const meta = {
-  title: 'Ledger Accounts/LedgerAccountOverview',
-  component: LedgerAccountOverview,
+  title: 'Ledger Accounts/AccountOverview',
+  component: AccountOverview,
   parameters: {
-    layout: 'centered',
+    layout: 'fullscreen',
   },
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="w-[600px] sm:w-[700px] md:w-[800px] p-8 bg-background rounded-3xl border border-border shadow-xs">
+      <div className="box-border w-full overflow-hidden bg-background p-4">
         <Story />
       </div>
     ),
   ],
-} satisfies Meta<typeof LedgerAccountOverview>;
+} satisfies Meta<typeof AccountOverview>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const ShowcaseList: StoryObj<unknown> = {
-  render: () => (
-    <div className="flex flex-col gap-4">
-      <h3 className="text-lg font-semibold text-foreground font-heading mb-2">
-        Ledger Types Overview
-      </h3>
-      <LedgerAccountOverview
-        type={ELedgerType.Revenue}
-        title="Software SaaS Subscriptions"
-        balance={{ amount: 75000000, currencyCode: 'USD', isMinorUnit: true }}
-        description="Monthly recurring software-as-a-service subscriber inflows"
-      />
-      <LedgerAccountOverview
-        type={ELedgerType.Asset}
-        title="Silicon Valley Bank Operations"
-        balance={{ amount: 1545000000, currencyCode: 'USD', isMinorUnit: true }}
-        description="Core operational business cash reserves"
-      />
-      <LedgerAccountOverview
-        type={ELedgerType.Equity}
-        title="Common Stock & Paid-in Capital"
-        balance={{ amount: 5000000000, currencyCode: 'USD', isMinorUnit: true }}
-        description="Founders and seed investors equity shares"
-      />
-      <LedgerAccountOverview
-        type={ELedgerType.Liability}
-        title="Term Loan (Series B Funding)"
-        balance={{ amount: 120000000, currencyCode: 'USD', isMinorUnit: true }}
-        description="Outstanding long-term bank obligations"
-      />
-      <LedgerAccountOverview
-        type={ELedgerType.Expense}
-        title="AWS Hosting & Infrastructure"
-        balance={{ amount: 4850000, currencyCode: 'USD', isMinorUnit: true }}
-        description="Cloud database and compute monthly expenditures"
-      />
-    </div>
-  ),
-};
-
-export const Revenue: Story = {
+export const Default: Story = {
   args: {
-    type: ELedgerType.Revenue,
-    title: 'Consulting & Advisory Services',
-    balance: { amount: 1250000, currencyCode: 'EUR', isMinorUnit: true },
-    description: 'Incoming client advisory fees',
+    account: baseAccount,
+    actionButtonText: 'Add transaction',
+    onActionButtonClick: () => console.log('Add transaction clicked'),
+    onSettingsClick: () => console.log('Account settings clicked'),
   },
 };
 
-export const Asset: Story = {
+export const SameFunctionalCurrency: Story = {
   args: {
-    type: ELedgerType.Asset,
-    title: 'Main Operating Cash Account',
-    balance: { amount: 8945000, currencyCode: 'USD', isMinorUnit: true },
-    description: 'Liquid cash in commercial checking account',
+    account: {
+      ...baseAccount,
+      name: 'Main Bank Account',
+      balance: { amount: 4000, currencyCode: 'USD', isMinorUnit: false },
+      functionalBalance: {
+        amount: 4000,
+        currencyCode: 'USD',
+        isMinorUnit: false,
+      },
+    },
+    actionButtonText: 'Add transaction',
   },
 };
 
-export const Equity: Story = {
+export const WithoutIcon: Story = {
   args: {
-    type: ELedgerType.Equity,
-    title: 'Retained Earnings',
-    balance: { amount: 35000000, currencyCode: 'USD', isMinorUnit: true },
-    description: 'Cumulative net earnings retained by the business',
+    account: baseAccount,
+    actionButtonText: 'Add transaction',
+    hideIcon: true,
   },
 };
 
-export const Liability: Story = {
+export const LongAccountName: Story = {
   args: {
-    type: ELedgerType.Liability,
-    title: 'Accounts Payable',
-    balance: { amount: 432000, currencyCode: 'GBP', isMinorUnit: true },
-    description: 'Outstanding vendor invoices and short-term payables',
-  },
-};
-
-export const Expense: Story = {
-  args: {
-    type: ELedgerType.Expense,
-    title: 'Global Office Rent & Leases',
-    balance: { amount: 950000, currencyCode: 'USD', isMinorUnit: true },
-    description: 'Monthly office lease and utilities expenses',
+    account: {
+      ...baseAccount,
+      name: 'International Operations Petty Cash Account',
+      balance: { amount: 1250000, currencyCode: 'GBP', isMinorUnit: true },
+      functionalBalance: {
+        amount: 2480000,
+        currencyCode: 'NGN',
+        isMinorUnit: false,
+      },
+    },
+    actionButtonText: 'Add transaction',
   },
 };

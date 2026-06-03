@@ -162,6 +162,21 @@ export const EAccountingEntityType = {
 export type UAccountingEntityType =
   (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
 
+export const EJournalEntryStatus = {
+  Archived: 'archived',
+  Draft: 'draft',
+  Posted: 'posted',
+  Voided: 'voided',
+} as const;
+export type UJournalEntryStatus =
+  (typeof EJournalEntryStatus)[keyof typeof EJournalEntryStatus];
+
+export const EJournalSide = {
+  Debit: 'debit',
+  Credit: 'credit',
+} as const;
+export type UJournalSide = (typeof EJournalSide)[keyof typeof EJournalSide];
+
 export const EExchangeRateType = {
   Official: 'official',
   Negotiated: 'negotiated',
@@ -222,12 +237,14 @@ export const ELedgerAccountSubType = {
   MarketingAndSelling: 'marketing_and_selling',
   ResearchAndDevelopment: 'research_and_development',
   DepreciationAndAmortization: 'depreciation_and_amortization',
-  InterestAndFinanceCharges: 'interest_and_finance_charges',
+  BankCharge: 'bank_charge',
+  FinanceCost: 'finance_cost',
+  Interest: 'interest',
   IncomeTaxExpense: 'income_tax_expense',
   UnrealizedLoss: 'unrealized_loss',
   LossOnAssetDisposal: 'loss_on_asset_disposal',
-  ImpairmentLosses: 'impairment_losses',
-  OtherLosses: 'other_losses',
+  ImpairmentLoss: 'impairment_loss',
+  OtherLoss: 'other_loss',
 } as const;
 export type ULedgerAccountSubType =
   (typeof ELedgerAccountSubType)[keyof typeof ELedgerAccountSubType];
@@ -422,6 +439,40 @@ export interface ICurrencyDto {
   minorUnit: number;
 }
 
+export interface IExchangeRateDto {
+  baseCurrencyCode: string;
+  targetCurrencyCode: string;
+  /** @format double */
+  rate: number;
+  type: UExchangeRateType;
+  /** @format date-time */
+  asOf: string;
+  source: string;
+  /** @format double */
+  id?: number;
+}
+
+export interface IJournalLineDto {
+  accountId: string;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+  description: string | null;
+  side: UJournalSide;
+  /** @format double */
+  sequenceOrder: number;
+}
+
+export interface ITransferTransactionReq {
+  sourceLine: IJournalLineDto;
+  destinationLines: IJournalLineDto[];
+  status: UJournalEntryStatus;
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  memo: string | null;
+}
+
 export interface IUserSignupReq {
   firstName: string;
   lastName: string;
@@ -442,19 +493,6 @@ export interface IResetPasswordReq {
   token: string;
   password: string;
   confirmPassword: string;
-}
-
-export interface IExchangeRateDto {
-  baseCurrencyCode: string;
-  targetCurrencyCode: string;
-  /** @format double */
-  rate: number;
-  type: UExchangeRateType;
-  /** @format date-time */
-  asOf: string;
-  source: string;
-  /** @format double */
-  id?: number;
 }
 
 export interface IOpeningBalanceDto {
@@ -831,6 +869,26 @@ export class Api<
         path: `/currencies`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+  };
+  bookkeeping = {
+    /**
+     * @description Create a new petty cash sub account
+     *
+     * @tags Bookkeeping
+     * @name RecordTransfer
+     * @request POST:/bookkeeping
+     */
+    recordTransfer: (
+      data: ITransferTransactionReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<void, IHttpErrorDto>({
+        path: `/bookkeeping`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
         ...params,
       }),
   };

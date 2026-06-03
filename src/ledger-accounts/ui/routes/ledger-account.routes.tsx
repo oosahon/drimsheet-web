@@ -1,3 +1,4 @@
+import NewCashTransactionPage from '@/bookkeeping/ui/pages/new-cash-transaction.page';
 import PettyCashAccountPage from '@/ledger-accounts/ui/pages/petty-cash-account.page';
 import PettyCashAccountsDashboardPage from '@/ledger-accounts/ui/pages/petty-cash-accounts-dashboard.page';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
@@ -15,6 +16,10 @@ const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {
       {
         path: 'petty-cash/:accountId',
         element: <PettyCashAccountPage />,
+      },
+      {
+        path: 'petty-cash/:accountId/transactions/new',
+        element: <NewCashTransactionPage />,
       },
     ],
   };
