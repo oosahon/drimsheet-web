@@ -11,7 +11,7 @@ const TRANSLATION_FILE_PATH = path.resolve(
 );
 
 async function fetchErrorKeysFromGitHub() {
-  const url = `https://raw.githubusercontent.com/${config.org}/${config.repo}/${config.branch}/exports/error-keys.json`;
+  const url = `https://raw.githubusercontent.com/${config.org}/${config.repo}/${config.branch}/generated/error-keys.json`;
 
   const res = await fetch(url, {
     headers: {
