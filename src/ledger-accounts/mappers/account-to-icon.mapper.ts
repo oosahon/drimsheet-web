@@ -168,25 +168,19 @@ const expenseTypeMaps: TSubTypeIconMaps = {
       rent_and_utilities: HousePlug,
     },
   },
-  bank_charge: {
+  [ELedgerAccountSubType.BankCharge]: {
     fallback: Building2,
     behaviorMaps: {
       bank_charge: Building2,
     },
   },
-  finance_cost: {
+  [ELedgerAccountSubType.FinanceCost]: {
     fallback: BadgePercent,
     behaviorMaps: {
       finance_cost: BadgePercent,
     },
   },
-  [ELedgerAccountSubType.InterestAndFinanceCharges]: {
-    fallback: CirclePercent,
-    behaviorMaps: {
-      interest: CirclePercent,
-    },
-  },
-  interest: {
+  [ELedgerAccountSubType.Interest]: {
     fallback: CirclePercent,
     behaviorMaps: {
       interest: CirclePercent,

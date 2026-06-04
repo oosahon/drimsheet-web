@@ -134,6 +134,14 @@ const meta = {
   title: 'Ledger Accounts/LedgerAccountsTable',
   component: LedgerAccountsTable,
   tags: ['autodocs'],
+  args: {
+    onSortChange: (key, direction) =>
+      console.log('Sort changed:', key, direction),
+    onFilterChange: (filters) => console.log('Filter changed:', filters),
+    onAddAccount: () => console.log('Add account clicked'),
+    onSearchChange: (value) => console.log('Search changed:', value),
+    filters: {},
+  },
   decorators: [
     (Story) => (
       <div className="w-full max-w-5xl p-6 bg-background rounded-2xl border border-border/80 shadow-xs">

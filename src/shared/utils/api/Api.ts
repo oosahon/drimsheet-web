@@ -162,6 +162,30 @@ export const EAccountingEntityType = {
 export type UAccountingEntityType =
   (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
 
+export const EJournalEntrySourceType = {
+  System: 'system',
+  Expense: 'expense',
+  OpeningBalance: 'opening_balance',
+  Sale: 'sale',
+  Purchase: 'purchase',
+  CreditNote: 'credit_note',
+  DebitNote: 'debit_note',
+  Transfer: 'transfer',
+  Payment: 'payment',
+  Receipt: 'receipt',
+  Adjustment: 'adjustment',
+} as const;
+export type UJournalEntrySourceType =
+  (typeof EJournalEntrySourceType)[keyof typeof EJournalEntrySourceType];
+
+export const ELedgerAccountBalanceEffect = {
+  Increase: 'increase',
+  Decrease: 'decrease',
+  Noop: 'noop',
+} as const;
+export type ULedgerAccountBalanceEffect =
+  (typeof ELedgerAccountBalanceEffect)[keyof typeof ELedgerAccountBalanceEffect];
+
 export const EJournalEntryStatus = {
   Archived: 'archived',
   Draft: 'draft',
@@ -439,7 +463,7 @@ export interface ICurrencyDto {
   minorUnit: number;
 }
 
-export interface IExchangeRateDto {
+export interface IExchangeRateReq {
   baseCurrencyCode: string;
   targetCurrencyCode: string;
   /** @format double */
@@ -452,10 +476,10 @@ export interface IExchangeRateDto {
   id?: number;
 }
 
-export interface IJournalLineDto {
+export interface IJournalLineReq {
   accountId: string;
   amount: IMoneyDto;
-  exchangeRate: IExchangeRateDto | null;
+  exchangeRate: IExchangeRateReq | null;
   description: string | null;
   side: UJournalSide;
   /** @format double */
@@ -463,14 +487,85 @@ export interface IJournalLineDto {
 }
 
 export interface ITransferTransactionReq {
-  sourceLine: IJournalLineDto;
-  destinationLines: IJournalLineDto[];
+  sourceLine: IJournalLineReq;
+  destinationLines: IJournalLineReq[];
   status: UJournalEntryStatus;
   /** @format date-time */
   effectiveDate: string;
   /** @format date-time */
   postedAt: string | null;
   memo: string | null;
+}
+
+export interface IJournalHeaderDto {
+  sourceType: UJournalEntrySourceType;
+  counterpartyId: string | null;
+  memo: string | null;
+  status: UJournalEntryStatus;
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  /** @format date-time */
+  voidedAt: string | null;
+  voidingEntryId: string | null;
+  /** @format double */
+  version: number;
+  createdBy: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+}
+
+export interface IExchangeRate {
+  currencyPair: string;
+  baseCurrencyCode: string;
+  targetCurrencyCode: string;
+  /** @format double */
+  rate: number;
+  type: UExchangeRateType;
+  /** @format date-time */
+  asOf: string;
+  source: string;
+  /** @format date-time */
+  createdAt: string;
+}
+
+export interface IAccountTransactionRes {
+  id: string;
+  entryId: string;
+  accountId: string;
+  /** @format double */
+  sequenceOrder: number;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRate | null;
+  functionalAmount: IMoneyDto;
+  side: UJournalSide;
+  description: string | null;
+  /** @format double */
+  version: number;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  header: IJournalHeaderDto;
+  balanceEffect: ULedgerAccountBalanceEffect;
+}
+
+export interface IPaginatedResponseIAccountTransactionRes {
+  data: IAccountTransactionRes[];
+  meta: IPaginationResponseMeta;
+}
+
+export interface IPaginationDto {
+  /** @format double */
+  limit?: number;
+  orderBy?: string;
+  sortDirection?: UPaginationSortDirection;
+  search?: string;
+  /** @format double */
+  page?: number;
 }
 
 export interface IUserSignupReq {
@@ -497,7 +592,7 @@ export interface IResetPasswordReq {
 
 export interface IOpeningBalanceDto {
   amount: IMoneyDto;
-  exchangeRate: IExchangeRateDto | null;
+  exchangeRate: IExchangeRateReq | null;
 }
 
 export interface IPettyCashAccountCreationReq {
@@ -842,14 +937,14 @@ export class Api<
      *
      * @tags Ledger Accounts, Asset Account
      * @name MakePettyCashSubAccount
-     * @request POST:/ledger/asset-accounts
+     * @request POST:/ledger/asset-accounts/petty-cash
      */
     makePettyCashSubAccount: (
       data: IPettyCashAccountCreationReq,
       params: RequestParams = {}
     ) =>
       this.request<void, IHttpErrorDto>({
-        path: `/ledger/asset-accounts`,
+        path: `/ledger/asset-accounts/petty-cash`,
         method: 'POST',
         body: data,
         type: EContentType.Json,
@@ -878,17 +973,45 @@ export class Api<
      *
      * @tags Bookkeeping
      * @name RecordTransfer
-     * @request POST:/bookkeeping
+     * @request POST:/bookkeeping/transfer
      */
     recordTransfer: (
       data: ITransferTransactionReq,
       params: RequestParams = {}
     ) =>
       this.request<void, IHttpErrorDto>({
-        path: `/bookkeeping`,
+        path: `/bookkeeping/transfer`,
         method: 'POST',
         body: data,
         type: EContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description List transactions
+     *
+     * @tags Bookkeeping
+     * @name ListTransactions
+     * @request GET:/bookkeeping/transactions/accounts/{accountId}
+     */
+    listTransactions: (
+      accountId: string,
+      query?: {
+        /** @format double */
+        limit?: number;
+        orderBy?: string;
+        sortDirection?: UPaginationSortDirection;
+        search?: string;
+        /** @format double */
+        page?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<IPaginatedResponseIAccountTransactionRes, IHttpErrorDto>({
+        path: `/bookkeeping/transactions/accounts/${accountId}`,
+        method: 'GET',
+        query: query,
+        format: 'json',
         ...params,
       }),
   };

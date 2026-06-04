@@ -5,6 +5,7 @@ import { CurrencySelect } from '@/shared/ui/components/currency-select';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/shared/ui/components/dialog';
@@ -15,6 +16,7 @@ import { MoneyInput } from '@/shared/ui/components/money-input';
 import type { ICurrencyDto, ILedgerAccountDto } from '@/shared/utils/api/Api';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 /**
  * ===================================
@@ -98,13 +100,22 @@ function TransactionLineCard({
   onDelete,
   disabled,
 }: TransactionLineCardProps) {
+  const { t } = useTranslation(['bookkeeping']);
+
   const currencyCode = getLineCurrency(line, account);
+  const unknown_account_text = t('bookkeeping:unknown_account_text');
+  const edit_line_text = t('bookkeeping:edit_transaction_line_text', {
+    lineNumber,
+  });
+  const delete_line_text = t('bookkeeping:delete_transaction_line_text', {
+    lineNumber,
+  });
 
   return (
     <div className="flex items-center gap-2 rounded-md border border-border/80 bg-card px-3 py-2 shadow-xs">
       <div className="min-w-0 flex-1">
         <div className="truncate text-sm font-medium">
-          {account?.name || 'Unknown account'}
+          {account?.name || unknown_account_text}
         </div>
       </div>
 
@@ -127,7 +138,7 @@ function TransactionLineCard({
           type="button"
           variant="ghost"
           size="icon-sm"
-          aria-label={`Edit line ${lineNumber}`}
+          aria-label={edit_line_text}
           onClick={onEdit}
           disabled={disabled}
         >
@@ -137,7 +148,7 @@ function TransactionLineCard({
           type="button"
           variant="ghost"
           size="icon-sm"
-          aria-label={`Delete line ${lineNumber}`}
+          aria-label={delete_line_text}
           onClick={onDelete}
           disabled={disabled}
         >
@@ -165,6 +176,8 @@ function TransactionLineEditor({
   onSave,
   onCancel,
 }: TransactionLineEditorProps) {
+  const { t } = useTranslation(['bookkeeping', 'shared']);
+
   const selectedAccount = accounts.find(
     (account) => account.id === line.accountId
   );
@@ -188,11 +201,17 @@ function TransactionLineEditor({
     });
   };
 
+  const account_text = t('shared:account');
+  const currency_text = t('shared:currency');
+  const amount_label = t('bookkeeping:amount_label');
+  const cancel_text = t('shared:cancel');
+  const save_text = t('shared:save');
+
   return (
     <div className="space-y-3 rounded-md border border-border/80 bg-background p-3">
       <AccountCombobox
         id="transaction-line-account-editor"
-        label="Account"
+        label={account_text}
         value={line.accountId}
         accounts={accounts}
         onChange={updateAccount}
@@ -200,7 +219,7 @@ function TransactionLineEditor({
 
       <div className="grid grid-cols-[2fr_3fr] gap-x-3">
         <CurrencySelect
-          label="Currency"
+          label={currency_text}
           value={line.currency}
           currencies={currencies}
           onChange={(value) => updateLine('currency', value)}
@@ -208,7 +227,7 @@ function TransactionLineEditor({
         />
 
         <Field>
-          <Label htmlFor="transaction-line-amount-editor">Amount</Label>
+          <Label htmlFor="transaction-line-amount-editor">{amount_label}</Label>
           <MoneyInput
             id="transaction-line-amount-editor"
             name="transaction-line-amount-editor"
@@ -224,10 +243,10 @@ function TransactionLineEditor({
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={onCancel}>
-          Cancel
+          {cancel_text}
         </Button>
         <Button type="button" onClick={onSave}>
-          Save
+          {save_text}
         </Button>
       </div>
     </div>
@@ -240,7 +259,7 @@ function TransactionLinesFormContent({
   accounts,
   onCancel,
 }: TransactionLinesFormContentProps) {
-  const { data: currencies = [] } = useCurrencies();
+  const { t } = useTranslation(['shared']);
 
   const [lines, setLines] = useState<ITransactionLineFormState[]>(defaultLines);
   const [activeEditor, setActiveEditor] = useState<ActiveEditor>(
@@ -248,6 +267,8 @@ function TransactionLinesFormContent({
   );
   const [draftLine, setDraftLine] =
     useState<ITransactionLineForm>(createEmptyLine);
+
+  const { data: currencies = [] } = useCurrencies();
 
   const hasOpenEditor = activeEditor !== null;
 
@@ -319,6 +340,10 @@ function TransactionLinesFormContent({
     );
   };
 
+  const add_text = t('shared:add');
+  const cancel_text = t('shared:cancel');
+  const save_text = t('shared:save');
+
   return (
     <div className="w-sm max-w-full">
       <form onSubmit={handleSubmit}>
@@ -378,15 +403,15 @@ function TransactionLinesFormContent({
                   onClick={showNewLineEditor}
                 >
                   <Plus />
-                  Add
+                  {add_text}
                 </Button>
               </div>
 
               <div className="mt-2 flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={handleCancel}>
-                  Cancel
+                  {cancel_text}
                 </Button>
-                <Button type="submit">Save</Button>
+                <Button type="submit">{save_text}</Button>
               </div>
             </>
           )}
@@ -429,21 +454,31 @@ export interface TransactionLinesFormDialogProps extends TransactionLinesFormPro
 function TransactionLinesFormDialog({
   open,
   onClose,
-  title = 'Transaction lines',
+  title,
   ...formProps
 }: TransactionLinesFormDialogProps) {
+  const { t } = useTranslation(['bookkeeping']);
+
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) onClose();
+  };
+
+  const transaction_lines_title_text = t('bookkeeping:transaction_lines_title');
+  const transaction_lines_dialog_description_text = t(
+    'bookkeeping:transaction_lines_dialog_description'
+  );
+  const title_text = title ?? transaction_lines_title_text;
+
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(isOpen) => {
-        if (!isOpen) onClose();
-      }}
-    >
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="w-sm bg-card border-border/80 shadow-2xl backdrop-blur-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold tracking-tight text-foreground font-heading">
-            {title}
+            {title_text}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            {transaction_lines_dialog_description_text}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="mt-4 flex justify-center">

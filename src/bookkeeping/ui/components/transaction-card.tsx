@@ -2,47 +2,17 @@ import {
   Item,
   ItemContent,
   ItemDescription,
-  ItemMedia,
   ItemTitle,
 } from '@/shared/ui/components/item';
 import Money from '@/shared/ui/components/money';
 import { StatusBadge } from '@/shared/ui/components/status-badge';
 import { cn } from '@/shared/ui/components/utils';
-import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import type { ComponentProps } from 'react';
+import { BalanceEffectIcon } from './balance-effect-icon';
 
 interface TransactionCardProps extends ComponentProps<typeof Item> {
   constinerProps?: ComponentProps<'div'>;
   direction: 'increase' | 'decrease' | 'noop';
-}
-
-function TransactionCardIcon({
-  direction,
-}: Pick<TransactionCardProps, 'direction'>) {
-  const mediaClassName = 'self-center !translate-y-0 size-16 rounded-full';
-
-  switch (direction) {
-    case 'increase':
-      return (
-        <ItemMedia className={cn(mediaClassName, 'bg-success/10')}>
-          <TrendingUp className="size-7 text-success" />
-        </ItemMedia>
-      );
-
-    case 'decrease':
-      return (
-        <ItemMedia className={cn(mediaClassName, 'bg-error/10')}>
-          <TrendingDown className="size-7 text-error" />
-        </ItemMedia>
-      );
-
-    case 'noop':
-      return (
-        <ItemMedia className={cn(mediaClassName, 'bg-muted')}>
-          <Minus className="size-7 text-muted-foreground opacity-50" />
-        </ItemMedia>
-      );
-  }
 }
 
 function TransactionCard({
@@ -64,7 +34,7 @@ function TransactionCard({
         className={cn('min-h-24 gap-5 px-5 py-4', className)}
         {...props}
       >
-        <TransactionCardIcon direction={direction} />
+        <BalanceEffectIcon effect={direction} />
 
         <ItemContent className="min-w-0 gap-2">
           <ItemTitle className="line-clamp-1 text-xl font-medium">

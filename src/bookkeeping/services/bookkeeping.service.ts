@@ -1,14 +1,15 @@
 import type { ITransferTransactionFormValues } from '@/bookkeeping/ui/components/transfer-transaction-form';
 import purpleLedgerApi from '@/shared/utils/api';
 import {
-  type IJournalLineDto,
+  type IJournalLineReq,
+  type IPaginationDto,
   type ITransferTransactionReq,
   EJournalEntryStatus,
   EJournalSide,
 } from '@/shared/utils/api/Api';
 
 async function recordTransaction(payload: ITransferTransactionFormValues) {
-  const sourceLine: IJournalLineDto = {
+  const sourceLine: IJournalLineReq = {
     accountId: payload.sourceAccountId,
     amount: payload.amount,
     exchangeRate: null,
@@ -17,7 +18,7 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
     sequenceOrder: 1,
   };
 
-  const destingationLine: IJournalLineDto = {
+  const destingationLine: IJournalLineReq = {
     accountId: payload.destinationAccountId,
     amount: payload.amountReceived,
     exchangeRate: null,
@@ -42,8 +43,20 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
   return data;
 }
 
+async function getAccountTransactions(
+  accountId: string,
+  pagination: IPaginationDto
+) {
+  const { data } = await purpleLedgerApi.bookkeeping.listTransactions(
+    accountId,
+    pagination
+  );
+  return data;
+}
+
 const bookkeepingService = Object.freeze({
   recordTransaction,
+  getAccountTransactions,
 });
 
 export default bookkeepingService;
