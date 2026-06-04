@@ -24,8 +24,8 @@ export const Default: Story = {
   args: {
     meta: {
       page: 2,
-      pageSize: 10,
-      totalElements: 50,
+      limit: 10,
+      total: 50,
       totalPages: 5,
     },
     onPageChange: (page) => console.log('Page changed to:', page),

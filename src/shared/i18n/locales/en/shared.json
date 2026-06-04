@@ -51,5 +51,6 @@
   "file_upload_accepts": "{{types}} only",
   "save": "Save",
   "settings": "Settings",
-  "or_text": "Or"
+  "or_text": "Or",
+  "date": "Date"
 }
