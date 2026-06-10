@@ -18,7 +18,7 @@ const assetAccountService = {
       isControlAccount: false,
     };
 
-    await purpleLedgerApi.ledger.makePettyCashSubAccount(body);
+    await purpleLedgerApi.ledger.createPettyCashAccount(body);
   },
 };
 
