@@ -39,7 +39,7 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
   };
 
   const { data } =
-    await purpleLedgerApi.bookkeeping.recordTransfer(journalEntry);
+    await purpleLedgerApi.journalEntry.recordTransfer(journalEntry);
   return data;
 }
 
@@ -47,7 +47,7 @@ async function getAccountTransactions(
   accountId: string,
   pagination: IPaginationDto
 ) {
-  const { data } = await purpleLedgerApi.bookkeeping.listTransactions(
+  const { data } = await purpleLedgerApi.ledger.listTransactions(
     accountId,
     pagination
   );

@@ -156,5 +156,21 @@
   "journal_entry_error_journal_line_invalid_description": "Invalid description",
   "journal_entry_error_journal_line_invalid_exchange_rate": "Invalid exchange rate",
   "journal_entry_error_journal_line_invalid_header_entry_id": "Invalid header entry",
-  "journal_entry_error_journal_line_invalid_sequence_order": "Invalid sequence order"
+  "journal_entry_error_journal_line_invalid_sequence_order": "Invalid sequence order",
+  "currency_error_exchange_rate_invalid_date": "Invalid date",
+  "journal_entry_error_account_not_found": "Account not found",
+  "journal_entry_error_control_account_opening_balance_not_allowed": "Opening balance not allowed.",
+  "journal_entry_error_control_account_transaction_not_allowed": "Transaction not allowed.",
+  "journal_entry_error_empty_journal_lines": "Empty journal lines.",
+  "journal_entry_error_existing_opening_balance": "Opening balance already exists.",
+  "journal_entry_error_invalid_journal_entry": "Invalid journal entry.",
+  "journal_entry_error_mismatched_journal_lines": "Mismatched journal lines.",
+  "journal_entry_error_transfer_not_permitted_on_account": "Transfer is not permitted on this account.",
+  "journal_entry_error_unconfigured_opening_balance_account": "Opening balance not configured.",
+  "journal_entry_error_unsupported_source_type": "Unsupported transaction type.",
+  "ledger_balance_error_invalid_accounting_entity_id": "Invalid accounting entity.",
+  "ledger_balance_error_invalid_balance_effect": "Invalid balance effect.",
+  "ledger_balance_error_invalid_creator_id": "Invalid creator.",
+  "ledger_balance_error_invalid_journal_entry_id": "Invalid journal entry.",
+  "ledger_balance_error_invalid_ledger_account_id": "Invalid ledger account."
 }
