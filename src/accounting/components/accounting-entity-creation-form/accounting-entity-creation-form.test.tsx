@@ -1,9 +1,9 @@
-import { accountingEntityCreationFormValidation } from '@/accounting/hooks/ui/accounting-entity.validations';
-import { AccountingEntityCreationForm } from '@/accounting/ui/components/accounting-entity-creation-form';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import dayjs from 'dayjs';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { AccountingEntityCreationForm } from './accounting-entity-creation-form';
+import { accountingEntityCreationFormValidation } from './validation';
 
 beforeAll(() => {
   vi.stubGlobal(

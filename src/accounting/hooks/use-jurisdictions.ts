@@ -1,4 +1,4 @@
-import accountingService from '@/accounting/services/accounting.service';
+import accountingService from '@/accounting/lib/accounting.service';
 import { useQuery } from '@tanstack/react-query';
 
 export default function useJurisdictions() {

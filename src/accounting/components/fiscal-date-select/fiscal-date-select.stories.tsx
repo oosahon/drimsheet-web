@@ -1,5 +1,5 @@
-import { FiscalDateSelect } from '@/accounting/ui/components/fiscal-date-select';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { FiscalDateSelect } from './fiscal-date-select';
 
 const meta = {
   title: 'Accounting/FiscalDateSelect',

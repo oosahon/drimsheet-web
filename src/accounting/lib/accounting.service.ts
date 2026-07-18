@@ -1,4 +1,3 @@
-import type { IAccountingEntityFormValues } from '@/accounting/ui/components/accounting-entity-creation-form';
 import localStorageService from '@/shared/services/local-storage.service';
 import purpleLedgerApi from '@/shared/utils/api';
 import {
@@ -8,9 +7,20 @@ import {
 } from '@/shared/utils/api/Api';
 import dateUtils from '@/shared/utils/date';
 
+export interface CreateAccountingEntityInput {
+  name: string;
+  countryCode: string;
+  functionalCurrency: string;
+  reportingCurrency: string;
+  fiscalYearStart: Date | null;
+  fiscalYearEnd: Date | null;
+  appUsageMode: 'power_user' | 'non_power_user';
+  accountingStandardCode: string;
+}
+
 const accountingService = {
   toCreateAccountingEntityPayload(
-    data: IAccountingEntityFormValues
+    data: CreateAccountingEntityInput
   ): IAccountingEntityCreationDto {
     if (!data.fiscalYearStart || !data.fiscalYearEnd) {
       throw new Error('Fiscal year start and end dates are required');
@@ -57,7 +67,7 @@ const accountingService = {
     return res.data;
   },
 
-  async createAccountingEntity(payload: IAccountingEntityFormValues) {
+  async createAccountingEntity(payload: CreateAccountingEntityInput) {
     const parsedPayload = this.toCreateAccountingEntityPayload(payload);
     const { data: accountingEntity } =
       await purpleLedgerApi.accounting.createAccountingEntity(parsedPayload);

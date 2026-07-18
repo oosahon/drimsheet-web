@@ -1,8 +1,7 @@
-import { FISCAL_YEAR_STARTS } from '@/accounting/config/fiscal-year-start.config';
-import { accountingEntityCreationFormValidation } from '@/accounting/hooks/ui/accounting-entity.validations';
-import { useFiscalYearWarning } from '@/accounting/hooks/ui/use-fiscal-year-warning';
-import { AccountingEntityTypeSelect } from '@/accounting/ui/components/accounting-entity-type-select';
-import { FiscalDateSelect } from '@/accounting/ui/components/fiscal-date-select';
+import { AccountingEntityTypeSelect } from '@/accounting/components/accounting-entity-type-select';
+import { FiscalDateSelect } from '@/accounting/components/fiscal-date-select';
+import { useFiscalYearWarning } from '@/accounting/hooks/use-fiscal-year-warning';
+import { FISCAL_YEAR_STARTS } from '@/accounting/lib/fiscal-year-start.config';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { AlertTitle, WarningAlert } from '@/shared/ui/components/alert';
 import { Button } from '@/shared/ui/components/button';
@@ -20,18 +19,8 @@ import { AppUsageModeRadioGroup } from '@/user/components/app-usage-mode-radio-g
 import { useFormik } from 'formik';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
-
-export interface IAccountingEntityFormValues {
-  name: string;
-  entityType: string;
-  countryCode: string;
-  functionalCurrency: string;
-  reportingCurrency: string;
-  fiscalYearStart: Date | null;
-  fiscalYearEnd: Date | null;
-  appUsageMode: 'power_user' | 'non_power_user';
-  accountingStandardCode: string;
-}
+import type { IAccountingEntityFormValues } from './types';
+import { accountingEntityCreationFormValidation } from './validation';
 
 export interface AccountingEntityCreationFormProps {
   onSubmit: (values: IAccountingEntityFormValues) => Promise<void> | void;

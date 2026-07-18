@@ -1,5 +1,5 @@
-import { AccountingEntityTypeSelect } from '@/accounting/ui/components/accounting-entity-type-select';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { AccountingEntityTypeSelect } from './accounting-entity-type-select';
 
 const meta = {
   title: 'Accounting/AccountingEntityTypeSelect',

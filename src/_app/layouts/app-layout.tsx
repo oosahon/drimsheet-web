@@ -1,4 +1,4 @@
-import { LogoutConfirmationDialog } from '@/auth/dialogs/logout-confirmation';
+import { LogoutConfirmationDialog } from '@/auth/dialogs/logout-confirmation.dialog';
 import OnboardingManager from '@/onboarding/ui/containers/onboarding-manager.container';
 import { AppSidebar } from '@/shared/ui/components/app';
 import { SidebarInset, SidebarProvider } from '@/shared/ui/components/sidebar';

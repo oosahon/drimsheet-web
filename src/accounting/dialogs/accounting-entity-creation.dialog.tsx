@@ -1,9 +1,7 @@
-import useCreateAccountingEntity from '@/accounting/hooks/api/use-create-accounting-entity';
-import useJurisdictions from '@/accounting/hooks/api/use-jurisdictions';
-import {
-  AccountingEntityCreationForm,
-  type IAccountingEntityFormValues,
-} from '@/accounting/ui/components/accounting-entity-creation-form';
+import { AccountingEntityCreationForm } from '@/accounting/components/accounting-entity-creation-form/accounting-entity-creation-form';
+import type { IAccountingEntityFormValues } from '@/accounting/components/accounting-entity-creation-form/types';
+import useCreateAccountingEntity from '@/accounting/hooks/use-create-accounting-entity';
+import useJurisdictions from '@/accounting/hooks/use-jurisdictions';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import useCurrencies from '@/shared/hooks/use-currencies';
 import {
@@ -17,15 +15,15 @@ import useProfile from '@/user/hooks/use-profile';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-interface AccountingEntityCreationFormContainerProps {
+interface AccountingEntityCreationDialogProps {
   open: boolean;
   done: () => void;
 }
 
-export default function AccountingEntityCreationFormContainer({
+export default function AccountingEntityCreationDialog({
   open,
   done,
-}: AccountingEntityCreationFormContainerProps) {
+}: AccountingEntityCreationDialogProps) {
   const { t } = useTranslation('accounting');
   const handleApiError = useApiErrorHandler();
 

@@ -1,4 +1,4 @@
-import { FISCAL_YEAR_STARTS } from '@/accounting/config/fiscal-year-start.config';
+import { FISCAL_YEAR_STARTS } from '@/accounting/lib/fiscal-year-start.config';
 import { type UJurisdictionCode } from '@/shared/utils/api/Api';
 import { JS_MONTH_INDEX_OFFSET } from '@/shared/utils/date';
 import { useMemo } from 'react';
