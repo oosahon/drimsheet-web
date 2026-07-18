@@ -1,10 +1,36 @@
-import { RequestPasswordResetFormContainer } from '@/auth/components/request-password-reset-form';
+import { RequestPasswordResetForm } from '@/auth/components/request-password-reset-form';
+import type { IRequestPasswordResetFormValues } from '@/auth/components/request-password-reset-form/types';
+import useRequestPasswordReset from '@/auth/hooks/use-request-password-reset';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function RequestPasswordResetPage() {
   const { t } = useTranslation('auth');
   const { t: tShared } = useTranslation('shared');
+
+  const handleApiError = useApiErrorHandler();
+  const password_reset_link_sent_text = t('password_reset_link_sent_text');
+
+  const {
+    mutateAsync: requestPasswordReset,
+    isPending,
+    isSuccess,
+  } = useRequestPasswordReset();
+
+  const handleRequestReset = async (
+    values: IRequestPasswordResetFormValues
+  ) => {
+    try {
+      await requestPasswordReset(values.email);
+      toast.success(password_reset_link_sent_text);
+    } catch (error) {
+      handleApiError(error, {
+        showToast: true,
+      });
+    }
+  };
 
   const reset_password_title = t('reset_password_title');
   const reset_password_description = t('reset_password_description');
@@ -34,7 +60,11 @@ export default function RequestPasswordResetPage() {
           </p>
         </div>
         <div>
-          <RequestPasswordResetFormContainer />
+          <RequestPasswordResetForm
+            onSubmit={handleRequestReset}
+            loading={isPending}
+            isSuccess={isSuccess}
+          />
         </div>
       </div>
     </div>

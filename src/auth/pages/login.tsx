@@ -1,13 +1,31 @@
 import { AuthConsent } from '@/auth/components/auth-consent';
 import { GoogleAuthButton } from '@/auth/components/google-auth-button';
-import { LoginFormContainer } from '@/auth/components/login-form';
+import { LoginForm } from '@/auth/components/login-form';
+import type { ILoginFormValues } from '@/auth/components/login-form/types';
+import useLoginWithEmail from '@/auth/hooks/use-login-with-email';
 import { FieldDescription, FieldSeparator } from '@/shared/components/field';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function LoginPage() {
   const { t } = useTranslation('auth');
   const { t: tShared } = useTranslation('shared');
+
+  const handleApiError = useApiErrorHandler();
+  const { mutateAsync: loginWithEmail, isPending } = useLoginWithEmail();
+  const navigate = useNavigate();
+
+  const handleLogin = async (values: ILoginFormValues) => {
+    try {
+      await loginWithEmail(values);
+      navigate('/dashboard');
+    } catch (error) {
+      handleApiError(error, {
+        showToast: true,
+      });
+    }
+  };
 
   const or_text = t('or_text');
   const no_account_text = t('no_account_text');
@@ -37,7 +55,7 @@ export default function LoginPage() {
 
         <FieldSeparator className="my-4">{or_text}</FieldSeparator>
 
-        <LoginFormContainer />
+        <LoginForm onSubmit={handleLogin} loading={isPending} />
 
         <FieldDescription className="text-center">
           {no_account_text}{' '}

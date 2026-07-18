@@ -1,6 +1,8 @@
 import { AuthConsent } from '@/auth/components/auth-consent';
 import { GoogleAuthButton } from '@/auth/components/google-auth-button';
-import { SignupFormContainer } from '@/auth/components/signup-form';
+import { SignupForm } from '@/auth/components/signup-form';
+import type { ISignupFormValues } from '@/auth/components/signup-form/types';
+import useSignupWithEmail from '@/auth/hooks/use-signup-with-email';
 import emailSentImg from '@/shared/assets/email-sent.svg';
 import logoImg from '@/shared/assets/logo.svg';
 import {
@@ -10,14 +12,33 @@ import {
   CardTitle,
 } from '@/shared/components/card';
 import { FieldDescription, FieldSeparator } from '@/shared/components/field';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function SignupPage() {
   const [searchParams] = useSearchParams();
+  const handleApiError = useApiErrorHandler();
   const { t } = useTranslation('auth');
   const { t: tShared } = useTranslation('shared');
+
+  const account_created_success_text = t('account_created_success_text');
+
+  const [, setSearchParams] = useSearchParams();
+
+  const { mutateAsync: signup, isPending } = useSignupWithEmail();
+
+  const handleSignup = async (values: ISignupFormValues) => {
+    try {
+      await signup(values);
+      toast.success(account_created_success_text);
+      setSearchParams({ success: 'true' });
+    } catch (error) {
+      handleApiError(error, { showToast: true });
+    }
+  };
 
   const success = useMemo(
     () => searchParams.get('success') === 'true',
@@ -70,7 +91,7 @@ export default function SignupPage() {
 
         <FieldSeparator className="my-4">{or_text}</FieldSeparator>
 
-        <SignupFormContainer />
+        <SignupForm onSubmit={handleSignup} loading={isPending} />
 
         <FieldDescription className="text-center">
           {already_have_account_text}{' '}
