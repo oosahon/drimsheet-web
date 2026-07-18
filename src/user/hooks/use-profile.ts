@@ -1,4 +1,4 @@
-import userService from '@/user/services/user.service';
+import userService from '@/user/lib/user.service';
 import { useQuery } from '@tanstack/react-query';
 
 export default function useProfile() {

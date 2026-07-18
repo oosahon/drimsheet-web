@@ -18,7 +18,7 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
     sequenceOrder: 1,
   };
 
-  const destingationLine: IJournalLineReq = {
+  const destinationLine: IJournalLineReq = {
     accountId: payload.destinationAccountId,
     amount: payload.amountReceived,
     exchangeRate: null,
@@ -29,7 +29,7 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
 
   const journalEntry: ITransferTransactionReq = {
     sourceLine,
-    destinationLines: [destingationLine],
+    destinationLines: [destinationLine],
     status: payload.pending
       ? EJournalEntryStatus.Draft
       : EJournalEntryStatus.Posted,

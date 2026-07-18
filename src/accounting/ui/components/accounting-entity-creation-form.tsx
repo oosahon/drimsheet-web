@@ -16,7 +16,7 @@ import {
   type UJurisdictionCode,
 } from '@/shared/utils/api/Api';
 import dateUtils from '@/shared/utils/date';
-import { AppUsageModeRadioGroup } from '@/user/ui/app-usage-mode-radio-group';
+import { AppUsageModeRadioGroup } from '@/user/components/app-usage-mode-radio-group';
 import { useFormik } from 'formik';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
