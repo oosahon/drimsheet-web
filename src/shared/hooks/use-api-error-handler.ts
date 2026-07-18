@@ -1,4 +1,4 @@
-import authService from '@/auth/services/auth.service';
+import authService from '@/auth/lib/auth.service';
 import i18n from '@/shared/i18n/config';
 import apiErrorsJson from '@/shared/i18n/locales/en/api-errors.json';
 import observabilityService from '@/shared/services/observability.service';

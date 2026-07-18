@@ -1,4 +1,4 @@
-import authService from '@/auth/services/auth.service';
+import authService from '@/auth/lib/auth.service';
 import localStorageService from '@/shared/services/local-storage.service';
 import { Api } from '@/shared/utils/api/Api';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';

@@ -18,22 +18,50 @@ This document provides guidelines for contributing to the web frontend project t
 
 ### Domain-Driven Features Structure
 
-We have favored a feature-slice / domain-driven architecture for the frontend to ensure highly cohesive and decoupled features.
+We use a feature-first, domain-driven architecture to keep related code cohesive and easy to reason about. Each feature owns its UI, hooks, routing, and feature-specific business logic, while `src/shared/` holds reusable code that is not owned by one domain.
 
-Here are the conventions you would find within each domain under `src/` (e.g., `src/auth`, `src/onboarding`):
+The agent rules in [`.agents/rules/folder-structure.md`](./.agents/rules/folder-structure.md), [`.agents/rules/dependency-rules.md`](./.agents/rules/dependency-rules.md), and [`.agents/rules/file-responsibility-rules.md`](./.agents/rules/file-responsibility-rules.md) are the source of truth for layout and import boundaries.
+
+Here is the target structure under `src/`:
 
 ```text
 src/
-├─ [domain-name]/
-│  ├─ hooks/       # Custom hooks (e.g., React Query and form state integration)
-│  ├─ routes/      # The actual feature pages and layouts mapped to the router
-│  ├─ services/    # API clients (e.g., Axios calls) connecting to backend
-│  ├─ types/       # Domain-specific TypeScript types and interfaces
-│  └─ ui/          # Purely presentational components (pure functions without side effects) tied to the domain
-│     └─ containers/ # Wrappers and containers that have side effects
+├─ _app/                     # App bootstrap, providers, root styles, and route wiring
+├─ [feature]/
+│  ├─ __docs__/              # Feature documentation, decisions, and diagrams
+│  ├─ components/            # Pure presentation components
+│  │  └─ [component]/
+│  │     ├─ [component].tsx
+│  │     ├─ [component].stories.tsx
+│  │     ├─ [component].test.tsx
+│  │     ├─ [component].container.tsx
+│  │     ├─ types.ts
+│  │     ├─ validation.ts
+│  │     └─ index.ts
+│  ├─ hooks/                 # Feature-scoped UI and API hooks
+│  ├─ pages/                 # Page composition and orchestration
+│  ├─ layouts/               # Feature-specific reusable layouts
+│  ├─ dialogs/               # Dialog orchestration and side effects
+│  ├─ lib/                   # Services, mappers, helpers, utilities, adapters
+│  └─ routes/                # Route definitions that render pages only
 │
-└─ shared/         # Shared utilities, global UI components (design system), and cross-domain types
+└─ shared/
+   ├─ components/            # Reusable design-system and UI building blocks
+   │  ├─ icons/
+   │  └─ [component]/
+   ├─ hooks/                 # Reusable hooks shared across features
+   ├─ layouts/               # Reusable layout primitives
+   ├─ lib/                   # Shared services, helpers, mappers, and utilities
+   └─ configs/               # Shared configuration data
 ```
+
+## Design Principles
+
+- Keep components pure unless they explicitly need side effects.
+- Put orchestration in pages, dialogs, or containers, not in reusable UI components.
+- Keep business logic in hooks or `lib/`, not in presentation files.
+- Prefer feature-local code first, then promote to `shared/` only when reuse is real and stable.
+- Keep route files thin: routes should map URLs to pages and nothing more.
 
 ## Working with Money
 
