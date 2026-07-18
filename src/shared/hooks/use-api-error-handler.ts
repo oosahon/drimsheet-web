@@ -1,9 +1,8 @@
-import authService from '@/auth/lib/auth.service';
-import i18n from '@/shared/i18n/config';
 import apiErrorsJson from '@/shared/i18n/locales/en/api-errors.json';
-import observabilityService from '@/shared/services/observability.service';
-import type { IApiValidationError } from '@/shared/utils/api/Api';
-import { parseApiError } from '@/shared/utils/api/errors';
+import type { IApiValidationError } from '@/shared/lib/api/Api';
+import { parseApiError } from '@/shared/lib/api/errors';
+import observabilityService from '@/shared/lib/observability.service';
+import i18n from 'i18next';
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 
@@ -19,6 +18,16 @@ type THandleErrorOptions = {
   report?: boolean;
 };
 
+interface ApiErrorHandlerConfig {
+  handleUnauthorized?: () => void;
+}
+
+let apiErrorHandlerConfig: ApiErrorHandlerConfig = {};
+
+export function configureApiErrorHandler(config: ApiErrorHandlerConfig) {
+  apiErrorHandlerConfig = config;
+}
+
 export default function useApiErrorHandler() {
   const handleApiError = useCallback(
     (err: unknown, options?: THandleErrorOptions) => {
@@ -29,8 +38,7 @@ export default function useApiErrorHandler() {
           error.code === 401 &&
           !window.location.pathname.startsWith('/auth/')
         ) {
-          authService.removeToken();
-          window.location.href = '/auth/signin';
+          apiErrorHandlerConfig.handleUnauthorized?.();
           return;
         }
 

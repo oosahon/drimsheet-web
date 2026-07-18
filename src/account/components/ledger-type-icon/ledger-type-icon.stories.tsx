@@ -1,5 +1,5 @@
 import { LedgerTypeIcon } from '@/account/components/ledger-type-icon';
-import { ELedgerType, type ULedgerType } from '@/shared/utils/api/Api';
+import { ELedgerType, type ULedgerType } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

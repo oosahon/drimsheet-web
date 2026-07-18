@@ -1,11 +1,11 @@
-import localStorageService from '@/shared/services/local-storage.service';
-import purpleLedgerApi from '@/shared/utils/api';
+import purpleLedgerApi from '@/shared/lib/api';
 import {
   EAccountingEntityType,
   EPeriodUnit,
   type IAccountingEntityCreationDto,
-} from '@/shared/utils/api/Api';
-import dateUtils from '@/shared/utils/date';
+} from '@/shared/lib/api/Api';
+import dateUtils from '@/shared/lib/date';
+import localStorageService from '@/shared/lib/local-storage.service';
 
 export interface CreateAccountingEntityInput {
   name: string;

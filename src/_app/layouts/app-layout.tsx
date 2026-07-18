@@ -1,7 +1,7 @@
+import { AppSidebar } from '@/_app/components/app-sidebar';
 import { LogoutConfirmationDialog } from '@/auth/dialogs/logout-confirmation';
 import { OnboardingManager } from '@/onboarding/components/onboarding-manager';
-import { AppSidebar } from '@/shared/ui/components/app';
-import { SidebarInset, SidebarProvider } from '@/shared/ui/components/sidebar';
+import { SidebarInset, SidebarProvider } from '@/shared/components/sidebar';
 import { NavUserContainer } from '@/user/components/nav-user';
 import type { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';

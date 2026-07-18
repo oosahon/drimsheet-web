@@ -2,19 +2,19 @@ import { AccountingEntityTypeSelect } from '@/accounting/components/accounting-e
 import { FiscalDateSelect } from '@/accounting/components/fiscal-date-select';
 import { useFiscalYearWarning } from '@/accounting/hooks/use-fiscal-year-warning';
 import { FISCAL_YEAR_STARTS } from '@/accounting/lib/fiscal-year-start.config';
+import { AlertTitle, WarningAlert } from '@/shared/components/alert';
+import { Button } from '@/shared/components/button';
+import { CountryComboBox } from '@/shared/components/country-combobox';
+import { CurrencySelect } from '@/shared/components/currency-select';
+import { FieldError, FieldGroup, FieldSet } from '@/shared/components/field';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
-import { AlertTitle, WarningAlert } from '@/shared/ui/components/alert';
-import { Button } from '@/shared/ui/components/button';
-import { CountryComboBox } from '@/shared/ui/components/country-combobox';
-import { CurrencySelect } from '@/shared/ui/components/currency-select';
-import { FieldError, FieldGroup, FieldSet } from '@/shared/ui/components/field';
 import {
   EAccountingEntityType,
   type ICurrencyDto,
   type IJurisdictionDto,
   type UJurisdictionCode,
-} from '@/shared/utils/api/Api';
-import dateUtils from '@/shared/utils/date';
+} from '@/shared/lib/api/Api';
+import dateUtils from '@/shared/lib/date';
 import { AppUsageModeRadioGroup } from '@/user/components/app-usage-mode-radio-group';
 import { useFormik } from 'formik';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';

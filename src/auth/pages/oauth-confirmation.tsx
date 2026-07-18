@@ -1,5 +1,5 @@
 import authService from '@/auth/lib/auth.service';
-import { FullPageLoader } from '@/shared/ui/components/full-page-loader';
+import { FullPageLoader } from '@/shared/components/full-page-loader';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 

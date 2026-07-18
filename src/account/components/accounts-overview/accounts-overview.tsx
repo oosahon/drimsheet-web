@@ -1,8 +1,8 @@
 import { LedgerTypeIcon } from '@/account/components/ledger-type-icon';
-import Money from '@/shared/ui/components/money';
-import { cn } from '@/shared/ui/components/utils';
-import type { IMoneyDto } from '@/shared/utils/api/Api';
-import { ELedgerType, type ULedgerType } from '@/shared/utils/api/Api';
+import Money from '@/shared/components/money';
+import type { IMoneyDto } from '@/shared/lib/api/Api';
+import { ELedgerType, type ULedgerType } from '@/shared/lib/api/Api';
+import { cn } from '@/shared/lib/cn';
 import { useTranslation } from 'react-i18next';
 
 export interface LedgerAccountsOverviewProps {

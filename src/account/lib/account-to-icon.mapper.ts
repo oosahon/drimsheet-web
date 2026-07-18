@@ -4,7 +4,7 @@ import {
   type ILedgerAccountDto,
   type ULedgerAccountSubType,
   type ULedgerType,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import {
   BadgeDollarSign,
   BadgePercent,

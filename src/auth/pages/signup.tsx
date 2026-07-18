@@ -8,8 +8,8 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from '@/shared/ui/components/card';
-import { FieldDescription, FieldSeparator } from '@/shared/ui/components/field';
+} from '@/shared/components/card';
+import { FieldDescription, FieldSeparator } from '@/shared/components/field';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';

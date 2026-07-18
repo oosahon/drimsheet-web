@@ -3,23 +3,20 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ledgerAccountMapper from '@/account/lib/account.mapper';
-import { Button } from '@/shared/ui/components/button';
-import {
-  DataTable,
-  type ITableColumn,
-} from '@/shared/ui/components/data-table';
-import { FormattedDate } from '@/shared/ui/components/date';
-import Money from '@/shared/ui/components/money';
-import { SearchField } from '@/shared/ui/components/search-field';
-import { StatusBadge } from '@/shared/ui/components/status-badge';
-import { TablePagination } from '@/shared/ui/components/table-pagination';
+import { Button } from '@/shared/components/button';
+import { DataTable, type ITableColumn } from '@/shared/components/data-table';
+import { FormattedDate } from '@/shared/components/date';
+import Money from '@/shared/components/money';
+import { SearchField } from '@/shared/components/search-field';
+import { StatusBadge } from '@/shared/components/status-badge';
+import { TablePagination } from '@/shared/components/table-pagination';
 import {
   ELedgerAccountStatus,
   type ILedgerAccountDto,
   type IMoneyDto,
   type IPaginationResponseMeta,
   type ULedgerAccountStatus,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import { Link } from 'react-router-dom';
 
 export interface LedgerAccountsTableProps {

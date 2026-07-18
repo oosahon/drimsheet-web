@@ -1,5 +1,5 @@
-import { AnimatedThemeToggler } from '@/shared/ui/components/animated-theme-toggler';
-import { Avatar, AvatarFallback } from '@/shared/ui/components/avatar';
+import { AnimatedThemeToggler } from '@/shared/components/animated-theme-toggler';
+import { Avatar, AvatarFallback } from '@/shared/components/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,14 +8,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/shared/ui/components/dropdown-menu';
+} from '@/shared/components/dropdown-menu';
 import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from '@/shared/ui/components/sidebar';
-import { Skeleton } from '@/shared/ui/components/skeleton';
-import type { IUser } from '@/shared/utils/api/Api';
+} from '@/shared/components/sidebar';
+import { Skeleton } from '@/shared/components/skeleton';
+import type { IUser } from '@/shared/lib/api/Api';
 import {
   BadgeCheckIcon,
   BellIcon,

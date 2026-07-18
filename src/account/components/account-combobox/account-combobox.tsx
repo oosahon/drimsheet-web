@@ -6,11 +6,11 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-} from '@/shared/ui/components/combobox';
-import { Field, FieldError } from '@/shared/ui/components/field';
-import { InputGroupAddon } from '@/shared/ui/components/input-group';
-import { Label } from '@/shared/ui/components/label';
-import type { ILedgerAccountDto } from '@/shared/utils/api/Api';
+} from '@/shared/components/combobox';
+import { Field, FieldError } from '@/shared/components/field';
+import { InputGroupAddon } from '@/shared/components/input-group';
+import { Label } from '@/shared/components/label';
+import type { ILedgerAccountDto } from '@/shared/lib/api/Api';
 import { Wallet } from 'lucide-react';
 import { createElement, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';

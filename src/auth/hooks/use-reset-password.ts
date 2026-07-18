@@ -1,5 +1,5 @@
 import authService from '@/auth/lib/auth.service';
-import type { IResetPasswordReq } from '@/shared/utils/api/Api';
+import type { IResetPasswordReq } from '@/shared/lib/api/Api';
 import { useMutation } from '@tanstack/react-query';
 
 export default function useResetPassword() {

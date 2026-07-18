@@ -7,7 +7,7 @@ import {
   type UAdjunctAccountRule,
   type UContraAccountRule,
   type UNormalBalance,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';

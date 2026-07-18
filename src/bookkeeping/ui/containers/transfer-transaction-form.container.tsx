@@ -3,7 +3,7 @@ import useRecordTransferTransaction from '@/bookkeeping/hooks/api/use-record-tra
 import type { ITransferTransactionFormValues } from '@/bookkeeping/ui/components/transfer-transaction-form';
 import { TransferTransactionForm } from '@/bookkeeping/ui/components/transfer-transaction-form';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
-import { ELedgerAccountSubType } from '@/shared/utils/api/Api';
+import { ELedgerAccountSubType } from '@/shared/lib/api/Api';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 

@@ -5,7 +5,7 @@ import {
 import useResetPassword from '@/auth/hooks/use-reset-password';
 import authService from '@/auth/lib/auth.service';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
-import type { IApiValidationError } from '@/shared/utils/api/Api';
+import type { IApiValidationError } from '@/shared/lib/api/Api';
 
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

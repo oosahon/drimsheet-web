@@ -1,4 +1,4 @@
-import { FieldDescription } from '@/shared/ui/components/field';
+import { FieldDescription } from '@/shared/components/field';
 import { useTranslation } from 'react-i18next';
 
 interface IAuthConsentProps {

@@ -1,4 +1,4 @@
-import { Button } from '@/shared/ui/components/button';
+import { Button } from '@/shared/components/button';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';

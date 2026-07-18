@@ -65,8 +65,10 @@ Shared code should stay generic and reusable.
 
 ```text
 src/shared/
+  assets/
   components/
   hooks/
+  i18n/
   layouts/
   lib/
   configs/
@@ -77,6 +79,9 @@ src/shared/
 - `layouts/` contains reusable layout primitives.
 - `lib/` contains shared services, helpers, mappers, and utilities.
 - `configs/` contains shared configuration data such as currencies, country lists, and fiscal-year settings.
+- `assets/` contains reusable static assets consumed by multiple independent owners.
+- `i18n/` contains only genuinely shared locale resources. Feature locale resources belong in the owning feature, and i18n composition/initialization belongs in `_app/`.
+- Component-specific support files, including hooks, contexts, types, variants, validation, helpers, stories, and tests, belong in the narrowest component directory that owns all of their consumers.
 
 ## Shared Component Layout
 

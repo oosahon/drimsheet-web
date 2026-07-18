@@ -8,7 +8,7 @@ import {
   ENormalBalance,
   type ILedgerAccountDto,
   type TEntityId,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const baseAccount: ILedgerAccountDto = {

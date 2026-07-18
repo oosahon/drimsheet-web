@@ -1,4 +1,4 @@
-import useDebounce from '@/shared/hooks/ui/use-debounce';
+import useDebounce from '@/shared/hooks/use-debounce';
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

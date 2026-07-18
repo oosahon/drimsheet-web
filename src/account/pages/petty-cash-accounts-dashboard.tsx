@@ -1,14 +1,14 @@
 import { LedgerAccountsOverview } from '@/account/components/accounts-overview';
 import { LedgerAccountsTableContainer } from '@/account/components/accounts-table';
 import { PettyCashAccountFormContainer } from '@/account/components/petty-cash-account-form';
-import { AppBody, AppHeader } from '@/shared/ui/components/app';
+import { AppBody, AppHeader } from '@/shared/components/app';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/shared/ui/components/dialog';
-import { ELedgerType } from '@/shared/utils/api/Api';
+} from '@/shared/components/dialog';
+import { ELedgerType } from '@/shared/lib/api/Api';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 

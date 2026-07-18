@@ -5,7 +5,7 @@ import OAuthConfirmationPage from '@/auth/pages/oauth-confirmation';
 import RequestPasswordResetPage from '@/auth/pages/request-password-reset';
 import ResetPasswordPage from '@/auth/pages/reset-password';
 import SignupPage from '@/auth/pages/signup';
-import type { TModuleRoutes } from '@/shared/types/routes.types';
+import type { TModuleRoutes } from '@/shared/lib/routes.types';
 
 const useAuthRoutes: TModuleRoutes = (basePath) => {
   return {

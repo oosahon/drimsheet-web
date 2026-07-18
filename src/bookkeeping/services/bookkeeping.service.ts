@@ -1,12 +1,12 @@
 import type { ITransferTransactionFormValues } from '@/bookkeeping/ui/components/transfer-transaction-form';
-import purpleLedgerApi from '@/shared/utils/api';
+import purpleLedgerApi from '@/shared/lib/api';
 import {
   type IJournalLineReq,
   type IPaginationDto,
   type ITransferTransactionReq,
   EJournalEntryStatus,
   EJournalSide,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 
 async function recordTransaction(payload: ITransferTransactionFormValues) {
   const sourceLine: IJournalLineReq = {

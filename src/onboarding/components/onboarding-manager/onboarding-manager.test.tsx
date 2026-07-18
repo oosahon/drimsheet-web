@@ -1,6 +1,6 @@
 import useAccountingEntities from '@/accounting/hooks/use-accounting-entities';
 import { OnboardingManager } from '@/onboarding/components/onboarding-manager';
-import type { IAccountingEntity } from '@/shared/utils/api/Api';
+import type { IAccountingEntity } from '@/shared/lib/api/Api';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

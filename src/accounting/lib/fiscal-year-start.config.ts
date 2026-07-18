@@ -5,7 +5,7 @@
 import {
   EJurisdictionCode,
   type UJurisdictionCode,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 
 export type IFiscalYearStart = {
   month: number;

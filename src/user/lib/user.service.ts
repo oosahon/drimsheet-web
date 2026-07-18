@@ -1,4 +1,4 @@
-import purpleLedgerApi from '@/shared/utils/api';
+import purpleLedgerApi from '@/shared/lib/api';
 
 const userService = {
   async getProfile() {

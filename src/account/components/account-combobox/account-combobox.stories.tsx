@@ -9,7 +9,7 @@ import {
   type UAdjunctAccountRule,
   type UContraAccountRule,
   type UNormalBalance,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 
 const mockAccounts: ILedgerAccountDto[] = [
   {

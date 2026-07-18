@@ -1,8 +1,8 @@
-import type { TStatusBadgeValue } from '@/shared/ui/components/status-badge';
+import type { TStatusBadgeValue } from '@/shared/components/status-badge';
 import {
   ELedgerAccountStatus,
   type ULedgerAccountStatus,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import { t } from 'i18next';
 
 function mapStatusToBadgeProps(

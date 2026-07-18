@@ -1,6 +1,6 @@
 import useVerifyEmail from '@/auth/hooks/use-verify-email';
+import { FullPageLoader } from '@/shared/components/full-page-loader';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
-import { FullPageLoader } from '@/shared/ui/components/full-page-loader';
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';

@@ -1,4 +1,4 @@
-import currencyService from '@/shared/services/currency.service';
+import currencyService from '@/shared/lib/currency.service';
 import { useQuery } from '@tanstack/react-query';
 
 export default function useCurrencies() {

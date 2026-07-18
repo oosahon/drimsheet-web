@@ -1,5 +1,5 @@
-import type { IMoneyDto } from '@/shared/utils/api/Api';
-import dateUtils from '@/shared/utils/date';
+import type { IMoneyDto } from '@/shared/lib/api/Api';
+import dateUtils from '@/shared/lib/date';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';

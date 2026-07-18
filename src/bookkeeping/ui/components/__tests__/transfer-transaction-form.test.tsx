@@ -11,7 +11,7 @@ import {
   ENormalBalance,
   type ILedgerAccountDto,
   type TEntityId,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';

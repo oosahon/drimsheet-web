@@ -1,13 +1,13 @@
 import useLedgerAccount from '@/account/hooks/use-ledger-account';
 import TransferTransactionFormContainer from '@/bookkeeping/ui/containers/transfer-transaction-form.container';
-import { EFileType } from '@/shared/types/file.types';
-import { AppHeader } from '@/shared/ui/components/app';
-import { DocumentUpload } from '@/shared/ui/components/document-upload';
-import { FieldSeparator } from '@/shared/ui/components/field';
+import { AppHeader } from '@/shared/components/app';
+import { DocumentUpload } from '@/shared/components/document-upload';
+import { EFileType } from '@/shared/components/document-upload/types';
+import { FieldSeparator } from '@/shared/components/field';
 import {
   PageBreadcrumbs,
   type IPageBreadcrumb,
-} from '@/shared/ui/components/page-breadcrumbs';
+} from '@/shared/components/page-breadcrumbs';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 

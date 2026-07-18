@@ -1,7 +1,7 @@
 import { AuthConsent } from '@/auth/components/auth-consent';
 import { GoogleAuthButton } from '@/auth/components/google-auth-button';
 import { LoginFormContainer } from '@/auth/components/login-form';
-import { FieldDescription, FieldSeparator } from '@/shared/ui/components/field';
+import { FieldDescription, FieldSeparator } from '@/shared/components/field';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 

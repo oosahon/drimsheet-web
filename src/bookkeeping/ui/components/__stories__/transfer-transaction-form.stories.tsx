@@ -1,5 +1,5 @@
+import '@/_app/i18n/config';
 import { TransferTransactionForm } from '@/bookkeeping/ui/components/transfer-transaction-form';
-import '@/shared/i18n/config';
 import {
   ELedgerAccountStatus,
   ELedgerType,
@@ -8,7 +8,7 @@ import {
   type UAdjunctAccountRule,
   type UContraAccountRule,
   type UNormalBalance,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 

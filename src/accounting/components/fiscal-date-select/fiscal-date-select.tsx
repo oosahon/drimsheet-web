@@ -1,13 +1,13 @@
-import { Button } from '@/shared/ui/components/button';
-import { Calendar } from '@/shared/ui/components/calendar';
-import { Field, FieldError } from '@/shared/ui/components/field';
-import { Label } from '@/shared/ui/components/label';
+import { Button } from '@/shared/components/button';
+import { Calendar } from '@/shared/components/calendar';
+import { Field, FieldError } from '@/shared/components/field';
+import { Label } from '@/shared/components/label';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/shared/ui/components/popover';
-import dateUtils from '@/shared/utils/date';
+} from '@/shared/components/popover';
+import dateUtils from '@/shared/lib/date';
 import { Calendar1 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

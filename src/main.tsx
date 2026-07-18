@@ -1,6 +1,6 @@
+import '@/_app/i18n/config';
 import App from '@/_app/index';
 import '@/_app/index.css';
-import '@/shared/i18n/config';
 import * as Sentry from '@sentry/react';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';

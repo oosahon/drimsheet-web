@@ -1,18 +1,15 @@
 import { BalanceEffectIcon } from '@/bookkeeping/ui/components/balance-effect-icon';
-import { Button } from '@/shared/ui/components/button';
-import {
-  DataTable,
-  type ITableColumn,
-} from '@/shared/ui/components/data-table';
-import { FormattedDate } from '@/shared/ui/components/date';
-import Money from '@/shared/ui/components/money';
-import { SearchField } from '@/shared/ui/components/search-field';
-import { TablePagination } from '@/shared/ui/components/table-pagination';
+import { Button } from '@/shared/components/button';
+import { DataTable, type ITableColumn } from '@/shared/components/data-table';
+import { FormattedDate } from '@/shared/components/date';
+import Money from '@/shared/components/money';
+import { SearchField } from '@/shared/components/search-field';
+import { TablePagination } from '@/shared/components/table-pagination';
 import {
   type IAccountTransactionRes,
   type IMoneyDto,
   type IPaginationResponseMeta,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import { Ellipsis } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';

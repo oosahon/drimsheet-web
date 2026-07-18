@@ -1,5 +1,4 @@
 import useLogout from '@/auth/hooks/use-logout';
-import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +10,8 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/shared/ui/components/alert-dialog';
+} from '@/shared/components/alert-dialog';
+import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { LogOutIcon } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';

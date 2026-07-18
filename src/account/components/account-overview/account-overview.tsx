@@ -1,14 +1,14 @@
 import mapAccountTypeToIcon from '@/account/lib/account-to-icon.mapper';
-import { Button } from '@/shared/ui/components/button';
-import Money from '@/shared/ui/components/money';
+import { Button } from '@/shared/components/button';
+import Money from '@/shared/components/money';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/shared/ui/components/tooltip';
-import { cn } from '@/shared/ui/components/utils';
-import { type ILedgerAccountDto } from '@/shared/utils/api/Api';
+} from '@/shared/components/tooltip';
+import { type ILedgerAccountDto } from '@/shared/lib/api/Api';
+import { cn } from '@/shared/lib/cn';
 import { Plus, Settings } from 'lucide-react';
 import { createElement } from 'react';
 import { useTranslation } from 'react-i18next';

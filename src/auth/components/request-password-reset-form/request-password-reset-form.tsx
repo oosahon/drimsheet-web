@@ -1,14 +1,14 @@
 import { RequestPasswordResetSuccess } from '@/auth/components/reset-password-request-success';
-import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
-import { Button } from '@/shared/ui/components/button';
+import { Button } from '@/shared/components/button';
 import {
   Field,
   FieldError,
   FieldGroup,
   FieldLabel,
-} from '@/shared/ui/components/field';
-import { Input } from '@/shared/ui/components/input';
-import { cn } from '@/shared/ui/components/utils';
+} from '@/shared/components/field';
+import { Input } from '@/shared/components/input';
+import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { cn } from '@/shared/lib/cn';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';

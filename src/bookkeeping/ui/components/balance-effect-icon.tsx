@@ -1,6 +1,6 @@
-import { ItemMedia } from '@/shared/ui/components/item';
-import { cn } from '@/shared/ui/components/utils';
-import type { ULedgerAccountBalanceEffect } from '@/shared/utils/api/Api';
+import { ItemMedia } from '@/shared/components/item';
+import type { ULedgerAccountBalanceEffect } from '@/shared/lib/api/Api';
+import { cn } from '@/shared/lib/cn';
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import type { ComponentProps } from 'react';
 

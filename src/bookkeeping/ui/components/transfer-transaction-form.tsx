@@ -1,15 +1,15 @@
 import { AccountCombobox } from '@/account/components/account-combobox';
 import useTransferTransactionFormValidation from '@/bookkeeping/hooks/ui/use-transfer-transaction-form-validation';
+import { Button } from '@/shared/components/button';
+import { DateInput } from '@/shared/components/date-input';
+import { Field, FieldError, FieldGroup } from '@/shared/components/field';
+import { Label } from '@/shared/components/label';
+import { MoneyWithCurrencyInput } from '@/shared/components/money-with-currency-input';
+import { Textarea } from '@/shared/components/textarea';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
-import { Button } from '@/shared/ui/components/button';
-import { DateInput } from '@/shared/ui/components/date-input';
-import { Field, FieldError, FieldGroup } from '@/shared/ui/components/field';
-import { Label } from '@/shared/ui/components/label';
-import { MoneyWithCurrencyInput } from '@/shared/ui/components/money-with-currency-input';
-import { Textarea } from '@/shared/ui/components/textarea';
-import { cn } from '@/shared/ui/components/utils';
-import type { ILedgerAccountDto, IMoneyDto } from '@/shared/utils/api/Api';
-import dateUtils from '@/shared/utils/date';
+import type { ILedgerAccountDto, IMoneyDto } from '@/shared/lib/api/Api';
+import { cn } from '@/shared/lib/cn';
+import dateUtils from '@/shared/lib/date';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 

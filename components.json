@@ -16,9 +16,9 @@
   "menuAccent": "bold",
   "aliases": {
     "components": "@/shared/components",
-    "utils": "@/shared/components/lib",
+    "utils": "@/shared/lib",
     "ui": "@/shared/components",
-    "lib": "@/shared/components",
+    "lib": "@/shared/lib",
     "hooks": "@/shared/hooks"
   },
   "registries": {

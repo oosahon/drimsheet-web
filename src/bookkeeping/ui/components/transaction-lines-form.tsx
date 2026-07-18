@@ -1,19 +1,19 @@
 import { AccountCombobox } from '@/account/components/account-combobox';
-import useCurrencies from '@/shared/hooks/use-currencies';
-import { Button } from '@/shared/ui/components/button';
-import { CurrencySelect } from '@/shared/ui/components/currency-select';
+import { Button } from '@/shared/components/button';
+import { CurrencySelect } from '@/shared/components/currency-select';
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/shared/ui/components/dialog';
-import { Field, FieldGroup } from '@/shared/ui/components/field';
-import { Label } from '@/shared/ui/components/label';
-import Money from '@/shared/ui/components/money';
-import { MoneyInput } from '@/shared/ui/components/money-input';
-import type { ICurrencyDto, ILedgerAccountDto } from '@/shared/utils/api/Api';
+} from '@/shared/components/dialog';
+import { Field, FieldGroup } from '@/shared/components/field';
+import { Label } from '@/shared/components/label';
+import Money from '@/shared/components/money';
+import { MoneyInput } from '@/shared/components/money-input';
+import useCurrencies from '@/shared/hooks/use-currencies';
+import type { ICurrencyDto, ILedgerAccountDto } from '@/shared/lib/api/Api';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
 import { useTranslation } from 'react-i18next';

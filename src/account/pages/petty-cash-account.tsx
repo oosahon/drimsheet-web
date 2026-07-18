@@ -1,16 +1,16 @@
 import { AccountOverview } from '@/account/components/account-overview';
 import useLedgerAccount from '@/account/hooks/use-ledger-account';
-import useDebounce from '@/shared/hooks/ui/use-debounce';
-import { useTableQueryParams } from '@/shared/hooks/ui/use-table-query-params';
-import { AppBody, AppHeader } from '@/shared/ui/components/app';
+import { AppBody, AppHeader } from '@/shared/components/app';
 import {
   type IPageBreadcrumb,
   PageBreadcrumbs,
-} from '@/shared/ui/components/page-breadcrumbs';
+} from '@/shared/components/page-breadcrumbs';
+import useDebounce from '@/shared/hooks/use-debounce';
+import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import {
   type IAccountTransactionRes,
   type IPaginationDto,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 

@@ -1,4 +1,4 @@
-import { useSidebar } from '@/shared/hooks/use-sidebar';
+import { useSidebar } from '@/shared/components/sidebar/use-sidebar';
 import useProfile from '@/user/hooks/use-profile';
 import type { ReactNode } from 'react';
 import { NavUser } from './nav-user';

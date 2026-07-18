@@ -1,10 +1,10 @@
 import type { ISignupFormValues } from '@/auth/components/signup-form/types';
-import purpleLedgerApi from '@/shared/utils/api';
+import purpleLedgerApi from '@/shared/lib/api';
 import type {
   IEmailLoginReq,
   IResetPasswordReq,
   IUser,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import { jwtDecode } from 'jwt-decode';
 
 let accessToken: string;

@@ -1,11 +1,11 @@
+import { Button } from '@/shared/components/button';
+import { CurrencySelect } from '@/shared/components/currency-select';
+import { Field, FieldError, FieldGroup } from '@/shared/components/field';
+import { Input } from '@/shared/components/input';
+import { Label } from '@/shared/components/label';
+import { MoneyInput } from '@/shared/components/money-input';
 import useCurrencies from '@/shared/hooks/use-currencies';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
-import { Button } from '@/shared/ui/components/button';
-import { CurrencySelect } from '@/shared/ui/components/currency-select';
-import { Field, FieldError, FieldGroup } from '@/shared/ui/components/field';
-import { Input } from '@/shared/ui/components/input';
-import { Label } from '@/shared/ui/components/label';
-import { MoneyInput } from '@/shared/ui/components/money-input';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import usePettyCashAccountFormValidation from './validation';

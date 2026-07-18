@@ -1,13 +1,13 @@
 import { LedgerAccountsTable } from '@/account/components/accounts-table';
 import useLedgerAccounts from '@/account/hooks/use-ledger-accounts';
 import ledgerAccountService from '@/account/lib/ledger-account.service';
-import useDebounce from '@/shared/hooks/ui/use-debounce';
-import { useTableQueryParams } from '@/shared/hooks/ui/use-table-query-params';
+import useDebounce from '@/shared/hooks/use-debounce';
+import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import {
   type IGetLedgerAccountsQuery,
   type ILedgerAccountDto,
   type ULedgerAccountSortBy,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 import { useMemo, useState } from 'react';
 
 interface LedgerAccountsTableContainerProps {

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const API_FILE_PATH = path.resolve('src/shared/utils/api/Api.ts');
+const API_FILE_PATH = path.resolve('src/shared/lib/api/Api.ts');
 
 function convertEnums() {
   let content = fs.readFileSync(API_FILE_PATH, 'utf-8');

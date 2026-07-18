@@ -1,5 +1,5 @@
 import bookkeepingService from '@/bookkeeping/services/bookkeeping.service';
-import type { IPaginationDto } from '@/shared/utils/api/Api';
+import type { IPaginationDto } from '@/shared/lib/api/Api';
 import { useQuery } from '@tanstack/react-query';
 
 interface IParams {

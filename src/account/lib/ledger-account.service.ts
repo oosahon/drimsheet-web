@@ -1,9 +1,9 @@
-import purpleLedgerApi from '@/shared/utils/api';
+import purpleLedgerApi from '@/shared/lib/api';
 import {
   ELedgerAccountSubType,
   ELedgerType,
   type IGetLedgerAccountsQuery,
-} from '@/shared/utils/api/Api';
+} from '@/shared/lib/api/Api';
 
 async function getLedgerAccounts(query: IGetLedgerAccountsQuery) {
   const response = await purpleLedgerApi.ledger.getLedgerAccounts(query);
