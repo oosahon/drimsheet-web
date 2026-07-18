@@ -1,4 +1,4 @@
-import AccountingEntityCreationDialog from '@/accounting/dialogs/accounting-entity-creation.dialog';
+import AccountingEntityCreationDialog from '@/accounting/dialogs/accounting-entity-creation';
 import useAccountingEntities from '@/accounting/hooks/use-accounting-entities';
 import { useMemo } from 'react';
 

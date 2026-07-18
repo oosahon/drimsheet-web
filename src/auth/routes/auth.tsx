@@ -1,10 +1,10 @@
 import AuthLayout from '@/auth/layouts/auth-layout';
-import CompleteSignupPage from '@/auth/pages/complete-signup.page';
-import LoginPage from '@/auth/pages/login.page';
-import OAuthConfirmationPage from '@/auth/pages/oauth-confirmation.page';
-import RequestPasswordResetPage from '@/auth/pages/request-password-reset.page';
-import ResetPasswordPage from '@/auth/pages/reset-password.page';
-import SignupPage from '@/auth/pages/signup.page';
+import CompleteSignupPage from '@/auth/pages/complete-signup';
+import LoginPage from '@/auth/pages/login';
+import OAuthConfirmationPage from '@/auth/pages/oauth-confirmation';
+import RequestPasswordResetPage from '@/auth/pages/request-password-reset';
+import ResetPasswordPage from '@/auth/pages/reset-password';
+import SignupPage from '@/auth/pages/signup';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
 
 const useAuthRoutes: TModuleRoutes = (basePath) => {

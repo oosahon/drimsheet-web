@@ -1,6 +1,6 @@
-import PettyCashAccountPage from '@/account/pages/petty-cash-account.page';
-import PettyCashAccountsDashboardPage from '@/account/pages/petty-cash-accounts-dashboard.page';
-import NewCashTransactionPage from '@/bookkeeping/ui/pages/new-cash-transaction.page';
+import PettyCashAccountPage from '@/account/pages/petty-cash-account';
+import PettyCashAccountsDashboardPage from '@/account/pages/petty-cash-accounts-dashboard';
+import NewCashTransactionPage from '@/bookkeeping/ui/pages/new-cash-transaction';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
 
 const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {

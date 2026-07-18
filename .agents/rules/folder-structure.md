@@ -100,3 +100,4 @@ components/<name>/
 - Use directory names that are stable and descriptive.
 - Keep file names consistent with the exported component or hook name.
 - Prefer one responsibility per file and one public entry point per folder.
+- Do not use redundant suffixes (like `.page.tsx`, `.dialog.tsx`, or `.route.tsx`) for files that already live in role-specific directories (e.g., `pages/`, `dialogs/`, `routes/`). Use suffixes only for cohabiting files like `.container.tsx`, `.stories.tsx`, or `.test.tsx`.
