@@ -14,8 +14,8 @@ import {
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import useAccountTransactions from '@/bookkeeping/hooks/api/use-account-transactions';
-import { TransactionsTable } from '@/bookkeeping/ui/components/transactions-table';
+import { TransactionsTable } from '@/bookkeeping/components/transactions-table';
+import useAccountTransactions from '@/bookkeeping/hooks/use-account-transactions';
 import { useTranslation } from 'react-i18next';
 
 export default function PettyCashAccountPage() {

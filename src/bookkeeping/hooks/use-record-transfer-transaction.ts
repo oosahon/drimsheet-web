@@ -1,4 +1,4 @@
-import bookkeepingService from '@/bookkeeping/services/bookkeeping.service';
+import bookkeepingService from '@/bookkeeping/lib/bookkeeping.service';
 import { useMutation } from '@tanstack/react-query';
 
 export default function useRecordTransferTransaction() {

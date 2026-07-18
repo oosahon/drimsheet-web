@@ -1,6 +1,6 @@
-import { BalanceEffectIcon } from '@/bookkeeping/ui/components/balance-effect-icon';
 import { ELedgerAccountBalanceEffect } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { BalanceEffectIcon } from './balance-effect-icon';
 
 const meta = {
   title: 'Bookkeeping/BalanceEffectIcon',

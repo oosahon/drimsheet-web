@@ -1,10 +1,4 @@
 import {
-  TransactionLinesForm,
-  TransactionLinesFormDialog,
-  type ITransactionLineForm,
-  type TransactionLinesFormProps,
-} from '@/bookkeeping/ui/components/transaction-lines-form';
-import {
   ELedgerAccountStatus,
   ELedgerType,
   type ILedgerAccountDto,
@@ -16,6 +10,12 @@ import {
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import {
+  TransactionLinesForm,
+  TransactionLinesFormDialog,
+  type ITransactionLineForm,
+  type TransactionLinesFormProps,
+} from './transaction-lines-form';
 
 vi.mock('@/shared/hooks/use-currencies', () => ({
   default: () => ({

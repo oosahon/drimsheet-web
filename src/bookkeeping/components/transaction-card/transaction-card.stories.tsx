@@ -1,5 +1,5 @@
-import { TransactionCard } from '@/bookkeeping/ui/components/transaction-card';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { TransactionCard } from './transaction-card';
 
 const meta = {
   title: 'Bookkeeping/TransactionCard',

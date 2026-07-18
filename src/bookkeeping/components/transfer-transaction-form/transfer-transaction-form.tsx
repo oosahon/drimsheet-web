@@ -1,5 +1,4 @@
 import { AccountCombobox } from '@/account/components/account-combobox';
-import useTransferTransactionFormValidation from '@/bookkeeping/hooks/ui/use-transfer-transaction-form-validation';
 import { Button } from '@/shared/components/button';
 import { DateInput } from '@/shared/components/date-input';
 import { Field, FieldError, FieldGroup } from '@/shared/components/field';
@@ -12,6 +11,7 @@ import { cn } from '@/shared/lib/cn';
 import dateUtils from '@/shared/lib/date';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import useTransferTransactionFormValidation from './validation';
 
 export interface ITransferTransactionFormValues {
   sourceAccountId: string;

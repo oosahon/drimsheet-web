@@ -1,5 +1,4 @@
 import '@/_app/i18n/config';
-import { TransferTransactionForm } from '@/bookkeeping/ui/components/transfer-transaction-form';
 import {
   ELedgerAccountStatus,
   ELedgerType,
@@ -11,6 +10,7 @@ import {
 } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
+import { TransferTransactionForm } from './transfer-transaction-form';
 
 const mockAccounts: ILedgerAccountDto[] = [
   {

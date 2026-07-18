@@ -1,4 +1,3 @@
-import { TransactionsTable } from '@/bookkeeping/ui/components/transactions-table';
 import {
   EJournalEntrySourceType,
   EJournalEntryStatus,
@@ -8,6 +7,7 @@ import {
 } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
+import { TransactionsTable } from './transactions-table';
 
 const mockTransactions: IAccountTransactionRes[] = [
   {

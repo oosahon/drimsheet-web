@@ -1,3 +1,4 @@
+import { BalanceEffectIcon } from '@/bookkeeping/components/balance-effect-icon';
 import {
   Item,
   ItemContent,
@@ -8,7 +9,6 @@ import Money from '@/shared/components/money';
 import { StatusBadge } from '@/shared/components/status-badge';
 import { cn } from '@/shared/lib/cn';
 import type { ComponentProps } from 'react';
-import { BalanceEffectIcon } from './balance-effect-icon';
 
 interface TransactionCardProps extends ComponentProps<typeof Item> {
   constinerProps?: ComponentProps<'div'>;

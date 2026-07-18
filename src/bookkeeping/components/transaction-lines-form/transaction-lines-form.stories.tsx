@@ -1,8 +1,4 @@
 import {
-  TransactionLinesForm,
-  TransactionLinesFormDialog,
-} from '@/bookkeeping/ui/components/transaction-lines-form';
-import {
   ELedgerAccountStatus,
   ELedgerType,
   type ICurrencyDto,
@@ -14,6 +10,10 @@ import {
 } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  TransactionLinesForm,
+  TransactionLinesFormDialog,
+} from './transaction-lines-form';
 
 const mockCurrencies: ICurrencyDto[] = [
   { code: 'NGN', symbol: 'N', name: 'Nigerian Naira', minorUnit: 2 },

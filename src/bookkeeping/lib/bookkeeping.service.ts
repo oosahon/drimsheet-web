@@ -1,4 +1,4 @@
-import type { ITransferTransactionFormValues } from '@/bookkeeping/ui/components/transfer-transaction-form';
+import type { ITransferTransactionFormValues } from '@/bookkeeping/components/transfer-transaction-form';
 import purpleLedgerApi from '@/shared/lib/api';
 import {
   type IJournalLineReq,

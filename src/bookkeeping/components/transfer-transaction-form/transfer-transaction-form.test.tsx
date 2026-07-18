@@ -1,8 +1,4 @@
 import {
-  TransferTransactionForm,
-  type ITransferTransactionFormProps,
-} from '@/bookkeeping/ui/components/transfer-transaction-form';
-import {
   EAdjunctAccountRule,
   EContraAccountRule,
   ELedgerAccountStatus,
@@ -15,6 +11,10 @@ import {
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import {
+  TransferTransactionForm,
+  type ITransferTransactionFormProps,
+} from './transfer-transaction-form';
 
 const createAccount = (
   overrides: Pick<ILedgerAccountDto, 'id' | 'code' | 'name'> &
