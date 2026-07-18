@@ -1,5 +1,5 @@
+import { AccountCombobox } from '@/account/components/account-combobox';
 import useTransferTransactionFormValidation from '@/bookkeeping/hooks/ui/use-transfer-transaction-form-validation';
-import { AccountCombobox } from '@/ledger-accounts/ui/components/account-combobox';
 import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
 import { Button } from '@/shared/ui/components/button';
 import { DateInput } from '@/shared/ui/components/date-input';

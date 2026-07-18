@@ -1,7 +1,7 @@
+import useLedgerAccounts from '@/account/hooks/use-ledger-accounts';
 import useRecordTransferTransaction from '@/bookkeeping/hooks/api/use-record-transfer-transaction';
 import type { ITransferTransactionFormValues } from '@/bookkeeping/ui/components/transfer-transaction-form';
 import { TransferTransactionForm } from '@/bookkeeping/ui/components/transfer-transaction-form';
-import useLedgerAccounts from '@/ledger-accounts/hooks/api/use-ledger-accounts';
 import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
 import { ELedgerAccountSubType } from '@/shared/utils/api/Api';
 import { useTranslation } from 'react-i18next';

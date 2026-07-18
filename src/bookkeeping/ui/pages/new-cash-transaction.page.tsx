@@ -1,5 +1,5 @@
+import useLedgerAccount from '@/account/hooks/use-ledger-account';
 import TransferTransactionFormContainer from '@/bookkeeping/ui/containers/transfer-transaction-form.container';
-import useLedgerAccount from '@/ledger-accounts/hooks/api/use-ledger-account';
 import { EFileType } from '@/shared/types/file.types';
 import { AppHeader } from '@/shared/ui/components/app';
 import { DocumentUpload } from '@/shared/ui/components/document-upload';

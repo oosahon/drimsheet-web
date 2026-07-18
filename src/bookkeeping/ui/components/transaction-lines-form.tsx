@@ -1,4 +1,4 @@
-import { AccountCombobox } from '@/ledger-accounts/ui/components/account-combobox';
+import { AccountCombobox } from '@/account/components/account-combobox';
 import useCurrencies from '@/shared/hooks/use-currencies';
 import { Button } from '@/shared/ui/components/button';
 import { CurrencySelect } from '@/shared/ui/components/currency-select';
