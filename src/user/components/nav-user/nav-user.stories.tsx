@@ -1,9 +1,9 @@
-import { NavUser } from '@/shared/ui/components/nav-user';
+import { NavUser } from '@/user/components/nav-user';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 
 const meta = {
-  title: 'Shared UI/NavUser',
+  title: 'User/NavUser',
   component: NavUser,
   tags: ['autodocs'],
   decorators: [
@@ -16,6 +16,7 @@ const meta = {
     ),
   ],
 } satisfies Meta<typeof NavUser>;
+
 export default meta;
 type Story = StoryObj<typeof meta>;
 
@@ -26,5 +27,11 @@ export const Default: Story = {
       lastName: 'Doe',
       email: 'john@example.com',
     },
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    isLoading: true,
   },
 };

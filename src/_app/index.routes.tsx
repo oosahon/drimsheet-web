@@ -1,3 +1,4 @@
+import AppLayout from '@/_app/layouts/app-layout';
 import useLedgerAccountRoutes from '@/account/routes/ledger-account.routes';
 import useAuthRoutes from '@/auth/routes/auth.routes';
 import useReportingRoutes from '@/reporting/ui/routes/reporting.routes';
@@ -8,7 +9,13 @@ export default function AppRoutes() {
   const authRoutes = useAuthRoutes('/auth');
   const ledgerAccountRoutes = useLedgerAccountRoutes('/accounts');
 
-  const routes = useRoutes([reportingRoutes, authRoutes, ledgerAccountRoutes]);
+  const routes = useRoutes([
+    {
+      element: <AppLayout />,
+      children: [reportingRoutes, ledgerAccountRoutes],
+    },
+    authRoutes,
+  ]);
 
   return routes;
 }

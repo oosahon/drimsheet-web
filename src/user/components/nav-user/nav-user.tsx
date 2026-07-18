@@ -1,5 +1,3 @@
-import { LogoutConfirmationDialog } from '@/auth/dialogs/logout-confirmation';
-import { useSidebar } from '@/shared/hooks/use-sidebar';
 import { AnimatedThemeToggler } from '@/shared/ui/components/animated-theme-toggler';
 import { Avatar, AvatarFallback } from '@/shared/ui/components/avatar';
 import {
@@ -17,7 +15,7 @@ import {
   SidebarMenuItem,
 } from '@/shared/ui/components/sidebar';
 import { Skeleton } from '@/shared/ui/components/skeleton';
-import useProfile from '@/user/hooks/use-profile';
+import type { IUser } from '@/shared/utils/api/Api';
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -25,17 +23,34 @@ import {
   LogOutIcon,
   SparklesIcon,
 } from 'lucide-react';
+import type { ReactNode } from 'react';
 
-export function NavUser() {
-  const { data: user, isLoading } = useProfile();
+export type NavUserProfile = Pick<IUser, 'email' | 'firstName' | 'lastName'>;
 
-  const { isMobile } = useSidebar();
+export interface NavUserProps {
+  user?: NavUserProfile;
+  isLoading?: boolean;
+  isMobile?: boolean;
+  logoutDialog?: (trigger: ReactNode) => ReactNode;
+}
 
+export function NavUser({
+  user,
+  isLoading = false,
+  isMobile = false,
+  logoutDialog = (trigger) => trigger,
+}: NavUserProps) {
   if (!user || isLoading) {
     return <Skeleton className="h-10 w-10 rounded-full" />;
   }
 
   const avatar = user.firstName.charAt(0) + user.lastName.charAt(0);
+  const logoutTrigger = (
+    <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+      <LogOutIcon />
+      Log out
+    </DropdownMenuItem>
+  );
 
   return (
     <SidebarMenu>
@@ -102,12 +117,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <LogoutConfirmationDialog>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
-                <LogOutIcon />
-                Log out
-              </DropdownMenuItem>
-            </LogoutConfirmationDialog>
+            {logoutDialog(logoutTrigger)}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

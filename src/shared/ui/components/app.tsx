@@ -7,7 +7,6 @@ import {
 } from '@/shared/ui/components/breadcrumb';
 import { NavConfigurations } from '@/shared/ui/components/nav-configurations';
 import { NavMain } from '@/shared/ui/components/nav-main';
-import { NavUser } from '@/shared/ui/components/nav-user';
 import {
   Sidebar,
   SidebarContent,
@@ -27,7 +26,7 @@ import {
   TrendingUp,
   UsersRound,
 } from 'lucide-react';
-import type { PropsWithChildren } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
 import { Fragment, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -129,7 +128,11 @@ export function AppHeaderTitle({
 // 4. AppSidebar
 // ==========================================
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  footer?: ReactNode;
+}
+
+export function AppSidebar({ footer, ...props }: AppSidebarProps) {
   const { t } = useTranslation(['shared']);
 
   const sidebarData = useMemo(
@@ -219,9 +222,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavMain items={sidebarData.navMain} />
         <NavConfigurations projects={sidebarData.projects} />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser />
-      </SidebarFooter>
+      {footer && <SidebarFooter>{footer}</SidebarFooter>}
       <SidebarRail />
     </Sidebar>
   );
