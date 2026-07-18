@@ -1,4 +1,4 @@
-import DashboardRoute from '@/reporting/ui/routes/dashboard';
+import DashboardPage from '@/reporting/pages/dashboard';
 import type { TModuleRoutes } from '@/shared/types/routes.types';
 import { Navigate } from 'react-router-dom';
 
@@ -7,7 +7,7 @@ const useReportingRoutes: TModuleRoutes = (basePath) => {
     path: basePath,
     children: [
       { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: 'dashboard', element: <DashboardRoute /> },
+      { path: 'dashboard', element: <DashboardPage /> },
     ],
   };
 };

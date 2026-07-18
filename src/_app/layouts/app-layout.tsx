@@ -1,5 +1,5 @@
 import { LogoutConfirmationDialog } from '@/auth/dialogs/logout-confirmation';
-import OnboardingManager from '@/onboarding/ui/containers/onboarding-manager.container';
+import { OnboardingManager } from '@/onboarding/components/onboarding-manager';
 import { AppSidebar } from '@/shared/ui/components/app';
 import { SidebarInset, SidebarProvider } from '@/shared/ui/components/sidebar';
 import { NavUserContainer } from '@/user/components/nav-user';
