@@ -1,4 +1,4 @@
-import bookkeepingService from '@/bookkeeping/lib/bookkeeping.service';
+import { bookkeepingService } from '@/bookkeeping/lib/bookkeeping.service';
 import type { IPaginationDto } from '@/shared/lib/api/Api';
 import { useQuery } from '@tanstack/react-query';
 
@@ -7,10 +7,7 @@ interface IParams {
   pagination: IPaginationDto;
 }
 
-export default function useAccountTransactions({
-  accountId,
-  pagination,
-}: IParams) {
+export function useAccountTransactions({ accountId, pagination }: IParams) {
   return useQuery({
     queryKey: [
       'bookkeepingService.getAccountTransactions',

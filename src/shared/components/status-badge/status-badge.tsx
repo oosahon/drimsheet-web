@@ -19,7 +19,7 @@ export function StatusBadge({
   showDot = true,
   label,
   ...props
-}: StatusBadgeProps) {
+}: Readonly<StatusBadgeProps>) {
   return (
     <span
       className={cn(statusBadgeVariants({ variant }), className)}

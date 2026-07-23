@@ -1,5 +1,5 @@
 import { useSidebar } from '@/shared/components/sidebar/use-sidebar';
-import useProfile from '@/user/hooks/use-profile';
+import { useProfile } from '@/user/hooks/use-profile';
 import type { ReactNode } from 'react';
 import { NavUser } from './nav-user';
 
@@ -7,7 +7,9 @@ interface NavUserContainerProps {
   logoutDialog?: (trigger: ReactNode) => ReactNode;
 }
 
-export function NavUserContainer({ logoutDialog }: NavUserContainerProps) {
+export function NavUserContainer({
+  logoutDialog,
+}: Readonly<NavUserContainerProps>) {
   const { data: user, isLoading } = useProfile();
   const { isMobile } = useSidebar();
 

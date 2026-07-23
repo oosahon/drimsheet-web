@@ -1,11 +1,11 @@
 import { AccountOverview } from '@/account/components/account-overview';
-import useLedgerAccount from '@/account/hooks/use-ledger-account';
+import { useLedgerAccount } from '@/account/hooks/use-ledger-account';
 import { AppBody, AppHeader } from '@/shared/components/app';
 import {
   type IPageBreadcrumb,
   PageBreadcrumbs,
 } from '@/shared/components/page-breadcrumbs';
-import useDebounce from '@/shared/hooks/use-debounce';
+import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import {
   type IAccountTransactionRes,
@@ -15,10 +15,10 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { TransactionsTable } from '@/bookkeeping/components/transactions-table';
-import useAccountTransactions from '@/bookkeeping/hooks/use-account-transactions';
+import { useAccountTransactions } from '@/bookkeeping/hooks/use-account-transactions';
 import { useTranslation } from 'react-i18next';
 
-export default function PettyCashAccountPage() {
+export function PettyCashAccountPage() {
   const { t } = useTranslation(['shared']);
   const { accountId } = useParams();
   const navigate = useNavigate();

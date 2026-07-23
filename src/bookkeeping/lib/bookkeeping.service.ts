@@ -1,5 +1,5 @@
 import type { ITransferTransactionFormValues } from '@/bookkeeping/components/transfer-transaction-form';
-import purpleLedgerApi from '@/shared/lib/api';
+import { purpleLedgerApi } from '@/shared/lib/api';
 import {
   type IJournalLineReq,
   type IPaginationDto,
@@ -54,9 +54,7 @@ async function getAccountTransactions(
   return data;
 }
 
-const bookkeepingService = Object.freeze({
+export const bookkeepingService = Object.freeze({
   recordTransaction,
   getAccountTransactions,
 });
-
-export default bookkeepingService;

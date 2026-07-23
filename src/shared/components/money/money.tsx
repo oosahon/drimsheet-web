@@ -1,6 +1,6 @@
 import uiCurrencies from '@/shared/configs/currencies.json' with { type: 'json' };
 import type { IMoneyDto } from '@/shared/lib/api/Api';
-import currencyService from '@/shared/lib/currency.service';
+import { currencyService } from '@/shared/lib/currency.service';
 import type { ComponentProps } from 'react';
 
 interface MoneyProps extends ComponentProps<'span'> {
@@ -28,7 +28,7 @@ const getMoneyDisplayAmount = (value: IMoneyDto): number => {
   }
 };
 
-export default function Money({ value, hide, ...props }: MoneyProps) {
+export function Money({ value, hide, ...props }: Readonly<MoneyProps>) {
   const locale = currencyService.getJurisdictionLocale(value.currencyCode);
 
   const formatted = new Intl.NumberFormat(locale, {

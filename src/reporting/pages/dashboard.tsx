@@ -1,4 +1,4 @@
-export default function DashboardPage() {
+export function DashboardPage() {
   return (
     <>
       <div>Dashboard</div>

@@ -1,5 +1,5 @@
 import '@/_app/i18n/config';
-import App from '@/_app/index';
+import { App } from '@/_app/index';
 import '@/_app/index.css';
 import * as Sentry from '@sentry/react';
 import { StrictMode } from 'react';

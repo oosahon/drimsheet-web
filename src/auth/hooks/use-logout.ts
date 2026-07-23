@@ -1,7 +1,7 @@
-import authService from '@/auth/lib/auth.service';
+import { authService } from '@/auth/lib/auth.service';
 import { useMutation } from '@tanstack/react-query';
 
-export default function useLogout() {
+export function useLogout() {
   return useMutation({
     mutationFn: () => authService.logout(),
   });

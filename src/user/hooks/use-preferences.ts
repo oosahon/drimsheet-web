@@ -1,7 +1,7 @@
-import userService from '@/user/lib/user.service';
+import { userService } from '@/user/lib/user.service';
 import { useQuery } from '@tanstack/react-query';
 
-export default function usePreferences() {
+export function usePreferences() {
   return useQuery({
     queryKey: ['userService.getPreferences'],
     queryFn: () => userService.getPreferences(),

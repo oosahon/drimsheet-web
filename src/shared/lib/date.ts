@@ -121,7 +121,7 @@ function isNotInTheFuture(date: Date | string | number) {
   return dayjs(date).isBefore(dayjs());
 }
 
-const dateUtils = Object.freeze({
+export const dateUtils = Object.freeze({
   isValidDate,
   isNotInThePast,
   isNotInTheFuture,
@@ -135,7 +135,5 @@ const dateUtils = Object.freeze({
   getDurationInMonths,
   formatOptions,
 });
-
-export default dateUtils;
 
 export { JS_MONTH_INDEX_OFFSET };

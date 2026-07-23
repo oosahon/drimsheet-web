@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-export default function useResetPasswordFormValidation() {
+export function useResetPasswordFormValidation() {
   const { t } = useTranslation('auth');
 
   const password_min_length_text = t('password_min_length_text');

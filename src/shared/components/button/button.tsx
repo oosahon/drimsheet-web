@@ -19,7 +19,7 @@ export function Button({
   loading = false,
   children,
   ...props
-}: ButtonProps) {
+}: Readonly<ButtonProps>) {
   if (asChild) {
     return (
       <Slot.Root

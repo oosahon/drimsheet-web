@@ -1,10 +1,10 @@
-import authService from '@/auth/lib/auth.service';
+import { authService } from '@/auth/lib/auth.service';
 import { FullPageLoader } from '@/shared/components/full-page-loader';
 import { useEffect, useRef, useState, type PropsWithChildren } from 'react';
 
-export default function AccessTokenManagerContainer({
+export function AccessTokenManagerContainer({
   children,
-}: PropsWithChildren) {
+}: Readonly<PropsWithChildren>) {
   const [isInitializing, setIsInitializing] = useState(true);
 
   const hasInitialized = useRef(false);

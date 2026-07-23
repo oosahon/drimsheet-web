@@ -2,11 +2,11 @@ import { Ellipsis, EqualApproximately, Plus } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import ledgerAccountMapper from '@/account/lib/account.mapper';
+import { ledgerAccountMapper } from '@/account/lib/account.mapper';
 import { Button } from '@/shared/components/button';
 import { DataTable, type ITableColumn } from '@/shared/components/data-table';
 import { FormattedDate } from '@/shared/components/date';
-import Money from '@/shared/components/money';
+import { Money } from '@/shared/components/money';
 import { SearchField } from '@/shared/components/search-field';
 import { StatusBadge } from '@/shared/components/status-badge';
 import { TablePagination } from '@/shared/components/table-pagination';
@@ -62,7 +62,7 @@ export function LedgerAccountsTable({
   onSearchChange,
   filters,
   onAddAccount,
-}: LedgerAccountsTableProps) {
+}: Readonly<LedgerAccountsTableProps>) {
   const { t } = useTranslation(['ledger-accounts', 'shared']);
 
   const columns = useMemo<ITableColumn<ILedgerAccountDto>[]>(() => {

@@ -1,6 +1,6 @@
-import useLedgerAccounts from '@/account/hooks/use-ledger-accounts';
-import useRecordTransferTransaction from '@/bookkeeping/hooks/use-record-transfer-transaction';
-import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
+import { useLedgerAccounts } from '@/account/hooks/use-ledger-accounts';
+import { useRecordTransferTransaction } from '@/bookkeeping/hooks/use-record-transfer-transaction';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { ELedgerAccountSubType } from '@/shared/lib/api/Api';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -15,7 +15,7 @@ interface TransferTransactionFormContainerProps {
 export function TransferTransactionFormContainer({
   sourceAccountId,
   onSuccess,
-}: TransferTransactionFormContainerProps) {
+}: Readonly<TransferTransactionFormContainerProps>) {
   const { data: accountsData, isLoading } = useLedgerAccounts({
     limit: 100,
     subType: ELedgerAccountSubType.CashAndCashEquivalent,

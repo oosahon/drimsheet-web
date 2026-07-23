@@ -12,7 +12,7 @@ function BalanceEffectIcon({
   effect,
   className,
   ...props
-}: TransactionCardProps) {
+}: Readonly<TransactionCardProps>) {
   const defaultClassName = 'self-center !translate-y-0 size-16 rounded-full';
 
   switch (effect) {

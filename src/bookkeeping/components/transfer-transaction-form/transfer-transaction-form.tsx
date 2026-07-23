@@ -5,13 +5,13 @@ import { Field, FieldError, FieldGroup } from '@/shared/components/field';
 import { Label } from '@/shared/components/label';
 import { MoneyWithCurrencyInput } from '@/shared/components/money-with-currency-input';
 import { Textarea } from '@/shared/components/textarea';
-import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import type { ILedgerAccountDto, IMoneyDto } from '@/shared/lib/api/Api';
 import { cn } from '@/shared/lib/cn';
-import dateUtils from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/date';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import useTransferTransactionFormValidation from './validation';
+import { useTransferTransactionFormValidation } from './validation';
 
 export interface ITransferTransactionFormValues {
   sourceAccountId: string;
@@ -66,11 +66,11 @@ function PendingSwitch({
   id,
   checked,
   onChange,
-}: {
+}: Readonly<{
   id: string;
   checked: boolean;
   onChange: (checked: boolean) => void;
-}) {
+}>) {
   return (
     <button
       type="button"
@@ -99,7 +99,7 @@ export function TransferTransactionForm({
   onSubmit,
   loading,
   sourceAccountId,
-}: ITransferTransactionFormProps) {
+}: Readonly<ITransferTransactionFormProps>) {
   const { t } = useTranslation(['bookkeeping', 'shared']);
 
   const validationSchema = useTransferTransactionFormValidation();

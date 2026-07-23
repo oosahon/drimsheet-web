@@ -27,7 +27,7 @@ export interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   footer?: ReactNode;
 }
 
-export function AppSidebar({ footer, ...props }: AppSidebarProps) {
+export function AppSidebar({ footer, ...props }: Readonly<AppSidebarProps>) {
   const { t } = useTranslation(['shared']);
 
   const sidebarData = useMemo(

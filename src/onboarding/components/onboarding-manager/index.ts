@@ -1,1 +1,1 @@
-export { default as OnboardingManager } from './onboarding-manager.container';
+export { OnboardingManager } from './onboarding-manager.container';

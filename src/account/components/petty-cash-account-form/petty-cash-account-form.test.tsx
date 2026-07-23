@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/shared/hooks/use-currencies', () => ({
-  default: () => ({ data: [] }),
+  useCurrencies: () => ({ data: [] }),
 }));
 
 describe('PettyCashAccountForm', () => {

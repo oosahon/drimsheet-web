@@ -10,7 +10,7 @@ interface SearchFieldProps extends React.ComponentProps<'input'> {
   fieldLabelProps?: React.ComponentProps<typeof FieldLabel>;
 }
 
-export function SearchField({ ...inputProps }: SearchFieldProps) {
+export function SearchField({ ...inputProps }: Readonly<SearchFieldProps>) {
   return (
     <InputGroup>
       <InputGroupAddon>

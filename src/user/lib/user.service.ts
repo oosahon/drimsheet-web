@@ -1,6 +1,6 @@
-import purpleLedgerApi from '@/shared/lib/api';
+import { purpleLedgerApi } from '@/shared/lib/api';
 
-const userService = {
+export const userService = {
   async getProfile() {
     const res = await purpleLedgerApi.users.getAuthUserProfile();
     return res.data;
@@ -13,5 +13,3 @@ const userService = {
     return res.data;
   },
 };
-
-export default userService;

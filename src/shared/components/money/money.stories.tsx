@@ -1,4 +1,4 @@
-import Money from '@/shared/components/money';
+import { Money } from '@/shared/components/money';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {

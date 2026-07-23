@@ -138,7 +138,7 @@ function useFilePreview(file: File) {
   return previewUrl;
 }
 
-function FilePreview({ file }: { file: File }) {
+function FilePreview({ file }: Readonly<{ file: File }>) {
   const previewUrl = useFilePreview(file);
 
   return (
@@ -178,7 +178,7 @@ function DocumentUploadContent({
   onUpload,
   className,
   ...props
-}: DocumentUploadProps) {
+}: Readonly<DocumentUploadProps>) {
   const { i18n, t } = useTranslation('shared');
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -308,7 +308,7 @@ function DocumentUploadContent({
   );
 }
 
-function DocumentUpload(props: DocumentUploadProps) {
+function DocumentUpload(props: Readonly<DocumentUploadProps>) {
   return (
     <DndProvider backend={HTML5Backend}>
       <DocumentUploadContent {...props} />

@@ -40,7 +40,7 @@ function isHashLink(link: string) {
 export function PageBreadcrumbs({
   breadcrumb,
   isLoading,
-}: PageBreadcrumbsProps) {
+}: Readonly<PageBreadcrumbsProps>) {
   if (isLoading) {
     return <Skeleton className="w-25 h-3" />;
   }

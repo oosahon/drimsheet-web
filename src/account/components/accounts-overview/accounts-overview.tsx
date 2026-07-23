@@ -1,5 +1,5 @@
 import { LedgerTypeIcon } from '@/account/components/ledger-type-icon';
-import Money from '@/shared/components/money';
+import { Money } from '@/shared/components/money';
 import type { IMoneyDto } from '@/shared/lib/api/Api';
 import { ELedgerType, type ULedgerType } from '@/shared/lib/api/Api';
 import { cn } from '@/shared/lib/cn';
@@ -19,7 +19,7 @@ export function LedgerAccountsOverview({
   balance,
   description,
   className,
-}: LedgerAccountsOverviewProps) {
+}: Readonly<LedgerAccountsOverviewProps>) {
   const { t } = useTranslation(['shared']);
 
   const ledgerTypeLabels: Record<ULedgerType, string> = {

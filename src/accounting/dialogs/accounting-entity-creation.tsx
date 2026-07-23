@@ -1,7 +1,7 @@
 import { AccountingEntityCreationForm } from '@/accounting/components/accounting-entity-creation-form/accounting-entity-creation-form';
 import type { IAccountingEntityFormValues } from '@/accounting/components/accounting-entity-creation-form/types';
-import useCreateAccountingEntity from '@/accounting/hooks/use-create-accounting-entity';
-import useJurisdictions from '@/accounting/hooks/use-jurisdictions';
+import { useCreateAccountingEntity } from '@/accounting/hooks/use-create-accounting-entity';
+import { useJurisdictions } from '@/accounting/hooks/use-jurisdictions';
 import {
   Dialog,
   DialogContent,
@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/dialog';
-import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
-import useCurrencies from '@/shared/hooks/use-currencies';
-import useProfile from '@/user/hooks/use-profile';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
+import { useCurrencies } from '@/shared/hooks/use-currencies';
+import { useProfile } from '@/user/hooks/use-profile';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -20,7 +20,7 @@ interface AccountingEntityCreationDialogProps {
   done: () => void;
 }
 
-export default function AccountingEntityCreationDialog({
+export function AccountingEntityCreationDialog({
   open,
   done,
 }: AccountingEntityCreationDialogProps) {

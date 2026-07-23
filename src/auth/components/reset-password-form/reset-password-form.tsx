@@ -7,13 +7,13 @@ import {
 } from '@/shared/components/field';
 import { Input } from '@/shared/components/input';
 import { PasswordInput } from '@/shared/components/password-input';
-import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { cn } from '@/shared/lib/cn';
 import { useFormik, type FormikHelpers } from 'formik';
 import { type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { IResetPasswordFormValues } from './types';
-import useResetPasswordFormValidation from './validation';
+import { useResetPasswordFormValidation } from './validation';
 
 export interface ResetPasswordFormProps extends Omit<
   ComponentProps<'div'>,
@@ -33,7 +33,7 @@ export function ResetPasswordForm({
   onSubmit,
   loading,
   ...props
-}: ResetPasswordFormProps) {
+}: Readonly<ResetPasswordFormProps>) {
   const { t } = useTranslation('auth');
 
   const validationSchema = useResetPasswordFormValidation();

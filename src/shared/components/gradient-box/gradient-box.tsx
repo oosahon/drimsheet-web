@@ -41,7 +41,7 @@ export function GradientBox({
   className,
   variant,
   ...props
-}: GradientBoxProps) {
+}: Readonly<GradientBoxProps>) {
   return (
     <div
       className={cn(gradientBoxVariants({ variant }), className)}

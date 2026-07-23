@@ -1,8 +1,8 @@
 import type { IPettyCashAccountFormValues } from '@/account/components/petty-cash-account-form';
-import purpleLedgerApi from '@/shared/lib/api';
+import { purpleLedgerApi } from '@/shared/lib/api';
 import type { IPettyCashAccountCreationReq } from '@/shared/lib/api/Api';
 
-const assetAccountService = {
+export const assetAccountService = {
   async createPettyCashAccount(payload: IPettyCashAccountFormValues) {
     const body: IPettyCashAccountCreationReq = {
       name: payload.name,
@@ -21,5 +21,3 @@ const assetAccountService = {
     await purpleLedgerApi.ledger.createPettyCashAccount(body);
   },
 };
-
-export default assetAccountService;

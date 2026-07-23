@@ -19,7 +19,7 @@ export function AppUsageModeRadioGroup({
   value,
   onChange,
   error,
-}: AppUsageModeRadioGroupProps) {
+}: Readonly<AppUsageModeRadioGroupProps>) {
   return (
     <Field>
       <Label className="text-muted-foreground">Accounting mode</Label>

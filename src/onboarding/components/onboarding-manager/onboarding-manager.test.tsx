@@ -1,4 +1,4 @@
-import useAccountingEntities from '@/accounting/hooks/use-accounting-entities';
+import { useAccountingEntities } from '@/accounting/hooks/use-accounting-entities';
 import { OnboardingManager } from '@/onboarding/components/onboarding-manager';
 import type { IAccountingEntity } from '@/shared/lib/api/Api';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -8,16 +8,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('@/accounting/dialogs/accounting-entity-creation', () => {
   return {
     __esModule: true,
-    default: ({ open }: { open: boolean; done: () => void }) => (
-      <div data-testid="accounting-onboarding-form" data-open={open} />
-    ),
+    AccountingEntityCreationDialog: ({
+      open,
+    }: {
+      open: boolean;
+      done: () => void;
+    }) => <div data-testid="accounting-onboarding-form" data-open={open} />,
   };
 });
 
 vi.mock('@/accounting/hooks/use-accounting-entities', () => {
   return {
     __esModule: true,
-    default: vi.fn(),
+    useAccountingEntities: vi.fn(),
   };
 });
 

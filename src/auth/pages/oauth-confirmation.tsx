@@ -1,9 +1,9 @@
-import authService from '@/auth/lib/auth.service';
+import { authService } from '@/auth/lib/auth.service';
 import { FullPageLoader } from '@/shared/components/full-page-loader';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-export default function OAuthConfirmationPage() {
+export function OAuthConfirmationPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 

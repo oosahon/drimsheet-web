@@ -2,7 +2,7 @@ import { AuthConsent } from '@/auth/components/auth-consent';
 import { GoogleAuthButton } from '@/auth/components/google-auth-button';
 import { SignupForm } from '@/auth/components/signup-form';
 import type { ISignupFormValues } from '@/auth/components/signup-form/types';
-import useSignupWithEmail from '@/auth/hooks/use-signup-with-email';
+import { useSignupWithEmail } from '@/auth/hooks/use-signup-with-email';
 import emailSentImg from '@/shared/assets/email-sent.svg';
 import logoImg from '@/shared/assets/logo.svg';
 import {
@@ -12,13 +12,13 @@ import {
   CardTitle,
 } from '@/shared/components/card';
 import { FieldDescription, FieldSeparator } from '@/shared/components/field';
-import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-export default function SignupPage() {
+export function SignupPage() {
   const [searchParams] = useSearchParams();
   const handleApiError = useApiErrorHandler();
   const { t } = useTranslation('auth');

@@ -6,7 +6,7 @@ import {
   PopoverTrigger,
 } from '@/shared/components/popover';
 import { cn } from '@/shared/lib/cn';
-import dateUtils from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/date';
 import { Calendar1 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -44,7 +44,7 @@ function DateInput({
   className,
   disabled,
   ...props
-}: DateInputProps) {
+}: Readonly<DateInputProps>) {
   const [open, setOpen] = useState(false);
 
   const selectedDate = parseDateValue(value);

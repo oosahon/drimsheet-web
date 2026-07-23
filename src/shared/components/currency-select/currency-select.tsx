@@ -39,7 +39,7 @@ export function CurrencySelect({
   onChange,
   error,
   displayCode = false,
-}: CurrencySelectProps) {
+}: Readonly<CurrencySelectProps>) {
   const mappedCurrencies = useMemo(() => {
     return currencies.map((c) => {
       const uiCurrency = uiCurrencies.find((uc) => uc.code === c.code);

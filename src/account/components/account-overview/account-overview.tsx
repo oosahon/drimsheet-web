@@ -1,6 +1,6 @@
-import mapAccountTypeToIcon from '@/account/lib/account-to-icon.mapper';
+import { mapAccountTypeToIcon } from '@/account/lib/account-to-icon.mapper';
 import { Button } from '@/shared/components/button';
-import Money from '@/shared/components/money';
+import { Money } from '@/shared/components/money';
 import {
   Tooltip,
   TooltipContent,
@@ -31,7 +31,7 @@ function AccountOverview({
   settingsTooltipLabel,
   className,
   ...props
-}: AccountOverviewProps) {
+}: Readonly<AccountOverviewProps>) {
   const { t } = useTranslation(['shared']);
   const AccountIcon = mapAccountTypeToIcon(account);
   const accountIcon = createElement(AccountIcon, {

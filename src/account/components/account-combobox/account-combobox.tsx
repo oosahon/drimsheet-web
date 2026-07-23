@@ -1,4 +1,4 @@
-import mapAccountTypeToIcon from '@/account/lib/account-to-icon.mapper';
+import { mapAccountTypeToIcon } from '@/account/lib/account-to-icon.mapper';
 import {
   Combobox,
   ComboboxContent,
@@ -27,7 +27,7 @@ export interface AccountComboboxProps {
   disabled?: boolean;
 }
 
-function AccountIcon({ account }: { account?: ILedgerAccountDto }) {
+function AccountIcon({ account }: Readonly<{ account?: ILedgerAccountDto }>) {
   const Icon = account ? mapAccountTypeToIcon(account) : Wallet;
 
   return createElement(Icon, { className: 'size-4 shrink-0' });
@@ -43,7 +43,7 @@ export function AccountCombobox({
   placeholder,
   emptyMessage,
   disabled = false,
-}: AccountComboboxProps) {
+}: Readonly<AccountComboboxProps>) {
   const { t } = useTranslation(['ledger-accounts']);
   const [searchValue, setSearchValue] = useState('');
 

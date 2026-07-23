@@ -34,7 +34,7 @@ export function CountryComboBox({
   jurisdictions,
   onChange,
   error,
-}: CountryComboBoxProps) {
+}: Readonly<CountryComboBoxProps>) {
   const mappedCountries = useMemo(() => {
     return jurisdictions.map((c) => {
       const uiCountry = countries.find((uc) => uc.code === c.code);

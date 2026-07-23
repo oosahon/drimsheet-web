@@ -1,6 +1,10 @@
 import { cn } from '@/shared/lib/cn';
 
-function Input({ className, type, ...props }: React.ComponentProps<'input'>) {
+function Input({
+  className,
+  type,
+  ...props
+}: Readonly<React.ComponentProps<'input'>>) {
   return (
     <input
       type={type}

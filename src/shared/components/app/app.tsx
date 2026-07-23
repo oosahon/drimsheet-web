@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 // 1. AppBody
 // ==========================================
 
-export function AppBody({ children }: PropsWithChildren) {
+export function AppBody({ children }: Readonly<PropsWithChildren>) {
   return (
     <div className="flex w-full flex-col gap-15 pt-0 max-w-full">
       {children}
@@ -40,7 +40,7 @@ export function AppHeader({
   children,
   className,
   ...props
-}: AppHeaderProps) {
+}: Readonly<AppHeaderProps>) {
   return (
     <header
       {...props}
@@ -92,7 +92,7 @@ export function AppHeader({
 export function AppHeaderTitle({
   className,
   ...props
-}: React.ComponentProps<'h1'>) {
+}: Readonly<React.ComponentProps<'h1'>>) {
   return (
     <h1
       {...props}

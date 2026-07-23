@@ -1,5 +1,5 @@
 import { cn } from '@/shared/lib/cn';
-import dateUtils from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/date';
 
 interface FormattedDateProps extends React.HTMLAttributes<HTMLSpanElement> {
   value: Date;
@@ -11,7 +11,7 @@ function FormattedDate({
   className,
   countryCode,
   ...props
-}: FormattedDateProps) {
+}: Readonly<FormattedDateProps>) {
   return (
     <span
       className={cn('text-xs text-muted-foreground font-medium', className)}

@@ -8,13 +8,13 @@ import {
 
 export function NavConfigurations({
   projects,
-}: {
+}: Readonly<{
   projects: {
     name: string;
     url: string;
     icon: React.ReactNode;
   }[];
-}) {
+}>) {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Configurations</SidebarGroupLabel>

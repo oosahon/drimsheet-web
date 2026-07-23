@@ -3,12 +3,12 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/shared/components/button';
-import CarouselContext from '@/shared/components/carousel/carousel-context';
+import { CarouselContext } from '@/shared/components/carousel/carousel-context';
 import type {
   CarouselApi,
   CarouselProps,
 } from '@/shared/components/carousel/types';
-import useCarousel from '@/shared/components/carousel/use-carousel';
+import { useCarousel } from '@/shared/components/carousel/use-carousel';
 import { cn } from '@/shared/lib/cn';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
@@ -20,7 +20,7 @@ function Carousel({
   className,
   children,
   ...props
-}: React.ComponentProps<'div'> & CarouselProps) {
+}: Readonly<React.ComponentProps<'div'> & CarouselProps>) {
   const [carouselRef, api] = useEmblaCarousel(
     {
       ...opts,
@@ -102,7 +102,10 @@ function Carousel({
   );
 }
 
-function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
+function CarouselContent({
+  className,
+  ...props
+}: Readonly<React.ComponentProps<'div'>>) {
   const { carouselRef, orientation } = useCarousel();
 
   return (
@@ -123,7 +126,10 @@ function CarouselContent({ className, ...props }: React.ComponentProps<'div'>) {
   );
 }
 
-function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
+function CarouselItem({
+  className,
+  ...props
+}: Readonly<React.ComponentProps<'div'>>) {
   const { orientation } = useCarousel();
 
   return (
@@ -146,7 +152,7 @@ function CarouselPrevious({
   variant = 'outline',
   size = 'icon-sm',
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: Readonly<React.ComponentProps<typeof Button>>) {
   // 5. third party library hooks
   const { t } = useTranslation(['shared']);
 
@@ -180,7 +186,7 @@ function CarouselNext({
   variant = 'outline',
   size = 'icon-sm',
   ...props
-}: React.ComponentProps<typeof Button>) {
+}: Readonly<React.ComponentProps<typeof Button>>) {
   // 5. third party library hooks
   const { t } = useTranslation(['shared']);
 

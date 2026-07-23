@@ -1,7 +1,7 @@
-import CarouselContext from '@/shared/components/carousel/carousel-context';
+import { CarouselContext } from '@/shared/components/carousel/carousel-context';
 import { useContext } from 'react';
 
-export default function useCarousel() {
+export function useCarousel() {
   const context = useContext(CarouselContext);
 
   if (!context) {

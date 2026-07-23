@@ -6,7 +6,7 @@ import { NavUserContainer } from '@/user/components/nav-user';
 import type { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 
-export default function AppLayout() {
+export function AppLayout() {
   return (
     <>
       <SidebarProvider>

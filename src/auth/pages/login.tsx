@@ -2,13 +2,13 @@ import { AuthConsent } from '@/auth/components/auth-consent';
 import { GoogleAuthButton } from '@/auth/components/google-auth-button';
 import { LoginForm } from '@/auth/components/login-form';
 import type { ILoginFormValues } from '@/auth/components/login-form/types';
-import useLoginWithEmail from '@/auth/hooks/use-login-with-email';
+import { useLoginWithEmail } from '@/auth/hooks/use-login-with-email';
 import { FieldDescription, FieldSeparator } from '@/shared/components/field';
-import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function LoginPage() {
+export function LoginPage() {
   const { t } = useTranslation('auth');
   const { t: tShared } = useTranslation('shared');
 

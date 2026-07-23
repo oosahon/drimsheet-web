@@ -10,9 +10,9 @@ import {
 } from '@/shared/components/dialog';
 import { Field, FieldGroup } from '@/shared/components/field';
 import { Label } from '@/shared/components/label';
-import Money from '@/shared/components/money';
+import { Money } from '@/shared/components/money';
 import { MoneyInput } from '@/shared/components/money-input';
-import useCurrencies from '@/shared/hooks/use-currencies';
+import { useCurrencies } from '@/shared/hooks/use-currencies';
 import type { ICurrencyDto, ILedgerAccountDto } from '@/shared/lib/api/Api';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
@@ -99,7 +99,7 @@ function TransactionLineCard({
   onEdit,
   onDelete,
   disabled,
-}: TransactionLineCardProps) {
+}: Readonly<TransactionLineCardProps>) {
   const { t } = useTranslation(['bookkeeping']);
 
   const currencyCode = getLineCurrency(line, account);
@@ -175,7 +175,7 @@ function TransactionLineEditor({
   onChange,
   onSave,
   onCancel,
-}: TransactionLineEditorProps) {
+}: Readonly<TransactionLineEditorProps>) {
   const { t } = useTranslation(['bookkeeping', 'shared']);
 
   const selectedAccount = accounts.find(
@@ -258,7 +258,7 @@ function TransactionLinesFormContent({
   onSubmit,
   accounts,
   onCancel,
-}: TransactionLinesFormContentProps) {
+}: Readonly<TransactionLinesFormContentProps>) {
   const { t } = useTranslation(['shared']);
 
   const [lines, setLines] = useState<ITransactionLineFormState[]>(defaultLines);
@@ -426,7 +426,7 @@ function TransactionLinesForm({
   onSubmit,
   accounts,
   onCancel,
-}: TransactionLinesFormProps) {
+}: Readonly<TransactionLinesFormProps>) {
   const defaultValueKey = JSON.stringify(defaultValue);
 
   return (
@@ -456,7 +456,7 @@ function TransactionLinesFormDialog({
   onClose,
   title,
   ...formProps
-}: TransactionLinesFormDialogProps) {
+}: Readonly<TransactionLinesFormDialogProps>) {
   const { t } = useTranslation(['bookkeeping']);
 
   const handleOpenChange = (isOpen: boolean) => {

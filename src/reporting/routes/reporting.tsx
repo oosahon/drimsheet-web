@@ -1,8 +1,8 @@
-import DashboardPage from '@/reporting/pages/dashboard';
+import { DashboardPage } from '@/reporting/pages/dashboard';
 import type { TModuleRoutes } from '@/shared/lib/routes.types';
 import { Navigate } from 'react-router-dom';
 
-const useReportingRoutes: TModuleRoutes = (basePath) => {
+export const useReportingRoutes: TModuleRoutes = (basePath) => {
   return {
     path: basePath,
     children: [
@@ -11,5 +11,3 @@ const useReportingRoutes: TModuleRoutes = (basePath) => {
     ],
   };
 };
-
-export default useReportingRoutes;

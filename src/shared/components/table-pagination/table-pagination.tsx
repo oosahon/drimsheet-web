@@ -16,7 +16,7 @@ export function TablePagination({
   meta,
   onPageChange,
   className,
-}: TablePaginationProps) {
+}: Readonly<TablePaginationProps>) {
   const { page, totalPages } = meta;
 
   if (totalPages <= 1) {

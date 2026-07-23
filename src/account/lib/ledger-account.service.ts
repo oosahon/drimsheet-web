@@ -1,4 +1,4 @@
-import purpleLedgerApi from '@/shared/lib/api';
+import { purpleLedgerApi } from '@/shared/lib/api';
 import {
   ELedgerAccountSubType,
   ELedgerType,
@@ -23,10 +23,8 @@ async function getLedgerAccount(id: string) {
   return res.data;
 }
 
-const ledgerAccountService = Object.freeze({
+export const ledgerAccountService = Object.freeze({
   getLedgerAccounts,
   getPettyBaseCashFilters,
   getLedgerAccount,
 });
-
-export default ledgerAccountService;

@@ -7,7 +7,7 @@ interface PurpleLedgerApiAuthConfig {
   getAccountingEntityId?: () => string | null;
 }
 
-const purpleLedgerApi = new Api({
+export const purpleLedgerApi = new Api({
   baseURL: `${import.meta.env.VITE_API_URL}/api/v1`,
   withCredentials: true,
 });
@@ -76,5 +76,3 @@ purpleLedgerApi.instance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
-
-export default purpleLedgerApi;

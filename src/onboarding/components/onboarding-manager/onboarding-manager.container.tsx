@@ -1,8 +1,8 @@
-import AccountingEntityCreationDialog from '@/accounting/dialogs/accounting-entity-creation';
-import useAccountingEntities from '@/accounting/hooks/use-accounting-entities';
+import { AccountingEntityCreationDialog } from '@/accounting/dialogs/accounting-entity-creation';
+import { useAccountingEntities } from '@/accounting/hooks/use-accounting-entities';
 import { useMemo } from 'react';
 
-export default function OnboardingManager() {
+export function OnboardingManager() {
   const {
     data: accountingEntities,
     isLoading: isLoadingEntities,

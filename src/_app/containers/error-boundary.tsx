@@ -1,7 +1,7 @@
 import { Button } from '@/shared/components/button';
 import { FullPageLoader } from '@/shared/components/full-page-loader';
-import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
-import observabilityService from '@/shared/lib/observability.service';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
+import { observabilityService } from '@/shared/lib/observability.service';
 import { ErrorBoundary as SentryErrorBoundary } from '@sentry/react';
 import { isAxiosError } from 'axios';
 import { type ReactElement, type ReactNode, useEffect, useState } from 'react';

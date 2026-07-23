@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 
-function useGoogleOAuth() {
+export function useGoogleOAuth() {
   return useMutation({
     mutationFn: () => {
       window.location.href = `${import.meta.env.VITE_API_URL}/api/v1/auth/google`;
@@ -8,5 +8,3 @@ function useGoogleOAuth() {
     },
   });
 }
-
-export default useGoogleOAuth;

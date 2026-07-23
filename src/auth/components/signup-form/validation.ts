@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-export default function useSignupFormValidation() {
+export function useSignupFormValidation() {
   const { t } = useTranslation('auth');
 
   const first_name_required_text = t('first_name_required_text');

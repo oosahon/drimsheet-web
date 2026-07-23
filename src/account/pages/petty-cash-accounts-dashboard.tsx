@@ -12,7 +12,7 @@ import { ELedgerType } from '@/shared/lib/api/Api';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export default function PettyCashAccountsDashboardPage() {
+export function PettyCashAccountsDashboardPage() {
   const { t } = useTranslation(['ledger-accounts', 'shared']);
 
   const [showCreationForm, setShowCreationForm] = useState(false);

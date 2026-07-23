@@ -1,7 +1,7 @@
 import countries from '@/shared/configs/countries.json' with { type: 'json' };
-import purpleLedgerApi from '@/shared/lib/api';
+import { purpleLedgerApi } from '@/shared/lib/api';
 
-const currencyService = {
+export const currencyService = {
   async getAll() {
     const res = await purpleLedgerApi.currencies.getAll();
     return res.data;
@@ -14,5 +14,3 @@ const currencyService = {
     return jurisdiction?.locale ?? 'en-NG';
   },
 };
-
-export default currencyService;

@@ -1,4 +1,4 @@
-import useLedgerAccount from '@/account/hooks/use-ledger-account';
+import { useLedgerAccount } from '@/account/hooks/use-ledger-account';
 import { TransferTransactionFormContainer } from '@/bookkeeping/components/transfer-transaction-form';
 import { AppHeader } from '@/shared/components/app';
 import { DocumentUpload } from '@/shared/components/document-upload';
@@ -11,7 +11,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 
-export default function NewCashTransactionPage() {
+export function NewCashTransactionPage() {
   const navigate = useNavigate();
   const { t } = useTranslation(['shared']);
   const { accountId } = useParams();

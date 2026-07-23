@@ -18,7 +18,7 @@ import {
 } from './transaction-lines-form';
 
 vi.mock('@/shared/hooks/use-currencies', () => ({
-  default: () => ({
+  useCurrencies: () => ({
     data: [
       { code: 'NGN', symbol: 'N', name: 'Nigerian Naira', minorUnit: 2 },
       { code: 'USD', symbol: '$', name: 'United States Dollar', minorUnit: 2 },

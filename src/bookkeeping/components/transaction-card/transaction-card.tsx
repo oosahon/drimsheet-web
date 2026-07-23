@@ -5,7 +5,7 @@ import {
   ItemDescription,
   ItemTitle,
 } from '@/shared/components/item';
-import Money from '@/shared/components/money';
+import { Money } from '@/shared/components/money';
 import { StatusBadge } from '@/shared/components/status-badge';
 import { cn } from '@/shared/lib/cn';
 import type { ComponentProps } from 'react';
@@ -21,7 +21,7 @@ function TransactionCard({
   direction,
   variant = 'default',
   ...props
-}: TransactionCardProps) {
+}: Readonly<TransactionCardProps>) {
   const { className: containerClassName, ...containerProps } = constinerProps;
 
   return (

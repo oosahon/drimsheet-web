@@ -1,12 +1,12 @@
 import { RequestPasswordResetForm } from '@/auth/components/request-password-reset-form';
 import type { IRequestPasswordResetFormValues } from '@/auth/components/request-password-reset-form/types';
-import useRequestPasswordReset from '@/auth/hooks/use-request-password-reset';
-import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
+import { useRequestPasswordReset } from '@/auth/hooks/use-request-password-reset';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 
-export default function RequestPasswordResetPage() {
+export function RequestPasswordResetPage() {
   const { t } = useTranslation('auth');
   const { t: tShared } = useTranslation('shared');
 

@@ -1,4 +1,4 @@
-import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { describe, expect, it } from 'vitest';
 
 interface FormValues {

@@ -16,8 +16,6 @@ function mapStatusToBadgeProps(
   }
 }
 
-const ledgerAccountMapper = Object.freeze({
+export const ledgerAccountMapper = Object.freeze({
   mapStatusToBadgeProps,
 });
-
-export default ledgerAccountMapper;

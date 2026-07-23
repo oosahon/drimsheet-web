@@ -1,13 +1,13 @@
-import AuthLayout from '@/auth/layouts/auth-layout';
-import CompleteSignupPage from '@/auth/pages/complete-signup';
-import LoginPage from '@/auth/pages/login';
-import OAuthConfirmationPage from '@/auth/pages/oauth-confirmation';
-import RequestPasswordResetPage from '@/auth/pages/request-password-reset';
-import ResetPasswordPage from '@/auth/pages/reset-password';
-import SignupPage from '@/auth/pages/signup';
+import { AuthLayout } from '@/auth/layouts/auth-layout';
+import { CompleteSignupPage } from '@/auth/pages/complete-signup';
+import { LoginPage } from '@/auth/pages/login';
+import { OAuthConfirmationPage } from '@/auth/pages/oauth-confirmation';
+import { RequestPasswordResetPage } from '@/auth/pages/request-password-reset';
+import { ResetPasswordPage } from '@/auth/pages/reset-password';
+import { SignupPage } from '@/auth/pages/signup';
 import type { TModuleRoutes } from '@/shared/lib/routes.types';
 
-const useAuthRoutes: TModuleRoutes = (basePath) => {
+export const useAuthRoutes: TModuleRoutes = (basePath) => {
   return {
     path: basePath,
     element: <AuthLayout />,
@@ -21,5 +21,3 @@ const useAuthRoutes: TModuleRoutes = (basePath) => {
     ],
   };
 };
-
-export default useAuthRoutes;

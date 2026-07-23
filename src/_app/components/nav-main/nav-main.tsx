@@ -33,7 +33,7 @@ interface NavItem {
 interface NavMainProps extends PropsWithChildren {
   items: NavItem[];
 }
-export function NavMain({ items }: NavMainProps) {
+export function NavMain({ items }: Readonly<NavMainProps>) {
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Accounting</SidebarGroupLabel>

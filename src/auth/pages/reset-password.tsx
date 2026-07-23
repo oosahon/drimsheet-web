@@ -2,16 +2,16 @@ import {
   ResetPasswordForm,
   type ResetPasswordFormProps,
 } from '@/auth/components/reset-password-form';
-import useResetPassword from '@/auth/hooks/use-reset-password';
-import authService from '@/auth/lib/auth.service';
-import useApiErrorHandler from '@/shared/hooks/use-api-error-handler';
+import { useResetPassword } from '@/auth/hooks/use-reset-password';
+import { authService } from '@/auth/lib/auth.service';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import type { IApiValidationError } from '@/shared/lib/api/Api';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-export default function ResetPasswordPage() {
+export function ResetPasswordPage() {
   const { t } = useTranslation('auth');
   const { t: tShared } = useTranslation('shared');
   const navigate = useNavigate();

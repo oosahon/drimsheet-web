@@ -1,5 +1,5 @@
 import type { ISignupFormValues } from '@/auth/components/signup-form/types';
-import purpleLedgerApi from '@/shared/lib/api';
+import { purpleLedgerApi } from '@/shared/lib/api';
 import type {
   IEmailLoginReq,
   IResetPasswordReq,
@@ -21,7 +21,7 @@ async function executeRefresh(): Promise<string> {
   }
 }
 
-const authService = {
+export const authService = {
   isLoggedIn() {
     return localStorage.getItem('isLoggedIn') === 'true';
   },
@@ -106,5 +106,3 @@ const authService = {
     this.removeToken();
   },
 };
-
-export default authService;

@@ -6,7 +6,11 @@ interface CurrencyLogoProps extends ComponentProps<'div'> {
   url?: string;
 }
 
-export function CurrencyLogo({ url, className, ...props }: CurrencyLogoProps) {
+export function CurrencyLogo({
+  url,
+  className,
+  ...props
+}: Readonly<CurrencyLogoProps>) {
   if (!url) {
     return <CoinsIcon />;
   }

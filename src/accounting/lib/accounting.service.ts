@@ -1,11 +1,11 @@
-import purpleLedgerApi from '@/shared/lib/api';
+import { purpleLedgerApi } from '@/shared/lib/api';
 import {
   EAccountingEntityType,
   EPeriodUnit,
   type IAccountingEntityCreationDto,
 } from '@/shared/lib/api/Api';
-import dateUtils from '@/shared/lib/date';
-import localStorageService from '@/shared/lib/local-storage.service';
+import { dateUtils } from '@/shared/lib/date';
+import { localStorageService } from '@/shared/lib/local-storage.service';
 
 export interface CreateAccountingEntityInput {
   name: string;
@@ -18,7 +18,7 @@ export interface CreateAccountingEntityInput {
   accountingStandardCode: string;
 }
 
-const accountingService = {
+export const accountingService = {
   toCreateAccountingEntityPayload(
     data: CreateAccountingEntityInput
   ): IAccountingEntityCreationDto {
@@ -75,5 +75,3 @@ const accountingService = {
     return accountingEntity;
   },
 };
-
-export default accountingService;

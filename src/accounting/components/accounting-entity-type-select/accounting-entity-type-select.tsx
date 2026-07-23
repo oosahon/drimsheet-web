@@ -18,7 +18,7 @@ export function AccountingEntityTypeSelect({
   value,
   onChange,
   error,
-}: AccountingEntityTypeSelectProps) {
+}: Readonly<AccountingEntityTypeSelectProps>) {
   return (
     <Field>
       <Label htmlFor="individual-entity">Who is this account for?</Label>

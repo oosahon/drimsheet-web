@@ -4,11 +4,11 @@ import { Field, FieldError, FieldGroup } from '@/shared/components/field';
 import { Input } from '@/shared/components/input';
 import { Label } from '@/shared/components/label';
 import { MoneyInput } from '@/shared/components/money-input';
-import useCurrencies from '@/shared/hooks/use-currencies';
-import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { useCurrencies } from '@/shared/hooks/use-currencies';
+import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import usePettyCashAccountFormValidation from './validation';
+import { usePettyCashAccountFormValidation } from './validation';
 
 export interface IPettyCashAccountFormValues {
   name: string;
@@ -30,7 +30,7 @@ const initialValues: IPettyCashAccountFormValues = {
 export function PettyCashAccountForm({
   onSubmit,
   loading,
-}: IPettyCashAccountFormProps) {
+}: Readonly<IPettyCashAccountFormProps>) {
   const { data: currencies = [] } = useCurrencies();
   const validationSchema = usePettyCashAccountFormValidation();
 

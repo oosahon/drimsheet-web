@@ -1,7 +1,7 @@
 import apiErrorsJson from '@/shared/i18n/locales/en/api-errors.json';
 import type { IApiValidationError } from '@/shared/lib/api/Api';
 import { parseApiError } from '@/shared/lib/api/errors';
-import observabilityService from '@/shared/lib/observability.service';
+import { observabilityService } from '@/shared/lib/observability.service';
 import i18n from 'i18next';
 import { useCallback } from 'react';
 import { toast } from 'sonner';
@@ -28,7 +28,7 @@ export function configureApiErrorHandler(config: ApiErrorHandlerConfig) {
   apiErrorHandlerConfig = config;
 }
 
-export default function useApiErrorHandler() {
+export function useApiErrorHandler() {
   const handleApiError = useCallback(
     (err: unknown, options?: THandleErrorOptions) => {
       try {

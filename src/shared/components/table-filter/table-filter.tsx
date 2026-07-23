@@ -34,7 +34,7 @@ export function TableFilter({
   onClear,
   onSelectAll,
   trigger,
-}: TableFilterProps) {
+}: Readonly<TableFilterProps>) {
   const { t } = useTranslation(['shared']);
 
   const [searchQuery, setSearchQuery] = React.useState('');

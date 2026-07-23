@@ -248,7 +248,7 @@ function mapExpenseToIcon(
   return mapSubTypeToIcon(account, expenseTypeMaps, typeMaps.expense);
 }
 
-export default function mapAccountTypeToIcon(
+export function mapAccountTypeToIcon(
   account: Pick<ILedgerAccountDto, 'type' | 'subType' | 'behavior'>
 ): TIcon {
   switch (account.type) {

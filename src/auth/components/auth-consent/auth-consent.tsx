@@ -7,7 +7,7 @@ interface IAuthConsentProps {
 
 export function AuthConsent({
   actionText = 'creating an account',
-}: IAuthConsentProps) {
+}: Readonly<IAuthConsentProps>) {
   const { t } = useTranslation(['auth']);
 
   const consent_text = t('auth:by_action_you_agree_to_our_text', {

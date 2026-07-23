@@ -1,10 +1,12 @@
-import useGoogleOAuth from '@/auth/hooks/use-google-oauth';
+import { useGoogleOAuth } from '@/auth/hooks/use-google-oauth';
 import { Button } from '@/shared/components/button';
 import { GoogleIcon } from '@/shared/components/icons/google';
 import { type ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export function GoogleAuthButton({ ...props }: ComponentProps<typeof Button>) {
+export function GoogleAuthButton({
+  ...props
+}: Readonly<ComponentProps<typeof Button>>) {
   const { t } = useTranslation('auth');
   const { mutate } = useGoogleOAuth();
 

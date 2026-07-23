@@ -1,2 +1,2 @@
 export * from './money';
-export { default } from './money';
+export { Money } from './money';

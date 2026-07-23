@@ -7,14 +7,14 @@ import { Button } from '@/shared/components/button';
 import { CountryComboBox } from '@/shared/components/country-combobox';
 import { CurrencySelect } from '@/shared/components/currency-select';
 import { FieldError, FieldGroup, FieldSet } from '@/shared/components/field';
-import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import {
   EAccountingEntityType,
   type ICurrencyDto,
   type IJurisdictionDto,
   type UJurisdictionCode,
 } from '@/shared/lib/api/Api';
-import dateUtils from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/date';
 import { AppUsageModeRadioGroup } from '@/user/components/app-usage-mode-radio-group';
 import { useFormik } from 'formik';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -41,7 +41,9 @@ function Step1({
   getErrorMessage,
   jurisdictions,
   onNext,
-}: StepProps & { jurisdictions: IJurisdictionDto[]; onNext: () => void }) {
+}: Readonly<
+  StepProps & { jurisdictions: IJurisdictionDto[]; onNext: () => void }
+>) {
   const [accountingStandard, setAccountingStandard] = useState('IFRS');
 
   const isComplete =
@@ -144,13 +146,15 @@ function Step2({
   currencies,
   onNext,
   onBack,
-}: StepProps & {
-  getFiscalYearStartErrorStr: () => string | undefined;
-  getFiscalYearEndErrorStr: () => string | undefined;
-  currencies: ICurrencyDto[];
-  onNext: () => void;
-  onBack: () => void;
-}) {
+}: Readonly<
+  StepProps & {
+    getFiscalYearStartErrorStr: () => string | undefined;
+    getFiscalYearEndErrorStr: () => string | undefined;
+    currencies: ICurrencyDto[];
+    onNext: () => void;
+    onBack: () => void;
+  }
+>) {
   const isComplete =
     !!formik.values.functionalCurrency &&
     !!formik.values.reportingCurrency &&
@@ -264,7 +268,7 @@ function Step3({
   getErrorMessage,
   onBack,
   isSubmitting,
-}: StepProps & { onBack: () => void; isSubmitting?: boolean }) {
+}: Readonly<StepProps & { onBack: () => void; isSubmitting?: boolean }>) {
   const isComplete = formik.isValid;
   return (
     <div className="flex flex-col gap-6">
@@ -298,7 +302,7 @@ function AccountingEntityCreationForm({
   loading,
   currencies = [],
   jurisdictions = [],
-}: AccountingEntityCreationFormProps) {
+}: Readonly<AccountingEntityCreationFormProps>) {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
 

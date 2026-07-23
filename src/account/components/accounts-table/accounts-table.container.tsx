@@ -1,7 +1,7 @@
 import { LedgerAccountsTable } from '@/account/components/accounts-table';
-import useLedgerAccounts from '@/account/hooks/use-ledger-accounts';
-import ledgerAccountService from '@/account/lib/ledger-account.service';
-import useDebounce from '@/shared/hooks/use-debounce';
+import { useLedgerAccounts } from '@/account/hooks/use-ledger-accounts';
+import { ledgerAccountService } from '@/account/lib/ledger-account.service';
+import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import {
   type IGetLedgerAccountsQuery,
@@ -14,9 +14,9 @@ interface LedgerAccountsTableContainerProps {
   onAddAccount: () => void;
 }
 
-export default function LedgerAccountsTableContainer({
+export function LedgerAccountsTableContainer({
   onAddAccount,
-}: LedgerAccountsTableContainerProps) {
+}: Readonly<LedgerAccountsTableContainerProps>) {
   const tableQuery = useTableQueryParams<keyof ILedgerAccountDto, 'status'>({
     filterKeys: ['status'],
   });

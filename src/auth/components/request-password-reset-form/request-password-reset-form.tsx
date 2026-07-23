@@ -7,13 +7,13 @@ import {
   FieldLabel,
 } from '@/shared/components/field';
 import { Input } from '@/shared/components/input';
-import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { cn } from '@/shared/lib/cn';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { IRequestPasswordResetFormValues } from './types';
-import useRequestPasswordResetFormValidation from './validation';
+import { useRequestPasswordResetFormValidation } from './validation';
 
 interface IRequestPasswordResetFormProps extends Omit<
   ComponentProps<'div'>,
@@ -30,7 +30,7 @@ export function RequestPasswordResetForm({
   loading,
   isSuccess,
   ...props
-}: IRequestPasswordResetFormProps) {
+}: Readonly<IRequestPasswordResetFormProps>) {
   const { t } = useTranslation('auth');
 
   const validationSchema = useRequestPasswordResetFormValidation();

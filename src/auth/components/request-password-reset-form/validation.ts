@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-export default function useRequestPasswordResetFormValidation() {
+export function useRequestPasswordResetFormValidation() {
   const { t } = useTranslation('auth');
 
   const valid_email_text = t('valid_email_text');

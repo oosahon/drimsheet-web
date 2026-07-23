@@ -1,10 +1,10 @@
 import type { IMoneyDto } from '@/shared/lib/api/Api';
-import dateUtils from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/date';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-export default function useTransferTransactionFormValidation() {
+export function useTransferTransactionFormValidation() {
   const { t } = useTranslation<'bookkeeping'>('bookkeeping');
 
   const source_account_required_text = t('source_account_required_text');

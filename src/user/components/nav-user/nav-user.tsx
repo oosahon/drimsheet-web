@@ -39,7 +39,7 @@ export function NavUser({
   isLoading = false,
   isMobile = false,
   logoutDialog = (trigger) => trigger,
-}: NavUserProps) {
+}: Readonly<NavUserProps>) {
   if (!user || isLoading) {
     return <Skeleton className="h-10 w-10 rounded-full" />;
   }

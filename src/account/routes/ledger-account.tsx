@@ -1,9 +1,9 @@
-import PettyCashAccountPage from '@/account/pages/petty-cash-account';
-import PettyCashAccountsDashboardPage from '@/account/pages/petty-cash-accounts-dashboard';
-import NewCashTransactionPage from '@/bookkeeping/pages/new-cash-transaction';
+import { PettyCashAccountPage } from '@/account/pages/petty-cash-account';
+import { PettyCashAccountsDashboardPage } from '@/account/pages/petty-cash-accounts-dashboard';
+import { NewCashTransactionPage } from '@/bookkeeping/pages/new-cash-transaction';
 import type { TModuleRoutes } from '@/shared/lib/routes.types';
 
-const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {
+export const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {
   return {
     path: basePath,
     children: [
@@ -22,5 +22,3 @@ const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {
     ],
   };
 };
-
-export default useLedgerAccountRoutes;

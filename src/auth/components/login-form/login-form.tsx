@@ -7,14 +7,14 @@ import {
 } from '@/shared/components/field';
 import { Input } from '@/shared/components/input';
 import { PasswordInput } from '@/shared/components/password-input';
-import useFieldErrorMessage from '@/shared/hooks/use-field-error-message';
+import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { cn } from '@/shared/lib/cn';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import type { ILoginFormValues } from './types';
-import useLoginFormValidation from './validation';
+import { useLoginFormValidation } from './validation';
 
 interface ILoginFormProps extends Omit<ComponentProps<'div'>, 'onSubmit'> {
   onSubmit: (values: ILoginFormValues) => void;
@@ -26,7 +26,7 @@ export function LoginForm({
   onSubmit,
   loading,
   ...props
-}: ILoginFormProps) {
+}: Readonly<ILoginFormProps>) {
   const { t } = useTranslation('auth');
 
   const validationSchema = useLoginFormValidation();

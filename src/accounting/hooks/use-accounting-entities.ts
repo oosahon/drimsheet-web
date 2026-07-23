@@ -1,7 +1,7 @@
-import accountingService from '@/accounting/lib/accounting.service';
+import { accountingService } from '@/accounting/lib/accounting.service';
 import { useQuery } from '@tanstack/react-query';
 
-export default function useAccountingEntities() {
+export function useAccountingEntities() {
   return useQuery({
     queryKey: ['accountingService.getAccountingEntities'],
     queryFn: () => accountingService.getAccountingEntities(),

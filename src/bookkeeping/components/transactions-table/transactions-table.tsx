@@ -2,7 +2,7 @@ import { BalanceEffectIcon } from '@/bookkeeping/components/balance-effect-icon'
 import { Button } from '@/shared/components/button';
 import { DataTable, type ITableColumn } from '@/shared/components/data-table';
 import { FormattedDate } from '@/shared/components/date';
-import Money from '@/shared/components/money';
+import { Money } from '@/shared/components/money';
 import { SearchField } from '@/shared/components/search-field';
 import { TablePagination } from '@/shared/components/table-pagination';
 import {
@@ -49,7 +49,7 @@ function TransactionsTable({
   'data-testid': dataTestId = 'transactions-table',
   searchValue = '',
   onSearchChange,
-}: TransactionsTableProps) {
+}: Readonly<TransactionsTableProps>) {
   const { t } = useTranslation(['bookkeeping', 'shared']);
 
   const columns = useMemo<ITableColumn<IAccountTransactionRes>[]>(() => {

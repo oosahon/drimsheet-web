@@ -3,7 +3,10 @@ import { cn } from '@/shared/lib/cn';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 
-function PasswordInput({ className, ...props }: React.ComponentProps<'input'>) {
+function PasswordInput({
+  className,
+  ...props
+}: Readonly<React.ComponentProps<'input'>>) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (

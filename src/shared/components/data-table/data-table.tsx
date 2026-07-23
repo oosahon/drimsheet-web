@@ -102,7 +102,7 @@ export function TableCheckbox({
   indeterminate = false,
   onClick,
   'aria-label': ariaLabel,
-}: TableCheckboxProps) {
+}: Readonly<TableCheckboxProps>) {
   return (
     <button
       type="button"
@@ -136,7 +136,7 @@ export function DataTableSkeleton({
   columnsCount,
   showSelection = false,
   rowsCount = 5,
-}: DataTableSkeletonProps) {
+}: Readonly<DataTableSkeletonProps>) {
   return (
     <>
       {Array.from({ length: rowsCount }).map((_, rIdx) => (
@@ -169,7 +169,7 @@ interface SortIconProps {
   direction: 'asc' | 'desc' | null;
 }
 
-function SortIcon({ direction }: SortIconProps) {
+function SortIcon({ direction }: Readonly<SortIconProps>) {
   if (direction === 'asc') {
     return (
       <ArrowUp className="size-3.5 text-primary stroke-[2.5] animate-in slide-in-from-bottom-1 duration-150" />
@@ -190,7 +190,7 @@ export interface WithTooltipProps {
   children: React.ReactNode;
 }
 
-function WithTooltip({ tooltip, children }: WithTooltipProps) {
+function WithTooltip({ tooltip, children }: Readonly<WithTooltipProps>) {
   if (!tooltip) return <>{children}</>;
 
   return (
@@ -226,7 +226,7 @@ export function DataTableHeaderCell<T extends IDataWithId>({
   filters,
   onFilterChange,
   getStickyStyles,
-}: DataTableHeaderCellProps<T>) {
+}: Readonly<DataTableHeaderCellProps<T>>) {
   const isSorted = currentSortKey === column.dataIndex;
   const sortDir = isSorted ? currentSortDirection : null;
 
@@ -333,7 +333,7 @@ export interface DataTableEmptyStateProps {
 export function DataTableEmptyState({
   columnsCount,
   emptyStateNode,
-}: DataTableEmptyStateProps) {
+}: Readonly<DataTableEmptyStateProps>) {
   const { t } = useTranslation(['shared']);
   const no_records_found = t('shared:no_records_found');
   const no_records_description = t('shared:no_records_description');
@@ -377,7 +377,7 @@ export function DataTableRow<T extends IDataWithId>({
   selectable = false,
   isSelected = false,
   onSelectRow,
-}: DataTableRowProps<T>) {
+}: Readonly<DataTableRowProps<T>>) {
   const { t } = useTranslation(['shared']);
 
   const deselect_row_text = t('shared:deselect_row', { id: row.id });
@@ -436,7 +436,7 @@ export function DataTableActiveFilters<T extends IDataWithId>({
   columns,
   filters,
   onFilterChange,
-}: DataTableActiveFiltersProps<T>) {
+}: Readonly<DataTableActiveFiltersProps<T>>) {
   const { t } = useTranslation(['shared']);
 
   const activeChips = useMemo(() => {
@@ -562,7 +562,7 @@ export function DataTable<T extends IDataWithId>({
   className,
   stickyHeader = false,
   filters,
-}: TableProps<T>) {
+}: Readonly<TableProps<T>>) {
   const { t } = useTranslation(['shared']);
 
   const selectedSet = useMemo(
