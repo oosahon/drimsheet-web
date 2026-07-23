@@ -20,7 +20,7 @@ This document provides guidelines for contributing to the web frontend project t
 
 We use a feature-first, domain-driven architecture to keep related code cohesive and easy to reason about. Each feature owns its UI, hooks, routing, and feature-specific business logic, while `src/shared/` holds reusable code that is not owned by one domain.
 
-The agent rules in [`.agents/rules/folder-structure.md`](./.agents/rules/folder-structure.md), [`.agents/rules/dependency-rules.md`](./.agents/rules/dependency-rules.md), and [`.agents/rules/file-responsibility-rules.md`](./.agents/rules/file-responsibility-rules.md) are the source of truth for layout and import boundaries.
+The agent rules in [`.agents/rules/folder-structure.md`](./.agents/rules/folder-structure.md), [`.agents/rules/dependency-rules.md`](./.agents/rules/dependency-rules.md), [`.agents/rules/file-responsibility-rules.md`](./.agents/rules/file-responsibility-rules.md), and [`.agents/rules/i18n-rules.md`](./.agents/rules/i18n-rules.md) are the source of truth for layout, import boundaries, and translations.
 
 Here is the target structure under `src/`:
 
@@ -46,11 +46,13 @@ src/
 │  └─ routes/                # Route definitions that render pages only
 │
 └─ shared/
+   ├─ assets/                # Reusable static assets (images, icons, vectors)
    ├─ components/            # Reusable design-system and UI building blocks
    │  ├─ icons/
    │  └─ [component]/
    ├─ hooks/                 # Reusable hooks shared across features
-   ├─ layouts/               # Reusable layout primitives
+   ├─ i18n/                  # Shared translation/localization files
+   ├─ layouts/               # Reusable layout primitives (optional, when concern exists)
    ├─ lib/                   # Shared services, helpers, mappers, and utilities
    └─ configs/               # Shared configuration data
 ```
@@ -108,10 +110,25 @@ We enforce a specific commit message format to generate clean changelogs and tra
 
 Our project follows these guidelines for testing:
 
-- **Test Proximity**: Test files should be kept near their test subjects.
-- **`__tests__` (`.test.tsx` / `.test.ts`)**: Used for isolated unit tests (e.g., testing hooks, utilities, or simple UI components without heavy context dependencies).
-- **`__specs__` (`.spec.tsx` / `.spec.ts`)**: Used for integration tests where Context providers, routing, or significant DOM/user interactions are being tested.
-- **End-to-End (E2E) Tests**: All E2E testing covers core user flows to verify application resilience.
+- **Test Proximity**: Test files must be co-located near their test subjects (e.g., inside the component directory `src/<feature>/components/[component]/[component].test.tsx`). Hook and utility tests can also be placed in localized `__tests__/` subdirectories (e.g., `src/shared/hooks/__tests__/`).
+- **Unit and Integration Tests (`.test.tsx` / `.test.ts`)**: Used for all levels of testing inside `src/`. We do not use `.spec.tsx` or `.spec.ts` for frontend tests inside `src/`.
+- **End-to-End (E2E) Tests (`.spec.ts`)**: All E2E tests are located under the root `e2e/` directory and run via Playwright. No `.spec.` files should exist inside `src/`.
+
+## Shadcn UI & Component Normalization
+
+We use Shadcn UI for component generation, but we require strict normalization of the generated code to preserve the repository architecture:
+
+- **Shadcn as Source**: Treat generated shadcn code as application-owned source code. Do not keep them flat under `src/shared/components` or under landing buckets like `src/shared/components/ui`.
+- **Normalization**: Move every generated component to its own directory under `src/shared/components/[component]/` (or feature-specific directories if only one feature consumes it). Ensure there is an `index.ts` public entry point.
+- **Rules File**: The detailed guidelines are in [`.agents/rules/shadcn-rules.md`](./.agents/rules/shadcn-rules.md).
+- **Validation**: Before committing, run `npm run check-structure` to ensure all imports and folder layouts comply with structure rules.
+
+## Storybook Documentation
+
+To ensure high-quality presentation components, we require Storybook documentation for all UI components:
+
+- **Stories File**: Every UI component must have a co-located `.stories.tsx` file documenting the component in realistic states (except for components inside `icons/`, which share `icons.stories.tsx`).
+- **Enforcement**: This rule is strictly enforced at the pre-push level via a husky hook that runs `yarn check-stories`.
 
 ## Reporting Bugs
 

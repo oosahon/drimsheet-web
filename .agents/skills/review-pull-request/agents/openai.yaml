@@ -1,0 +1,4 @@
+interface:
+  display_name: 'Review Pull Request'
+  short_description: 'Review code changes before they are merged'
+  default_prompt: 'Use $review-pull-request to review the current changes and report actionable findings.'

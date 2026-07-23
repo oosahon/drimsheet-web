@@ -7,6 +7,7 @@ Before making changes, follow the rules in:
 - `.agents/rules/folder-structure.md`
 - `.agents/rules/dependency-rules.md`
 - `.agents/rules/file-responsibility-rules.md`
+- `.agents/rules/i18n-rules.md` when working with translations
 - `.agents/rules/shadcn-rules.md` when working with shadcn-generated code
 
 ## Working Principles
