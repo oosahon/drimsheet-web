@@ -1,11 +1,28 @@
-import AppRoutes from '@/_app/index.routes';
-import AccessTokenManager from '@/auth/ui/containers/access-token-manager';
-import { Toaster } from '@/shared/ui/components/sonner';
-import { TooltipProvider } from '@/shared/ui/components/tooltip';
-import { DefaultErrorBoundary } from '@/shared/ui/containers/error-boundary';
+import { DefaultErrorBoundary } from '@/_app/containers/error-boundary';
+import { AppRoutes } from '@/_app/index.routes';
+import { AccessTokenManagerContainer } from '@/auth/components/access-token-manager';
+import { authService } from '@/auth/lib/auth.service';
+import { Toaster } from '@/shared/components/sonner';
+import { TooltipProvider } from '@/shared/components/tooltip';
+import { configureApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
+import { configurePurpleLedgerApi } from '@/shared/lib/api';
+import { localStorageService } from '@/shared/lib/local-storage.service';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter } from 'react-router-dom';
+
+configurePurpleLedgerApi({
+  getToken: () => authService.getToken(),
+  getAccessToken: () => authService.getAccessToken(),
+  getAccountingEntityId: () => localStorageService.getAccountingEntityId(),
+});
+
+configureApiErrorHandler({
+  handleUnauthorized: () => {
+    authService.removeToken();
+    window.location.href = '/auth/signin';
+  },
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -16,10 +33,10 @@ const queryClient = new QueryClient({
   },
 });
 
-function App() {
+export function App() {
   return (
     <DefaultErrorBoundary>
-      <AccessTokenManager>
+      <AccessTokenManagerContainer>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
             <BrowserRouter>
@@ -29,9 +46,7 @@ function App() {
           <ReactQueryDevtools initialIsOpen={false} />
           <Toaster />
         </QueryClientProvider>
-      </AccessTokenManager>
+      </AccessTokenManagerContainer>
     </DefaultErrorBoundary>
   );
 }
-
-export default App;

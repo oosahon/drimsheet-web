@@ -1,0 +1,51 @@
+import { ItemMedia } from '@/shared/components/item';
+import type { ULedgerAccountBalanceEffect } from '@/shared/lib/api/Api';
+import { cn } from '@/shared/lib/cn';
+import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
+import type { ComponentProps } from 'react';
+
+interface TransactionCardProps extends ComponentProps<'div'> {
+  effect: ULedgerAccountBalanceEffect;
+}
+
+function BalanceEffectIcon({
+  effect,
+  className,
+  ...props
+}: Readonly<TransactionCardProps>) {
+  const defaultClassName = 'self-center !translate-y-0 size-16 rounded-full';
+
+  switch (effect) {
+    case 'increase':
+      return (
+        <ItemMedia
+          className={cn(defaultClassName, className, 'bg-success/10')}
+          {...props}
+        >
+          <TrendingUp className="size-7 text-success" />
+        </ItemMedia>
+      );
+
+    case 'decrease':
+      return (
+        <ItemMedia
+          className={cn(defaultClassName, className, 'bg-error/10')}
+          {...props}
+        >
+          <TrendingDown className="size-7 text-error" />
+        </ItemMedia>
+      );
+
+    case 'noop':
+      return (
+        <ItemMedia
+          className={cn(defaultClassName, className, 'bg-muted')}
+          {...props}
+        >
+          <Minus className="size-7 text-muted-foreground opacity-50" />
+        </ItemMedia>
+      );
+  }
+}
+
+export { BalanceEffectIcon };

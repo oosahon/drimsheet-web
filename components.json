@@ -5,7 +5,7 @@
   "tsx": true,
   "tailwind": {
     "config": "tailwind.config.ts",
-    "css": "src/index.css",
+    "css": "src/_app/index.css",
     "baseColor": "zinc",
     "cssVariables": true,
     "prefix": ""
@@ -15,10 +15,10 @@
   "menuColor": "default",
   "menuAccent": "bold",
   "aliases": {
-    "components": "@/shared/ui/components",
-    "utils": "@/shared/ui/components/utils",
-    "ui": "@/shared/ui/components",
-    "lib": "@/shared/ui/components",
+    "components": "@/shared/components",
+    "utils": "@/shared/lib",
+    "ui": "@/shared/components",
+    "lib": "@/shared/lib",
     "hooks": "@/shared/hooks"
   },
   "registries": {

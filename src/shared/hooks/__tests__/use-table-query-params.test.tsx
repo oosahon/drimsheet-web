@@ -1,4 +1,4 @@
-import { useTableQueryParams } from '@/shared/hooks/ui/use-table-query-params';
+import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';

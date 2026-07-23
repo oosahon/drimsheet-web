@@ -1,4 +1,4 @@
-import '@/shared/i18n/config';
+import '@/_app/i18n/config';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 

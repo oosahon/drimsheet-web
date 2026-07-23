@@ -15,28 +15,36 @@ function findMissingStories(dir) {
       } else if (
         entry.isFile() &&
         entry.name.endsWith('.tsx') &&
-        entry.name !== 'index.tsx'
+        entry.name !== 'index.tsx' &&
+        !entry.name.endsWith('.stories.tsx') &&
+        !entry.name.endsWith('.test.tsx') &&
+        !entry.name.endsWith('.container.tsx')
       ) {
         const filePath = path.join(currentDir, entry.name);
         const parts = filePath.split(path.sep);
 
-        // Ensure file is in an exact 'ui' directory, or a subfolder of 'ui', but not in '__stories__'
         const isInUI = parts.includes('components');
-        const isNotStory = !parts.includes('__stories__');
-        const isNotTest = !parts.includes('__tests__');
 
-        if (isInUI && isNotStory && isNotTest) {
+        if (isInUI) {
           const dirname = path.dirname(filePath);
           const basename = path.basename(entry.name, '.tsx');
 
-          // Expected story path: [dirname]/__stories__/[basename].stories.tsx
-          const storyPath = path.join(
+          const storyPath = path.join(dirname, `${basename}.stories.tsx`);
+          const legacyStoryPath = path.join(
             dirname,
             '__stories__',
             `${basename}.stories.tsx`
           );
+          const iconSetStoryPath = path.join(dirname, 'icons.stories.tsx');
 
-          if (!fs.existsSync(storyPath)) {
+          if (
+            !(
+              path.basename(dirname) === 'icons' &&
+              fs.existsSync(iconSetStoryPath)
+            ) &&
+            !fs.existsSync(storyPath) &&
+            !fs.existsSync(legacyStoryPath)
+          ) {
             missing.push(filePath);
           }
         }
@@ -62,7 +70,7 @@ if (missing.length > 0) {
   });
   console.error(
     '\x1b[33m%s\x1b[0m',
-    'Please create the corresponding stories in the __stories__ directory before pushing.'
+    'Please create the corresponding co-located stories before pushing.'
   );
   process.exit(1);
 } else {

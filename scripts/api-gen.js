@@ -8,7 +8,7 @@ dotenv.config();
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const TEMP_SWAGGER_PATH = path.resolve('src/swagger.tmp.json');
-const OUTPUT_DIR = path.resolve('src/shared/utils/api');
+const OUTPUT_DIR = path.resolve('src/shared/lib/api');
 
 async function fetchSwaggerFromGitHub() {
   const url = `https://raw.githubusercontent.com/${config.org}/${config.repo}/${config.branch}/${config.swaggerPath}`;
