@@ -111,8 +111,31 @@ We enforce a specific commit message format to generate clean changelogs and tra
 Our project follows these guidelines for testing:
 
 - **Test Proximity**: Test files must be co-located near their test subjects (e.g., inside the component directory `src/<feature>/components/[component]/[component].test.tsx`). Hook and utility tests can also be placed in localized `__tests__/` subdirectories (e.g., `src/shared/hooks/__tests__/`).
-- **Unit and Integration Tests (`.test.tsx` / `.test.ts`)**: Used for all levels of testing inside `src/`. We do not use `.spec.tsx` or `.spec.ts` for frontend tests inside `src/`.
-- **End-to-End (E2E) Tests (`.spec.ts`)**: All E2E tests are located under the root `e2e/` directory and run via Playwright. No `.spec.` files should exist inside `src/`.
+- **Component and Module Tests (`.test.tsx` / `.test.ts`)**: Vitest is used for components, containers, hooks, mappers, validation, and other module-owned contracts inside `src/`. Do not use `.spec.tsx` or `.spec.ts` inside `src/`.
+- **Browser Integration Tests (`.spec.ts`)**: Playwright specs live under `playwright/tests/<feature>/`. They exercise the running frontend with controlled first-party API responses and must not require live services or credentials.
+- **System End-to-End Tests**: Complete journeys across the deployed frontend, API, database, email, and other test-system boundaries live in the separate E2E repository.
+
+Install the Chromium browser once after installing dependencies:
+
+```bash
+npx playwright install chromium
+```
+
+Run browser integration tests:
+
+```bash
+npm run typecheck:integration
+npm run test:integration
+npm run test:integration:ui
+npm run test:integration:coverage
+```
+
+Playwright coverage is written to `coverage/playwright/` and reports Chromium
+runtime coverage for application modules loaded by the integration journeys.
+Keep it separate from Vitest coverage.
+
+See [`.agents/workflow/testing.md`](./.agents/workflow/testing.md) for test
+selection, placement, focused commands, and CI requirements.
 
 ## Shadcn UI & Component Normalization
 

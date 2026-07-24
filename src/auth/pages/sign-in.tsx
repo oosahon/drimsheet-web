@@ -8,7 +8,7 @@ import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
-export function LoginPage() {
+export function SignInPage() {
   const { t } = useTranslation('auth');
   const { t: tShared } = useTranslation('shared');
 

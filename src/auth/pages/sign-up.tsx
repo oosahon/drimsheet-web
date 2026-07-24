@@ -18,7 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { Link, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 
-export function SignupPage() {
+export function SignUpPage() {
   const [searchParams] = useSearchParams();
   const handleApiError = useApiErrorHandler();
   const { t } = useTranslation('auth');
@@ -47,6 +47,7 @@ export function SignupPage() {
 
   const account_created_success_title = t('account_created_success_title');
   const check_email_verification_text = t('check_email_verification_text');
+  const email_sent_text = t('email_sent_text');
   const or_text = t('or_text');
   const already_have_account_text = t('already_have_account_text');
   const sign_in_link_text = t('sign_in_link_text');
@@ -55,17 +56,17 @@ export function SignupPage() {
 
   if (success) {
     return (
-      <div className="flex h-screen items-center justify-center">
+      <output className="flex h-screen items-center justify-center">
         <Card>
           <CardHeader className="flex flex-col items-center gap-4">
-            <img src={emailSentImg} alt="Email Sent" />
+            <img src={emailSentImg} alt={email_sent_text} />
             <CardTitle>{account_created_success_title}</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-4">
             <p>{check_email_verification_text}</p>
           </CardContent>
         </Card>
-      </div>
+      </output>
     );
   }
 

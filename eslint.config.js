@@ -10,7 +10,13 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores([
+    'blob-report',
+    'coverage',
+    'dist',
+    'playwright-report',
+    'test-results',
+  ]),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -31,6 +37,16 @@ export default defineConfig([
         'warn',
         { allowSameFolder: true, rootDir: 'src', prefix: '@' },
       ],
+    },
+  },
+  {
+    files: ['playwright/**/*.ts', 'playwright*.config.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      'react-hooks/rules-of-hooks': 'off',
+      'react-refresh/only-export-components': 'off',
     },
   },
   ...storybook.configs['flat/recommended'],

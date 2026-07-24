@@ -10,6 +10,38 @@ Keep the codebase feature-first, predictable, and easy for an AI agent to extend
 - `src/_app/` contains app bootstrap, providers, global styles, and root route wiring.
 - `src/<feature>/` contains one major business domain or product feature, such as `auth`, `accounting`, or `ledger-accounts`.
 - `src/shared/` contains reusable code that is not owned by a single feature.
+- `playwright/` contains frontend-owned browser integration tests and their
+  test-only support code.
+
+## Playwright Integration Layout
+
+Organize browser integration specs by product feature:
+
+```text
+playwright/
+  tests/
+    <feature>/
+      <user-outcome>.spec.ts
+  fixtures/
+  mocks/
+  factories/
+  pages/
+  reporters/
+```
+
+- `tests/` contains executable `*.spec.ts` files grouped by feature.
+- `fixtures/` contains reusable Playwright fixture extensions.
+- `mocks/` contains feature-specific network route registration and
+  representative API responses.
+- `factories/` contains deterministic test-data builders.
+- `pages/` contains repeated locator groups or user workflows.
+- `reporters/` contains Playwright reporter integrations such as coverage
+  aggregation.
+- Create a support directory only when it has a real consumer.
+- Keep simple locators and one-off API responses in the owning spec.
+- Do not create generic `helpers/` or `utils/` buckets.
+- Keep Playwright reports, results, traces, screenshots, cache, and
+  authentication state out of version control.
 
 ## Feature Folder Layout
 

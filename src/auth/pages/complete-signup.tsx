@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
-export function CompleteSignupPage() {
+export function CompleteSignUpPage() {
   const handleApiError = useApiErrorHandler();
   const { t } = useTranslation('auth');
 

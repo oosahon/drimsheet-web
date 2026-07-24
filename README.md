@@ -44,11 +44,35 @@ This repo contains the frontend web application of PurpleLedger. It provides the
 
 ### Testing
 
-Run the test suite:
+Run component and module tests:
 
 ```bash
 npm run test
 ```
+
+Install Chromium once, then run browser integration tests:
+
+```bash
+npx playwright install chromium
+npm run typecheck:integration
+npm run test:integration
+```
+
+Use `npm run test:integration:ui` for Playwright UI mode. Browser integration
+tests run the real frontend with controlled API responses and do not require a
+live backend or credentials. Full-system E2E tests live in a separate
+repository.
+
+Generate application code coverage for the Playwright journeys with:
+
+```bash
+npm run test:integration:coverage
+```
+
+Open `coverage/playwright/index.html` to inspect the source report.
+
+See [the testing workflow](.agents/workflow/testing.md) for test selection,
+placement, focused commands, and CI requirements.
 
 ### Linting and Formatting
 

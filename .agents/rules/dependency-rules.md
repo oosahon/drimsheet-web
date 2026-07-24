@@ -37,6 +37,18 @@ Make imports predictable so the agent can change one part of the app without cau
 - Do not duplicate shared logic in feature folders.
 - Do not move a feature-specific implementation into shared code just because it is useful once.
 
+## Playwright Integration Imports
+
+- Playwright specs and support code may import stable application contracts,
+  including generated API types.
+- Use type-only imports when the test needs only a source contract.
+- Application code under `src/` must not import from `playwright/`.
+- Do not duplicate production business logic in Playwright fixtures, mocks,
+  factories, or page objects.
+- Playwright support files may depend on other test support files with a
+  narrower responsibility, but executable specs should remain the composition
+  boundary.
+
 ## Barrel File Rules
 
 - Use barrels only for public entry points.
