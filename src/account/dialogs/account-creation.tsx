@@ -47,7 +47,6 @@ export function AccountCreationDialog({
       );
       onOpenChange(false);
     } catch (error) {
-      console.log('>>>>>>>>>>>>>>>>', { values, error });
       handleApiError(error, { showToast: true });
     }
   };

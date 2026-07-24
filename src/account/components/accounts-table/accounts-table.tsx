@@ -88,13 +88,14 @@ export function LedgerAccountsTable({
         ),
       },
       {
-        dataIndex: 'functionalBalance',
+        dataIndex: 'balance',
         title: balance_text,
         sortable: true,
         render: (value, row) => (
           <>
             <Money
               className="text-foreground text-sm font-heading"
+              localCode={row.functionalBalance.currencyCode}
               value={value as IMoneyDto}
             />
 

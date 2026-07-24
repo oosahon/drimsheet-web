@@ -5,6 +5,7 @@ import type { ComponentProps } from 'react';
 
 interface MoneyProps extends ComponentProps<'span'> {
   value: IMoneyDto;
+  localCode?: string;
   hide?: boolean;
 }
 
@@ -28,8 +29,15 @@ const getMoneyDisplayAmount = (value: IMoneyDto): number => {
   }
 };
 
-export function Money({ value, hide, ...props }: Readonly<MoneyProps>) {
-  const locale = currencyService.getJurisdictionLocale(value.currencyCode);
+export function Money({
+  value,
+  localCode,
+  hide,
+  ...props
+}: Readonly<MoneyProps>) {
+  const locale = currencyService.getJurisdictionLocale(
+    localCode || value.currencyCode
+  );
 
   const formatted = new Intl.NumberFormat(locale, {
     style: 'currency',
