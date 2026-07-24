@@ -7,6 +7,9 @@ Before making changes, follow the rules in:
 - `.agents/rules/folder-structure.md`
 - `.agents/rules/dependency-rules.md`
 - `.agents/rules/file-responsibility-rules.md`
+- `.agents/rules/type-naming-rules.md`
+- `.agents/rules/mapper-rules.md` when creating or updating mappers
+- `.agents/rules/testing-rules.md` when creating or updating tests
 - `.agents/rules/i18n-rules.md` when working with translations
 - `.agents/rules/shadcn-rules.md` when working with shadcn-generated code
 
@@ -15,6 +18,9 @@ Before making changes, follow the rules in:
 - Keep changes aligned with the existing feature-first structure.
 - Prefer the smallest file and folder change that satisfies the task.
 - Preserve dependency direction and file responsibility boundaries.
+- Map form values directly to generated DTOs through explicit, validation-free
+  mappers.
 - If a task appears to conflict with the rules, update the rules first or call out the conflict before proceeding.
 - For UI component tasks, follow `.agents/skills/create-ui-components/SKILL.md`.
 - For shadcn tasks, use `.agents/skills/add-shadcn-ui/SKILL.md` and `.agents/workflow/shadcn-ui.md`.
+- For test selection and placement, follow `.agents/workflow/testing.md`.

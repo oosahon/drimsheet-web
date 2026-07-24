@@ -1,4 +1,4 @@
-import { mapAccountTypeToIcon } from '@/account/lib/account-to-icon.mapper';
+import { mapAccountTypeToIcon } from '@/account/lib/mappers/account-to-icon.mapper';
 import { Button } from '@/shared/components/button';
 import { Money } from '@/shared/components/money';
 import {
@@ -8,7 +8,7 @@ import {
   TooltipTrigger,
 } from '@/shared/components/tooltip';
 import { type ILedgerAccountDto } from '@/shared/lib/api/Api';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { Plus, Settings } from 'lucide-react';
 import { createElement } from 'react';
 import { useTranslation } from 'react-i18next';

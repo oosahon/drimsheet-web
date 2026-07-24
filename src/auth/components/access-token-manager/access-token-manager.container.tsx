@@ -1,4 +1,4 @@
-import { authService } from '@/auth/lib/auth.service';
+import { authService } from '@/auth/lib/services/auth.service';
 import { FullPageLoader } from '@/shared/components/full-page-loader';
 import { useEffect, useRef, useState, type PropsWithChildren } from 'react';
 

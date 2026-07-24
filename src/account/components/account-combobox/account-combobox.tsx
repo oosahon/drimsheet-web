@@ -1,4 +1,4 @@
-import { mapAccountTypeToIcon } from '@/account/lib/account-to-icon.mapper';
+import { mapAccountTypeToIcon } from '@/account/lib/mappers/account-to-icon.mapper';
 import {
   Combobox,
   ComboboxContent,

@@ -2,7 +2,7 @@ import { Ellipsis, EqualApproximately, Plus } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { ledgerAccountMapper } from '@/account/lib/account.mapper';
+import { ledgerAccountMapper } from '@/account/lib/mappers/account.mapper';
 import { Button } from '@/shared/components/button';
 import { DataTable, type ITableColumn } from '@/shared/components/data-table';
 import { FormattedDate } from '@/shared/components/date';
@@ -88,13 +88,14 @@ export function LedgerAccountsTable({
         ),
       },
       {
-        dataIndex: 'functionalBalance',
+        dataIndex: 'balance',
         title: balance_text,
         sortable: true,
         render: (value, row) => (
           <>
             <Money
               className="text-foreground text-sm font-heading"
+              localCode={row.functionalBalance.currencyCode}
               value={value as IMoneyDto}
             />
 

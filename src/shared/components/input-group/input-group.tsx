@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Button } from '@/shared/components/button';
 import { Input } from '@/shared/components/input';
 import { Textarea } from '@/shared/components/textarea';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 
 function InputGroup({
   className,

@@ -28,7 +28,7 @@ Make imports predictable so the agent can change one part of the app without cau
 
 - Network access belongs in hooks or services, not in pure components.
 - Local storage, analytics, timers, subscriptions, and DOM mutation belong outside pure components.
-- Data shaping and mapping belong in `lib/` or dedicated mappers.
+- Data shaping and mapping belong in `lib/mappers/`.
 - Validation logic belongs in `validation.ts` unless it is shared across multiple features.
 
 ## Shared Imports

@@ -1,6 +1,6 @@
 import type { AccountingEntityCreationFormStep1Props } from '@/accounting/components/accounting-entity-creation-form/types';
 import { AccountingEntityTypeSelect } from '@/accounting/components/accounting-entity-type-select';
-import { FISCAL_YEAR_STARTS } from '@/accounting/lib/fiscal-year-start.config';
+import { FISCAL_YEAR_STARTS } from '@/accounting/lib/configs/fiscal-year-start.config';
 import { AlertTitle, WarningAlert } from '@/shared/components/alert';
 import { Button } from '@/shared/components/button';
 import { CountryComboBox } from '@/shared/components/country-combobox';
@@ -9,7 +9,7 @@ import {
   EAccountingEntityType,
   type UJurisdictionCode,
 } from '@/shared/lib/api/Api';
-import { dateUtils } from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/utils/date';
 import { AlertCircleIcon, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';

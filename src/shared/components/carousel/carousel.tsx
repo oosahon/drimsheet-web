@@ -9,7 +9,7 @@ import type {
   CarouselProps,
 } from '@/shared/components/carousel/types';
 import { useCarousel } from '@/shared/components/carousel/use-carousel';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 function Carousel({

@@ -3,7 +3,7 @@ import {
   MoneyInput,
   type MoneyInputProps,
 } from '@/shared/components/money-input';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { ArrowRightLeft } from 'lucide-react';
 
 export interface CurrencyExchangeRateInputProps extends Omit<
@@ -47,7 +47,7 @@ export function CurrencyExchangeRateInput({
         </InputGroupAddon>
       </InputGroup>
 
-      <ArrowRightLeft aria-hidden="true" className="size-8 shrink-0" />
+      <ArrowRightLeft aria-hidden="true" className="size-4 shrink-0" />
 
       <InputGroup className="w-36" data-disabled={disabled || undefined}>
         <MoneyInput

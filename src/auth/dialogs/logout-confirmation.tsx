@@ -23,7 +23,7 @@ interface LogoutConfirmationDialogProps {
 
 export function LogoutConfirmationDialog({
   children,
-}: LogoutConfirmationDialogProps) {
+}: Readonly<LogoutConfirmationDialogProps>) {
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
   const handleApiError = useApiErrorHandler();

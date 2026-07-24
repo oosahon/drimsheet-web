@@ -1,4 +1,6 @@
 import { NavMain } from '@/_app/components/nav-main';
+import { SidebarProvider } from '@/shared/components/sidebar';
+import { TooltipProvider } from '@/shared/components/tooltip';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Home, Settings } from 'lucide-react';
 import React from 'react';
@@ -11,9 +13,13 @@ const meta = {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <div className="w-64 border p-2">
-          <Story />
-        </div>
+        <TooltipProvider>
+          <SidebarProvider>
+            <div className="w-64 border p-2">
+              <Story />
+            </div>
+          </SidebarProvider>
+        </TooltipProvider>
       </MemoryRouter>
     ),
   ],

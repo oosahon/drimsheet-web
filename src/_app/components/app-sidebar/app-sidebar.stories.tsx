@@ -1,5 +1,6 @@
 import { AppSidebar } from '@/_app/components/app-sidebar';
 import { SidebarProvider } from '@/shared/components/sidebar';
+import { TooltipProvider } from '@/shared/components/tooltip';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -10,12 +11,14 @@ const meta = {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <SidebarProvider>
-          <div className="flex h-screen w-full bg-background">
-            <Story />
-            <main className="flex-1 p-4">Main Content Area</main>
-          </div>
-        </SidebarProvider>
+        <TooltipProvider>
+          <SidebarProvider>
+            <div className="flex h-screen w-full bg-background">
+              <Story />
+              <main className="flex-1 p-4">Main Content Area</main>
+            </div>
+          </SidebarProvider>
+        </TooltipProvider>
       </MemoryRouter>
     ),
   ],

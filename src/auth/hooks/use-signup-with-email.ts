@@ -1,5 +1,5 @@
 import type { ISignupFormValues } from '@/auth/components/signup-form/types';
-import { authService } from '@/auth/lib/auth.service';
+import { authService } from '@/auth/lib/services/auth.service';
 import { useMutation } from '@tanstack/react-query';
 
 export function useSignupWithEmail() {

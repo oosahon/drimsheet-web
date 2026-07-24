@@ -1,5 +1,5 @@
 import { Input } from '@/shared/components/input';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 

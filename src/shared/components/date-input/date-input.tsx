@@ -5,8 +5,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/shared/components/popover';
-import { cn } from '@/shared/lib/cn';
-import { dateUtils } from '@/shared/lib/date';
+import { cn } from '@/shared/lib/utils/cn';
+import { dateUtils } from '@/shared/lib/utils/date';
 import { Calendar1 } from 'lucide-react';
 import { useState } from 'react';
 

@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { MemoryRouter } from 'react-router-dom';
 
 import { LedgerAccountsTable } from '@/account/components/accounts-table';
 import {
@@ -144,9 +145,11 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div className="w-full max-w-5xl p-6 bg-background rounded-2xl border border-border/80 shadow-xs">
-        <Story />
-      </div>
+      <MemoryRouter>
+        <div className="w-full max-w-5xl p-6 bg-background rounded-2xl border border-border/80 shadow-xs">
+          <Story />
+        </div>
+      </MemoryRouter>
     ),
   ],
 } satisfies Meta<typeof LedgerAccountsTable>;

@@ -1,4 +1,4 @@
-import { dateUtils } from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/utils/date';
 import dayjs from 'dayjs';
 import * as yup from 'yup';
 

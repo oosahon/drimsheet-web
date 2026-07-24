@@ -7,8 +7,8 @@ import { MoneyWithCurrencyInput } from '@/shared/components/money-with-currency-
 import { Textarea } from '@/shared/components/textarea';
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import type { ILedgerAccountDto, IMoneyDto } from '@/shared/lib/api/Api';
-import { cn } from '@/shared/lib/cn';
-import { dateUtils } from '@/shared/lib/date';
+import { cn } from '@/shared/lib/utils/cn';
+import { dateUtils } from '@/shared/lib/utils/date';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { useTransferTransactionFormValidation } from './validation';

@@ -5,7 +5,7 @@ import {
   BreadcrumbSeparator,
 } from '@/shared/components/breadcrumb';
 import { SidebarTrigger } from '@/shared/components/sidebar';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import type { PropsWithChildren } from 'react';
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';

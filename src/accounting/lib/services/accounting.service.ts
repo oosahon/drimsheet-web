@@ -4,8 +4,8 @@ import {
   EPeriodUnit,
   type IAccountingEntityCreationDto,
 } from '@/shared/lib/api/Api';
-import { dateUtils } from '@/shared/lib/date';
-import { localStorageService } from '@/shared/lib/local-storage.service';
+import { localStorageService } from '@/shared/lib/services/local-storage.service';
+import { dateUtils } from '@/shared/lib/utils/date';
 
 export interface CreateAccountingEntityInput {
   name: string;
@@ -59,6 +59,11 @@ export const accountingService = {
   async getAccountingEntities() {
     const res = await purpleLedgerApi.accounting.getUserAccountingEntities();
     localStorageService.setAccountingEntityId(res.data[0]?.id ?? '');
+    return res.data;
+  },
+
+  async getAccountingEntity() {
+    const res = await purpleLedgerApi.accounting.getActiveAccountingEntity();
     return res.data;
   },
 

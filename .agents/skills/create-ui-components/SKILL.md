@@ -13,8 +13,11 @@ API boundaries, and presentation/container split.
 Before editing component code:
 
 1. Read `.agents/rules/folder-structure.md`,
-   `.agents/rules/dependency-rules.md`, and
-   `.agents/rules/file-responsibility-rules.md`.
+   `.agents/rules/dependency-rules.md`,
+   `.agents/rules/file-responsibility-rules.md`,
+   `.agents/rules/type-naming-rules.md`,
+   `.agents/rules/mapper-rules.md`, and
+   `.agents/rules/testing-rules.md`.
 2. Read every rule bundled with this skill:
    - [Structure and public API](rules/structure-and-public-api.md)
    - [Purity and containers](rules/purity-and-containers.md)
@@ -46,8 +49,10 @@ are useful examples, but some predate the current rules.
    hooks, handlers, or meaningful conditional rendering into `parts/`.
 7. Create the smallest applicable colocated file set and expose only its public
    contract from `index.ts`.
-8. Add realistic stories and focused behavior tests. For forms, keep all types
-   and validation outside the component file.
+8. Add realistic stories and focused behavior tests. Use real owned components
+   and hooks in component tests. For containers, mock external systems only when
+   necessary. For forms, keep all types and validation outside the component
+   file.
 9. Verify the focused change, then inspect the final diff for architecture drift.
 
 ## Verification
@@ -73,7 +78,11 @@ or risk warrants them. Report any check that could not be run.
   `lib`, according to ownership.
 - Every UI `.tsx` file has a colocated story.
 - Behavior and user outcomes have focused tests.
+- Component tests do not mock owned components or hooks.
+- Container tests render the real presentational component and mock only
+  necessary external boundaries.
 - Form types live in `types.ts`; form validation lives in `validation.ts`.
+- Types follow the repository prefix convention; only `*Props` omit a prefix.
 - Imports obey feature-to-shared dependency direction.
 - Substantial private UI sections live in `parts/`, remain owner-private, and
   are not re-exported.

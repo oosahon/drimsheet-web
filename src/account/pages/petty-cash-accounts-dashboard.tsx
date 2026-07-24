@@ -1,13 +1,7 @@
 import { LedgerAccountsOverview } from '@/account/components/accounts-overview';
 import { LedgerAccountsTableContainer } from '@/account/components/accounts-table';
-import { PettyCashAccountFormContainer } from '@/account/components/petty-cash-account-form';
+import { AccountCreationDialog } from '@/account/dialogs/account-creation';
 import { AppBody, AppHeader } from '@/shared/components/app';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/components/dialog';
 import { ELedgerType } from '@/shared/lib/api/Api';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,10 +17,6 @@ export function PettyCashAccountsDashboardPage() {
   const accounts_count_text = t('ledger-accounts:accounts_count', {
     count: 12,
   });
-  const create_petty_cash_account_text = t(
-    'ledger-accounts:create_petty_cash_account'
-  );
-
   return (
     <>
       <AppHeader
@@ -48,20 +38,10 @@ export function PettyCashAccountsDashboardPage() {
           onAddAccount={() => setShowCreationForm(true)}
         />
 
-        <Dialog open={showCreationForm} onOpenChange={setShowCreationForm}>
-          <DialogContent className="w-sm bg-card border-border/80 shadow-2xl backdrop-blur-md">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-semibold tracking-tight text-foreground font-heading">
-                {create_petty_cash_account_text}
-              </DialogTitle>
-            </DialogHeader>
-            <div className="mt-4 flex justify-center">
-              <PettyCashAccountFormContainer
-                onSuccess={() => setShowCreationForm(false)}
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
+        <AccountCreationDialog
+          open={showCreationForm}
+          onOpenChange={setShowCreationForm}
+        />
       </AppBody>
     </>
   );

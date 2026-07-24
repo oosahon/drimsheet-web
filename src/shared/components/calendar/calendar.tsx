@@ -8,7 +8,7 @@ import {
 
 import { Button } from '@/shared/components/button';
 import { buttonVariants } from '@/shared/components/button/button-variants';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import {
   ChevronDownIcon,
   ChevronLeftIcon,

@@ -2,6 +2,15 @@ import '@/_app/i18n/config';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+vi.stubGlobal(
+  'ResizeObserver',
+  class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  }
+);
+
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({

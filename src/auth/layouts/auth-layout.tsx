@@ -1,4 +1,4 @@
-import { authService } from '@/auth/lib/auth.service';
+import { authService } from '@/auth/lib/services/auth.service';
 import { useMemo } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 

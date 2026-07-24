@@ -5,7 +5,7 @@ import { AlertTitle, WarningAlert } from '@/shared/components/alert';
 import { Button } from '@/shared/components/button';
 import { CurrencySelect } from '@/shared/components/currency-select';
 import { FieldError, FieldGroup, FieldSet } from '@/shared/components/field';
-import { dateUtils } from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/utils/date';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
