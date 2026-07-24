@@ -15,7 +15,7 @@ import {
 import countries from '@/shared/configs/countries.json' with { type: 'json' };
 import uiCurrencies from '@/shared/configs/currencies.json' with { type: 'json' };
 import { type ICurrencyDto, type IMoneyDto } from '@/shared/lib/api/Api';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import type { ChangeEvent } from 'react';
 import { forwardRef, useMemo, useRef, useState } from 'react';
 

@@ -4,8 +4,8 @@ import {
   EPeriodUnit,
   type IAccountingEntityCreationDto,
 } from '@/shared/lib/api/Api';
-import { dateUtils } from '@/shared/lib/date';
-import { localStorageService } from '@/shared/lib/local-storage.service';
+import { localStorageService } from '@/shared/lib/services/local-storage.service';
+import { dateUtils } from '@/shared/lib/utils/date';
 
 export interface CreateAccountingEntityInput {
   name: string;

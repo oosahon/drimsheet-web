@@ -24,6 +24,11 @@ src/<feature>/
   layouts/
   dialogs/
   lib/
+    configs/
+    mappers/
+    services/
+    types/
+    utils/
   routes/
 ```
 
@@ -33,7 +38,12 @@ src/<feature>/
 - `pages/` contains page composition and orchestration only.
 - `layouts/` contains reusable layout wrappers for that feature.
 - `dialogs/` contains dialog orchestrators and dialog-specific composition.
-- `lib/` contains feature services, mappers, helpers, utilities, and adapters.
+- `lib/` is the container for reusable feature logic. Group files into
+  responsibility-based subdirectories such as `configs/`, `mappers/`,
+  `services/`, `types/`, and `utils/` when those concerns exist.
+- Do not place implementation files directly in `lib/`.
+- Do not create empty responsibility directories or a generic `helpers/`
+  directory; use the narrowest descriptive responsibility.
 - `routes/` contains route definitions that render pages only.
 
 ## Component Folder Layout
@@ -82,13 +92,21 @@ src/shared/
   i18n/
   layouts/
   lib/
+    api/
+    configs/
+    mappers/
+    services/
+    types/
+    utils/
   configs/
 ```
 
 - `components/` contains reusable presentational building blocks.
 - `hooks/` contains reusable hooks shared across multiple features.
 - `layouts/` contains reusable layout primitives.
-- `lib/` contains shared services, helpers, mappers, and utilities.
+- `lib/` is the container for shared non-UI logic, grouped into descriptive
+  responsibility directories such as `api/`, `configs/`, `mappers/`,
+  `services/`, `types/`, and `utils/`.
 - `configs/` contains shared configuration data such as currencies, country lists, and fiscal-year settings.
 - `assets/` contains reusable static assets consumed by multiple independent owners.
 - `i18n/` contains only genuinely shared locale resources. Feature locale resources belong in the owning feature, and i18n composition/initialization belongs in `_app/`.

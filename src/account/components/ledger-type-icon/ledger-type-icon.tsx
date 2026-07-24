@@ -1,5 +1,5 @@
 import { ELedgerType, type ULedgerType } from '@/shared/lib/api/Api';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { CreditCard, Receipt, Scale, TrendingUp, Wallet } from 'lucide-react';
 
 export interface LedgerTypeIconProps {

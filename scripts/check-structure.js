@@ -101,6 +101,14 @@ const featureRoots = fs
   )
   .map((entry) => entry.name);
 
+walk(srcRoot, (fullPath, entry) => {
+  if (entry.isFile() && path.basename(path.dirname(fullPath)) === 'lib') {
+    errors.push(
+      `Move file into a responsibility directory under lib: ${relative(fullPath)}`
+    );
+  }
+});
+
 walk(sharedRoot, (fullPath, entry) => {
   if (!entry.isFile() || !/\.(ts|tsx)$/.test(entry.name)) {
     return;

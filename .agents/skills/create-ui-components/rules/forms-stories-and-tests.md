@@ -50,7 +50,10 @@ Every form component must keep its types outside the component file:
 
 ## Tests
 
+- Follow `.agents/rules/testing-rules.md`.
 - Use Vitest, Testing Library, and `userEvent` following nearby tests.
+- Use real owned child components and hooks; do not use module mocks in
+  component tests.
 - Test user-visible contracts and outcomes, not hook calls or internal state.
 - Keep one behavior or outcome per test.
 - Prefer accessible queries by role, label, and visible text.
@@ -58,5 +61,8 @@ Every form component must keep its types outside the component file:
   interaction, and accessibility semantics when relevant.
 - For forms, test required/invalid states and a successful submit payload.
 - Test validation directly when rules have meaningful branches or edge cases.
-- Test containers separately only when their orchestration adds behavior worth
-  protecting; mock at external boundaries rather than implementation details.
+- Test containers separately when their orchestration adds behavior worth
+  protecting. Render the real presentational component and mock only necessary
+  external boundaries.
+- Test dialogs and pages through the Playwright integration layer, not through
+  component Testing Library tests.

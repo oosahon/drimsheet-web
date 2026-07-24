@@ -9,7 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/shared/components/popover';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 
 export interface TableFilterOption {
   label: string;

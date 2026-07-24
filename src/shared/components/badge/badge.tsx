@@ -1,5 +1,5 @@
 import { badgeVariants } from '@/shared/components/badge/badge-variants';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { type VariantProps } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 

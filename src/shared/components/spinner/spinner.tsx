@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { Loader2Icon } from 'lucide-react';
 
 function Spinner({

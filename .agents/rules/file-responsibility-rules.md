@@ -62,7 +62,17 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 
 ## `lib/`
 
-- Put services, adapters, mappers, helpers, and utility functions here.
+- Use `lib/` as a container for reusable non-UI logic.
+- Put generated API clients and their transport configuration in `lib/api/`.
+- Put static configuration data in `lib/configs/`.
+- Put deterministic data transformations in `lib/mappers/`.
+- Put reusable business operations and side-effect boundaries in
+  `lib/services/`.
+- Put cross-file contracts owned by the feature or shared layer in
+  `lib/types/`.
+- Put small, deterministic, general-purpose functions in `lib/utils/`.
+- Do not place implementation files directly in `lib/`.
+- Avoid a generic `helpers/` directory; classify the responsibility precisely.
 - `lib/` should contain reusable logic that is not tied to a single UI component.
 - Keep `lib/` free of page-specific orchestration.
 

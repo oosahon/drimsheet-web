@@ -8,7 +8,7 @@ import {
 import { Input } from '@/shared/components/input';
 import { PasswordInput } from '@/shared/components/password-input';
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { useFormik } from 'formik';
 import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';

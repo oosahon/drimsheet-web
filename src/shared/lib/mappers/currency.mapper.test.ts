@@ -1,5 +1,5 @@
 import { EExchangeRateType } from '@/shared/lib/api/Api';
-import { currencyMapper } from '@/shared/lib/currency.mapper';
+import { currencyMapper } from '@/shared/lib/mappers/currency.mapper';
 import { describe, expect, it } from 'vitest';
 
 describe('currencyMapper', () => {

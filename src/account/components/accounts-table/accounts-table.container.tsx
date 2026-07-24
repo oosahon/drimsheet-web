@@ -1,6 +1,6 @@
 import { LedgerAccountsTable } from '@/account/components/accounts-table';
 import { useLedgerAccounts } from '@/account/hooks/use-ledger-accounts';
-import { ledgerAccountService } from '@/account/lib/ledger-account.service';
+import { ledgerAccountService } from '@/account/lib/services/ledger-account.service';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import {

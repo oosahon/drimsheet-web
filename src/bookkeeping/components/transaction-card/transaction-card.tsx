@@ -7,7 +7,7 @@ import {
 } from '@/shared/components/item';
 import { Money } from '@/shared/components/money';
 import { StatusBadge } from '@/shared/components/status-badge';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import type { ComponentProps } from 'react';
 
 interface TransactionCardProps extends ComponentProps<typeof Item> {

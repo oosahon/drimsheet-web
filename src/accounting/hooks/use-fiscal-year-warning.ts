@@ -1,6 +1,6 @@
-import { FISCAL_YEAR_STARTS } from '@/accounting/lib/fiscal-year-start.config';
+import { FISCAL_YEAR_STARTS } from '@/accounting/lib/configs/fiscal-year-start.config';
 import { type UJurisdictionCode } from '@/shared/lib/api/Api';
-import { JS_MONTH_INDEX_OFFSET } from '@/shared/lib/date';
+import { JS_MONTH_INDEX_OFFSET } from '@/shared/lib/utils/date';
 import { useMemo } from 'react';
 
 export function useFiscalYearWarning(

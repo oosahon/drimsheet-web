@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { Label } from '@/shared/components/label';
 import { Separator } from '@/shared/components/separator';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 
 function FieldSet({
   className,

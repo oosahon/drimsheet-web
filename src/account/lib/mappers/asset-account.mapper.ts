@@ -3,8 +3,8 @@ import type {
   IExchangeRateDto,
   IPettyCashAccountCreationReq,
 } from '@/shared/lib/api/Api';
-import { currencyMapper } from '@/shared/lib/currency.mapper';
-import { moneyMapper } from '@/shared/lib/money.mapper';
+import { currencyMapper } from '@/shared/lib/mappers/currency.mapper';
+import { moneyMapper } from '@/shared/lib/mappers/money.mapper';
 
 function toPettyCashAccountCreationDto(
   values: IAccountCreationFormValues,

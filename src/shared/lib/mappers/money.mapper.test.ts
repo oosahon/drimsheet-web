@@ -1,4 +1,4 @@
-import { moneyMapper } from '@/shared/lib/money.mapper';
+import { moneyMapper } from '@/shared/lib/mappers/money.mapper';
 import { describe, expect, it } from 'vitest';
 
 describe('moneyMapper', () => {

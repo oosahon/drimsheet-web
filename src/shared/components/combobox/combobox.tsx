@@ -7,7 +7,7 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from '@/shared/components/input-group';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 

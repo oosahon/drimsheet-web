@@ -1,6 +1,6 @@
 import uiCurrencies from '@/shared/configs/currencies.json' with { type: 'json' };
 import type { IMoneyDto } from '@/shared/lib/api/Api';
-import { currencyService } from '@/shared/lib/currency.service';
+import { currencyService } from '@/shared/lib/services/currency.service';
 import type { ComponentProps } from 'react';
 
 interface MoneyProps extends ComponentProps<'span'> {

@@ -3,7 +3,7 @@ import {
   type ResetPasswordFormProps,
 } from '@/auth/components/reset-password-form';
 import { useResetPassword } from '@/auth/hooks/use-reset-password';
-import { authService } from '@/auth/lib/auth.service';
+import { authService } from '@/auth/lib/services/auth.service';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import type { IApiValidationError } from '@/shared/lib/api/Api';
 import { useMemo } from 'react';

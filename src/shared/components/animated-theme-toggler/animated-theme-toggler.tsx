@@ -2,7 +2,7 @@ import { Moon, Sun } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 
 interface AnimatedThemeTogglerProps extends React.ComponentPropsWithoutRef<'button'> {
   duration?: number;

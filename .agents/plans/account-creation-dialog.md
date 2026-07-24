@@ -42,7 +42,7 @@ and unstaged working-tree changes must be preserved during implementation.
    in this ticket. Every API payload must use `isControlAccount: false` and omit
    `controlAccountCode`.
 5. Map `createWithoutOpeningBalance: true` to `openingBalance: null`.
-6. Add `src/shared/lib/currency.mapper.ts` for the reusable mapping from a
+6. Add `src/shared/lib/mappers/currency.mapper.ts` for the reusable mapping from a
    user-entered foreign-currency rate to `IExchangeRateDto`. The mapper should
    set:
    - `baseCurrencyCode` to the petty-cash account currency;
@@ -105,7 +105,7 @@ state, or mutation details to the page when the dialog can own them.
    `currencyCode` with the active entity's `functionalCurrencyCode`.
 4. Submit through an account-owned mutation hook.
 5. Map `IAccountCreationFormValues` to `IPettyCashAccountCreationReq` in
-   `src/account/lib/asset-account.mapper.ts`, keeping API shaping out of the
+   `src/account/lib/mappers/asset-account.mapper.ts`, keeping API shaping out of the
    dialog and service. The mapper assumes the form values have already passed
    form validation and must not perform validation:
    - always set `isControlAccount: false`;
@@ -139,19 +139,19 @@ intermediate request type between the form values and generated DTO.
   - Controlled dialog composition and account-creation orchestration.
 - `src/account/dialogs/account-creation.test.tsx`
   - Focused dialog/workflow coverage.
-- `src/shared/lib/currency.mapper.ts`
+- `src/shared/lib/mappers/currency.mapper.ts`
   - Map a user-entered rate, currency pair, and opening date to
     `IExchangeRateDto`.
-- `src/shared/lib/currency.mapper.test.ts`
+- `src/shared/lib/mappers/currency.mapper.test.ts`
   - Cover the exchange-rate DTO mapping contract.
-- `src/shared/lib/money.mapper.ts`
+- `src/shared/lib/mappers/money.mapper.ts`
   - Serialize `number | string` amounts and map them to `IMoneyDto`.
-- `src/shared/lib/money.mapper.test.ts`
+- `src/shared/lib/mappers/money.mapper.test.ts`
   - Cover numeric/string serialization and major/minor-unit DTO mapping.
-- `src/account/lib/asset-account.mapper.ts`
+- `src/account/lib/mappers/asset-account.mapper.ts`
   - Map `IAccountCreationFormValues` directly to
     `IPettyCashAccountCreationReq`.
-- `src/account/lib/asset-account.mapper.test.ts`
+- `src/account/lib/mappers/asset-account.mapper.test.ts`
   - Cover the form-to-petty-cash DTO mapping.
 
 ### Update
@@ -163,7 +163,7 @@ intermediate request type between the form values and generated DTO.
   - Keep `showCreationForm` and connect
     `open={showCreationForm}` / `onOpenChange={setShowCreationForm}`.
   - Keep the table's `onAddAccount` handler opening the dialog.
-- `src/account/lib/asset-account.service.ts` and
+- `src/account/lib/services/asset-account.service.ts` and
   `src/account/hooks/use-create-petty-cash-account.ts`
   - Accept `IPettyCashAccountCreationReq` and `IAccountCreationFormValues`
     respectively, with mapping delegated to `assetAccountMapper`.
@@ -213,8 +213,8 @@ final change:
 
 ```bash
 npm test -- --run src/account/dialogs/account-creation.test.tsx
-npm test -- --run src/shared/lib/currency.mapper.test.ts
-npm test -- --run src/account/lib/asset-account.mapper.test.ts
+npm test -- --run src/shared/lib/mappers/currency.mapper.test.ts
+npm test -- --run src/account/lib/mappers/asset-account.mapper.test.ts
 npm run check:structure
 npm run check-stories
 npm run lint
@@ -240,7 +240,7 @@ required upstream capability.
 - All created accounts use `isControlAccount: false`, regardless of the visible
   sub-account checkbox.
 - Foreign-currency opening balances are mapped through
-  `src/shared/lib/currency.mapper.ts`.
+  `src/shared/lib/mappers/currency.mapper.ts`.
 - Success closes the dialog and refreshes account data; failure preserves the
   form and keeps the dialog open.
 - Focused tests and required repository checks pass.

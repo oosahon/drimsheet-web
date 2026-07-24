@@ -1,5 +1,5 @@
 import type { IAccountCreationFormValues } from '@/account/components/account-creation-form';
-import { assetAccountMapper } from '@/account/lib/asset-account.mapper';
+import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
 import {
   EExchangeRateType,
   ELedgerAccountBehavior,

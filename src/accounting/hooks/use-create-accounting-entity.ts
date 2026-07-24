@@ -1,7 +1,7 @@
 import {
   accountingService,
   type CreateAccountingEntityInput,
-} from '@/accounting/lib/accounting.service';
+} from '@/accounting/lib/services/accounting.service';
 import { useMutation } from '@tanstack/react-query';
 
 export function useCreateAccountingEntity() {

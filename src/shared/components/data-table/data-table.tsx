@@ -35,7 +35,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/shared/components/tooltip';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 

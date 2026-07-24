@@ -2,7 +2,7 @@ import { type VariantProps } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 
 import { buttonVariants } from '@/shared/components/button/button-variants';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { Loader2 } from 'lucide-react';
 
 export interface ButtonProps

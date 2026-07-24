@@ -1,6 +1,6 @@
 import type { IAccountCreationFormValues } from '@/account/components/account-creation-form';
-import { assetAccountMapper } from '@/account/lib/asset-account.mapper';
-import { assetAccountService } from '@/account/lib/asset-account.service';
+import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
+import { assetAccountService } from '@/account/lib/services/asset-account.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useCreatePettyCashAccount(accountingCurrencyCode: string) {

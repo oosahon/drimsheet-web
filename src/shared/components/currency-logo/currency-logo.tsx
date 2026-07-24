@@ -1,4 +1,4 @@
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { CoinsIcon } from 'lucide-react';
 import { type ComponentProps } from 'react';
 

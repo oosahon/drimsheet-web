@@ -1,4 +1,4 @@
-import { dateUtils } from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/utils/date';
 import { describe, expect, it } from 'vitest';
 
 describe('date utils', () => {

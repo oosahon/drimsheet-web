@@ -4,7 +4,7 @@ import {
   type UFileType,
 } from '@/shared/components/document-upload/types';
 import { Separator } from '@/shared/components/separator';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { Plus, Upload } from 'lucide-react';
 import {
   type ChangeEvent,

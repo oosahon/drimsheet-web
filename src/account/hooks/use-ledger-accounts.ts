@@ -1,4 +1,4 @@
-import { ledgerAccountService } from '@/account/lib/ledger-account.service';
+import { ledgerAccountService } from '@/account/lib/services/ledger-account.service';
 import { type IGetLedgerAccountsQuery } from '@/shared/lib/api/Api';
 import { useQuery } from '@tanstack/react-query';
 

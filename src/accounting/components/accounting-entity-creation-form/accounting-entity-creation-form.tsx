@@ -1,5 +1,5 @@
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
-import { dateUtils } from '@/shared/lib/date';
+import { dateUtils } from '@/shared/lib/utils/date';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { AccountingEntityCreationFormStep1 } from './parts/first-step';

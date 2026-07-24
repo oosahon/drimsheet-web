@@ -1,4 +1,4 @@
-import { bookkeepingService } from '@/bookkeeping/lib/bookkeeping.service';
+import { bookkeepingService } from '@/bookkeeping/lib/services/bookkeeping.service';
 import type { IPaginationDto } from '@/shared/lib/api/Api';
 import { useQuery } from '@tanstack/react-query';
 

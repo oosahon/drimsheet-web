@@ -3,7 +3,7 @@ import {
   MoneyInput,
   type MoneyInputProps,
 } from '@/shared/components/money-input';
-import { cn } from '@/shared/lib/cn';
+import { cn } from '@/shared/lib/utils/cn';
 import { ArrowRightLeft } from 'lucide-react';
 
 export interface CurrencyExchangeRateInputProps extends Omit<
