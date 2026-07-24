@@ -225,6 +225,26 @@ export type ULedgerAccountSortBy =
   (typeof ELedgerAccountSortBy)[keyof typeof ELedgerAccountSortBy];
 
 export const ELedgerAccountSubType = {
+  RetainedEarnings: 'retained_earnings',
+  Sales: 'sales',
+  Services: 'services',
+  Subscriptions: 'subscriptions',
+  EmploymentIncome: 'employment_income',
+  InterestIncome: 'interest_income',
+  GainOnAssetSale: 'gain_on_asset_sale',
+  UnrealizedGains: 'unrealized_gains',
+  PayrollAndPersonnel: 'payroll_and_personnel',
+  RentAndUtilities: 'rent_and_utilities',
+  AdminAndGeneral: 'admin_and_general',
+  MarketingAndSelling: 'marketing_and_selling',
+  ResearchAndDevelopment: 'research_and_development',
+  DepreciationAndAmortization: 'depreciation_and_amortization',
+  BankCharge: 'bank_charge',
+  FinanceCost: 'finance_cost',
+  Interest: 'interest',
+  UnrealizedLoss: 'unrealized_loss',
+  ImpairmentLoss: 'impairment_loss',
+  OtherLoss: 'other_loss',
   CashAndCashEquivalent: 'cash_and_cash_equivalent',
   ShortTermInvestment: 'short_term_investment',
   Receivables: 'receivables',
@@ -245,31 +265,11 @@ export const ELedgerAccountSubType = {
   LeaseLiability: 'lease_liability',
   Provision: 'provision',
   Capital: 'capital',
-  RetainedEarnings: 'retained_earnings',
   Reserve: 'reserve',
   OpeningBalance: 'opening_balance',
-  Sales: 'sales',
-  Services: 'services',
-  Subscriptions: 'subscriptions',
-  EmploymentIncome: 'employment_income',
-  InterestIncome: 'interest_income',
-  GainOnAssetSale: 'gain_on_asset_sale',
-  UnrealizedGains: 'unrealized_gains',
   DirectCosts: 'direct_costs',
-  PayrollAndPersonnel: 'payroll_and_personnel',
-  RentAndUtilities: 'rent_and_utilities',
-  AdminAndGeneral: 'admin_and_general',
-  MarketingAndSelling: 'marketing_and_selling',
-  ResearchAndDevelopment: 'research_and_development',
-  DepreciationAndAmortization: 'depreciation_and_amortization',
-  BankCharge: 'bank_charge',
-  FinanceCost: 'finance_cost',
-  Interest: 'interest',
   IncomeTaxExpense: 'income_tax_expense',
-  UnrealizedLoss: 'unrealized_loss',
   LossOnAssetDisposal: 'loss_on_asset_disposal',
-  ImpairmentLoss: 'impairment_loss',
-  OtherLoss: 'other_loss',
 } as const;
 export type ULedgerAccountSubType =
   (typeof ELedgerAccountSubType)[keyof typeof ELedgerAccountSubType];
@@ -298,6 +298,58 @@ export const ELedgerAccountStatus = {
 } as const;
 export type ULedgerAccountStatus =
   (typeof ELedgerAccountStatus)[keyof typeof ELedgerAccountStatus];
+
+export const ELedgerAccountBehavior = {
+  Bank: 'bank',
+  PettyCash: 'petty_cash',
+  DefaultCash: 'default_cash',
+  StockAndEtfs: 'stock_and_etfs',
+  Bonds: 'bonds',
+  StatutoryReceivable: 'statutory_receivable',
+  TradeReceivable: 'trade_receivable',
+  DefaultReceivables: 'default_receivables',
+  Default: 'default',
+  CreditCard: 'credit_card',
+  Overdraft: 'overdraft',
+  ShortTermLoan: 'short_term_loan',
+  DefaultShortTermDebt: 'default_short_term_debt',
+  TaxPayable: 'tax_payable',
+  TradePayable: 'trade_payable',
+  DefaultPayable: 'default_payable',
+  Mortgage: 'mortgage',
+  OtherLongTermLoan: 'other_long_term_loan',
+  OwnerCapital: 'owner_capital',
+  RetainedEarnings: 'retained_earnings',
+  RevaluationReserve: 'revaluation_reserve',
+  OpeningBalanceEquity: 'opening_balance_equity',
+  Sales: 'sales',
+  Services: 'services',
+  Subscriptions: 'subscriptions',
+  EmploymentIncome: 'employment_income',
+  InterestIncome: 'interest_income',
+  GainOnAssetSale: 'gain_on_asset_sale',
+  UnrealizedGains: 'unrealized_gains',
+  Cogs: 'cogs',
+  CostOfServices: 'cost_of_services',
+  CostOfRevenue: 'cost_of_revenue',
+  DefaultDirectCost: 'default_direct_cost',
+  PayrollAndPersonnel: 'payroll_and_personnel',
+  RentAndUtilities: 'rent_and_utilities',
+  AdminAndGeneral: 'admin_and_general',
+  MarketingAndSelling: 'marketing_and_selling',
+  ResearchAndDevelopment: 'research_and_development',
+  DepreciationAndAmortization: 'depreciation_and_amortization',
+  BankCharge: 'bank_charge',
+  FinanceCost: 'finance_cost',
+  Interest: 'interest',
+  TaxExpense: 'tax_expense',
+  UnrealizedLoss: 'unrealized_loss',
+  AssetDisposalLoss: 'asset_disposal_loss',
+  ImpairmentLoss: 'impairment_loss',
+  OtherLoss: 'other_loss',
+} as const;
+export type ULedgerAccountBehavior =
+  (typeof ELedgerAccountBehavior)[keyof typeof ELedgerAccountBehavior];
 
 export const ENormalBalance = {
   Debit: 'debit',
@@ -397,7 +449,7 @@ export interface ILedgerAccountDto {
   type: ULedgerType;
   normalBalance: UNormalBalance;
   subType: any;
-  behavior: string;
+  behavior: ULedgerAccountBehavior;
   isControlAccount: boolean;
   controlAccountId?: TEntityId;
   name: string;
@@ -1254,6 +1306,21 @@ export class Api<
         method: 'POST',
         body: data,
         type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get active accounting entity
+     *
+     * @tags Accounting
+     * @name GetActiveAccountingEntity
+     * @request GET:/accounting/accounting-entity
+     */
+    getActiveAccountingEntity: (params: RequestParams = {}) =>
+      this.request<IAccountingEntity, IHttpErrorDto>({
+        path: `/accounting/accounting-entity`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

@@ -9,6 +9,7 @@ import {
 } from '@/shared/components/input-group';
 import { cn } from '@/shared/lib/cn';
 import { CheckIcon, ChevronDownIcon, XIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Combobox = ComboboxPrimitive.Root;
 
@@ -20,10 +21,17 @@ function ComboboxTrigger({
   className,
   children,
   showIcon = true,
+  'aria-label': ariaLabel,
   ...props
 }: Readonly<ComboboxPrimitive.Trigger.Props & { showIcon?: boolean }>) {
+  const { t } = useTranslation<'shared'>('shared');
+  const open_options_aria_label = t('open_options_aria_label');
+  const resolvedAriaLabel =
+    ariaLabel ?? (children ? undefined : open_options_aria_label);
+
   return (
     <ComboboxPrimitive.Trigger
+      aria-label={resolvedAriaLabel}
       data-slot="combobox-trigger"
       className={cn("[&_svg:not([class*='size-'])]:size-4", className)}
       {...props}
@@ -41,12 +49,24 @@ function ComboboxTrigger({
 
 function ComboboxClear({
   className,
+  'aria-label': ariaLabel,
   ...props
 }: Readonly<ComboboxPrimitive.Clear.Props>) {
+  const { t } = useTranslation<'shared'>('shared');
+  const clear_selection_aria_label = t('clear_selection_aria_label');
+  const resolvedAriaLabel = ariaLabel ?? clear_selection_aria_label;
+
   return (
     <ComboboxPrimitive.Clear
+      aria-label={resolvedAriaLabel}
       data-slot="combobox-clear"
-      render={<InputGroupButton variant="ghost" size="icon-xs" />}
+      render={
+        <InputGroupButton
+          aria-label={resolvedAriaLabel}
+          variant="ghost"
+          size="icon-xs"
+        />
+      }
       className={cn(className)}
       {...props}
     >
@@ -68,6 +88,9 @@ function ComboboxInput({
     showClear?: boolean;
   }
 >) {
+  const { t } = useTranslation<'shared'>('shared');
+  const open_options_aria_label = t('open_options_aria_label');
+
   return (
     <InputGroup className={cn('w-auto', className)}>
       <ComboboxPrimitive.Input
@@ -77,6 +100,7 @@ function ComboboxInput({
       <InputGroupAddon align="inline-end">
         {showTrigger && (
           <InputGroupButton
+            aria-label={open_options_aria_label}
             size="icon-xs"
             variant="ghost"
             asChild

@@ -56,5 +56,7 @@
   "save": "Save",
   "settings": "Settings",
   "or_text": "Or",
-  "date": "Date"
+  "date": "Date",
+  "open_options_aria_label": "Open options",
+  "clear_selection_aria_label": "Clear selection"
 }

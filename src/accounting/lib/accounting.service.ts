@@ -62,6 +62,11 @@ export const accountingService = {
     return res.data;
   },
 
+  async getAccountingEntity() {
+    const res = await purpleLedgerApi.accounting.getActiveAccountingEntity();
+    return res.data;
+  },
+
   async getJurisdiction() {
     const res = await purpleLedgerApi.accounting.getJurisdictions();
     return res.data;

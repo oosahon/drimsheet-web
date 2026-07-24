@@ -47,7 +47,7 @@ export function CurrencyExchangeRateInput({
         </InputGroupAddon>
       </InputGroup>
 
-      <ArrowRightLeft aria-hidden="true" className="size-8 shrink-0" />
+      <ArrowRightLeft aria-hidden="true" className="size-4 shrink-0" />
 
       <InputGroup className="w-36" data-disabled={disabled || undefined}>
         <MoneyInput

@@ -1,0 +1,63 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { OpeningBalanceFields } from './opening-balance-fields';
+
+const meta = {
+  title: 'Ledger Accounts/AccountCreationForm/OpeningBalanceFields',
+  component: OpeningBalanceFields,
+  tags: ['autodocs'],
+  parameters: { layout: 'centered' },
+  decorators: [
+    (Story) => (
+      <div className="w-[min(42rem,calc(100vw-2rem))]">
+        <Story />
+      </div>
+    ),
+  ],
+  args: {
+    accountingCurrencyCode: 'NGN',
+    currencyCode: 'NGN',
+    createWithoutOpeningBalance: false,
+    openingBalance: '',
+    openingDate: '',
+    exchangeRate: '',
+    onCreateWithoutOpeningBalanceChange: () => {},
+    onOpeningBalanceChange: () => {},
+    onOpeningDateChange: () => {},
+    onExchangeRateChange: () => {},
+  },
+  argTypes: {
+    onCreateWithoutOpeningBalanceChange: { action: 'opening toggled' },
+    onOpeningBalanceChange: { action: 'balance changed' },
+    onOpeningDateChange: { action: 'date changed' },
+    onExchangeRateChange: { action: 'exchange rate changed' },
+  },
+} satisfies Meta<typeof OpeningBalanceFields>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const ForeignCurrency: Story = {
+  args: {
+    currencyCode: 'USD',
+    openingBalance: 1,
+    openingDate: '2026-07-01',
+    exchangeRate: 1500,
+  },
+};
+
+export const WithoutOpeningBalance: Story = {
+  args: {
+    createWithoutOpeningBalance: true,
+  },
+};
+
+export const Invalid: Story = {
+  args: {
+    currencyCode: 'USD',
+    openingBalanceError: [{ message: 'Opening balance is required' }],
+    openingDateError: [{ message: 'Opening date is required' }],
+    exchangeRateError: [{ message: 'Exchange rate is required' }],
+  },
+};
