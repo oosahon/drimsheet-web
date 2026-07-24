@@ -1,5 +1,6 @@
 import { FieldDescription } from '@/shared/components/field';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 interface IAuthConsentProps {
   actionText?: string;
@@ -21,13 +22,13 @@ export function AuthConsent({
   return (
     <FieldDescription className="px-6 text-center text-xs">
       {consent_text}{' '}
-      <a href="/terms-of-service" className="text-xs hover:text-purple-500">
+      <Link to="/terms-of-service" className="text-xs hover:text-purple-500">
         {terms_of_service_text}
-      </a>{' '}
+      </Link>{' '}
       {and_text}{' '}
-      <a href="/privacy-policy" className="text-xs hover:text-purple-500">
+      <Link to="/privacy-policy" className="text-xs hover:text-purple-500">
         {privacy_policy_text}
-      </a>
+      </Link>
       .
     </FieldDescription>
   );

@@ -1,5 +1,5 @@
 import { AuthConsent } from '@/auth/components/auth-consent';
-import { GoogleAuthButton } from '@/auth/components/google-auth-button';
+import { GoogleAuthButtonContainer } from '@/auth/components/google-auth-button';
 import { LoginForm } from '@/auth/components/login-form';
 import type { ILoginFormValues } from '@/auth/components/login-form/types';
 import { useLoginWithEmail } from '@/auth/hooks/use-login-with-email';
@@ -50,7 +50,7 @@ export function SignInPage() {
         </div>
 
         <div className="grid gap-4">
-          <GoogleAuthButton />
+          <GoogleAuthButtonContainer />
         </div>
 
         <FieldSeparator className="my-4">{or_text}</FieldSeparator>

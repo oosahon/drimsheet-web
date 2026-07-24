@@ -1,10 +1,15 @@
 import { AuthConsent } from '@/auth/components/auth-consent';
 import { render, screen } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 
 describe('AuthConsent', () => {
   it('renders correctly with default action text', () => {
-    render(<AuthConsent />);
+    render(
+      <MemoryRouter>
+        <AuthConsent />
+      </MemoryRouter>
+    );
 
     expect(
       screen.getByText(/By creating an account, you agree to our/i)
@@ -18,7 +23,11 @@ describe('AuthConsent', () => {
   });
 
   it('renders correctly with custom action text', () => {
-    render(<AuthConsent actionText="signing up" />);
+    render(
+      <MemoryRouter>
+        <AuthConsent actionText="signing up" />
+      </MemoryRouter>
+    );
 
     expect(
       screen.getByText(/By signing up, you agree to our/i)

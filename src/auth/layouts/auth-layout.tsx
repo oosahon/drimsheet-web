@@ -10,7 +10,7 @@ export function AuthLayout() {
   }
 
   return (
-    <div className="flex h-screen min-h-screen w-full items-center justify-center">
+    <div className="flex min-h-svh w-full items-center justify-center">
       <Outlet />
     </div>
   );
