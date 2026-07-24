@@ -38,7 +38,9 @@ src/<feature>/
 
 ## Component Folder Layout
 
-Every component must live in its own directory.
+Every public or independently reusable component must live in its own directory.
+Private UI subcomponents may live in the owning component's optional `parts/`
+directory.
 
 ```text
 components/<name>/
@@ -46,6 +48,10 @@ components/<name>/
   <ui>.stories.tsx
   <ui>.test.tsx
   <ui>.container.tsx
+  parts/
+    <part>.tsx
+    <part>.stories.tsx
+    <part>.test.tsx
   types.ts
   validation.ts
   index.ts
@@ -55,9 +61,14 @@ components/<name>/
 - Use `<ui>.stories.tsx` for Storybook documentation.
 - Use `<ui>.test.tsx` for Jest or Vitest UI tests.
 - Use `<ui>.container.tsx` only when the component requires side effects or orchestration.
+- Use `parts/` only for substantial UI subcomponents consumed exclusively by
+  the owning component directory.
 - Use `types.ts` for component-specific types.
 - Use `validation.ts` for validation logic related to the component.
 - Use `index.ts` as the public barrel for the component directory.
+- Do not add a barrel to `parts/` or re-export parts from the owner's
+  `index.ts`.
+- Promote a part to its own component directory when another owner needs it.
 
 ## Shared Folder Layout
 
@@ -92,12 +103,18 @@ components/<name>/
   <ui>.tsx
   <ui>.stories.tsx
   <ui>.test.tsx
+  parts/
+    <part>.tsx
+    <part>.stories.tsx
+    <part>.test.tsx
   types.ts
   index.ts
 ```
 
 - `icons/` is a shared exception for icon components.
 - `icons.stories.tsx` documents the full icon set.
+- Shared component parts remain private to their owning shared component and
+  must not import feature code.
 
 ## Naming Rules
 

@@ -1,4 +1,14 @@
 {
   "welcome_to_the_purple_side_text": "Welcome to the purple side!",
-  "date_placeholder": "Select date"
+  "date_placeholder": "Select date",
+  "residence_country_label": "Where do you reside?",
+  "unsupported_standard_warning": "Your selected country uses {{standard}} standards, but we only support IFRS for now.",
+  "nigerian_tax_only_warning": "Tax computations are only supported for Nigerian residents.",
+  "next_button_label": "Next",
+  "reporting_currency_label": "What currency should your reports use?",
+  "fiscal_year_start_label": "Start of financial year",
+  "fiscal_year_end_label": "End of financial year",
+  "fiscal_year_start_warning": "Unless approved by the tax authorities, your fiscal year must start on {{expectedStart}}.",
+  "back_button_label": "Back",
+  "complete_setup_button_label": "Complete setup"
 }

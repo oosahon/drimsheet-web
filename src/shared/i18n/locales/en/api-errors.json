@@ -230,5 +230,9 @@
   "runtime_error_context_store_not_found": "Store not found",
   "user_error_invalid_action": "Invalid action",
   "user_error_invalid_date": "Invalid date",
-  "user_error_invalid_id": "Invalid user id"
+  "user_error_invalid_id": "Invalid user id",
+  "journal_entry_error_entry_predates_account_opening_balance": "Entry predates account opening balance.",
+  "ledger_error_ledger_account_forbidden_control_account_opening_balance_date": "Opening balance date not allowed on control accounts",
+  "ledger_error_ledger_account_invalid_opening_balance_date": "Invalid opening balance date",
+  "ledger_error_ledger_account_opening_balance_date_already_set": "Opening balance date already set"
 }

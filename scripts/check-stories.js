@@ -24,8 +24,12 @@ function findMissingStories(dir) {
         const parts = filePath.split(path.sep);
 
         const isInUI = parts.includes('components');
+        const isPartsComponent =
+          /[\\/][^\\/]*components[\\/][^\\/]+[\\/]parts([\\/]|$)/.test(
+            filePath
+          );
 
-        if (isInUI) {
+        if (isInUI && !isPartsComponent) {
           const dirname = path.dirname(filePath);
           const basename = path.basename(entry.name, '.tsx');
 

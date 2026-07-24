@@ -406,6 +406,8 @@ export interface ILedgerAccountDto {
   adjunctAccountRule: UAdjunctAccountRule;
   /** Construct a type with a set of properties K of type T */
   meta?: RecordStringString;
+  /** @format date-time */
+  openingBalanceDate: string | null;
   createdBy: TEntityId;
   /** @format date-time */
   createdAt: string;
@@ -456,7 +458,7 @@ export interface IGetLedgerAccountsQuery {
   isControlAccount?: boolean;
 }
 
-export interface IExchangeRateReq {
+export interface IExchangeRateDto {
   baseCurrencyCode: string;
   targetCurrencyCode: string;
   /** @format double */
@@ -465,13 +467,13 @@ export interface IExchangeRateReq {
   /** @format date-time */
   asOf: string;
   source: string;
-  /** @format double */
-  id?: number;
 }
 
 export interface IOpeningBalanceDto {
   amount: IMoneyDto;
-  exchangeRate: IExchangeRateReq | null;
+  exchangeRate: IExchangeRateDto | null;
+  /** @format date-time */
+  date: string;
 }
 
 export interface IPettyCashAccountCreationReq {
@@ -556,14 +558,13 @@ export interface IPaginationDto {
 export interface IJournalLineReq {
   accountId: string;
   amount: IMoneyDto;
-  exchangeRate: IExchangeRateReq | null;
+  exchangeRate: IExchangeRateDto | null;
   description: string | null;
-  side: UJournalSide;
   /** @format double */
   sequenceOrder: number;
 }
 
-export interface ITransferTransactionReq {
+export interface ITransactionJournalEntryReq {
   sourceLine: IJournalLineReq;
   destinationLines: IJournalLineReq[];
   status: UJournalEntryStatus;
@@ -580,6 +581,27 @@ export interface ICurrencyDto {
   name: string;
   /** @format double */
   minorUnit: number;
+}
+
+/** From T, pick a set of properties whose keys are in the union K */
+export interface PickIPaginationDtoExcludeKeysSearchOrSortDirection {
+  /** @format double */
+  limit?: number;
+  orderBy?: string;
+  /** @format double */
+  page?: number;
+}
+
+export interface IExchangeRateQueryParam {
+  /** @format double */
+  limit?: number;
+  orderBy?: string;
+  /** @format double */
+  page?: number;
+  currencyPair: string;
+  type?: UExchangeRateType;
+  /** @format date-time */
+  asOf?: string;
 }
 
 export interface IUserSignupReq {
@@ -929,11 +951,12 @@ export class Api<
       data: IPettyCashAccountCreationReq,
       params: RequestParams = {}
     ) =>
-      this.request<void, IHttpErrorDto>({
+      this.request<any, IHttpErrorDto>({
         path: `/ledger/accounts/asset/petty-cash`,
         method: 'POST',
         body: data,
         type: EContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -982,14 +1005,33 @@ export class Api<
   };
   journalEntry = {
     /**
-     * @description Create a new petty cash sub account
+     * @description Create a payment journal entry
      *
      * @tags Journal Entries
-     * @name RecordTransfer
+     * @name CreatePayment
+     * @request POST:/journal-entry/payment
+     */
+    createPayment: (
+      data: ITransactionJournalEntryReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<void, IHttpErrorDto>({
+        path: `/journal-entry/payment`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * @description Create a transfer journal entry
+     *
+     * @tags Journal Entries
+     * @name CreateTransfer
      * @request POST:/journal-entry/transfer
      */
-    recordTransfer: (
-      data: ITransferTransactionReq,
+    createTransfer: (
+      data: ITransactionJournalEntryReq,
       params: RequestParams = {}
     ) =>
       this.request<void, IHttpErrorDto>({
@@ -1005,13 +1047,42 @@ export class Api<
      * @description Gets all system currencies
      *
      * @tags Currency
-     * @name GetAll
+     * @name GetAllCurrencies
      * @request GET:/currencies
      */
-    getAll: (params: RequestParams = {}) =>
+    getAllCurrencies: (params: RequestParams = {}) =>
       this.request<ICurrencyDto[], any>({
         path: `/currencies`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Gets all system exchange
+     *
+     * @tags Currency
+     * @name GetExchangeRates
+     * @request GET:/currencies/exchange-rates
+     */
+    getExchangeRates: (
+      query: {
+        /** @format double */
+        limit?: number;
+        orderBy?: string;
+        /** @format double */
+        page?: number;
+        currencyPair: string;
+        type?: UExchangeRateType;
+        /** @format date-time */
+        asOf?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<IExchangeRate[], any>({
+        path: `/currencies/exchange-rates`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),

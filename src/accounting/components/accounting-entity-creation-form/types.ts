@@ -1,3 +1,6 @@
+import type { ICurrencyDto, IJurisdictionDto } from '@/shared/lib/api/Api';
+import type { FormikProps } from 'formik';
+
 export interface IAccountingEntityFormValues {
   name: string;
   entityType: string;
@@ -8,4 +11,36 @@ export interface IAccountingEntityFormValues {
   fiscalYearEnd: Date | null;
   appUsageMode: 'power_user' | 'non_power_user';
   accountingStandardCode: string;
+}
+
+export interface AccountingEntityCreationFormProps {
+  onSubmit: (values: IAccountingEntityFormValues) => Promise<void> | void;
+  loading?: boolean;
+  currencies?: ICurrencyDto[];
+  jurisdictions?: IJurisdictionDto[];
+}
+
+interface StepProps {
+  formik: FormikProps<IAccountingEntityFormValues>;
+  getErrorMessage: (
+    name: keyof IAccountingEntityFormValues
+  ) => Array<{ message?: string } | undefined> | undefined;
+}
+
+export interface AccountingEntityCreationFormStep1Props extends StepProps {
+  jurisdictions: IJurisdictionDto[];
+  onNext: () => void;
+}
+
+export interface AccountingEntityCreationFormStep2Props extends StepProps {
+  getFiscalYearStartErrorStr: () => string | undefined;
+  getFiscalYearEndErrorStr: () => string | undefined;
+  currencies: ICurrencyDto[];
+  onNext: () => void;
+  onBack: () => void;
+}
+
+export interface AccountingEntityCreationFormStep3Props extends StepProps {
+  onBack: () => void;
+  isSubmitting?: boolean;
 }
