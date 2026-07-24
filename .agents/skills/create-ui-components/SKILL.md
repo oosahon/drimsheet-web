@@ -41,11 +41,14 @@ are useful examples, but some predate the current rules.
    callbacks into the pure component.
 5. Classify every operation as presentation or orchestration. Add
    `<component>.container.tsx` when orchestration or side effects are required.
-6. Create the smallest applicable colocated file set and expose only its public
+6. Assess the primary UI file for substantial internal components. Keep trivial
+   render helpers inline, but move private UI sections with their own contract,
+   hooks, handlers, or meaningful conditional rendering into `parts/`.
+7. Create the smallest applicable colocated file set and expose only its public
    contract from `index.ts`.
-7. Add realistic stories and focused behavior tests. For forms, keep all types
+8. Add realistic stories and focused behavior tests. For forms, keep all types
    and validation outside the component file.
-8. Verify the focused change, then inspect the final diff for architecture drift.
+9. Verify the focused change, then inspect the final diff for architecture drift.
 
 ## Verification
 
@@ -72,4 +75,6 @@ or risk warrants them. Report any check that could not be run.
 - Behavior and user outcomes have focused tests.
 - Form types live in `types.ts`; form validation lives in `validation.ts`.
 - Imports obey feature-to-shared dependency direction.
+- Substantial private UI sections live in `parts/`, remain owner-private, and
+  are not re-exported.
 - No internal helper is exported accidentally.

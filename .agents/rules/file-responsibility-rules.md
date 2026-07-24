@@ -9,6 +9,20 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 - Pure component files must contain presentation logic only.
 - Pure component files must not fetch data, read local storage, trigger navigation, or mutate global state.
 - Pure component files may accept props, render UI, and emit callbacks.
+- Keep trivial render helpers inline, but move coherent UI sections with their
+  own props, hooks, handlers, or meaningful conditional rendering into the
+  owner's `parts/` directory.
+
+## `parts/`
+
+- Use `parts/` only for UI subcomponents owned by and private to one component
+  directory.
+- Keep each part focused on one recognizable section of the owning UI.
+- Do not use `parts/` as a general bucket for hooks, services, utilities, or
+  reusable components.
+- Do not add a `parts/index.ts` barrel or expose parts through the owner's public
+  API.
+- Promote a part when it gains a consumer outside its owner.
 
 ## `*.container.tsx` Files
 
@@ -43,6 +57,7 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 
 - Export only the folder’s public API.
 - Barrel files should re-export the component, types, and validation entry points that are meant for consumption.
+- Do not export private components from `parts/`.
 - Avoid exporting internal helpers from the barrel.
 
 ## `lib/`

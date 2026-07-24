@@ -10,6 +10,9 @@ Every form component must keep its types outside the component file:
   <form-name>.container.tsx
   <form-name>.stories.tsx
   <form-name>.test.tsx
+  parts/
+    <part-name>.tsx
+    <part-name>.stories.tsx
   types.ts
   validation.ts
   index.ts
@@ -36,7 +39,9 @@ Every form component must keep its types outside the component file:
 - Use `satisfies Meta<typeof Component>` and `StoryObj<typeof meta>`.
 - Add `tags: ['autodocs']` unless the nearby Storybook convention requires
   otherwise.
-- Import the component through its public alias.
+- Import public components through their public alias. Import private
+  `parts/` components directly from their implementation file because they are
+  intentionally absent from the public barrel.
 - Cover realistic visual and interaction states such as default, loading,
   disabled, empty, invalid, populated, and long-content states when relevant.
 - Supply deterministic data and lightweight providers or decorators.

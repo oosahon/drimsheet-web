@@ -3,7 +3,7 @@ import { purpleLedgerApi } from '@/shared/lib/api';
 
 export const currencyService = {
   async getAll() {
-    const res = await purpleLedgerApi.currencies.getAll();
+    const res = await purpleLedgerApi.currencies.getAllCurrencies();
     return res.data;
   },
 

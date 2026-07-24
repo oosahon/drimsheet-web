@@ -18,6 +18,8 @@ Make imports predictable so the agent can change one part of the app without cau
 
 - Shared code must stay feature-agnostic.
 - Feature code may depend on shared code, but not the other way around.
+- A component's `parts/` files share the dependency permissions of their owner
+  and may be imported only from within that owning component directory.
 - UI components must not reach into infrastructure concerns directly.
 - Pages and dialogs may orchestrate side effects, but they should not own reusable business logic.
 - Route files must remain thin and only wire URLs to pages.
@@ -38,5 +40,7 @@ Make imports predictable so the agent can change one part of the app without cau
 ## Barrel File Rules
 
 - Use barrels only for public entry points.
+- Do not create a barrel for a private `parts/` directory or re-export a private
+  part from its owner.
 - Do not create circular dependencies through barrels.
 - Keep import paths explicit when a barrel would hide important dependency direction.

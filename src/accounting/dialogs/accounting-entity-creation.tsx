@@ -23,7 +23,7 @@ interface AccountingEntityCreationDialogProps {
 export function AccountingEntityCreationDialog({
   open,
   done,
-}: AccountingEntityCreationDialogProps) {
+}: Readonly<AccountingEntityCreationDialogProps>) {
   const { t } = useTranslation('accounting');
   const handleApiError = useApiErrorHandler();
 
