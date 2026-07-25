@@ -36,3 +36,9 @@ export async function registerAuthenticatedAppRoutes(page: Page) {
     }
   );
 }
+
+export async function registerLogoutRoute(page: Page) {
+  await page.route('**/api/v1/auth/logout', async (route) => {
+    await route.fulfill({ status: 204 });
+  });
+}
