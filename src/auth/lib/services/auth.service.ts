@@ -98,7 +98,11 @@ export const authService = {
 
   decodeToken(token?: string | null) {
     if (!token) return null;
-    return jwtDecode(token) as IUser;
+    try {
+      return jwtDecode(token) as IUser;
+    } catch {
+      return null;
+    }
   },
 
   async logout() {

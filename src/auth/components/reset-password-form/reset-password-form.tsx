@@ -52,6 +52,12 @@ export function ResetPasswordForm({
     touched: formik.touched,
   });
 
+  const passwordErrors = getErrorMessage('password');
+  const confirmPasswordErrors = getErrorMessage('confirmPassword');
+
+  const passwordInvalid = passwordErrors.length > 0;
+  const confirmPasswordInvalid = confirmPasswordErrors.length > 0;
+
   const email_label = t('email_label');
   const new_password_label = t('new_password_label');
   const confirm_password_label = t('confirm_password_label');
@@ -59,10 +65,10 @@ export function ResetPasswordForm({
 
   return (
     <div
-      className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+      className={cn('flex flex-col gap-6 w-full min-w-0 max-w-full', className)}
       {...props}
     >
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} aria-busy={loading}>
         <FieldGroup>
           <Field>
             <div>
@@ -71,39 +77,63 @@ export function ResetPasswordForm({
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="email"
                 disabled
                 value={email}
               />
             </div>
 
-            <div className="mt-2">
+            <Field className="mt-2" data-invalid={passwordInvalid || undefined}>
               <FieldLabel htmlFor="password">{new_password_label}</FieldLabel>
               <PasswordInput
                 id="password"
                 name="password"
+                autoComplete="new-password"
+                disabled={loading}
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                aria-invalid={passwordInvalid || undefined}
+                aria-describedby={
+                  passwordInvalid ? 'password-error' : undefined
+                }
               />
-              <FieldError errors={getErrorMessage('password')} />
-            </div>
+              <FieldError id="password-error" errors={passwordErrors} />
+            </Field>
 
-            <div className="mt-2">
+            <Field
+              className="mt-2"
+              data-invalid={confirmPasswordInvalid || undefined}
+            >
               <FieldLabel htmlFor="confirmPassword">
                 {confirm_password_label}
               </FieldLabel>
               <PasswordInput
                 id="confirmPassword"
                 name="confirmPassword"
+                autoComplete="new-password"
+                disabled={loading}
                 value={formik.values.confirmPassword}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                aria-invalid={confirmPasswordInvalid || undefined}
+                aria-describedby={
+                  confirmPasswordInvalid ? 'confirmPassword-error' : undefined
+                }
               />
-              <FieldError errors={getErrorMessage('confirmPassword')} />
-            </div>
+              <FieldError
+                id="confirmPassword-error"
+                errors={confirmPasswordErrors}
+              />
+            </Field>
           </Field>
           <Field className="mt-2">
-            <Button type="submit" loading={loading} className="w-full">
+            <Button
+              type="submit"
+              loading={loading}
+              disabled={loading}
+              className="w-full"
+            >
               {reset_password_text}
             </Button>
           </Field>

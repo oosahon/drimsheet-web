@@ -17,14 +17,14 @@ export function useResetPasswordFormValidation() {
       yup.object({
         password: yup
           .string()
+          .required(password_required_text)
           .min(8, password_min_length_text)
           .matches(/(?=.*[0-9])/, password_number_text)
-          .matches(/(?=.*[^A-Za-z0-9])/, password_special_character_text)
-          .required(password_required_text),
+          .matches(/(?=.*[^A-Za-z0-9])/, password_special_character_text),
         confirmPassword: yup
           .string()
-          .oneOf([yup.ref('password')], passwords_match_text)
-          .required(confirm_password_required_text),
+          .required(confirm_password_required_text)
+          .oneOf([yup.ref('password')], passwords_match_text),
       }),
     [
       password_min_length_text,
