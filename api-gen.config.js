@@ -1,6 +1,6 @@
 export default {
   org: 'purple-ledger',
   repo: 'purple-ledger-core',
-  branch: 'test/pur-33',
+  branch: 'main',
   swaggerPath: 'generated/swagger.json',
 };
