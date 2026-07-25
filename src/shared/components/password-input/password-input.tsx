@@ -5,6 +5,7 @@ import { useState } from 'react';
 
 function PasswordInput({
   className,
+  disabled,
   ...props
 }: Readonly<React.ComponentProps<'input'>>) {
   const [showPassword, setShowPassword] = useState(false);
@@ -13,13 +14,15 @@ function PasswordInput({
     <div className="relative">
       <Input
         type={showPassword ? 'text' : 'password'}
+        disabled={disabled}
         className={cn('pr-10', className)}
         {...props}
       />
       <button
         type="button"
+        disabled={disabled}
         onClick={() => setShowPassword((prev) => !prev)}
-        className="absolute right-0 top-0 flex h-full items-center justify-center px-3 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-r-md"
+        className="absolute right-0 top-0 flex h-full items-center justify-center px-3 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-r-md disabled:pointer-events-none disabled:opacity-50"
         aria-label={showPassword ? 'Hide password' : 'Show password'}
       >
         {showPassword ? (

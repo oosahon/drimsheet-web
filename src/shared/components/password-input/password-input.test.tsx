@@ -47,4 +47,12 @@ describe('PasswordInput', () => {
     const input = screen.getByLabelText('Password');
     expect(input).toHaveAttribute('placeholder', 'Enter your password');
   });
+  it('disables input and toggle button when disabled prop is true', () => {
+    render(<PasswordInput disabled aria-label="Password" />);
+    const input = screen.getByLabelText('Password');
+    const toggleButton = screen.getByRole('button', { name: 'Show password' });
+
+    expect(input).toBeDisabled();
+    expect(toggleButton).toBeDisabled();
+  });
 });

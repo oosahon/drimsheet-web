@@ -62,11 +62,9 @@ test('verifies the email and replaces the route with the dashboard', async ({
   await page.goto(verificationUrl);
 
   const request = await verificationRequest;
-  const requestUrl = new URL(request.url());
 
   expect(request.method()).toBe('POST');
-  expect(requestUrl.searchParams.get('token')).toBe(verificationToken);
-  expect(request.postData()).toBeNull();
+  expect(request.postDataJSON()).toEqual({ token: verificationToken });
   await expect(page.getByText('Email verified successfully')).toBeVisible();
   await expect(page).toHaveURL('/dashboard');
   expect(await page.evaluate(() => localStorage.getItem('isLoggedIn'))).toBe(

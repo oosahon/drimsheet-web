@@ -667,6 +667,10 @@ export interface IAccessToken {
   accessToken: string;
 }
 
+export interface IVerifyEmailReq {
+  token: string;
+}
+
 export interface IEmailLoginReq {
   email: string;
   password: string;
@@ -1163,16 +1167,12 @@ export class Api<
      * @name VerifyEmail
      * @request POST:/auth/signup/complete
      */
-    verifyEmail: (
-      query: {
-        token: string;
-      },
-      params: RequestParams = {}
-    ) =>
+    verifyEmail: (data: IVerifyEmailReq, params: RequestParams = {}) =>
       this.request<IAccessToken, IHttpErrorDto>({
         path: `/auth/signup/complete`,
         method: 'POST',
-        query: query,
+        body: data,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),
@@ -1240,7 +1240,7 @@ export class Api<
      * @request GET:/auth/google
      */
     loginWithGoogle: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<any, void>({
         path: `/auth/google`,
         method: 'GET',
         ...params,
@@ -1254,7 +1254,7 @@ export class Api<
      * @request GET:/auth/google/callback
      */
     loginWithGoogleCallback: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<any, void | IHttpErrorDto>({
         path: `/auth/google/callback`,
         method: 'GET',
         ...params,
