@@ -1,4 +1,8 @@
-import type { IAccountingEntity, IUser, TEntityId } from '@/shared/lib/api/Api';
+import type {
+  IAccountingEntity,
+  IUserProfileDto,
+  TEntityId,
+} from '@/shared/lib/api/Api';
 import type { Page } from '@playwright/test';
 
 const timestamp = '2026-01-01T00:00:00.000Z';
@@ -11,8 +15,7 @@ export const authenticatedUser = {
   lastName: 'User',
   createdAt: timestamp,
   updatedAt: timestamp,
-  deletedAt: null,
-} satisfies IUser;
+} satisfies IUserProfileDto;
 
 const accountingEntity = {
   id: '00000000-0000-4000-8000-000000000002' as TEntityId,

@@ -67,7 +67,7 @@ export function SignupForm({
       className={cn('flex w-full min-w-0 max-w-full flex-col gap-6', className)}
       {...props}
     >
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} autoComplete="on">
         <FieldGroup>
           <div className="grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
             <Field data-invalid={firstNameInvalid}>
@@ -112,7 +112,7 @@ export function SignupForm({
               id="email"
               name="email"
               type="email"
-              autoComplete="email"
+              autoComplete="username"
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}

@@ -70,17 +70,18 @@ describe('LoginForm', () => {
       password: 'Valid1Password!',
     });
   });
-  it('exposes autocomplete attributes on email and password inputs', () => {
+  it('exposes credential autocomplete attributes on the form and inputs', () => {
     render(
       <MemoryRouter>
         <LoginForm onSubmit={vi.fn()} loading={false} />
       </MemoryRouter>
     );
 
-    expect(screen.getByLabelText(/Email/i)).toHaveAttribute(
-      'autocomplete',
-      'email'
-    );
+    const emailInput = screen.getByLabelText(/Email/i);
+    const form = emailInput.closest('form');
+
+    expect(form).toHaveAttribute('autocomplete', 'on');
+    expect(emailInput).toHaveAttribute('autocomplete', 'username');
     expect(screen.getByLabelText(/^Password$/i)).toHaveAttribute(
       'autocomplete',
       'current-password'
@@ -145,7 +146,7 @@ describe('LoginForm', () => {
     expect(emailInput).not.toHaveAttribute('aria-describedby');
   });
 
-  it('disables controls and prevents submission while loading', async () => {
+  it('keeps credentials readable and prevents submission while loading', async () => {
     const user = userEvent.setup();
     const handleSubmit = vi.fn();
 
@@ -163,9 +164,11 @@ describe('LoginForm', () => {
     const toggleButton = screen.getByRole('button', { name: /Show password/i });
     const submitButton = screen.getByRole('button', { name: /Sign In/i });
 
-    expect(emailInput).toBeDisabled();
-    expect(passwordInput).toBeDisabled();
-    expect(toggleButton).toBeDisabled();
+    expect(emailInput).toHaveAttribute('readonly');
+    expect(passwordInput).toHaveAttribute('readonly');
+    expect(emailInput).not.toBeDisabled();
+    expect(passwordInput).not.toBeDisabled();
+    expect(toggleButton).not.toBeDisabled();
     expect(submitButton).toBeDisabled();
 
     await user.click(submitButton);

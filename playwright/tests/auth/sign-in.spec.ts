@@ -86,11 +86,16 @@ test('handles single-flight submission and disables controls while pending', asy
   const submitBtn = page.getByRole('button', { name: 'Sign In' });
   await submitBtn.click();
 
-  await expect(page.getByLabel('Email')).toBeDisabled();
-  await expect(page.getByLabel('Password', { exact: true })).toBeDisabled();
+  await expect(page.getByLabel('Email')).toHaveAttribute('readonly', '');
+  await expect(page.getByLabel('Password', { exact: true })).toHaveAttribute(
+    'readonly',
+    ''
+  );
+  await expect(page.getByLabel('Email')).not.toBeDisabled();
+  await expect(page.getByLabel('Password', { exact: true })).not.toBeDisabled();
   await expect(
     page.getByRole('button', { name: 'Show password' })
-  ).toBeDisabled();
+  ).not.toBeDisabled();
   await expect(submitBtn).toBeDisabled();
 
   await page.keyboard.press('Enter');

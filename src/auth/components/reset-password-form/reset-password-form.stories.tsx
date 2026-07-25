@@ -29,14 +29,12 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    email: 'user@example.com',
     loading: false,
   },
 };
 
 export const Loading: Story = {
   args: {
-    email: 'user@example.com',
     loading: true,
   },
 };

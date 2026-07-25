@@ -60,7 +60,11 @@ export function LoginForm({
       className={cn('flex flex-col gap-6 w-full min-w-0 max-w-full', className)}
       {...props}
     >
-      <form onSubmit={formik.handleSubmit} aria-busy={loading}>
+      <form
+        onSubmit={formik.handleSubmit}
+        autoComplete="on"
+        aria-busy={loading}
+      >
         <FieldGroup>
           <Field data-invalid={isEmailInvalid}>
             <div>
@@ -69,8 +73,8 @@ export function LoginForm({
                 id="email"
                 name="email"
                 type="email"
-                autoComplete="email"
-                disabled={loading}
+                autoComplete="username"
+                readOnly={loading}
                 aria-invalid={isEmailInvalid ? 'true' : undefined}
                 aria-describedby={
                   isEmailInvalid ? 'login-email-error' : undefined
@@ -95,7 +99,7 @@ export function LoginForm({
                   id="password"
                   name="password"
                   autoComplete="current-password"
-                  disabled={loading}
+                  readOnly={loading}
                   aria-invalid={isPasswordInvalid ? 'true' : undefined}
                   aria-describedby={
                     isPasswordInvalid ? 'login-password-error' : undefined

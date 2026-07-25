@@ -3,7 +3,7 @@ import { purpleLedgerApi } from '@/shared/lib/api';
 import type {
   IEmailLoginReq,
   IResetPasswordReq,
-  IUser,
+  IUserProfileDto,
 } from '@/shared/lib/api/Api';
 import { jwtDecode } from 'jwt-decode';
 
@@ -99,7 +99,7 @@ export const authService = {
   decodeToken(token?: string | null) {
     if (!token) return null;
     try {
-      return jwtDecode(token) as IUser;
+      return jwtDecode(token) as IUserProfileDto;
     } catch {
       return null;
     }

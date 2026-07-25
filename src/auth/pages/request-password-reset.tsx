@@ -69,7 +69,7 @@ export function RequestPasswordResetPage() {
         </div>
 
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-2xl font-bold text-center tracking-tight">
             {isSuccess ? email_sent_text : reset_password_title}
           </h1>
           {isSuccess ? (

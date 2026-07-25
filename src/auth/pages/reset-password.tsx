@@ -3,10 +3,9 @@ import {
   type ResetPasswordFormProps,
 } from '@/auth/components/reset-password-form';
 import { useResetPassword } from '@/auth/hooks/use-reset-password';
-import { authService } from '@/auth/lib/services/auth.service';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import type { IApiValidationError } from '@/shared/lib/api/Api';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -22,11 +21,6 @@ export function ResetPasswordPage() {
 
   const [searchParams] = useSearchParams();
   const token = searchParams.get('token') ?? '';
-
-  const email = useMemo(
-    () => authService.decodeToken(token)?.email ?? '',
-    [token]
-  );
 
   const handleSubmit: ResetPasswordFormProps['onSubmit'] = async (
     values,
@@ -76,7 +70,7 @@ export function ResetPasswordPage() {
             <span className="sr-only">{purple_ledger_limited}</span>
           </Link>
         </div>
-        <h1 className="text-2xl font-bold tracking-tight">
+        <h1 className="text-2xl font-bold text-center tracking-tight">
           {reset_password_title}
         </h1>
         {isTokenMissing ? (
@@ -93,11 +87,7 @@ export function ResetPasswordPage() {
           </div>
         ) : (
           <div>
-            <ResetPasswordForm
-              email={email}
-              onSubmit={handleSubmit}
-              loading={isLoading}
-            />
+            <ResetPasswordForm onSubmit={handleSubmit} loading={isLoading} />
           </div>
         )}
         <div className="flex justify-center text-center">

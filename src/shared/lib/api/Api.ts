@@ -417,7 +417,7 @@ export interface IHttpErrorDto {
   cause?: TErrorCause;
 }
 
-export interface IUser {
+export interface IUserProfileDto {
   id: TEntityId;
   email: string;
   emailVerified: boolean;
@@ -427,8 +427,6 @@ export interface IUser {
   createdAt: string;
   /** @format date-time */
   updatedAt: string;
-  /** @format date-time */
-  deletedAt: string | null;
 }
 
 /** Construct a type with a set of properties K of type T */
@@ -674,6 +672,10 @@ export interface IVerifyEmailReq {
 export interface IEmailLoginReq {
   email: string;
   password: string;
+}
+
+export interface IRequestPasswordResetReq {
+  email: string;
 }
 
 export interface IResetPasswordReq {
@@ -956,7 +958,7 @@ export class Api<
      * @secure
      */
     getAuthUserProfile: (params: RequestParams = {}) =>
-      this.request<IUser, IHttpErrorDto>({
+      this.request<IUserProfileDto, IHttpErrorDto>({
         path: `/users/profile`,
         method: 'GET',
         secure: true,
@@ -1202,9 +1204,7 @@ export class Api<
      * @request POST:/auth/get-password-reset-link
      */
     getPasswordResetLink: (
-      data: {
-        email: string;
-      },
+      data: IRequestPasswordResetReq,
       params: RequestParams = {}
     ) =>
       this.request<void, IHttpErrorDto>({
@@ -1240,7 +1240,7 @@ export class Api<
      * @request GET:/auth/google
      */
     loginWithGoogle: (params: RequestParams = {}) =>
-      this.request<any, void>({
+      this.request<any, void | IHttpErrorDto>({
         path: `/auth/google`,
         method: 'GET',
         ...params,
@@ -1283,7 +1283,7 @@ export class Api<
      * @request POST:/auth/logout
      */
     logout: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<void, IHttpErrorDto>({
         path: `/auth/logout`,
         method: 'POST',
         ...params,

@@ -6,21 +6,12 @@ import { MemoryRouter } from 'react-router-dom';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('ResetPasswordForm', () => {
-  it('renders disabled email field with autocomplete attributes', () => {
+  it('renders password fields with autocomplete attributes', () => {
     render(
       <MemoryRouter>
-        <ResetPasswordForm
-          email="user@example.com"
-          onSubmit={vi.fn()}
-          loading={false}
-        />
+        <ResetPasswordForm onSubmit={vi.fn()} loading={false} />
       </MemoryRouter>
     );
-
-    const emailInput = screen.getByLabelText(/Email/i);
-    expect(emailInput).toBeDisabled();
-    expect(emailInput).toHaveValue('user@example.com');
-    expect(emailInput).toHaveAttribute('autocomplete', 'email');
 
     const passwordInput = screen.getByLabelText(/New Password/i);
     expect(passwordInput).toHaveAttribute('autocomplete', 'new-password');
@@ -36,11 +27,7 @@ describe('ResetPasswordForm', () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
-        <ResetPasswordForm
-          email="user@example.com"
-          onSubmit={vi.fn()}
-          loading={false}
-        />
+        <ResetPasswordForm onSubmit={vi.fn()} loading={false} />
       </MemoryRouter>
     );
 
@@ -66,11 +53,7 @@ describe('ResetPasswordForm', () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
-        <ResetPasswordForm
-          email="user@example.com"
-          onSubmit={vi.fn()}
-          loading={false}
-        />
+        <ResetPasswordForm onSubmit={vi.fn()} loading={false} />
       </MemoryRouter>
     );
 
@@ -109,11 +92,7 @@ describe('ResetPasswordForm', () => {
     const user = userEvent.setup();
     render(
       <MemoryRouter>
-        <ResetPasswordForm
-          email="user@example.com"
-          onSubmit={vi.fn()}
-          loading={false}
-        />
+        <ResetPasswordForm onSubmit={vi.fn()} loading={false} />
       </MemoryRouter>
     );
 
@@ -138,11 +117,7 @@ describe('ResetPasswordForm', () => {
 
     render(
       <MemoryRouter>
-        <ResetPasswordForm
-          email="user@example.com"
-          onSubmit={handleSubmit}
-          loading={false}
-        />
+        <ResetPasswordForm onSubmit={handleSubmit} loading={false} />
       </MemoryRouter>
     );
 
@@ -173,11 +148,7 @@ describe('ResetPasswordForm', () => {
   it('disables inputs and button and sets aria-busy when loading is true', () => {
     render(
       <MemoryRouter>
-        <ResetPasswordForm
-          email="user@example.com"
-          onSubmit={vi.fn()}
-          loading={true}
-        />
+        <ResetPasswordForm onSubmit={vi.fn()} loading={true} />
       </MemoryRouter>
     );
 

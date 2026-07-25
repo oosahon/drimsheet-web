@@ -16,6 +16,20 @@ describe('SignupForm', () => {
     ).toBeInTheDocument();
   });
 
+  it('exposes credential autocomplete attributes on the form and inputs', () => {
+    render(<SignupForm onSubmit={vi.fn()} loading={false} />);
+
+    const emailInput = screen.getByLabelText(/Email/i);
+    const form = emailInput.closest('form');
+
+    expect(form).toHaveAttribute('autocomplete', 'on');
+    expect(emailInput).toHaveAttribute('autocomplete', 'username');
+    expect(screen.getByLabelText(/^Password$/i)).toHaveAttribute(
+      'autocomplete',
+      'new-password'
+    );
+  });
+
   it('shows required validation errors on submit empty', async () => {
     const user = userEvent.setup();
     render(<SignupForm onSubmit={vi.fn()} loading={false} />);

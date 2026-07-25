@@ -188,7 +188,6 @@ test('reflows at 320px viewport without horizontal scroll', async ({
   expect(scrollWidth).toBeLessThanOrEqual(320);
 
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.getByLabel('Email')).toBeVisible();
   await expect(page.getByLabel('New Password')).toBeVisible();
   await expect(page.getByLabel('Confirm Password')).toBeVisible();
   await expect(

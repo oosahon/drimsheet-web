@@ -15,7 +15,7 @@ import {
   SidebarMenuItem,
 } from '@/shared/components/sidebar';
 import { Skeleton } from '@/shared/components/skeleton';
-import type { IUser } from '@/shared/lib/api/Api';
+import type { IUserProfileDto } from '@/shared/lib/api/Api';
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -25,7 +25,10 @@ import {
 } from 'lucide-react';
 import type { ReactNode } from 'react';
 
-export type NavUserProfile = Pick<IUser, 'email' | 'firstName' | 'lastName'>;
+export type NavUserProfile = Pick<
+  IUserProfileDto,
+  'email' | 'firstName' | 'lastName'
+>;
 
 export interface NavUserProps {
   user?: NavUserProfile;
