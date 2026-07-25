@@ -234,5 +234,11 @@
   "journal_entry_error_entry_predates_account_opening_balance": "Entry predates account opening balance.",
   "ledger_error_ledger_account_forbidden_control_account_opening_balance_date": "Opening balance date not allowed on control accounts",
   "ledger_error_ledger_account_invalid_opening_balance_date": "Invalid opening balance date",
-  "ledger_error_ledger_account_opening_balance_date_already_set": "Opening balance date already set"
+  "ledger_error_ledger_account_opening_balance_date_already_set": "Opening balance date already set",
+  "auth_error_invalid_confirm_password": "Invalid confirm password",
+  "auth_error_invalid_email": "Invalid email",
+  "auth_error_invalid_first_name": "Invalid first name",
+  "auth_error_invalid_last_name": "Invalid last name",
+  "auth_error_invalid_password": "Invalid password",
+  "auth_error_passwords_do_not_match": "Passwords do not match"
 }
