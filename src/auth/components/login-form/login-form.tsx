@@ -45,6 +45,11 @@ export function LoginForm({
     touched: formik.touched,
   });
 
+  const emailError = getErrorMessage('email');
+  const passwordError = getErrorMessage('password');
+  const isEmailInvalid = Boolean(emailError && emailError.length > 0);
+  const isPasswordInvalid = Boolean(passwordError && passwordError.length > 0);
+
   const email_label = t('email_label');
   const password_label = t('password_label');
   const forgot_password_text = t('forgot_password_text');
@@ -52,26 +57,37 @@ export function LoginForm({
 
   return (
     <div
-      className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+      className={cn('flex flex-col gap-6 w-full min-w-0 max-w-full', className)}
       {...props}
     >
-      <form onSubmit={formik.handleSubmit}>
+      <form
+        onSubmit={formik.handleSubmit}
+        autoComplete="on"
+        aria-busy={loading}
+      >
         <FieldGroup>
-          <Field>
+          <Field data-invalid={isEmailInvalid}>
             <div>
               <FieldLabel htmlFor="email">{email_label}</FieldLabel>
               <Input
                 id="email"
                 name="email"
                 type="email"
+                autoComplete="username"
+                readOnly={loading}
+                aria-invalid={isEmailInvalid ? 'true' : undefined}
+                aria-describedby={
+                  isEmailInvalid ? 'login-email-error' : undefined
+                }
                 value={formik.values.email}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
               />
-              <FieldError errors={getErrorMessage('email')} />
+              <FieldError id="login-email-error" errors={emailError} />
             </div>
-
-            <div className="mt-2 grid grid-cols-[1fr_auto] items-center text-left">
+          </Field>
+          <Field data-invalid={isPasswordInvalid} className="mt-2">
+            <div className="grid grid-cols-[1fr_auto] items-center text-left">
               <FieldLabel
                 htmlFor="password"
                 className="col-start-1 row-start-1"
@@ -82,11 +98,17 @@ export function LoginForm({
                 <PasswordInput
                   id="password"
                   name="password"
+                  autoComplete="current-password"
+                  readOnly={loading}
+                  aria-invalid={isPasswordInvalid ? 'true' : undefined}
+                  aria-describedby={
+                    isPasswordInvalid ? 'login-password-error' : undefined
+                  }
                   value={formik.values.password}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                 />
-                <FieldError errors={getErrorMessage('password')} />
+                <FieldError id="login-password-error" errors={passwordError} />
               </div>
               <Link
                 to="/auth/forgot-password"

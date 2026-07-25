@@ -24,3 +24,5 @@ Before making changes, follow the rules in:
 - For UI component tasks, follow `.agents/skills/create-ui-components/SKILL.md`.
 - For shadcn tasks, use `.agents/skills/add-shadcn-ui/SKILL.md` and `.agents/workflow/shadcn-ui.md`.
 - For test selection and placement, follow `.agents/workflow/testing.md`.
+- For Playwright browser integration tasks, follow
+  `.agents/skills/write-playwright-integration-tests/SKILL.md`.

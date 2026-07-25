@@ -5,7 +5,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from '@/shared/components/field';
-import { Input } from '@/shared/components/input';
 import { PasswordInput } from '@/shared/components/password-input';
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { cn } from '@/shared/lib/utils/cn';
@@ -19,7 +18,6 @@ export interface ResetPasswordFormProps extends Omit<
   ComponentProps<'div'>,
   'onSubmit'
 > {
-  email: string;
   onSubmit: (
     values: IResetPasswordFormValues,
     helpers: FormikHelpers<IResetPasswordFormValues>
@@ -29,7 +27,6 @@ export interface ResetPasswordFormProps extends Omit<
 
 export function ResetPasswordForm({
   className,
-  email,
   onSubmit,
   loading,
   ...props
@@ -52,58 +49,72 @@ export function ResetPasswordForm({
     touched: formik.touched,
   });
 
-  const email_label = t('email_label');
+  const passwordErrors = getErrorMessage('password');
+  const confirmPasswordErrors = getErrorMessage('confirmPassword');
+
+  const passwordInvalid = passwordErrors.length > 0;
+  const confirmPasswordInvalid = confirmPasswordErrors.length > 0;
+
   const new_password_label = t('new_password_label');
   const confirm_password_label = t('confirm_password_label');
   const reset_password_text = t('reset_password_text');
 
   return (
     <div
-      className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+      className={cn('flex flex-col gap-6 w-full min-w-0 max-w-full', className)}
       {...props}
     >
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} aria-busy={loading}>
         <FieldGroup>
-          <Field>
-            <div>
-              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                disabled
-                value={email}
-              />
-            </div>
-
-            <div className="mt-2">
-              <FieldLabel htmlFor="password">{new_password_label}</FieldLabel>
-              <PasswordInput
-                id="password"
-                name="password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError errors={getErrorMessage('password')} />
-            </div>
-
-            <div className="mt-2">
-              <FieldLabel htmlFor="confirmPassword">
-                {confirm_password_label}
-              </FieldLabel>
-              <PasswordInput
-                id="confirmPassword"
-                name="confirmPassword"
-                value={formik.values.confirmPassword}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError errors={getErrorMessage('confirmPassword')} />
-            </div>
+          <Field className="mt-2" data-invalid={passwordInvalid || undefined}>
+            <FieldLabel htmlFor="password">{new_password_label}</FieldLabel>
+            <PasswordInput
+              id="password"
+              name="password"
+              autoComplete="new-password"
+              disabled={loading}
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              aria-invalid={passwordInvalid || undefined}
+              aria-describedby={passwordInvalid ? 'password-error' : undefined}
+            />
+            <FieldError id="password-error" errors={passwordErrors} />
           </Field>
+
+          <Field
+            className="mt-2"
+            data-invalid={confirmPasswordInvalid || undefined}
+          >
+            <FieldLabel htmlFor="confirmPassword">
+              {confirm_password_label}
+            </FieldLabel>
+            <PasswordInput
+              id="confirmPassword"
+              name="confirmPassword"
+              autoComplete="new-password"
+              disabled={loading}
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              aria-invalid={confirmPasswordInvalid || undefined}
+              aria-describedby={
+                confirmPasswordInvalid ? 'confirmPassword-error' : undefined
+              }
+            />
+            <FieldError
+              id="confirmPassword-error"
+              errors={confirmPasswordErrors}
+            />
+          </Field>
+
           <Field className="mt-2">
-            <Button type="submit" loading={loading} className="w-full">
+            <Button
+              type="submit"
+              loading={loading}
+              disabled={loading}
+              className="w-full"
+            >
               {reset_password_text}
             </Button>
           </Field>

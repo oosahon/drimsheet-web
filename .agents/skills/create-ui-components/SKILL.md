@@ -53,6 +53,8 @@ are useful examples, but some predate the current rules.
    and hooks in component tests. For containers, mock external systems only when
    necessary. For forms, keep all types and validation outside the component
    file.
+   If the task requires dialog, page, route, or other browser integration
+   coverage, also use `$write-playwright-integration-tests`.
 9. Verify the focused change, then inspect the final diff for architecture drift.
 
 ## Verification

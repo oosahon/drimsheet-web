@@ -35,7 +35,7 @@ export function LogoutConfirmationDialog({
     try {
       await logout();
       setOpen(false);
-      navigate('/auth/signin');
+      navigate('/auth/signin', { replace: true });
     } catch (error) {
       handleApiError(error, { showToast: true });
     }

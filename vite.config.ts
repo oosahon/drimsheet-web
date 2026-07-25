@@ -18,6 +18,6 @@ export default defineConfig({
     globals: true,
     environment: 'jsdom',
     setupFiles: './setup-test.ts',
-    exclude: [...configDefaults.exclude, 'e2e/**'],
+    exclude: [...configDefaults.exclude, 'playwright/**'],
   },
 });

@@ -19,11 +19,9 @@ export function OnboardingManager() {
   if (isLoading) return null;
 
   return (
-    <>
-      <AccountingEntityCreationDialog
-        open={openAccountingOnboardingForm}
-        done={refetch}
-      />
-    </>
+    <AccountingEntityCreationDialog
+      open={openAccountingOnboardingForm}
+      done={refetch}
+    />
   );
 }

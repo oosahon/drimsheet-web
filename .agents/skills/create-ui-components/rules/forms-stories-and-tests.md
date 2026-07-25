@@ -64,5 +64,6 @@ Every form component must keep its types outside the component file:
 - Test containers separately when their orchestration adds behavior worth
   protecting. Render the real presentational component and mock only necessary
   external boundaries.
-- Test dialogs and pages through the Playwright integration layer, not through
-  component Testing Library tests.
+- Test dialogs and pages under `playwright/tests/<feature>/`, not through
+  component Testing Library tests. Use
+  `$write-playwright-integration-tests` for that coverage.

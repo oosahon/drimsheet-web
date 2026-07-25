@@ -1,4 +1,5 @@
 import { AppLayout } from '@/_app/layouts/app-layout';
+import { ProtectedAppLayout } from '@/_app/layouts/protected-app-layout';
 import { useLedgerAccountRoutes } from '@/account/routes/ledger-account';
 import { useAuthRoutes } from '@/auth/routes/auth';
 import { useReportingRoutes } from '@/reporting/routes/reporting';
@@ -11,7 +12,11 @@ export function AppRoutes() {
 
   const routes = useRoutes([
     {
-      element: <AppLayout />,
+      element: (
+        <ProtectedAppLayout>
+          <AppLayout />
+        </ProtectedAppLayout>
+      ),
       children: [reportingRoutes, ledgerAccountRoutes],
     },
     authRoutes,

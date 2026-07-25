@@ -1,15 +1,21 @@
 import animatedLogoImg from '@/shared/assets/animated-purple-ledger.svg';
+import type { FullPageLoaderProps } from './types';
 
-export function FullPageLoader() {
+export function FullPageLoader({ label }: Readonly<FullPageLoaderProps>) {
   return (
-    <div className="flex h-screen items-center justify-center fixed inset-0 z-50 backdrop-blur-md bg-background/50">
+    <div
+      role="status"
+      aria-live="polite"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-md"
+    >
       <img
-        className="animate-pulse-scale"
+        className="animate-pulse-scale motion-reduce:animate-none"
         width={100}
         height={100}
         src={animatedLogoImg}
-        alt="Purple Ledger"
+        alt=""
       />
+      <span className="sr-only">{label}</span>
     </div>
   );
 }

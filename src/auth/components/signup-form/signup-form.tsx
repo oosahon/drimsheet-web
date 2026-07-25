@@ -46,6 +46,16 @@ export function SignupForm({
     touched: formik.touched,
   });
 
+  const firstNameErrors = getErrorMessage('firstName');
+  const lastNameErrors = getErrorMessage('lastName');
+  const emailErrors = getErrorMessage('email');
+  const passwordErrors = getErrorMessage('password');
+
+  const firstNameInvalid = firstNameErrors.length > 0;
+  const lastNameInvalid = lastNameErrors.length > 0;
+  const emailInvalid = emailErrors.length > 0;
+  const passwordInvalid = passwordErrors.length > 0;
+
   const first_name_label = t('first_name_label');
   const last_name_label = t('last_name_label');
   const email_label = t('email_label');
@@ -54,13 +64,13 @@ export function SignupForm({
 
   return (
     <div
-      className={cn('flex flex-col gap-6 min-w-sm max-w-full', className)}
+      className={cn('flex w-full min-w-0 max-w-full flex-col gap-6', className)}
       {...props}
     >
-      <form onSubmit={formik.handleSubmit}>
+      <form onSubmit={formik.handleSubmit} autoComplete="on">
         <FieldGroup>
-          <Field className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col">
+          <div className="grid grid-cols-1 gap-4 min-[360px]:grid-cols-2">
+            <Field data-invalid={firstNameInvalid}>
               <FieldLabel htmlFor="firstName">{first_name_label}</FieldLabel>
               <Input
                 id="firstName"
@@ -70,10 +80,14 @@ export function SignupForm({
                 value={formik.values.firstName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                aria-invalid={firstNameInvalid || undefined}
+                aria-describedby={
+                  firstNameInvalid ? 'firstName-error' : undefined
+                }
               />
-              <FieldError errors={getErrorMessage('firstName')} />
-            </div>
-            <div className="flex flex-col">
+              <FieldError id="firstName-error" errors={firstNameErrors} />
+            </Field>
+            <Field data-invalid={lastNameInvalid}>
               <FieldLabel htmlFor="lastName">{last_name_label}</FieldLabel>
               <Input
                 id="lastName"
@@ -83,39 +97,46 @@ export function SignupForm({
                 value={formik.values.lastName}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
+                aria-invalid={lastNameInvalid || undefined}
+                aria-describedby={
+                  lastNameInvalid ? 'lastName-error' : undefined
+                }
               />
-              <FieldError errors={getErrorMessage('lastName')} />
-            </div>
+              <FieldError id="lastName-error" errors={lastNameErrors} />
+            </Field>
+          </div>
+
+          <Field data-invalid={emailInvalid}>
+            <FieldLabel htmlFor="email">{email_label}</FieldLabel>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="username"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              aria-invalid={emailInvalid || undefined}
+              aria-describedby={emailInvalid ? 'email-error' : undefined}
+            />
+            <FieldError id="email-error" errors={emailErrors} />
           </Field>
 
-          <Field>
-            <div>
-              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError errors={getErrorMessage('email')} />
-            </div>
-
-            <div className="mt-2">
-              <FieldLabel htmlFor="password">{password_label}</FieldLabel>
-              <PasswordInput
-                id="password"
-                name="password"
-                autoComplete="new-password"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError errors={getErrorMessage('password')} />
-            </div>
+          <Field data-invalid={passwordInvalid}>
+            <FieldLabel htmlFor="password">{password_label}</FieldLabel>
+            <PasswordInput
+              id="password"
+              name="password"
+              autoComplete="new-password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              aria-invalid={passwordInvalid || undefined}
+              aria-describedby={passwordInvalid ? 'password-error' : undefined}
+            />
+            <FieldError id="password-error" errors={passwordErrors} />
           </Field>
+
           <Field className="mt-2">
             <Button type="submit" loading={loading}>
               {create_account_text}

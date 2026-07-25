@@ -2,22 +2,28 @@
 
 ## Goal
 
-Choose the test runner and isolation boundary from the ownership layer under
-test.
+Choose the runner and isolation boundary from the behavior under test.
 
 ## Test Matrix
 
-| Owner               | Runner                   | Boundary                                               | Location                         |
-| ------------------- | ------------------------ | ------------------------------------------------------ | -------------------------------- |
-| Component           | Vitest + Testing Library | Real component tree                                    | Colocated `*.test.tsx`           |
-| Component container | Vitest + Testing Library | Real presentation; mocked external systems when needed | Colocated `*.test.tsx`           |
-| Dialog              | Playwright               | Running app with controlled API outcomes               | `e2e/tests/integration/dialogs/` |
-| Page                | Playwright               | Running app with controlled API outcomes               | `e2e/tests/integration/pages/`   |
-| Route               | Playwright               | Full application and test-system journey               | `e2e/tests/routes/`              |
+| Layer                    | Runner                   | Boundary                                          | Location                      |
+| ------------------------ | ------------------------ | ------------------------------------------------- | ----------------------------- |
+| Component                | Vitest + Testing Library | Real owned component tree                         | Colocated `*.test.tsx`        |
+| Component container      | Vitest + Testing Library | Real presentation with external boundaries mocked | Colocated `*.test.tsx`        |
+| Hook, mapper, validation | Vitest                   | Deterministic module contract                     | Colocated `*.test.ts(x)`      |
+| Browser integration      | Playwright               | Running frontend with controlled first-party APIs | `playwright/tests/<feature>/` |
+| System end-to-end        | External E2E suite       | Deployed frontend and real test-system boundaries | Separate repository           |
 
-The current `playwright.config.ts` recursively discovers `e2e/tests`, so these
-directories work without adding Playwright projects. Existing specs outside
-these directories are legacy-compatible; use this placement for new tests.
+## Select the Layer
+
+- Use Vitest for components, containers, hooks, mappers, services, validation,
+  and other module-owned contracts.
+- Use Playwright in this repository when browser composition, routing, portals,
+  focus, navigation, or browser APIs are material to the outcome.
+- Use the external E2E suite when the behavior under test includes the real API,
+  database, email delivery, identity provider, or another deployed service.
+- Do not duplicate lower-level component assertions in Playwright unless the
+  browser composition itself changes the behavior.
 
 ## Component Tests
 
@@ -44,53 +50,105 @@ npm test -- --run src/<feature>/components/<name>/<name>.test.tsx
 
 Run a focused container test with the same Vitest command used for components.
 
-## Dialog and Page Integration Tests
+## Browser Integration Tests
 
-1. Place the spec under `e2e/tests/integration/dialogs/` or
-   `e2e/tests/integration/pages/`.
-2. Navigate to the application state that renders the dialog or page.
-3. Use the real page, dialog, form, providers, router, and portal behavior.
-4. Intercept first-party API calls with `page.route()` only to make integration
-   scenarios deterministic.
-5. Fulfill representative loading, success, validation, and failure responses.
-6. Assert visible browser behavior, retained form state, dismissal, and
-   reopening where relevant.
-7. Do not mock React modules or replace owned UI.
+1. Identify one frontend-owned user outcome.
+2. Inspect the public route, page or dialog composition, generated API
+   contracts, and nearby lower-level coverage.
+3. Place the spec at
+   `playwright/tests/<feature>/<user-outcome>.spec.ts`.
+4. Import `test` and `expect` from `@integration/fixtures/test`.
+5. Register deterministic first-party API routes before navigation or the
+   interaction that can issue them.
+6. Navigate through the public application route.
+7. Use the real page, dialog, forms, providers, router, and portal behavior.
+8. Interact through accessible roles, labels, and visible text.
+9. Assert visible state, URL, focus, browser behavior, and request payloads
+   where they are part of the frontend contract.
+10. Run each scenario independently and together to detect shared-state or
+    ordering assumptions.
 
-Run a focused integration spec:
+Do not call live first-party services. Integration mode points
+`VITE_API_URL` at the local Vite origin so a missed intercept cannot reach a
+developer, staging, or production API.
+
+### Test support extraction
+
+- Keep one-off locators and API responses in the owning spec.
+- Add a feature mock when multiple scenarios or specs repeat material route
+  registration or response data.
+- Add a factory when multiple tests need deterministic variants of the same
+  entity.
+- Add a fixture when setup is reusable and belongs in the Playwright lifecycle.
+- Add a page object only when a locator group or workflow has more than one
+  consumer.
+- Do not add a base page class or generic helper bucket.
+
+### Locators and waiting
+
+Prefer role, label, text, placeholder, alt text, and title locators. Use a test
+ID only when no user-facing contract is stable. Use awaited web-first
+assertions and Playwright auto-waiting. Do not use fixed sleeps.
+
+Run browser integration tests:
 
 ```bash
-npm run test:e2e:run -- e2e/tests/integration/dialogs/<name>.spec.ts --project=chromium
+npm run test:integration -- playwright/tests/<feature>/<name>.spec.ts --project=chromium
+npm run test:integration
+npm run test:integration:ui
+npm run test:integration:debug
+npm run typecheck:integration
+npm run test:integration:report
 ```
 
-## Route End-to-End Tests
+### Code coverage
 
-1. Place the spec under `e2e/tests/routes/<feature>/`.
-2. Enter through the route or real application navigation.
-3. Use real first-party API/test-system boundaries for the journey under test.
-4. Cover authorization, navigation, persistence, and the route's critical user
-   outcome.
-5. Stub only third-party systems that are outside the product boundary or
-   unsafe/non-deterministic in the test environment.
-
-Run a focused route spec:
+Generate Chromium runtime coverage for application modules exercised by the
+browser journeys:
 
 ```bash
-npm run test:e2e:run -- e2e/tests/routes/<feature>/<route>.spec.ts --project=chromium
+npm run test:integration:coverage
 ```
+
+Open `coverage/playwright/index.html` for the navigable source report. The same
+run writes `coverage/playwright/lcov.info`,
+`coverage/playwright/coverage-final.json`, and a terminal summary.
+
+Coverage collection is opt-in and does not run during the normal integration
+command. It includes Vite-served modules under `src/` that were loaded during
+the tested journeys. Keep this report separate from Vitest coverage because the
+two suites exercise different boundaries.
+
+## CI Requirements
+
+The CI environment must run:
+
+```bash
+npm ci
+npx playwright install --with-deps chromium
+npm run typecheck:integration
+npm run test:integration
+```
+
+Publish `playwright-report/` and `test-results/` when the integration job fails
+so traces and failure artifacts remain available. If CI is owned outside this
+repository, record these exact requirements with the owning pipeline.
 
 ## Final Verification
 
-Run focused tests first. Then run the applicable broader checks:
+Run focused tests first, then the applicable broader checks:
 
 ```bash
 npm test -- --run
-npm run test:e2e:run -- --project=chromium
+npm run typecheck:integration
+npm run test:integration
 npm run check:structure
 npm run check-stories
 npm run lint
 npm run build
 ```
 
-Report checks that cannot run because the required backend, account fixtures,
-environment variables, or external test systems are unavailable.
+Verify runner separation with `npx playwright test --list`: Playwright should
+list only `playwright/**/*.spec.ts`, and Vitest should not discover those
+specs. Report checks that cannot run because the required browser binary or
+environment capability is unavailable.

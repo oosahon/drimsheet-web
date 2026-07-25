@@ -18,7 +18,7 @@ const meta = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  args: { onSubmit: () => {} },
+  args: { onSubmit: () => {}, loading: false },
   argTypes: {
     onSubmit: { action: 'submitted' },
   },
@@ -30,20 +30,11 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     loading: false,
-    isSuccess: false,
   },
 };
 
 export const Loading: Story = {
   args: {
     loading: true,
-    isSuccess: false,
-  },
-};
-
-export const SuccessState: Story = {
-  args: {
-    loading: false,
-    isSuccess: true,
   },
 };

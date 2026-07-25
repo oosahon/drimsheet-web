@@ -1,7 +1,7 @@
-import { RequestPasswordResetSuccess } from '@/auth/components/reset-password-request-success';
 import { Button } from '@/shared/components/button';
 import {
   Field,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -10,27 +10,22 @@ import { Input } from '@/shared/components/input';
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { cn } from '@/shared/lib/utils/cn';
 import { useFormik } from 'formik';
-import type { ComponentProps } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { IRequestPasswordResetFormValues } from './types';
+import { Link } from 'react-router-dom';
+import type {
+  IRequestPasswordResetFormValues,
+  RequestPasswordResetFormProps,
+} from './types';
 import { useRequestPasswordResetFormValidation } from './validation';
 
-interface IRequestPasswordResetFormProps extends Omit<
-  ComponentProps<'div'>,
-  'onSubmit'
-> {
-  onSubmit: (values: IRequestPasswordResetFormValues) => void;
-  loading: boolean;
-  isSuccess: boolean;
-}
+const EMAIL_ERROR_ID = 'request-password-reset-email-error';
 
 export function RequestPasswordResetForm({
   className,
   onSubmit,
   loading,
-  isSuccess,
   ...props
-}: Readonly<IRequestPasswordResetFormProps>) {
+}: Readonly<RequestPasswordResetFormProps>) {
   const { t } = useTranslation('auth');
 
   const validationSchema = useRequestPasswordResetFormValidation();
@@ -40,7 +35,10 @@ export function RequestPasswordResetForm({
       email: '',
     },
     validationSchema,
-    onSubmit,
+    onSubmit: async (values) => {
+      if (loading) return;
+      await onSubmit(values);
+    },
   });
 
   const getErrorMessage = useFieldErrorMessage({
@@ -50,44 +48,58 @@ export function RequestPasswordResetForm({
 
   const email_label = t('email_label');
   const get_password_reset_link_text = t('get_password_reset_link_text');
+  const back_to_sign_in_text = t('back_to_sign_in_text');
 
-  if (isSuccess) {
-    return (
-      <RequestPasswordResetSuccess
-        loading={loading}
-        retry={formik.handleSubmit}
-      />
-    );
-  }
+  const emailErrorMessage = getErrorMessage('email');
+  const hasEmailError = emailErrorMessage.length > 0;
 
   return (
-    <div
-      className={cn('flex flex-col gap-6 max-w-full min-w-xs', className)}
+    <form
+      onSubmit={formik.handleSubmit}
+      className={cn('flex w-full max-w-full min-w-0 flex-col gap-6', className)}
+      aria-busy={loading || undefined}
       {...props}
     >
-      <form onSubmit={formik.handleSubmit}>
-        <FieldGroup>
-          <Field>
-            <div>
-              <FieldLabel htmlFor="email">{email_label}</FieldLabel>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-              <FieldError errors={getErrorMessage('email')} />
-            </div>
-          </Field>
-          <Field className="mt-2">
-            <Button type="submit" loading={loading} className="w-full">
-              {get_password_reset_link_text}
-            </Button>
-          </Field>
-        </FieldGroup>
-      </form>
-    </div>
+      <FieldGroup>
+        <Field data-invalid={hasEmailError || undefined}>
+          <div>
+            <FieldLabel htmlFor="email">{email_label}</FieldLabel>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={loading}
+              aria-invalid={hasEmailError ? true : undefined}
+              aria-describedby={hasEmailError ? EMAIL_ERROR_ID : undefined}
+            />
+            <FieldError id={EMAIL_ERROR_ID} errors={emailErrorMessage} />
+          </div>
+        </Field>
+
+        <Field className="mt-2">
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={loading}
+            className="w-full"
+          >
+            {get_password_reset_link_text}
+          </Button>
+        </Field>
+
+        <FieldDescription className="text-center">
+          <Link
+            to="/auth/signin"
+            className="text-sm font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300"
+          >
+            {back_to_sign_in_text}
+          </Link>
+        </FieldDescription>
+      </FieldGroup>
+    </form>
   );
 }

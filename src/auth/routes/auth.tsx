@@ -1,10 +1,10 @@
 import { AuthLayout } from '@/auth/layouts/auth-layout';
-import { CompleteSignupPage } from '@/auth/pages/complete-signup';
-import { LoginPage } from '@/auth/pages/login';
+import { CompleteSignUpPage } from '@/auth/pages/complete-signup';
 import { OAuthConfirmationPage } from '@/auth/pages/oauth-confirmation';
 import { RequestPasswordResetPage } from '@/auth/pages/request-password-reset';
 import { ResetPasswordPage } from '@/auth/pages/reset-password';
-import { SignupPage } from '@/auth/pages/signup';
+import { SignInPage } from '@/auth/pages/sign-in';
+import { SignUpPage } from '@/auth/pages/sign-up';
 import type { TModuleRoutes } from '@/shared/lib/types/routes.types';
 
 export const useAuthRoutes: TModuleRoutes = (basePath) => {
@@ -12,9 +12,9 @@ export const useAuthRoutes: TModuleRoutes = (basePath) => {
     path: basePath,
     element: <AuthLayout />,
     children: [
-      { path: 'signin', element: <LoginPage /> },
-      { path: 'signup', element: <SignupPage /> },
-      { path: 'signup/complete', element: <CompleteSignupPage /> },
+      { path: 'signin', element: <SignInPage /> },
+      { path: 'signup', element: <SignUpPage /> },
+      { path: 'signup/complete', element: <CompleteSignUpPage /> },
       { path: 'forgot-password', element: <RequestPasswordResetPage /> },
       { path: 'reset-password', element: <ResetPasswordPage /> },
       { path: 'oauth-confirmation', element: <OAuthConfirmationPage /> },

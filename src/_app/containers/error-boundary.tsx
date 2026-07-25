@@ -5,6 +5,7 @@ import { observabilityService } from '@/shared/lib/services/observability.servic
 import { ErrorBoundary as SentryErrorBoundary } from '@sentry/react';
 import { isAxiosError } from 'axios';
 import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface DefaultErrorBoundaryProps {
   children: ReactNode;
@@ -25,6 +26,7 @@ const DefaultErrorFallback = ({
   error: unknown;
   resetError: () => void;
 }) => {
+  const { t } = useTranslation('shared');
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -37,7 +39,9 @@ const DefaultErrorFallback = ({
   const errorMessage = error instanceof Error ? error.message : String(error);
 
   if (!show) {
-    return <FullPageLoader />;
+    const loading_application_status = t('loading_application_status');
+
+    return <FullPageLoader label={loading_application_status} />;
   }
 
   return (
