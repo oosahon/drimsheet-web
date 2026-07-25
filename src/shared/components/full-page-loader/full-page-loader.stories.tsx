@@ -5,6 +5,9 @@ const meta = {
   title: 'Shared UI/FullPageLoader',
   component: FullPageLoader,
   tags: ['autodocs'],
+  args: {
+    label: 'Loading Purple Ledger',
+  },
 } satisfies Meta<typeof FullPageLoader>;
 export default meta;
 type Story = StoryObj<typeof meta>;

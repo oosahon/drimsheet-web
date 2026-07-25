@@ -57,6 +57,7 @@
   "settings": "Settings",
   "or_text": "Or",
   "date": "Date",
+  "loading_application_status": "Loading Purple Ledger",
   "open_options_aria_label": "Open options",
   "clear_selection_aria_label": "Clear selection"
 }
