@@ -242,5 +242,6 @@
   "auth_error_invalid_password": "Invalid password",
   "auth_error_passwords_do_not_match": "Passwords do not match",
   "auth_error_inconsistent_user_auth_internal_server_error": "Internal server error",
-  "auth_error_too_many_requests": "Too many requests"
+  "auth_error_too_many_requests": "Too many requests",
+  "app_error_accounting_active_entity_not_found": "Accounting entity not found."
 }

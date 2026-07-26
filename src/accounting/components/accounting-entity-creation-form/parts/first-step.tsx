@@ -11,7 +11,7 @@ import {
 } from '@/shared/lib/api/Api';
 import { dateUtils } from '@/shared/lib/utils/date';
 import { AlertCircleIcon, ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function AccountingEntityCreationFormStep1({
@@ -22,6 +22,9 @@ function AccountingEntityCreationFormStep1({
 }: Readonly<AccountingEntityCreationFormStep1Props>) {
   const { t } = useTranslation('accounting');
   const [accountingStandard, setAccountingStandard] = useState('IFRS');
+  const focusHeading = useCallback((heading: HTMLHeadingElement | null) => {
+    heading?.focus();
+  }, []);
 
   const isComplete =
     !!formik.values.entityType &&
@@ -78,9 +81,17 @@ function AccountingEntityCreationFormStep1({
   });
   const nigerian_tax_only_warning = t('nigerian_tax_only_warning');
   const next_button_label = t('next_button_label');
+  const step_title = t('entity_details_step_title');
 
   return (
     <div className="flex flex-col gap-6">
+      <h2
+        ref={focusHeading}
+        tabIndex={-1}
+        className="text-base font-semibold outline-none"
+      >
+        {step_title}
+      </h2>
       <FieldGroup>
         <AccountingEntityTypeSelect
           value={formik.values.entityType}

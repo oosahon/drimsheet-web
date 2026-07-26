@@ -1,1 +1,1 @@
-export { OnboardingManager } from './onboarding-manager.container';
+export { OnboardingManagerContainer } from './onboarding-manager.container';

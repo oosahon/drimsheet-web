@@ -1,31 +1,27 @@
 import { AppSidebar } from '@/_app/components/app-sidebar';
 import { LogoutConfirmationDialog } from '@/auth/dialogs/logout-confirmation';
-import { OnboardingManager } from '@/onboarding/components/onboarding-manager';
+import { OnboardingManagerContainer } from '@/onboarding/components/onboarding-manager';
 import { SidebarInset, SidebarProvider } from '@/shared/components/sidebar';
 import { NavUserContainer } from '@/user/components/nav-user';
 import type { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 
+const logoutRender = (trigger: ReactNode) => (
+  <LogoutConfirmationDialog>{trigger}</LogoutConfirmationDialog>
+);
+
 export function AppLayout() {
   return (
     <>
       <SidebarProvider>
-        <AppSidebar
-          footer={
-            <NavUserContainer
-              logoutDialog={(trigger: ReactNode) => (
-                <LogoutConfirmationDialog>{trigger}</LogoutConfirmationDialog>
-              )}
-            />
-          }
-        />
+        <AppSidebar footer={<NavUserContainer logoutDialog={logoutRender} />} />
         <SidebarInset>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0 mb-8 min-w-full">
             <Outlet />
           </div>
         </SidebarInset>
       </SidebarProvider>
-      <OnboardingManager />
+      <OnboardingManagerContainer />
     </>
   );
 }

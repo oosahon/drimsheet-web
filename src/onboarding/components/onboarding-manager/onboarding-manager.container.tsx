@@ -1,27 +1,31 @@
 import { AccountingEntityCreationDialog } from '@/accounting/dialogs/accounting-entity-creation';
 import { useAccountingEntities } from '@/accounting/hooks/use-accounting-entities';
-import { useMemo } from 'react';
 
-export function OnboardingManager() {
+export function OnboardingManagerContainer() {
   const {
     data: accountingEntities,
     isLoading: isLoadingEntities,
     refetch,
   } = useAccountingEntities();
 
-  const openAccountingOnboardingForm = useMemo(
-    () => !accountingEntities?.length && !isLoadingEntities,
-    [accountingEntities, isLoadingEntities]
-  );
+  const openAccountingOnboardingForm = accountingEntities?.length === 0;
 
-  const isLoading = isLoadingEntities;
+  const handleDone = async () => {
+    const result = await refetch();
 
-  if (isLoading) return null;
+    if (!result.data?.length) {
+      throw (
+        result.error ?? new Error('Accounting entity refresh returned empty')
+      );
+    }
+  };
+
+  if (isLoadingEntities) return null;
 
   return (
     <AccountingEntityCreationDialog
       open={openAccountingOnboardingForm}
-      done={refetch}
+      done={handleDone}
     />
   );
 }

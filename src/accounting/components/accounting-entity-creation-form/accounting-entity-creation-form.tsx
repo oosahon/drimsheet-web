@@ -2,6 +2,7 @@ import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { dateUtils } from '@/shared/lib/utils/date';
 import { useFormik } from 'formik';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AccountingEntityCreationFormStep1 } from './parts/first-step';
 import { AccountingEntityCreationFormStep2 } from './parts/second-step';
 import { AccountingEntityCreationFormStep3 } from './parts/third-step';
@@ -17,6 +18,7 @@ function AccountingEntityCreationForm({
   currencies = [],
   jurisdictions = [],
 }: Readonly<AccountingEntityCreationFormProps>) {
+  const { t } = useTranslation('accounting');
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
 
@@ -68,9 +70,14 @@ function AccountingEntityCreationForm({
     return undefined;
   };
 
+  const step_status = t('step_status', { step, totalSteps: 3 });
+
   return (
     <div className="min-w-xs max-w-full">
       <form id="accounting-entity-form" onSubmit={formik.handleSubmit}>
+        <p className="sr-only" role="status" aria-live="polite">
+          {step_status}
+        </p>
         <div
           key={step}
           className={
@@ -103,7 +110,7 @@ function AccountingEntityCreationForm({
               formik={formik}
               getErrorMessage={getErrorMessage}
               onBack={() => handleBack(2)}
-              isSubmitting={loading}
+              isSubmitting={loading ?? false}
             />
           )}
         </div>
