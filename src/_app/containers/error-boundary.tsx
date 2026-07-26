@@ -47,10 +47,10 @@ const DefaultErrorFallback = ({
   return (
     <div className="flex flex-col items-center justify-center p-8 min-h-[400px] text-center space-y-4">
       <h2 className="text-2xl font-semibold text-foreground">
-        Something went wrong
+        {t('something_went_wrong_title')}
       </h2>
       <p className="text-sm text-muted-foreground w-full max-w-md">
-        An unexpected error occurred. Our technical team has been notified.
+        {t('unexpected_error_description')}
       </p>
       {import.meta.env.DEV && (
         <pre className="text-center w-full max-w-2xl bg-muted p-4 rounded-md overflow-auto text-xs text-muted-foreground mt-4">
@@ -58,7 +58,7 @@ const DefaultErrorFallback = ({
         </pre>
       )}
       <Button onClick={resetError} className="mt-4">
-        Try Again
+        {t('try_again_text')}
       </Button>
     </div>
   );

@@ -58,6 +58,12 @@
   "or_text": "Or",
   "date": "Date",
   "loading_application_status": "Loading Purple Ledger",
+  "something_went_wrong_title": "Something went wrong",
+  "unexpected_error_description": "An unexpected error occurred. Our technical team has been notified.",
+  "try_again_text": "Try Again",
+  "exchange_rate_required_text": "Exchange rate is required",
+  "exchange_rate_number_text": "Exchange rate must be a number",
+  "exchange_rate_positive_text": "Exchange rate must be greater than zero",
   "open_options_aria_label": "Open options",
   "clear_selection_aria_label": "Clear selection"
 }

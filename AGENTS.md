@@ -20,6 +20,8 @@ Before making changes, follow the rules in:
 - Preserve dependency direction and file responsibility boundaries.
 - Map form values directly to generated DTOs through explicit, validation-free
   mappers.
+- Never introduce plain-text user-facing errors; route validation messages,
+  toast copy, dialog errors, and error fallbacks through i18n instead.
 - If a task appears to conflict with the rules, update the rules first or call out the conflict before proceeding.
 - For UI component tasks, follow `.agents/skills/create-ui-components/SKILL.md`.
 - For shadcn tasks, use `.agents/skills/add-shadcn-ui/SKILL.md` and `.agents/workflow/shadcn-ui.md`.

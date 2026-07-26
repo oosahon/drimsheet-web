@@ -32,6 +32,14 @@ components and locale resources.
   `_placeholder`, or `_aria_label`.
 - Translations used only in handlers, callbacks, loops, or dynamic mappings may
   be translated at the point of use when extraction would reduce locality.
+- Any error text that can be shown to a user must come from i18n.
+- This includes validation messages, toast copy, dialog errors, error boundary
+  fallbacks, and API error fallbacks.
+- Plain text error strings are allowed only for logs, telemetry, developer
+  assertions, and other debug-only output that never reaches production UI.
+- Before introducing new user-facing error copy, add or reuse a translation key
+  in the owning namespace rather than hard-coding English in components or
+  validation schemas.
 
 **Incorrect:**
 
