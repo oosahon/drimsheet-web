@@ -1,6 +1,5 @@
-import { PettyCashAccountPage } from '@/account/pages/petty-cash-account';
-import { PettyCashAccountsDashboardPage } from '@/account/pages/petty-cash-accounts-dashboard';
-import { NewCashTransactionPage } from '@/bookkeeping/pages/new-cash-transaction';
+import { AccountPage } from '@/account/pages/account';
+import { AccountsDashboardPage } from '@/account/pages/account-dashboard';
 import type { TModuleRoutes } from '@/shared/lib/types/routes.types';
 
 export const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {
@@ -8,16 +7,12 @@ export const useLedgerAccountRoutes: TModuleRoutes = (basePath) => {
     path: basePath,
     children: [
       {
-        path: 'petty-cash',
-        element: <PettyCashAccountsDashboardPage />,
+        index: true,
+        element: <AccountsDashboardPage />,
       },
       {
-        path: 'petty-cash/:accountId',
-        element: <PettyCashAccountPage />,
-      },
-      {
-        path: 'petty-cash/:accountId/transactions/new',
-        element: <NewCashTransactionPage />,
+        path: ':accountId',
+        element: <AccountPage />,
       },
     ],
   };
