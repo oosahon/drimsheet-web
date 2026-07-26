@@ -19,6 +19,45 @@ export const EPeriodUnit = {
 } as const;
 export type UPeriodUnit = (typeof EPeriodUnit)[keyof typeof EPeriodUnit];
 
+export const EAccountingStandardCode = {
+  AASB: 'AASB',
+  ASPE: 'ASPE',
+  CAS: 'CAS',
+  CGNC: 'CGNC',
+  EAS: 'EAS',
+  HGB: 'HGB',
+  HKFRS: 'HKFRS',
+  IFRS: 'IFRS',
+  IND_AS: 'IND_AS',
+  ISRAELI_GAAP: 'ISRAELI_GAAP',
+  J_GAAP: 'J_GAAP',
+  K_IFRS: 'K_IFRS',
+  MFRS: 'MFRS',
+  NIF: 'NIF',
+  NZ_IFRS: 'NZ_IFRS',
+  OIC: 'OIC',
+  PCG: 'PCG',
+  PFRS: 'PFRS',
+  PGC: 'PGC',
+  PSAK: 'PSAK',
+  RAS: 'RAS',
+  RJ: 'RJ',
+  SCF: 'SCF',
+  SFRS: 'SFRS',
+  SWISS_GAAP_FER: 'SWISS_GAAP_FER',
+  SYSCOHADA: 'SYSCOHADA',
+  TFRS: 'TFRS',
+  THAI_FRS: 'THAI_FRS',
+  TIFRS: 'TIFRS',
+  UK_GAAP: 'UK_GAAP',
+  US_GAAP: 'US_GAAP',
+  VAS: 'VAS',
+  LOCAL_GAAP: 'LOCAL_GAAP',
+  CASH_BASIS: 'CASH_BASIS',
+} as const;
+export type UAccountingStandardCode =
+  (typeof EAccountingStandardCode)[keyof typeof EAccountingStandardCode];
+
 export const EJurisdictionCode = {
   AD: 'AD',
   AE: 'AE',
@@ -707,7 +746,11 @@ export interface IFiscalYearCreationDto {
 
 export interface IPeriodCreationDto {
   unit: UPeriodUnit;
-  /** @format double */
+  /**
+   * @format int32
+   * @min 1
+   * @max 550
+   */
   count: number;
 }
 
@@ -715,10 +758,10 @@ export interface IPeriodCreationDto {
 export interface IAccountingEntityCreationDto {
   name: string;
   entityType: UAccountingEntityType;
-  jurisdictionCode: string;
-  accountingStandardCode: string;
-  functionalCurrencyCode: string;
-  reportingCurrencyCode: string;
+  jurisdictionCode: UJurisdictionCode;
+  accountingStandardCode: UAccountingStandardCode;
+  functionalCurrencyCode: UCurrencyCode;
+  reportingCurrencyCode: UCurrencyCode;
   /** Fiscal year creation DTO */
   fiscalYear: IFiscalYearCreationDto;
   accountingPeriod: IPeriodCreationDto;
@@ -1333,7 +1376,7 @@ export class Api<
      * @request GET:/accounting/jurisdictions
      */
     getJurisdictions: (params: RequestParams = {}) =>
-      this.request<IJurisdictionDto[], any>({
+      this.request<IJurisdictionDto[], IHttpErrorDto>({
         path: `/accounting/jurisdictions`,
         method: 'GET',
         format: 'json',
