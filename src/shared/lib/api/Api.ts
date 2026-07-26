@@ -1054,7 +1054,7 @@ export class Api<
       data: IPettyCashAccountCreationReq,
       params: RequestParams = {}
     ) =>
-      this.request<any, IHttpErrorDto>({
+      this.request<ILedgerAccountDto, IHttpErrorDto>({
         path: `/ledger/accounts/asset/petty-cash`,
         method: 'POST',
         body: data,

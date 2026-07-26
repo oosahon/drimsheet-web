@@ -24,10 +24,22 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+  currentPath: string;
   footer?: ReactNode;
 }
 
-export function AppSidebar({ footer, ...props }: Readonly<AppSidebarProps>) {
+function isRouteActive(currentPath: string, itemUrl: string) {
+  return (
+    itemUrl !== '#' &&
+    (currentPath === itemUrl || currentPath.startsWith(`${itemUrl}/`))
+  );
+}
+
+export function AppSidebar({
+  currentPath,
+  footer,
+  ...props
+}: Readonly<AppSidebarProps>) {
   const { t } = useTranslation(['shared']);
 
   const sidebarData = useMemo(
@@ -35,24 +47,15 @@ export function AppSidebar({ footer, ...props }: Readonly<AppSidebarProps>) {
       navMain: [
         {
           title: t('shared:dashboard'),
-          url: '#',
+          url: '/dashboard',
           icon: <LayoutDashboard />,
-          isActive: true,
+          isActive: isRouteActive(currentPath, '/dashboard'),
         },
         {
           title: t('shared:accounts'),
           url: '/accounts',
           icon: <Landmark />,
-          items: [
-            {
-              title: t('shared:bank_accounts'),
-              url: '/accounts/bank',
-            },
-            {
-              title: t('shared:petty_cash_accounts'),
-              url: '/accounts/petty-cash',
-            },
-          ],
+          isActive: isRouteActive(currentPath, '/accounts'),
         },
         {
           title: t('shared:income'),
@@ -88,7 +91,7 @@ export function AppSidebar({ footer, ...props }: Readonly<AppSidebarProps>) {
         },
       ],
     }),
-    [t]
+    [currentPath, t]
   );
 
   const purpleLedgerText = t('shared:purple_ledger');

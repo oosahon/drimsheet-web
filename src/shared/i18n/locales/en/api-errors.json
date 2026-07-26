@@ -257,5 +257,8 @@
   "ledger_error_asset_account_opening_balance_currency_mismatch": "Opening balance currency mismatch",
   "ledger_error_ledger_account_invalid_name": "Invalid name",
   "repo_error_missing_history": "Missing history",
-  "user_error_user_preferences_invalid_app_usage_mode": "Invalid app usage mode"
+  "user_error_user_preferences_invalid_app_usage_mode": "Invalid app usage mode",
+  "accounting_error_period_posting_date_not_covered": "Posting date not covered",
+  "accounting_error_period_posting_period_not_open": "Posting period not open",
+  "ledger_error_asset_account_invalid_control_account": "Invalid control account"
 }

@@ -18,7 +18,7 @@ import { TransactionsTable } from '@/bookkeeping/components/transactions-table';
 import { useAccountTransactions } from '@/bookkeeping/hooks/use-account-transactions';
 import { useTranslation } from 'react-i18next';
 
-export function PettyCashAccountPage() {
+export function AccountPage() {
   const { t } = useTranslation(['shared']);
   const { accountId } = useParams();
   const navigate = useNavigate();
@@ -51,14 +51,14 @@ export function PettyCashAccountPage() {
       pagination: transactionsQuery,
     });
 
-  const petty_cash_label = t('shared:petty_cash');
+  const accountsLabel = t('shared:accounts');
   const new_transaction_label = t('shared:new_transaction');
 
   const accountName = account?.name ?? '';
 
   const breadcrumb: IPageBreadcrumb = {
-    label: petty_cash_label,
-    link: '/accounts/petty-cash',
+    label: accountsLabel,
+    link: '/accounts',
     next: {
       label: accountName,
       link: '#',
