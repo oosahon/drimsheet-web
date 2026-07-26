@@ -38,6 +38,14 @@ const jurisdictions: IJurisdictionDto[] = [
 ];
 
 const validationMessages = {
+  entityTypeRequired: 'Entity type is required',
+  countryRequired: 'Country is required',
+  functionalCurrencyRequired: 'Functional currency is required',
+  reportingCurrencyRequired: 'Reporting currency is required',
+  fiscalYearStartRequired: 'Fiscal year start is required',
+  fiscalYearEndRequired: 'Fiscal year end is required',
+  fiscalYearStartTooOld:
+    'Start date must not be less than two years from the current date',
   fiscalYearMinDuration: 'The accounting period must be at least one month.',
   getFiscalYearMaxDuration: (maxFiscalMonths: number, country: string) =>
     `The accounting period cannot exceed the ${maxFiscalMonths}-month limit for ${country}.`,

@@ -8,6 +8,13 @@ import type { IAccountingEntityFormValues } from './types';
 const DEFAULT_MAX_FISCAL_MONTHS = 23;
 
 interface IAccountingEntityCreationValidationMessages {
+  entityTypeRequired: string;
+  countryRequired: string;
+  functionalCurrencyRequired: string;
+  reportingCurrencyRequired: string;
+  fiscalYearStartRequired: string;
+  fiscalYearEndRequired: string;
+  fiscalYearStartTooOld: string;
   fiscalYearMinDuration: string;
   getFiscalYearMaxDuration: (
     maxFiscalMonths: number,
@@ -20,28 +27,26 @@ function createAccountingEntityCreationFormValidation(
   messages: IAccountingEntityCreationValidationMessages
 ) {
   return yup.object({
-    entityType: yup.string().required('Entity type is required'),
-    countryCode: yup.string().required('Country is required'),
+    entityType: yup.string().required(messages.entityTypeRequired),
+    countryCode: yup.string().required(messages.countryRequired),
     functionalCurrency: yup
       .string()
-      .required('Functional currency is required'),
-    reportingCurrency: yup.string().required('Reporting currency is required'),
+      .required(messages.functionalCurrencyRequired),
+    reportingCurrency: yup
+      .string()
+      .required(messages.reportingCurrencyRequired),
     fiscalYearStart: yup
       .date()
       .nullable()
-      .required('Fiscal year start is required')
-      .test(
-        'is-recent',
-        'Start date must not be less than two years from the current date',
-        function (value) {
-          if (!value) return true;
-          return !dayjs(value).isBefore(dayjs().subtract(2, 'years'), 'day');
-        }
-      ),
+      .required(messages.fiscalYearStartRequired)
+      .test('is-recent', messages.fiscalYearStartTooOld, function (value) {
+        if (!value) return true;
+        return !dayjs(value).isBefore(dayjs().subtract(2, 'years'), 'day');
+      }),
     fiscalYearEnd: yup
       .date()
       .nullable()
-      .required('Fiscal year end is required')
+      .required(messages.fiscalYearEndRequired)
       .test(
         'is-valid-min-duration',
         messages.fiscalYearMinDuration,
@@ -86,16 +91,21 @@ function useAccountingEntityCreationFormValidation(
 ) {
   const { t } = useTranslation('accounting');
 
-  const fiscal_year_min_duration_error = t('fiscal_year_min_duration_error');
-
   return useMemo(
     () =>
       createAccountingEntityCreationFormValidation(jurisdictions, {
-        fiscalYearMinDuration: fiscal_year_min_duration_error,
+        entityTypeRequired: t('entity_type_required_text'),
+        countryRequired: t('country_required_text'),
+        functionalCurrencyRequired: t('functional_currency_required_text'),
+        reportingCurrencyRequired: t('reporting_currency_required_text'),
+        fiscalYearStartRequired: t('fiscal_year_start_required_text'),
+        fiscalYearEndRequired: t('fiscal_year_end_required_text'),
+        fiscalYearStartTooOld: t('fiscal_year_start_too_old_text'),
+        fiscalYearMinDuration: t('fiscal_year_min_duration_error'),
         getFiscalYearMaxDuration: (maxFiscalMonths, country) =>
           t('fiscal_year_max_duration_error', { country, maxFiscalMonths }),
       }),
-    [fiscal_year_min_duration_error, jurisdictions, t]
+    [jurisdictions, t]
   );
 }
 

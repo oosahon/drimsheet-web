@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import * as yup from 'yup';
 
 export const currencyExchangeRateInputValidation = yup
@@ -9,6 +10,6 @@ export const currencyExchangeRateInputValidation = yup
 
     return value;
   })
-  .typeError('Exchange rate must be a number')
-  .required('Exchange rate is required')
-  .moreThan(0, 'Exchange rate must be greater than zero');
+  .typeError(i18next.t('exchange_rate_number_text', { ns: 'shared' }))
+  .required(i18next.t('exchange_rate_required_text', { ns: 'shared' }))
+  .moreThan(0, i18next.t('exchange_rate_positive_text', { ns: 'shared' }));
