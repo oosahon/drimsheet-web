@@ -2,7 +2,7 @@ import { AccountingEntityCreationDialog } from '@/accounting/dialogs/accounting-
 import { useAccountingEntities } from '@/accounting/hooks/use-accounting-entities';
 import { useMemo } from 'react';
 
-export function OnboardingManager() {
+export function OnboardingManagerContainer() {
   const {
     data: accountingEntities,
     isLoading: isLoadingEntities,

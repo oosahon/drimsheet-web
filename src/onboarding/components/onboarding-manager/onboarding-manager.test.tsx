@@ -1,5 +1,5 @@
 import { useAccountingEntities } from '@/accounting/hooks/use-accounting-entities';
-import { OnboardingManager } from '@/onboarding/components/onboarding-manager';
+import { OnboardingManagerContainer } from '@/onboarding/components/onboarding-manager';
 import type { IAccountingEntity } from '@/shared/lib/api/Api';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
@@ -24,7 +24,7 @@ vi.mock('@/accounting/hooks/use-accounting-entities', () => {
   };
 });
 
-describe('OnboardingManager', () => {
+describe('OnboardingManagerContainer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -35,7 +35,7 @@ describe('OnboardingManager', () => {
       isLoading: true,
     } as unknown as UseQueryResult<IAccountingEntity[], Error>);
 
-    const { container } = render(<OnboardingManager />);
+    const { container } = render(<OnboardingManagerContainer />);
     expect(container.firstChild).toBeNull();
   });
 
@@ -45,7 +45,7 @@ describe('OnboardingManager', () => {
       isLoading: false,
     } as unknown as UseQueryResult<IAccountingEntity[], Error>);
 
-    render(<OnboardingManager />);
+    render(<OnboardingManagerContainer />);
 
     const form = screen.getByTestId('accounting-onboarding-form');
     expect(form).toBeInTheDocument();
@@ -58,7 +58,7 @@ describe('OnboardingManager', () => {
       isLoading: false,
     } as unknown as UseQueryResult<IAccountingEntity[], Error>);
 
-    render(<OnboardingManager />);
+    render(<OnboardingManagerContainer />);
 
     const form = screen.getByTestId('accounting-onboarding-form');
     expect(form).toBeInTheDocument();

@@ -1,6 +1,6 @@
 import { AppSidebar } from '@/_app/components/app-sidebar';
 import { LogoutConfirmationDialog } from '@/auth/dialogs/logout-confirmation';
-import { OnboardingManager } from '@/onboarding/components/onboarding-manager';
+import { OnboardingManagerContainer } from '@/onboarding/components/onboarding-manager';
 import { SidebarInset, SidebarProvider } from '@/shared/components/sidebar';
 import { NavUserContainer } from '@/user/components/nav-user';
 import type { ReactNode } from 'react';
@@ -25,7 +25,7 @@ export function AppLayout() {
           </div>
         </SidebarInset>
       </SidebarProvider>
-      <OnboardingManager />
+      <OnboardingManagerContainer />
     </>
   );
 }
