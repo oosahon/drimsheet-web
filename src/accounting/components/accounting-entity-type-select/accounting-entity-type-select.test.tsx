@@ -21,7 +21,9 @@ describe('AccountingEntityTypeSelect', () => {
     render(<AccountingEntityTypeSelect value="" onChange={onChange} />);
 
     expect(screen.getByText('Who is this account for?')).toBeInTheDocument();
-    expect(screen.getByRole('combobox')).toBeInTheDocument();
+    expect(
+      screen.getByRole('combobox', { name: 'Who is this account for?' })
+    ).toBeInTheDocument();
   });
 
   it('opens the select and chooses an entity', async () => {
@@ -54,5 +56,26 @@ describe('AccountingEntityTypeSelect', () => {
     );
 
     expect(screen.getByText('Entity is required')).toBeInTheDocument();
+    expect(screen.getByRole('combobox')).toHaveAttribute(
+      'aria-invalid',
+      'true'
+    );
+    expect(screen.getByRole('combobox')).toHaveAccessibleDescription(
+      'Entity is required'
+    );
+  });
+
+  it('marks unsupported entity types as unavailable', async () => {
+    const user = userEvent.setup();
+    render(<AccountingEntityTypeSelect value="" onChange={vi.fn()} />);
+
+    await user.click(screen.getByRole('combobox'));
+
+    expect(
+      screen.getByRole('option', { name: /Sole Proprietorship/ })
+    ).toHaveAttribute('data-disabled');
+    expect(screen.getByRole('option', { name: /Company/ })).toHaveAttribute(
+      'data-disabled'
+    );
   });
 });

@@ -6,19 +6,15 @@ import { NavUserContainer } from '@/user/components/nav-user';
 import type { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 
+const logoutRender = (trigger: ReactNode) => (
+  <LogoutConfirmationDialog>{trigger}</LogoutConfirmationDialog>
+);
+
 export function AppLayout() {
   return (
     <>
       <SidebarProvider>
-        <AppSidebar
-          footer={
-            <NavUserContainer
-              logoutDialog={(trigger: ReactNode) => (
-                <LogoutConfirmationDialog>{trigger}</LogoutConfirmationDialog>
-              )}
-            />
-          }
-        />
+        <AppSidebar footer={<NavUserContainer logoutDialog={logoutRender} />} />
         <SidebarInset>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0 mb-8 min-w-full">
             <Outlet />

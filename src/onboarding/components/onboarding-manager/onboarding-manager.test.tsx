@@ -3,6 +3,7 @@ import { OnboardingManagerContainer } from '@/onboarding/components/onboarding-m
 import type { IAccountingEntity } from '@/shared/lib/api/Api';
 import type { UseQueryResult } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/accounting/dialogs/accounting-entity-creation', () => {
@@ -10,10 +11,17 @@ vi.mock('@/accounting/dialogs/accounting-entity-creation', () => {
     __esModule: true,
     AccountingEntityCreationDialog: ({
       open,
+      done,
     }: {
       open: boolean;
-      done: () => void;
-    }) => <div data-testid="accounting-onboarding-form" data-open={open} />,
+      done: () => Promise<void>;
+    }) => (
+      <div data-testid="accounting-onboarding-form" data-open={open}>
+        <button type="button" onClick={() => void done()}>
+          Complete
+        </button>
+      </div>
+    ),
   };
 });
 
@@ -63,5 +71,23 @@ describe('OnboardingManagerContainer', () => {
     const form = screen.getByTestId('accounting-onboarding-form');
     expect(form).toBeInTheDocument();
     expect(form).toHaveAttribute('data-open', 'false');
+  });
+
+  it('awaits an authoritative non-empty refetch when onboarding completes', async () => {
+    const user = userEvent.setup();
+    const refetch = vi.fn().mockResolvedValue({
+      data: [{ id: 'entity-1', name: 'My Entity' }],
+      error: null,
+    });
+    vi.mocked(useAccountingEntities).mockReturnValue({
+      data: [],
+      isLoading: false,
+      refetch,
+    } as unknown as UseQueryResult<IAccountingEntity[], Error>);
+
+    render(<OnboardingManagerContainer />);
+    await user.click(screen.getByRole('button', { name: 'Complete' }));
+
+    expect(refetch).toHaveBeenCalledTimes(1);
   });
 });

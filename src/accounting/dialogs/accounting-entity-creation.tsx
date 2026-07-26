@@ -1,5 +1,8 @@
-import { AccountingEntityCreationForm } from '@/accounting/components/accounting-entity-creation-form/accounting-entity-creation-form';
-import type { IAccountingEntityFormValues } from '@/accounting/components/accounting-entity-creation-form/types';
+import {
+  AccountingEntityCreationForm,
+  AccountingEntityCreationFormSkeleton,
+  type IAccountingEntityFormValues,
+} from '@/accounting/components/accounting-entity-creation-form';
 import { useCreateAccountingEntity } from '@/accounting/hooks/use-create-accounting-entity';
 import { useJurisdictions } from '@/accounting/hooks/use-jurisdictions';
 import {
@@ -17,7 +20,7 @@ import { toast } from 'sonner';
 
 interface AccountingEntityCreationDialogProps {
   open: boolean;
-  done: () => void;
+  done: () => Promise<void>;
 }
 
 export function AccountingEntityCreationDialog({
@@ -29,37 +32,45 @@ export function AccountingEntityCreationDialog({
 
   const { mutateAsync: createAccountingEntity, isPending } =
     useCreateAccountingEntity();
-  const { data: user } = useProfile();
+  const { data: profile, isLoading: isLoadingProfile } = useProfile();
   const { data: currencies = [] } = useCurrencies();
   const { data: jurisdictions = [] } = useJurisdictions();
 
   const handleSubmit = async (values: IAccountingEntityFormValues) => {
     try {
-      const userName = `${user?.firstName} ${user?.lastName}`;
+      const userName =
+        `${profile?.firstName ?? ''} ${profile?.lastName ?? ''}`.trim();
       await createAccountingEntity({ ...values, name: userName });
 
+      await done();
       toast.success(t('welcome_to_the_purple_side_text'));
-      done();
     } catch (error) {
       handleApiError(error, { showToast: true });
     }
   };
 
+  const dialog_title = t('account_setup_title');
+  const dialog_description = t('account_setup_description');
+
   return (
     <Dialog open={open} modal>
       <DialogContent className="sm:max-w-sm" showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>Account Setup</DialogTitle>
+          <DialogTitle>{dialog_title}</DialogTitle>
           <DialogDescription className="text-sm">
-            Choose the type of account you want to create.
+            {dialog_description}
           </DialogDescription>
         </DialogHeader>
-        <AccountingEntityCreationForm
-          loading={isPending}
-          onSubmit={handleSubmit}
-          currencies={currencies}
-          jurisdictions={jurisdictions}
-        />
+        {isLoadingProfile ? (
+          <AccountingEntityCreationFormSkeleton />
+        ) : (
+          <AccountingEntityCreationForm
+            loading={isPending}
+            onSubmit={handleSubmit}
+            currencies={currencies}
+            jurisdictions={jurisdictions}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

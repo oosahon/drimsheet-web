@@ -1,8 +1,11 @@
+import {
+  AccountingEntityCreationForm,
+  AccountingEntityCreationFormSkeleton,
+} from '@/accounting/components/accounting-entity-creation-form';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import dayjs from 'dayjs';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { AccountingEntityCreationForm } from './accounting-entity-creation-form';
 import { accountingEntityCreationFormValidation } from './validation';
 
 beforeAll(() => {
@@ -41,12 +44,18 @@ describe('AccountingEntityCreationForm', () => {
     expect(
       screen.getByText('What currency should your reports use?')
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Reporting details' })
+    ).toHaveFocus();
     const nextBtn2 = screen.getByRole('button', { name: /Next/i });
     await user.click(nextBtn2);
 
     // Step 3
     const submitBtn = screen.getByRole('button', { name: /Complete setup/i });
     expect(submitBtn).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Usage preferences' })
+    ).toHaveFocus();
 
     // Submit
     await user.click(submitBtn);
@@ -100,6 +109,16 @@ describe('AccountingEntityCreationForm', () => {
     const submitBtn = screen.getByRole('button', { name: /Complete setup/i });
     // Assuming loading button is disabled
     expect(submitBtn).toBeDisabled();
+  });
+});
+
+describe('AccountingEntityCreationFormSkeleton', () => {
+  it('announces that the profile is loading', () => {
+    render(<AccountingEntityCreationFormSkeleton />);
+
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Loading your profile…'
+    );
   });
 });
 

@@ -7,6 +7,7 @@ import { CurrencySelect } from '@/shared/components/currency-select';
 import { FieldError, FieldGroup, FieldSet } from '@/shared/components/field';
 import { dateUtils } from '@/shared/lib/utils/date';
 import { AlertCircleIcon, ArrowLeft, ArrowRight } from 'lucide-react';
+import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function AccountingEntityCreationFormStep2({
@@ -19,6 +20,9 @@ function AccountingEntityCreationFormStep2({
   onBack,
 }: Readonly<AccountingEntityCreationFormStep2Props>) {
   const { t } = useTranslation('accounting');
+  const focusHeading = useCallback((heading: HTMLHeadingElement | null) => {
+    heading?.focus();
+  }, []);
 
   const isComplete =
     !!formik.values.functionalCurrency &&
@@ -54,9 +58,17 @@ function AccountingEntityCreationFormStep2({
   });
   const back_button_label = t('back_button_label');
   const next_button_label = t('next_button_label');
+  const step_title = t('reporting_details_step_title');
 
   return (
     <div className="flex flex-col gap-6">
+      <h2
+        ref={focusHeading}
+        tabIndex={-1}
+        className="text-base font-semibold outline-none"
+      >
+        {step_title}
+      </h2>
       <FieldGroup>
         <CurrencySelect
           label={reporting_currency_label}

@@ -10,5 +10,12 @@
   "fiscal_year_end_label": "End of financial year",
   "fiscal_year_start_warning": "Unless approved by the tax authorities, your fiscal year must start on {{expectedStart}}.",
   "back_button_label": "Back",
-  "complete_setup_button_label": "Complete setup"
+  "complete_setup_button_label": "Complete setup",
+  "account_setup_title": "Account setup",
+  "account_setup_description": "Choose the type of account you want to create.",
+  "entity_details_step_title": "Account details",
+  "reporting_details_step_title": "Reporting details",
+  "usage_preferences_step_title": "Usage preferences",
+  "step_status": "Step {{step}} of {{totalSteps}}",
+  "profile_loading_status": "Loading your profile…"
 }

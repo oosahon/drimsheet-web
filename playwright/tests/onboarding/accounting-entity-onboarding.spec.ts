@@ -1,0 +1,132 @@
+import { expect, test } from '@integration/fixtures/test';
+import {
+  authenticatedUser,
+  registerAuthenticatedAppRoutes,
+} from '@integration/mocks/authenticated-app';
+import type { Page } from '@playwright/test';
+
+const loginEndpoint = '**/api/v1/auth/login-with-email';
+const entityListEndpoint = '**/api/v1/accounting/accounting-entities';
+const entityCreationEndpoint = '**/api/v1/accounting/accounting-entity';
+
+async function signIn(page: Page) {
+  await page.route(loginEndpoint, async (route) => {
+    await route.fulfill({
+      status: 200,
+      json: { accessToken: 'integration-test-token' },
+    });
+  });
+  await page.goto('/auth/signin');
+  await page.getByLabel('Email').fill(authenticatedUser.email);
+  await page.getByLabel('Password', { exact: true }).fill('Password1!');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await expect(page).toHaveURL('/dashboard');
+}
+
+async function registerConfigurationRoutes(page: Page) {
+  await page.route('**/api/v1/currencies', async (route) => {
+    await route.fulfill({
+      json: [
+        { code: 'NGN', name: 'Nigerian Naira', symbol: '₦', minorUnit: 2 },
+      ],
+    });
+  });
+  await page.route('**/api/v1/accounting/jurisdictions', async (route) => {
+    await route.fulfill({
+      json: [
+        {
+          code: 'NG',
+          name: 'Nigeria',
+          currencyCode: 'NGN',
+          accountingStandards: { individual: ['IFRS'] },
+        },
+      ],
+    });
+  });
+}
+
+test('does not show onboarding when the entity query returns an entity', async ({
+  page,
+}) => {
+  await registerAuthenticatedAppRoutes(page);
+  await signIn(page);
+
+  await expect(
+    page.getByRole('dialog', { name: 'Account setup' })
+  ).not.toBeVisible();
+  await expect(page.getByText(authenticatedUser.email)).toBeVisible();
+});
+
+test('shows a non-dismissible onboarding dialog for an empty entity result', async ({
+  page,
+}) => {
+  await registerAuthenticatedAppRoutes(page);
+  await page.route(entityListEndpoint, async (route) => {
+    await route.fulfill({ json: [] });
+  });
+  await registerConfigurationRoutes(page);
+
+  await signIn(page);
+
+  const dialog = page.getByRole('dialog', { name: 'Account setup' });
+  await expect(dialog).toBeVisible();
+  await expect(
+    dialog.getByRole('combobox', { name: 'Who is this account for?' })
+  ).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole('button', { name: /close/i })).toHaveCount(0);
+});
+
+test('creates an entity, refetches eligibility, and closes onboarding', async ({
+  page,
+}) => {
+  let entityCreated = false;
+  let entityListRequestCount = 0;
+  let submittedPayload: unknown;
+  const createdEntity = {
+    id: '00000000-0000-4000-8000-000000000003',
+    name: 'Integration User',
+    type: 'individual',
+    ownerId: authenticatedUser.id,
+    functionalCurrencyCode: 'NGN',
+    jurisdictionCode: 'NG',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+  };
+
+  await registerAuthenticatedAppRoutes(page);
+  await page.route(entityListEndpoint, async (route) => {
+    entityListRequestCount += 1;
+    await route.fulfill({ json: entityCreated ? [createdEntity] : [] });
+  });
+  await page.route(entityCreationEndpoint, async (route) => {
+    submittedPayload = route.request().postDataJSON();
+    entityCreated = true;
+    await route.fulfill({ status: 201, json: createdEntity });
+  });
+  await registerConfigurationRoutes(page);
+  await signIn(page);
+
+  const dialog = page.getByRole('dialog', { name: 'Account setup' });
+  await dialog.getByRole('button', { name: 'Next' }).click();
+  await expect(
+    dialog.getByRole('heading', { name: 'Reporting details' })
+  ).toBeFocused();
+  await dialog.getByRole('button', { name: 'Next' }).click();
+  await dialog.getByRole('button', { name: 'Complete setup' }).click();
+
+  await expect(dialog).not.toBeVisible();
+  expect(entityListRequestCount).toBeGreaterThanOrEqual(2);
+  expect(submittedPayload).toEqual(
+    expect.objectContaining({
+      name: 'Integration User',
+      entityType: 'individual',
+      jurisdictionCode: 'NG',
+      functionalCurrencyCode: 'NGN',
+      reportingCurrencyCode: 'NGN',
+      accountingStandardCode: 'IFRS',
+      appUsageMode: 'non_power_user',
+    })
+  );
+});

@@ -19,22 +19,31 @@ export function AccountingEntityTypeSelect({
   onChange,
   error,
 }: Readonly<AccountingEntityTypeSelectProps>) {
+  const errorId = 'accounting-entity-type-error';
+  const hasError = Boolean(error?.some((item) => item?.message));
+
   return (
     <Field>
-      <Label htmlFor="individual-entity">Who is this account for?</Label>
+      <Label htmlFor="accounting-entity-type">Who is this account for?</Label>
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger>
+        <SelectTrigger
+          id="accounting-entity-type"
+          aria-invalid={hasError}
+          aria-describedby={hasError ? errorId : undefined}
+        >
           <SelectValue placeholder="Select an entity" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="individual">An Individual</SelectItem>
-          <SelectItem value="sole_proprietorship">
+          <SelectItem value="sole_proprietorship" disabled>
             A Sole Proprietorship (coming soon)
           </SelectItem>
-          <SelectItem value="company">A Company (coming soon)</SelectItem>
+          <SelectItem value="company" disabled>
+            A Company (coming soon)
+          </SelectItem>
         </SelectContent>
       </Select>
-      <FieldError errors={error} />
+      <FieldError id={errorId} errors={error} />
     </Field>
   );
 }
