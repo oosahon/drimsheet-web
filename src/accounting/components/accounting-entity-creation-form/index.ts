@@ -4,4 +4,4 @@ export type {
   AccountingEntityCreationFormProps,
   IAccountingEntityFormValues,
 } from './types';
-export { accountingEntityCreationFormValidation } from './validation';
+export { createAccountingEntityCreationFormValidation } from './validation';

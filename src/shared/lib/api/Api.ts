@@ -779,6 +779,8 @@ export interface IJurisdictionDto {
   code: string;
   name: string;
   currencyCode: string;
+  /** @format double */
+  maxFiscalMonths: number;
   accountingStandards: IAccountingStandardDto;
 }
 

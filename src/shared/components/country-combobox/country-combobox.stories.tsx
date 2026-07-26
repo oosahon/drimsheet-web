@@ -7,6 +7,7 @@ const dummyjurisdictions = uiCountries.map((c) => ({
   code: c.code,
   name: c.name,
   currencyCode: c.currencyCode,
+  maxFiscalMonths: 12,
   accountingStandards: {} as IAccountingStandardDto,
 }));
 
