@@ -12,6 +12,7 @@ const sampleJurisdictions: IJurisdictionDto[] = [
     code: 'NG',
     name: 'Nigeria',
     currencyCode: 'NGN',
+    maxFiscalMonths: 18,
     accountingStandards: {
       [EAccountingEntityType.Individual]: ['IFRS'],
       [EAccountingEntityType.SoleTrader]: ['IFRS'],
@@ -22,6 +23,7 @@ const sampleJurisdictions: IJurisdictionDto[] = [
     code: 'US',
     name: 'United States',
     currencyCode: 'USD',
+    maxFiscalMonths: 12,
     accountingStandards: {
       [EAccountingEntityType.Individual]: ['GAAP'],
       [EAccountingEntityType.SoleTrader]: ['GAAP'],

@@ -8,6 +8,8 @@
   "reporting_currency_label": "What currency should your reports use?",
   "fiscal_year_start_label": "Start of financial year",
   "fiscal_year_end_label": "End of financial year",
+  "fiscal_year_min_duration_error": "The accounting period must be at least one month.",
+  "fiscal_year_max_duration_error": "The accounting period cannot exceed the {{maxFiscalMonths}}-month limit for {{country}}.",
   "fiscal_year_start_warning": "Unless approved by the tax authorities, your fiscal year must start on {{expectedStart}}.",
   "back_button_label": "Back",
   "complete_setup_button_label": "Complete setup",

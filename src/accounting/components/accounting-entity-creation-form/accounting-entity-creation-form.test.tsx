@@ -2,11 +2,51 @@ import {
   AccountingEntityCreationForm,
   AccountingEntityCreationFormSkeleton,
 } from '@/accounting/components/accounting-entity-creation-form';
+import {
+  EAccountingEntityType,
+  type IJurisdictionDto,
+} from '@/shared/lib/api/Api';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import dayjs from 'dayjs';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { accountingEntityCreationFormValidation } from './validation';
+import { createAccountingEntityCreationFormValidation } from './validation';
+
+const jurisdictions: IJurisdictionDto[] = [
+  {
+    code: 'NG',
+    name: 'Nigeria',
+    currencyCode: 'NGN',
+    maxFiscalMonths: 12,
+    accountingStandards: {
+      [EAccountingEntityType.Individual]: ['IFRS'],
+      [EAccountingEntityType.SoleTrader]: ['IFRS'],
+      [EAccountingEntityType.PrivateCompany]: ['IFRS'],
+    },
+  },
+  {
+    code: 'US',
+    name: 'United States',
+    currencyCode: 'USD',
+    maxFiscalMonths: 18,
+    accountingStandards: {
+      [EAccountingEntityType.Individual]: ['GAAP'],
+      [EAccountingEntityType.SoleTrader]: ['GAAP'],
+      [EAccountingEntityType.PrivateCompany]: ['GAAP'],
+    },
+  },
+];
+
+const validationMessages = {
+  fiscalYearMinDuration: 'The accounting period must be at least one month.',
+  getFiscalYearMaxDuration: (maxFiscalMonths: number, country: string) =>
+    `The accounting period cannot exceed the ${maxFiscalMonths}-month limit for ${country}.`,
+};
+
+const validationSchema = createAccountingEntityCreationFormValidation(
+  jurisdictions,
+  validationMessages
+);
 
 beforeAll(() => {
   vi.stubGlobal(
@@ -17,6 +57,15 @@ beforeAll(() => {
       disconnect() {}
     }
   );
+  window.HTMLElement.prototype.hasPointerCapture = vi.fn(
+    () => false
+  ) as unknown as typeof window.HTMLElement.prototype.hasPointerCapture;
+  window.HTMLElement.prototype.releasePointerCapture =
+    vi.fn() as unknown as typeof window.HTMLElement.prototype.releasePointerCapture;
+  window.HTMLElement.prototype.setPointerCapture =
+    vi.fn() as unknown as typeof window.HTMLElement.prototype.setPointerCapture;
+  window.HTMLElement.prototype.scrollIntoView =
+    vi.fn() as unknown as typeof window.HTMLElement.prototype.scrollIntoView;
 });
 
 describe('AccountingEntityCreationForm', () => {
@@ -110,6 +159,69 @@ describe('AccountingEntityCreationForm', () => {
     // Assuming loading button is disabled
     expect(submitBtn).toBeDisabled();
   });
+
+  it('displays the jurisdiction fiscal-month limit and blocks progression', async () => {
+    const limitedJurisdiction: IJurisdictionDto = {
+      ...jurisdictions[0],
+      maxFiscalMonths: 11,
+    };
+    render(
+      <AccountingEntityCreationForm
+        onSubmit={vi.fn()}
+        jurisdictions={[limitedJurisdiction]}
+      />
+    );
+    const user = userEvent.setup();
+
+    await user.click(screen.getByRole('button', { name: /Next/i }));
+
+    const nextButton = screen.getByRole('button', { name: /Next/i });
+
+    const fiscalYearEnd = dayjs()
+      .startOf('year')
+      .add(1, 'year')
+      .subtract(1, 'day')
+      .toDate();
+    const endDateButtonName = new Intl.DateTimeFormat('en-NG', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+      .format(fiscalYearEnd)
+      .replace(/,/g, '');
+
+    await user.click(screen.getByRole('button', { name: endDateButtonName }));
+    await user.click(screen.getByRole('button', { name: /December 30th/i }));
+
+    expect(
+      await screen.findByText(
+        'The accounting period cannot exceed the 11-month limit for Nigeria.'
+      )
+    ).toBeInTheDocument();
+    expect(nextButton).toBeDisabled();
+
+    const invalidEndDateButtonName = new Intl.DateTimeFormat('en-NG', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+      .format(dayjs(fiscalYearEnd).subtract(1, 'day').toDate())
+      .replace(/,/g, '');
+
+    await user.click(
+      screen.getByRole('button', { name: invalidEndDateButtonName })
+    );
+    await user.click(screen.getByRole('button', { name: /November 30th/i }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByText(
+          'The accounting period cannot exceed the 11-month limit for Nigeria.'
+        )
+      ).not.toBeInTheDocument();
+      expect(nextButton).toBeEnabled();
+    });
+  });
 });
 
 describe('AccountingEntityCreationFormSkeleton', () => {
@@ -124,46 +236,103 @@ describe('AccountingEntityCreationFormSkeleton', () => {
 
 describe('AccountingEntityCreationForm Validation', () => {
   it('validates that fiscalYearStart is not more than 2 years in the past', async () => {
+    const fiscalYearStart = dayjs().subtract(1, 'year');
     const validData = {
       entityType: 'individual',
       countryCode: 'NG',
       functionalCurrency: 'NGN',
       reportingCurrency: 'NGN',
-      fiscalYearStart: dayjs().subtract(1, 'year').toDate(),
-      fiscalYearEnd: dayjs().toDate(),
+      fiscalYearStart: fiscalYearStart.toDate(),
+      fiscalYearEnd: fiscalYearStart
+        .add(12, 'months')
+        .subtract(1, 'day')
+        .toDate(),
     };
 
-    await expect(
-      accountingEntityCreationFormValidation.validate(validData)
-    ).resolves.toBeTruthy();
+    await expect(validationSchema.validate(validData)).resolves.toBeTruthy();
 
+    const invalidFiscalYearStart = dayjs().subtract(3, 'years');
     const invalidData = {
       ...validData,
-      fiscalYearStart: dayjs().subtract(3, 'years').toDate(),
-      fiscalYearEnd: dayjs().subtract(2, 'years').toDate(),
+      fiscalYearStart: invalidFiscalYearStart.toDate(),
+      fiscalYearEnd: invalidFiscalYearStart
+        .add(12, 'months')
+        .subtract(1, 'day')
+        .toDate(),
     };
 
-    await expect(
-      accountingEntityCreationFormValidation.validate(invalidData)
-    ).rejects.toThrow(
+    await expect(validationSchema.validate(invalidData)).rejects.toThrow(
       'Start date must not be less than two years from the current date'
     );
   });
 
-  it('validates that the duration between start and end date is not more than 23 months', async () => {
-    const invalidData = {
+  it('uses the selected jurisdiction maximum as an inclusive boundary', async () => {
+    const fiscalYearStart = dayjs().startOf('year');
+    const validData = {
       entityType: 'individual',
       countryCode: 'NG',
       functionalCurrency: 'NGN',
       reportingCurrency: 'NGN',
-      fiscalYearStart: dayjs().subtract(1, 'year').toDate(),
-      fiscalYearEnd: dayjs().add(2, 'years').toDate(), // Duration > 23 months
+      fiscalYearStart: fiscalYearStart.toDate(),
+      fiscalYearEnd: fiscalYearStart
+        .add(12, 'months')
+        .subtract(1, 'day')
+        .toDate(),
     };
 
+    await expect(validationSchema.validate(validData)).resolves.toBeTruthy();
+
     await expect(
-      accountingEntityCreationFormValidation.validate(invalidData)
+      validationSchema.validate({
+        ...validData,
+        fiscalYearEnd: fiscalYearStart.add(12, 'months').toDate(),
+      })
     ).rejects.toThrow(
-      'The difference between the start and end dates MUST not be more than 23 months or less than one month.'
+      'The accounting period cannot exceed the 12-month limit for Nigeria.'
+    );
+  });
+
+  it('requires the accounting period to span at least one month', async () => {
+    const fiscalYearStart = dayjs().startOf('year');
+
+    await expect(
+      validationSchema.validate({
+        entityType: 'individual',
+        countryCode: 'NG',
+        functionalCurrency: 'NGN',
+        reportingCurrency: 'NGN',
+        fiscalYearStart: fiscalYearStart.toDate(),
+        fiscalYearEnd: fiscalYearStart
+          .add(1, 'month')
+          .subtract(2, 'days')
+          .toDate(),
+      })
+    ).rejects.toThrow('The accounting period must be at least one month.');
+  });
+
+  it('uses the maximum belonging to the selected country', async () => {
+    const fiscalYearStart = dayjs().startOf('year');
+    const data = {
+      entityType: 'individual',
+      countryCode: 'US',
+      functionalCurrency: 'USD',
+      reportingCurrency: 'USD',
+      fiscalYearStart: fiscalYearStart.toDate(),
+      fiscalYearEnd: fiscalYearStart
+        .add(18, 'months')
+        .subtract(1, 'day')
+        .toDate(),
+    };
+
+    await expect(validationSchema.validate(data)).resolves.toBeTruthy();
+
+    await expect(
+      validationSchema.validate({
+        ...data,
+        fiscalYearEnd: fiscalYearStart.add(18, 'months').toDate(),
+      })
+    ).rejects.toThrow(
+      'The accounting period cannot exceed the 18-month limit for United States.'
     );
   });
 });

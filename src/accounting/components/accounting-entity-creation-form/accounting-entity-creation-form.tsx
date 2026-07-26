@@ -10,7 +10,7 @@ import type {
   AccountingEntityCreationFormProps,
   IAccountingEntityFormValues,
 } from './types';
-import { accountingEntityCreationFormValidation } from './validation';
+import { useAccountingEntityCreationFormValidation } from './validation';
 
 function AccountingEntityCreationForm({
   onSubmit,
@@ -21,6 +21,8 @@ function AccountingEntityCreationForm({
   const { t } = useTranslation('accounting');
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState<'right' | 'left'>('right');
+  const validationSchema =
+    useAccountingEntityCreationFormValidation(jurisdictions);
 
   const handleNext = (nextStep: number) => {
     setDirection('right');
@@ -45,7 +47,7 @@ function AccountingEntityCreationForm({
       appUsageMode: 'non_power_user',
       accountingStandardCode: 'IFRS',
     },
-    validationSchema: accountingEntityCreationFormValidation,
+    validationSchema,
     onSubmit: (values) => {
       onSubmit(values);
     },
