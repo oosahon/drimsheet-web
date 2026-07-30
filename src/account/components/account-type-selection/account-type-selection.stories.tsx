@@ -15,8 +15,10 @@ const meta = {
     ),
   ],
   argTypes: {
-    onChange: { action: 'changed' },
     onSubmit: { action: 'submitted' },
+  },
+  args: {
+    onSubmit: () => {},
   },
 } satisfies Meta<typeof AccountTypeSelection>;
 

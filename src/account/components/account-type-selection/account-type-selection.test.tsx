@@ -6,7 +6,7 @@ import { AccountTypeSelection } from './account-type-selection';
 
 describe('AccountTypeSelection', () => {
   it('renders title and all four account type options as enabled radio controls', () => {
-    render(<AccountTypeSelection />);
+    render(<AccountTypeSelection onSubmit={vi.fn()} />);
 
     expect(
       screen.getByRole('heading', { name: /select account type/i })
@@ -27,11 +27,11 @@ describe('AccountTypeSelection', () => {
     expect(screen.queryByText(/coming soon/i)).not.toBeInTheDocument();
   });
 
-  it('selects option on click and calls onChange callback', async () => {
+  it('selects option on click and enables continue button to submit', async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn();
+    const onSubmit = vi.fn();
 
-    render(<AccountTypeSelection onChange={onChange} />);
+    render(<AccountTypeSelection onSubmit={onSubmit} />);
 
     const bankRadio = screen.getByRole('radio', { name: /bank account/i });
     expect(bankRadio).toHaveAttribute('aria-checked', 'false');
@@ -39,14 +39,19 @@ describe('AccountTypeSelection', () => {
     await user.click(bankRadio);
 
     expect(bankRadio).toHaveAttribute('aria-checked', 'true');
-    expect(onChange).toHaveBeenCalledWith(ELedgerAccountBehavior.Bank);
+
+    const continueBtn = screen.getByRole('button', { name: /continue/i });
+    expect(continueBtn).toBeEnabled();
+
+    await user.click(continueBtn);
+    expect(onSubmit).toHaveBeenCalledWith(ELedgerAccountBehavior.Bank);
   });
 
-  it('selects virtual account option on click', async () => {
+  it('selects virtual account option on click and submits', async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn();
+    const onSubmit = vi.fn();
 
-    render(<AccountTypeSelection onChange={onChange} />);
+    render(<AccountTypeSelection onSubmit={onSubmit} />);
 
     const virtualAccountRadio = screen.getByRole('radio', {
       name: /virtual account/i,
@@ -54,8 +59,12 @@ describe('AccountTypeSelection', () => {
 
     await user.click(virtualAccountRadio);
 
-    expect(onChange).toHaveBeenCalledWith(ELedgerAccountBehavior.DefaultCash);
     expect(virtualAccountRadio).toHaveAttribute('aria-checked', 'true');
+
+    const continueBtn = screen.getByRole('button', { name: /continue/i });
+    await user.click(continueBtn);
+
+    expect(onSubmit).toHaveBeenCalledWith(ELedgerAccountBehavior.DefaultCash);
   });
 
   it('triggers onSubmit when Continue button is clicked with a selection', async () => {
@@ -78,20 +87,20 @@ describe('AccountTypeSelection', () => {
   });
 
   it('disables Continue button when no value is selected', () => {
-    render(<AccountTypeSelection />);
+    render(<AccountTypeSelection onSubmit={vi.fn()} />);
 
     const continueBtn = screen.getByRole('button', { name: /continue/i });
     expect(continueBtn).toBeDisabled();
   });
 
-  it('navigates to option and selects using keyboard Space key', async () => {
+  it('navigates to option using keyboard Space key and submits', async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn();
+    const onSubmit = vi.fn();
 
     render(
       <AccountTypeSelection
         defaultValue={ELedgerAccountBehavior.Bank}
-        onChange={onChange}
+        onSubmit={onSubmit}
       />
     );
 
@@ -100,26 +109,26 @@ describe('AccountTypeSelection', () => {
 
     await user.keyboard(' ');
 
-    expect(onChange).toHaveBeenCalledWith(ELedgerAccountBehavior.PettyCash);
+    const continueBtn = screen.getByRole('button', { name: /continue/i });
+    await user.click(continueBtn);
+
+    expect(onSubmit).toHaveBeenCalledWith(ELedgerAccountBehavior.PettyCash);
   });
 
   it('respects disabled prop', async () => {
     const user = userEvent.setup();
-    const onChange = vi.fn();
     const onSubmit = vi.fn();
 
     render(
       <AccountTypeSelection
         disabled
         defaultValue={ELedgerAccountBehavior.Bank}
-        onChange={onChange}
         onSubmit={onSubmit}
       />
     );
 
     const bankRadio = screen.getByRole('radio', { name: /bank account/i });
     await user.click(bankRadio);
-    expect(onChange).not.toHaveBeenCalled();
 
     const continueBtn = screen.getByRole('button', { name: /continue/i });
     expect(continueBtn).toBeDisabled();
