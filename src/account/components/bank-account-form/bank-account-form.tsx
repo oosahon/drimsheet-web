@@ -1,4 +1,5 @@
 import { OpeningBalanceFields } from '@/account/components/opening-balance-fields';
+import { Alert, AlertDescription } from '@/shared/components/alert';
 import { Button } from '@/shared/components/button';
 import { Checkbox } from '@/shared/components/checkbox';
 import { CurrencySelect } from '@/shared/components/currency-select';
@@ -12,16 +13,19 @@ import { Input } from '@/shared/components/input';
 import { Label } from '@/shared/components/label';
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { useFormik } from 'formik';
+import { Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import type {
-  IPettyCashAccountFormValues,
-  PettyCashAccountFormProps,
-} from './types';
-import { usePettyCashAccountFormValidation } from './validation';
+import { BankSelection } from './parts/bank-selection';
+import type { BankAccountFormProps, IBankAccountFormValues } from './types';
+import { useBankAccountFormValidation } from './validation';
 
-const defaultInitialValues: IPettyCashAccountFormValues = {
+const defaultInitialValues: IBankAccountFormValues = {
   name: '',
   currencyCode: '',
+  bankLocation: '',
+  bankName: '',
+  accountNumber: '',
+  accountName: '',
   createWithoutOpeningBalance: false,
   openingBalance: '',
   openingDate: '',
@@ -29,20 +33,22 @@ const defaultInitialValues: IPettyCashAccountFormValues = {
   isSubAccount: false,
 };
 
-export function PettyCashAccountForm({
+export function BankAccountForm({
   accountingCurrencyCode,
   currencies,
+  bankLocations,
+  banks,
+  isBanksLoading = false,
+  onBankLocationChange,
   initialValues,
   loading = false,
   disabled = false,
   onSubmit,
-}: Readonly<PettyCashAccountFormProps>) {
+}: Readonly<BankAccountFormProps>) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
-  const validationSchema = usePettyCashAccountFormValidation(
-    accountingCurrencyCode
-  );
+  const validationSchema = useBankAccountFormValidation(accountingCurrencyCode);
 
-  const formik = useFormik<IPettyCashAccountFormValues>({
+  const formik = useFormik<IBankAccountFormValues>({
     enableReinitialize: true,
     initialValues: { ...defaultInitialValues, ...initialValues },
     validationSchema,
@@ -69,6 +75,15 @@ export function PettyCashAccountForm({
     void formik.setFieldValue('currencyCode', value);
   };
 
+  const handleLocationChange = (location: string) => {
+    void formik.setFieldValue('bankLocation', location);
+    onBankLocationChange(location);
+  };
+
+  const handleBankNameChange = (bankName: string) => {
+    void formik.setFieldValue('bankName', bankName);
+  };
+
   const handleCreateWithoutOpeningBalanceChange = (checked: boolean) => {
     void formik.setFieldValue('createWithoutOpeningBalance', checked);
   };
@@ -79,6 +94,9 @@ export function PettyCashAccountForm({
 
   const account_name_label = t('account_name');
   const currency_label = t('currency_label');
+  const bank_account_number_label = t('bank_account_number_label');
+  const bank_account_name_label = t('bank_account_name_label');
+  const bank_details_info_alert = t('bank_details_info_alert');
   const create_as_sub_account_label = t('create_as_sub_account_label');
   const create_account_text = t('create_account_text');
 
@@ -89,8 +107,9 @@ export function PettyCashAccountForm({
       onSubmit={formik.handleSubmit}
     >
       <FieldSet disabled={disabled || loading}>
-        <FieldGroup>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-[1fr_1fr]">
+        <FieldGroup className="gap-5">
+          {/* Row 1: Currency (left, 2/5) & Account name (right, 3/5) */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-[2fr_3fr]">
             <CurrencySelect
               currencies={currencies}
               displayCode
@@ -114,6 +133,60 @@ export function PettyCashAccountForm({
             </Field>
           </div>
 
+          {/* Row 2: Bank location (left, using CountryComboBox) & Bank name (right) */}
+          <BankSelection
+            bankLocation={formik.values.bankLocation}
+            bankLocations={bankLocations}
+            bankName={formik.values.bankName}
+            bankNameError={getErrorMessage('bankName')}
+            banks={banks}
+            disabled={disabled || loading}
+            isBanksLoading={isBanksLoading}
+            locationError={getErrorMessage('bankLocation')}
+            onBankNameChange={handleBankNameChange}
+            onLocationChange={handleLocationChange}
+          />
+
+          {/* Row 3: Bank account number (left) & Bank account name (right) */}
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-[2fr_3fr]">
+            <Field
+              data-invalid={Boolean(getErrorMessage('accountNumber').length)}
+            >
+              <Label htmlFor="accountNumber">{bank_account_number_label}</Label>
+              <Input
+                aria-invalid={Boolean(getErrorMessage('accountNumber').length)}
+                id="accountNumber"
+                name="accountNumber"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.accountNumber}
+              />
+              <FieldError errors={getErrorMessage('accountNumber')} />
+            </Field>
+
+            <Field
+              data-invalid={Boolean(getErrorMessage('accountName').length)}
+            >
+              <Label htmlFor="accountName">{bank_account_name_label}</Label>
+              <Input
+                aria-invalid={Boolean(getErrorMessage('accountName').length)}
+                id="accountName"
+                name="accountName"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.accountName}
+              />
+              <FieldError errors={getErrorMessage('accountName')} />
+            </Field>
+          </div>
+
+          {/* Info Alert explaining bank details collection */}
+          <Alert variant="info" className="bg-muted/40 mb-3">
+            <Info className="size-4 text-muted-foreground" />
+            <AlertDescription>{bank_details_info_alert}</AlertDescription>
+          </Alert>
+
+          {/* Opening balance fields: checkbox, 2-col opening balance/date, exchange rate */}
           <OpeningBalanceFields
             accountingCurrencyCode={accountingCurrencyCode}
             createWithoutOpeningBalance={
@@ -135,6 +208,7 @@ export function PettyCashAccountForm({
             openingDateError={getErrorMessage('openingDate')}
           />
 
+          {/* Sub account checkbox */}
           <Field orientation="horizontal">
             <Checkbox
               aria-label={create_as_sub_account_label}
@@ -149,6 +223,7 @@ export function PettyCashAccountForm({
             <Label htmlFor="isSubAccount">{create_as_sub_account_label}</Label>
           </Field>
 
+          {/* Submit button */}
           <Field>
             <Button
               className="w-full sm:ml-auto sm:w-auto"

@@ -40,7 +40,7 @@ export function OpeningBalanceFields({
   const exchange_rate_label = t('exchange_rate_label');
 
   return (
-    <FieldGroup className="gap-5">
+    <FieldGroup>
       <Field orientation="horizontal">
         <Checkbox
           aria-label={create_without_opening_balance_label}

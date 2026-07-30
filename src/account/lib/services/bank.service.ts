@@ -2,6 +2,7 @@ import { purpleLedgerApi } from '@/shared/lib/api';
 
 export const bankService = {
   async getBanksByCountry(countryCode: string) {
-    return purpleLedgerApi.banks.getBanks({ countryCode });
+    const response = await purpleLedgerApi.banks.getBanks({ countryCode });
+    return response.data;
   },
 };

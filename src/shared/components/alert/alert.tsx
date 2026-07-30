@@ -11,6 +11,11 @@ const alertVariants = cva(
         default: 'bg-card text-card-foreground',
         destructive:
           'bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current',
+        success:
+          'bg-card text-success *:data-[slot=alert-description]:text-success/90 *:[svg]:text-current',
+        info: 'bg-card text-info *:data-[slot=alert-description]:text-info/90 *:[svg]:text-current',
+        warning:
+          'bg-card text-warning *:data-[slot=alert-description]:text-warning/90 *:[svg]:text-current',
       },
     },
     defaultVariants: {
@@ -84,13 +89,7 @@ function WarningAlert({
   ...props
 }: Readonly<React.ComponentProps<'div'>>) {
   return (
-    <Alert
-      className={cn(
-        'max-w-md border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-50',
-        className
-      )}
-      {...props}
-    />
+    <Alert variant="warning" className={cn('max-w-md', className)} {...props} />
   );
 }
 

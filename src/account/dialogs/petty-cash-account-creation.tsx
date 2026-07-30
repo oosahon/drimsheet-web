@@ -1,4 +1,3 @@
-import { AccountBehaviorNote } from '@/account/components/account-behavior-note';
 import {
   PettyCashAccountForm,
   type IPettyCashAccountFormValues,
@@ -13,7 +12,6 @@ import {
 } from '@/shared/components/dialog';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useCurrencies } from '@/shared/hooks/use-currencies';
-import { ELedgerAccountBehavior } from '@/shared/lib/api/Api';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -65,12 +63,10 @@ export function PettyCashAccountCreationDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{create_petty_cash_account_title}</DialogTitle>
         </DialogHeader>
-
-        <AccountBehaviorNote behavior={ELedgerAccountBehavior.PettyCash} />
 
         <PettyCashAccountForm
           accountingCurrencyCode={accountingCurrencyCode}
