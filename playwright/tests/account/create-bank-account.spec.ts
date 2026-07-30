@@ -81,10 +81,26 @@ async function signInAndNavigateToAccounts(page: Page) {
 }
 
 test.describe('Bank Account Creation Flow', () => {
-  test('opens bank creation dialog, attaches local statement, submits form and verifies API DTO', async ({
+  test('opens bank creation dialog, automatically loads banks for default jurisdiction, attaches statement, and submits DTO', async ({
     page,
   }) => {
     await signInAndNavigateToAccounts(page);
+
+    let requestedBankCountry: string | null = null;
+    await page.route(banksEndpoint, async (route) => {
+      const url = new URL(route.request().url());
+      requestedBankCountry = url.searchParams.get('countryCode');
+      await route.fulfill({
+        json: [
+          {
+            countryCode: 'NG',
+            bankCode: 'GTB',
+            bankName: 'Guaranty Trust Bank',
+          },
+          { countryCode: 'NG', bankCode: 'ACCESS', bankName: 'Access Bank' },
+        ],
+      });
+    });
 
     const addAccountButton = page.getByRole('button', { name: 'Add account' });
     await expect(addAccountButton).toBeVisible();
@@ -110,15 +126,8 @@ test.describe('Bank Account Creation Flow', () => {
     });
     await expect(bankDialog).toBeVisible();
 
-    // Test dismissal via Escape key
-    await page.keyboard.press('Escape');
-    await expect(bankDialog).not.toBeVisible();
-
-    // Reopen dialog
-    await addAccountButton.click();
-    await selectionDialog.getByRole('radio', { name: /bank account/i }).click();
-    await continueButton.click();
-    await expect(bankDialog).toBeVisible();
+    // Verify default jurisdiction NG triggered automatic bank loading without manual country reselection
+    await expect.poll(() => requestedBankCountry).toBe('NG');
 
     // Attach local statement PDF
     const fileInput = bankDialog.locator('input[type="file"]');
@@ -148,11 +157,7 @@ test.describe('Bank Account Creation Flow', () => {
       .getByRole('textbox', { name: 'Account name', exact: true })
       .fill('Main Operating Account');
 
-    // Select bank location
-    await bankDialog.getByRole('combobox', { name: 'Bank location' }).click();
-    await page.getByRole('option', { name: 'Nigeria' }).click();
-
-    // Select bank name
+    // Select bank name (automatically populated for NG)
     await bankDialog.getByRole('combobox', { name: 'Bank name' }).click();
     await page.getByRole('option', { name: 'Access Bank' }).click();
 
@@ -205,5 +210,113 @@ test.describe('Bank Account Creation Flow', () => {
         exchangeRate: null,
       },
     });
+  });
+
+  test('retains form fields and uploaded statement file on API creation failure', async ({
+    page,
+  }) => {
+    await signInAndNavigateToAccounts(page);
+
+    await page.route(createBankAccountEndpoint, async (route) => {
+      await route.fulfill({
+        status: 500,
+        json: { message: 'Failed to create bank account' },
+      });
+    });
+
+    await page.getByRole('button', { name: 'Add account' }).click();
+    const selectionDialog = page.getByRole('dialog').filter({
+      has: page.getByRole('heading', { name: /select account type/i }),
+    });
+    await selectionDialog.getByRole('radio', { name: /bank account/i }).click();
+    await selectionDialog.getByRole('button', { name: /continue/i }).click();
+
+    const bankDialog = page.getByRole('dialog').filter({
+      has: page.getByRole('heading', { name: /create bank account/i }),
+    });
+
+    // Attach statement
+    const fileInput = bankDialog.locator('input[type="file"]');
+    await fileInput.setInputFiles({
+      name: 'retained-statement.pdf',
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('test content'),
+    });
+    await expect(bankDialog.getByText('retained-statement.pdf')).toBeVisible();
+
+    // Fill form
+    await bankDialog
+      .getByRole('textbox', { name: 'Account name', exact: true })
+      .fill('Retained Form Account');
+    await bankDialog.getByRole('combobox', { name: 'Bank name' }).click();
+    await page.getByRole('option', { name: 'Access Bank' }).click();
+    await bankDialog
+      .getByRole('textbox', { name: 'Bank account number' })
+      .fill('9998887776');
+    await bankDialog
+      .getByRole('textbox', { name: 'Bank account name' })
+      .fill('Retained Corp');
+    await bankDialog
+      .getByRole('textbox', { name: 'Opening balance' })
+      .fill('1200');
+    await bankDialog.getByRole('button', { name: /opening date/i }).click();
+    await page.getByRole('gridcell', { name: '15' }).first().click();
+
+    await bankDialog.getByRole('button', { name: /create account/i }).click();
+
+    // Dialog stays open, values and statement file are retained
+    await expect(bankDialog).toBeVisible();
+    await expect(bankDialog.getByText('retained-statement.pdf')).toBeVisible();
+    await expect(
+      bankDialog.getByRole('textbox', { name: 'Account name', exact: true })
+    ).toHaveValue('Retained Form Account');
+    await expect(
+      bankDialog.getByRole('textbox', { name: 'Bank account number' })
+    ).toHaveValue('9998887776');
+  });
+
+  test('resets form and statement state after dismissal and reopening', async ({
+    page,
+  }) => {
+    await signInAndNavigateToAccounts(page);
+
+    await page.getByRole('button', { name: 'Add account' }).click();
+    const selectionDialog = page.getByRole('dialog').filter({
+      has: page.getByRole('heading', { name: /select account type/i }),
+    });
+    await selectionDialog.getByRole('radio', { name: /bank account/i }).click();
+    await selectionDialog.getByRole('button', { name: /continue/i }).click();
+
+    const bankDialog = page.getByRole('dialog').filter({
+      has: page.getByRole('heading', { name: /create bank account/i }),
+    });
+
+    // Fill form and attach file
+    await bankDialog
+      .getByRole('textbox', { name: 'Account name', exact: true })
+      .fill('Draft Account');
+    const fileInput = bankDialog.locator('input[type="file"]');
+    await fileInput.setInputFiles({
+      name: 'draft-statement.pdf',
+      mimeType: 'application/pdf',
+      buffer: Buffer.from('draft content'),
+    });
+    await expect(bankDialog.getByText('draft-statement.pdf')).toBeVisible();
+
+    // Dismiss via Escape
+    await page.keyboard.press('Escape');
+    await expect(bankDialog).not.toBeVisible();
+
+    // Reopen dialog
+    await page.getByRole('button', { name: 'Add account' }).click();
+    await selectionDialog.getByRole('radio', { name: /bank account/i }).click();
+    await selectionDialog.getByRole('button', { name: /continue/i }).click();
+
+    // Verify reopened form and statement upload are clean
+    await expect(bankDialog).toBeVisible();
+    await expect(
+      bankDialog.getByRole('textbox', { name: 'Account name', exact: true })
+    ).toHaveValue('');
+    await expect(bankDialog.getByText('draft-statement.pdf')).not.toBeVisible();
   });
 });

@@ -1,4 +1,5 @@
 import { Button } from '@/shared/components/button';
+import { RadioGroup, RadioGroupItem } from '@/shared/components/radio-group';
 import {
   ELedgerAccountBehavior,
   type ULedgerAccountBehavior,
@@ -12,7 +13,6 @@ import type { AccountTypeSelectionProps, IAccountTypeOption } from './types';
 export function AccountTypeSelection({
   defaultValue,
   value,
-  onChange,
   onSubmit,
   disabled = false,
   className,
@@ -57,16 +57,17 @@ export function AccountTypeSelection({
     },
   ];
 
+  const canSubmit = Boolean(selectedValue && !disabled);
+
   const handleSelect = (optionValue: ULedgerAccountBehavior) => {
     if (disabled) return;
     if (value === undefined) {
       setInternalSelected(optionValue);
     }
-    onChange?.(optionValue);
   };
 
   const handleSubmit = () => {
-    if (!selectedValue || disabled) return;
+    if (!canSubmit || !selectedValue) return;
     onSubmit?.(selectedValue);
   };
 
@@ -79,34 +80,43 @@ export function AccountTypeSelection({
         {title}
       </h2>
 
-      <div role="radiogroup" aria-label={title} className="flex flex-col gap-3">
+      <RadioGroup
+        value={selectedValue ?? ''}
+        defaultValue={defaultValue ?? ''}
+        onValueChange={(val) => handleSelect(val as ULedgerAccountBehavior)}
+        aria-label={title}
+        disabled={disabled}
+        className="flex flex-col gap-3"
+      >
         {options.map((option) => {
           const isSelected = selectedValue === option.value;
+          const optionId = `account-type-${option.value}`;
+
           return (
-            <div
+            <label
               key={option.value}
-              role="radio"
-              aria-checked={isSelected}
-              tabIndex={disabled ? -1 : 0}
-              onClick={() => handleSelect(option.value)}
-              onKeyDown={(e) => {
-                if (e.key === ' ' || e.key === 'Enter') {
-                  e.preventDefault();
-                  handleSelect(option.value);
-                }
-              }}
+              htmlFor={optionId}
               className={cn(
                 'flex cursor-pointer items-center gap-4 rounded-lg border border-border p-3 outline-none transition-all',
-                'hover:bg-accent/50 focus-visible:ring-2 focus-visible:ring-ring',
-                isSelected ? 'bg-accent/40 shadow-sm' : 'bg-card',
+                'hover:bg-accent/50 focus-within:ring-2 focus-within:ring-ring',
+                isSelected
+                  ? 'bg-accent/40 border-primary shadow-sm'
+                  : 'bg-card',
                 disabled && 'cursor-not-allowed opacity-50 hover:bg-card'
               )}
             >
+              <RadioGroupItem
+                id={optionId}
+                value={option.value}
+                disabled={disabled}
+              />
+
               <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
                 {option.icon ?? (
                   <div className="h-6 w-6 rounded bg-muted-foreground/30" />
                 )}
               </div>
+
               <div className="flex flex-col gap-0.5 text-left">
                 <span className="text-base font-semibold leading-tight text-foreground">
                   {option.label}
@@ -115,15 +125,15 @@ export function AccountTypeSelection({
                   {option.description}
                 </span>
               </div>
-            </div>
+            </label>
           );
         })}
-      </div>
+      </RadioGroup>
 
       <div className="flex justify-end pt-2">
         <Button
           onClick={handleSubmit}
-          disabled={!selectedValue || disabled}
+          disabled={!canSubmit}
           className="min-w-[100px]"
         >
           {continueText}

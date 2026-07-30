@@ -9,6 +9,7 @@ interface PettyCashAccountValidationMessages {
   currencyRequired: string;
   openingBalanceRequired: string;
   openingBalanceNumber: string;
+  openingBalanceNegative: string;
   openingDateRequired: string;
   exchangeRateRequired: string;
   exchangeRateNumber: string;
@@ -40,7 +41,10 @@ export function createPettyCashAccountFormValidation(
       'createWithoutOpeningBalance',
       {
         is: false,
-        then: (schema) => schema.required(messages.openingBalanceRequired),
+        then: (schema) =>
+          schema
+            .required(messages.openingBalanceRequired)
+            .min(0, messages.openingBalanceNegative),
         otherwise: (schema) => schema.notRequired(),
       }
     ),
@@ -78,6 +82,7 @@ export function usePettyCashAccountFormValidation(
   const currency_required_text = t('currency_required_text');
   const opening_balance_required_text = t('opening_balance_required_text');
   const opening_balance_number_text = t('opening_balance_number_text');
+  const opening_balance_negative_text = t('opening_balance_negative_text');
   const opening_date_required_text = t('opening_date_required_text');
   const exchange_rate_required_text = t('exchange_rate_required_text');
   const exchange_rate_number_text = t('exchange_rate_number_text');
@@ -92,6 +97,7 @@ export function usePettyCashAccountFormValidation(
         currencyRequired: currency_required_text,
         openingBalanceRequired: opening_balance_required_text,
         openingBalanceNumber: opening_balance_number_text,
+        openingBalanceNegative: opening_balance_negative_text,
         openingDateRequired: opening_date_required_text,
         exchangeRateRequired: exchange_rate_required_text,
         exchangeRateNumber: exchange_rate_number_text,
@@ -105,6 +111,7 @@ export function usePettyCashAccountFormValidation(
       currency_required_text,
       opening_balance_required_text,
       opening_balance_number_text,
+      opening_balance_negative_text,
       opening_date_required_text,
       exchange_rate_required_text,
       exchange_rate_number_text,

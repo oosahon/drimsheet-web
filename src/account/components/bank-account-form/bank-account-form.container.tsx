@@ -15,7 +15,7 @@ export function BankAccountFormContainer({
   initialValues,
   ...props
 }: Readonly<BankAccountFormContainerProps>) {
-  const [selectedLocation, setSelectedLocation] = useState(
+  const [selectedLocation, setSelectedLocation] = useState<string>(
     initialValues?.bankLocation ?? initialBankLocation
   );
 
@@ -31,10 +31,7 @@ export function BankAccountFormContainer({
       {...props}
       banks={banks}
       isBanksLoading={isBanksLoading}
-      initialValues={{
-        ...initialValues,
-        bankLocation: initialValues?.bankLocation ?? initialBankLocation,
-      }}
+      initialValues={initialValues}
       onBankLocationChange={handleLocationChange}
     />
   );

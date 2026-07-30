@@ -7,6 +7,7 @@ import { useAccountingEntity } from '@/accounting/hooks/use-accounting-entity';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/dialog';
@@ -16,7 +17,7 @@ import { Separator } from '@/shared/components/separator';
 import countries from '@/shared/configs/countries.json' with { type: 'json' };
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useCurrencies } from '@/shared/hooks/use-currencies';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
@@ -45,15 +46,6 @@ export function BankAccountCreationDialog({
   const { mutateAsync: createBankAccount, isPending: isCreating } =
     useCreateBankAccount(accountingCurrencyCode);
 
-  const bankLocations = useMemo(
-    () =>
-      countries.map((c) => ({
-        code: c.code,
-        name: c.name,
-      })),
-    []
-  );
-
   const formDisabled =
     isCurrenciesPending || isAccountingEntityPending || !accountingCurrencyCode;
 
@@ -76,6 +68,9 @@ export function BankAccountCreationDialog({
   };
 
   const create_bank_account_title = t('ledger-accounts:create_bank_account');
+  const create_bank_account_description = t(
+    'ledger-accounts:create_bank_account_description'
+  );
   const upload_bank_statement_title = t(
     'ledger-accounts:upload_bank_statement_title'
   );
@@ -91,13 +86,17 @@ export function BankAccountCreationDialog({
       <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-4xl">
         <DialogHeader>
           <DialogTitle>{create_bank_account_title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {create_bank_account_description}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_auto_1fr] md:items-start">
           <div className="order-2 min-w-0 md:order-1">
             <BankAccountFormContainer
+              key={initialJurisdiction}
               accountingCurrencyCode={accountingCurrencyCode}
-              bankLocations={bankLocations}
+              bankLocations={countries}
               currencies={currencies}
               disabled={formDisabled}
               initialBankLocation={initialJurisdiction}

@@ -8,6 +8,7 @@ const messages = {
   currencyRequired: 'Currency is required',
   openingBalanceRequired: 'Opening balance is required',
   openingBalanceNumber: 'Opening balance must be a number',
+  openingBalanceNegative: 'Opening balance cannot be negative',
   openingDateRequired: 'Opening date is required',
   exchangeRateRequired: 'Exchange rate is required',
   exchangeRateNumber: 'Exchange rate must be a number',
@@ -29,6 +30,24 @@ const validValues = {
 describe('petty cash account form validation', () => {
   it('accepts a same-currency opening balance', async () => {
     await expect(schema.validate(validValues)).resolves.toBeDefined();
+  });
+
+  it('accepts a zero opening balance', async () => {
+    await expect(
+      schema.validate({
+        ...validValues,
+        openingBalance: 0,
+      })
+    ).resolves.toBeDefined();
+  });
+
+  it('rejects a negative opening balance', async () => {
+    await expect(
+      schema.validate({
+        ...validValues,
+        openingBalance: -50,
+      })
+    ).rejects.toThrow('Opening balance cannot be negative');
   });
 
   it('requires an opening balance when opening balance is enabled', async () => {

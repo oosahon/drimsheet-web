@@ -22,13 +22,7 @@ export function AccountsDashboardPage() {
 
   const handleAccountTypeSelected = (behavior: ULedgerAccountBehavior) => {
     setShowAccountTypeSelection(false);
-
-    if (
-      behavior === ELedgerAccountBehavior.PettyCash ||
-      behavior === ELedgerAccountBehavior.Bank
-    ) {
-      setSelectedBehavior(behavior);
-    }
+    setSelectedBehavior(behavior);
   };
 
   const accounts_label = t('shared:accounts');

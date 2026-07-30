@@ -1,3 +1,4 @@
+import { bankLocationMapper } from '@/account/lib/mappers/bank-location.mapper';
 import {
   Combobox,
   ComboboxContent,
@@ -50,6 +51,11 @@ export function BankSelection({
 
   const safeBanks = useMemo(() => (Array.isArray(banks) ? banks : []), [banks]);
 
+  const jurisdictions = useMemo(
+    () => bankLocations.map(bankLocationMapper.toJurisdictionDto),
+    [bankLocations]
+  );
+
   const getBankDisplayName = (bank: BankItem) =>
     bank.bankName ?? bank.name ?? '';
   const getBankCode = (bank: BankItem) =>
@@ -80,7 +86,7 @@ export function BankSelection({
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-[2fr_3fr]">
       <CountryComboBox
         error={locationError}
-        jurisdictions={bankLocations}
+        jurisdictions={jurisdictions}
         label={bank_location_label}
         onChange={(val) => {
           onLocationChange(val);

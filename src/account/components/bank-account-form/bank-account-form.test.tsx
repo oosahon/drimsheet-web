@@ -227,7 +227,7 @@ describe('BankAccountForm', () => {
 });
 
 describe('BankAccountFormContainer', () => {
-  it('renders container with country-to-bank lookup and handles location change', async () => {
+  it('updates bank query location while retaining previously entered form fields', async () => {
     const user = userEvent.setup();
     const queryClient = new QueryClient();
     render(
@@ -241,12 +241,17 @@ describe('BankAccountFormContainer', () => {
       </QueryClientProvider>
     );
 
+    const nameInput = screen.getByLabelText('Account name');
+    await user.type(nameInput, 'Treasury Account');
+
     const locationInput = screen.getByPlaceholderText('Select a country');
     await user.click(locationInput);
     const usOption = await screen.findByRole('option', {
       name: /United States/i,
     });
     await user.click(usOption);
+
     expect(locationInput).toHaveValue('United States');
+    expect(nameInput).toHaveValue('Treasury Account');
   });
 });

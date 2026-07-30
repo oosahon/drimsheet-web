@@ -110,5 +110,7 @@
   "bank_location_required_text": "Bank location is required",
   "bank_name_required_text": "Bank name is required",
   "bank_account_number_required_text": "Bank account number is required",
-  "bank_account_name_required_text": "Bank account name is required"
+  "bank_account_name_required_text": "Bank account name is required",
+  "create_bank_account_description": "Fill in bank account details or upload a statement to create a new bank account.",
+  "create_petty_cash_account_description": "Fill in petty cash details to create a new petty cash account."
 }

@@ -7,6 +7,7 @@ import { useAccountingEntity } from '@/accounting/hooks/use-accounting-entity';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/dialog';
@@ -60,12 +61,18 @@ export function PettyCashAccountCreationDialog({
   const create_petty_cash_account_title = t(
     'ledger-accounts:create_petty_cash_account'
   );
+  const create_petty_cash_account_description = t(
+    'ledger-accounts:create_petty_cash_account_description'
+  );
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{create_petty_cash_account_title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {create_petty_cash_account_description}
+          </DialogDescription>
         </DialogHeader>
 
         <PettyCashAccountForm

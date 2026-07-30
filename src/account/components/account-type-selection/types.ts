@@ -11,8 +11,7 @@ export interface IAccountTypeOption {
 export interface AccountTypeSelectionProps {
   defaultValue?: ULedgerAccountBehavior;
   value?: ULedgerAccountBehavior;
-  onChange?: (value: ULedgerAccountBehavior) => void;
-  onSubmit?: (value: ULedgerAccountBehavior) => void;
+  onSubmit: (value: ULedgerAccountBehavior) => void;
   disabled?: boolean;
   className?: string;
 }
