@@ -1,8 +1,13 @@
 import { LedgerAccountsOverview } from '@/account/components/accounts-overview';
 import { LedgerAccountsTableContainer } from '@/account/components/accounts-table';
 import { AccountTypeSelectionDialog } from '@/account/dialogs/account-type-selection';
+import { PettyCashAccountCreationDialog } from '@/account/dialogs/petty-cash-account-creation';
 import { AppBody, AppHeader } from '@/shared/components/app';
-import { ELedgerType, type ULedgerAccountBehavior } from '@/shared/lib/api/Api';
+import {
+  ELedgerAccountBehavior,
+  ELedgerType,
+  type ULedgerAccountBehavior,
+} from '@/shared/lib/api/Api';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -11,12 +16,15 @@ export function AccountsDashboardPage() {
 
   const [showAccountTypeSelection, setShowAccountTypeSelection] =
     useState(false);
+  const [selectedBehavior, setSelectedBehavior] =
+    useState<ULedgerAccountBehavior | null>(null);
 
-  const handleAccountTypeSelected = (
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _behavior: ULedgerAccountBehavior
-  ) => {
+  const handleAccountTypeSelected = (behavior: ULedgerAccountBehavior) => {
     setShowAccountTypeSelection(false);
+
+    if (behavior === ELedgerAccountBehavior.PettyCash) {
+      setSelectedBehavior(behavior);
+    }
   };
 
   const accounts_label = t('shared:accounts');
@@ -45,6 +53,11 @@ export function AccountsDashboardPage() {
           open={showAccountTypeSelection}
           onClose={() => setShowAccountTypeSelection(false)}
           onSubmit={handleAccountTypeSelected}
+        />
+
+        <PettyCashAccountCreationDialog
+          open={selectedBehavior === ELedgerAccountBehavior.PettyCash}
+          onClose={() => setSelectedBehavior(null)}
         />
       </AppBody>
     </>

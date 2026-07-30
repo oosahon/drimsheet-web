@@ -1,9 +1,9 @@
-import type { IPettyCashFormValues } from '@/account/components/petty-cash-form';
+import type { IPettyCashAccountFormValues } from '@/account/components/petty-cash-account-form';
 import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
 import { EExchangeRateType } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
-const values: IPettyCashFormValues = {
+const values: IPettyCashAccountFormValues = {
   name: 'Office cash',
   currencyCode: 'NGN',
   createWithoutOpeningBalance: false,

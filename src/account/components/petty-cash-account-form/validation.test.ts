@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createPettyCashFormValidation } from './validation';
+import { createPettyCashAccountFormValidation } from './validation';
 
 const messages = {
   accountNameRequired: 'Account name is required',
@@ -14,7 +14,7 @@ const messages = {
   exchangeRatePositive: 'Exchange rate must be positive',
 };
 
-const schema = createPettyCashFormValidation('NGN', messages);
+const schema = createPettyCashAccountFormValidation('NGN', messages);
 
 const validValues = {
   name: 'Office cash',
@@ -26,7 +26,7 @@ const validValues = {
   isSubAccount: false,
 };
 
-describe('petty cash form validation', () => {
+describe('petty cash account form validation', () => {
   it('accepts a same-currency opening balance', async () => {
     await expect(schema.validate(validValues)).resolves.toBeDefined();
   });

@@ -86,23 +86,25 @@ export function OpeningBalanceFields({
         </Field>
       </div>
 
-      {showExchangeRate && (
-        <Field data-invalid={Boolean(exchangeRateError?.length)}>
-          <Label htmlFor="exchangeRate">{exchange_rate_label}</Label>
-          <CurrencyExchangeRateInput
-            aria-invalid={Boolean(exchangeRateError?.length)}
-            aria-label={exchange_rate_label}
-            baseCurrency={currencyCode}
-            disabled={disabled}
-            id="exchangeRate"
-            name="exchangeRate"
-            onChange={onExchangeRateChange}
-            targetCurrency={accountingCurrencyCode}
-            value={exchangeRate}
-          />
-          <FieldError errors={exchangeRateError} />
-        </Field>
-      )}
+      <div className="min-h-[76px]">
+        {showExchangeRate && (
+          <Field data-invalid={Boolean(exchangeRateError?.length)}>
+            <Label htmlFor="exchangeRate">{exchange_rate_label}</Label>
+            <CurrencyExchangeRateInput
+              aria-invalid={Boolean(exchangeRateError?.length)}
+              aria-label={exchange_rate_label}
+              baseCurrency={currencyCode}
+              disabled={disabled}
+              id="exchangeRate"
+              name="exchangeRate"
+              onChange={onExchangeRateChange}
+              targetCurrency={accountingCurrencyCode}
+              value={exchangeRate}
+            />
+            <FieldError errors={exchangeRateError} />
+          </Field>
+        )}
+      </div>
     </FieldGroup>
   );
 }

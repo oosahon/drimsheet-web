@@ -1,7 +1,8 @@
+import { AccountBehaviorNote } from '@/account/components/account-behavior-note';
 import {
-  PettyCashForm,
-  type IPettyCashFormValues,
-} from '@/account/components/petty-cash-form';
+  PettyCashAccountForm,
+  type IPettyCashAccountFormValues,
+} from '@/account/components/petty-cash-account-form';
 import { useCreatePettyCashAccount } from '@/account/hooks/use-create-petty-cash-account';
 import { useAccountingEntity } from '@/accounting/hooks/use-accounting-entity';
 import {
@@ -12,18 +13,19 @@ import {
 } from '@/shared/components/dialog';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useCurrencies } from '@/shared/hooks/use-currencies';
+import { ELedgerAccountBehavior } from '@/shared/lib/api/Api';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-interface AccountCreationDialogProps {
+export interface PettyCashAccountCreationDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onClose: () => void;
 }
 
-export function AccountCreationDialog({
+export function PettyCashAccountCreationDialog({
   open,
-  onOpenChange,
-}: Readonly<AccountCreationDialogProps>) {
+  onClose,
+}: Readonly<PettyCashAccountCreationDialogProps>) {
   const { t } = useTranslation(['ledger-accounts', 'shared']);
   const handleApiError = useApiErrorHandler();
 
@@ -39,13 +41,19 @@ export function AccountCreationDialog({
   const formDisabled =
     isCurrenciesPending || isAccountingEntityPending || !accountingCurrencyCode;
 
-  const handleSubmit = async (values: IPettyCashFormValues) => {
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      onClose();
+    }
+  };
+
+  const handleSubmit = async (values: IPettyCashAccountFormValues) => {
     try {
       await createPettyCashAccount(values);
       toast.success(
         t('ledger-accounts:petty_cash_account_created_success_text')
       );
-      onOpenChange(false);
+      onClose();
     } catch (error) {
       handleApiError(error, { showToast: true });
     }
@@ -56,13 +64,15 @@ export function AccountCreationDialog({
   );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{create_petty_cash_account_title}</DialogTitle>
         </DialogHeader>
 
-        <PettyCashForm
+        <AccountBehaviorNote behavior={ELedgerAccountBehavior.PettyCash} />
+
+        <PettyCashAccountForm
           accountingCurrencyCode={accountingCurrencyCode}
           currencies={currencies}
           disabled={formDisabled}

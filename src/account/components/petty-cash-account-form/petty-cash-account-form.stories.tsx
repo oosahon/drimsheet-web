@@ -1,24 +1,39 @@
-import { PettyCashAccountForm } from '@/account/components/petty-cash-account-form';
+import type { ICurrencyDto } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { MemoryRouter } from 'react-router-dom';
+import { PettyCashAccountForm } from './petty-cash-account-form';
+
+const currencies: ICurrencyDto[] = [
+  {
+    code: 'NGN',
+    name: 'Nigerian Naira',
+    symbol: '₦',
+    minorUnit: 2,
+  },
+  {
+    code: 'USD',
+    name: 'US Dollar',
+    symbol: '$',
+    minorUnit: 2,
+  },
+];
 
 const meta = {
   title: 'Ledger Accounts/PettyCashAccountForm',
   component: PettyCashAccountForm,
+  tags: ['autodocs'],
+  parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
-      <MemoryRouter>
-        <div className="p-4 max-w-sm mx-auto">
-          <Story />
-        </div>
-      </MemoryRouter>
+      <div className="w-[min(42rem,calc(100vw-2rem))]">
+        <Story />
+      </div>
     ),
   ],
-  parameters: {
-    layout: 'centered',
+  args: {
+    accountingCurrencyCode: 'NGN',
+    currencies,
+    onSubmit: () => {},
   },
-  tags: ['autodocs'],
-  args: { onSubmit: () => {} },
   argTypes: {
     onSubmit: { action: 'submitted' },
   },
@@ -27,14 +42,28 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {
+export const Default: Story = {};
+
+export const ForeignCurrency: Story = {
   args: {
-    loading: false,
+    initialValues: {
+      name: 'Travel Cash',
+      currencyCode: 'USD',
+      openingBalance: 100,
+      openingDate: '2026-07-01',
+      exchangeRate: 1500,
+    },
   },
 };
 
 export const Loading: Story = {
   args: {
     loading: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
   },
 };

@@ -1,3 +1,4 @@
+import type { IPettyCashAccountCreationReq } from '@/shared/lib/api/Api';
 import { expect, test } from '@integration/fixtures/test';
 import {
   authenticatedUser,
@@ -8,6 +9,7 @@ import type { Page } from '@playwright/test';
 const loginEndpoint = '**/api/v1/auth/login-with-email';
 const refreshEndpoint = '**/api/v1/auth/refresh-access-token';
 const ledgerAccountsEndpoint = '**/api/v1/ledger*';
+const createPettyCashEndpoint = '**/api/v1/ledger/asset/petty-cash';
 const currenciesEndpoint = '**/api/v1/currencies*';
 
 async function registerAccountPageRoutes(page: Page) {
@@ -37,17 +39,21 @@ async function registerAccountPageRoutes(page: Page) {
   });
 
   await page.route(ledgerAccountsEndpoint, async (route) => {
-    await route.fulfill({
-      json: {
-        data: [],
-        meta: {
-          total: 0,
-          page: 1,
-          limit: 10,
-          totalPages: 1,
+    if (route.request().method() === 'GET') {
+      await route.fulfill({
+        json: {
+          data: [],
+          meta: {
+            total: 0,
+            page: 1,
+            limit: 10,
+            totalPages: 1,
+          },
         },
-      },
-    });
+      });
+    } else {
+      await route.fallback();
+    }
   });
 }
 
@@ -74,39 +80,115 @@ test.describe('Account Type Selection Flow', () => {
     await expect(addAccountButton).toBeVisible();
     await addAccountButton.click();
 
-    const dialog = page.getByRole('dialog');
-    await expect(dialog).toBeVisible();
-    await expect(
-      dialog.getByRole('heading', { name: /select account type/i }).first()
-    ).toBeVisible();
+    const selectionDialog = page.getByRole('dialog').filter({
+      has: page.getByRole('heading', { name: /select account type/i }),
+    });
+    await expect(selectionDialog).toBeVisible();
 
     await expect(
-      dialog.getByRole('radio', { name: /bank account/i })
+      selectionDialog.getByRole('radio', { name: /bank account/i })
     ).toBeVisible();
     await expect(
-      dialog.getByRole('radio', { name: /petty cash/i })
+      selectionDialog.getByRole('radio', { name: /petty cash/i })
     ).toBeVisible();
     await expect(
-      dialog.getByRole('radio', { name: /virtual account/i })
+      selectionDialog.getByRole('radio', { name: /virtual account/i })
     ).toBeVisible();
     await expect(
-      dialog.getByRole('radio', { name: /credit card/i })
+      selectionDialog.getByRole('radio', { name: /credit card/i })
     ).toBeVisible();
 
     // Dismissal test via Escape
     await page.keyboard.press('Escape');
-    await expect(dialog).not.toBeVisible();
+    await expect(selectionDialog).not.toBeVisible();
 
-    // Reopen and submit choice
+    // Reopen selector
     await addAccountButton.click();
-    await expect(dialog).toBeVisible();
+    await expect(selectionDialog).toBeVisible();
 
-    await dialog.getByRole('radio', { name: /petty cash/i }).click();
+    // Select Petty cash
+    await selectionDialog.getByRole('radio', { name: /petty cash/i }).click();
 
-    const continueButton = dialog.getByRole('button', { name: /continue/i });
+    const continueButton = selectionDialog.getByRole('button', {
+      name: /continue/i,
+    });
     await expect(continueButton).toBeEnabled();
     await continueButton.click();
 
-    await expect(dialog).not.toBeVisible();
+    // Selection dialog closes, Petty Cash dialog opens
+    await expect(selectionDialog).not.toBeVisible();
+
+    const pettyCashDialog = page.getByRole('dialog').filter({
+      has: page.getByRole('heading', { name: /create petty cash account/i }),
+    });
+    await expect(pettyCashDialog).toBeVisible();
+
+    // Test dismissal of Petty Cash dialog via Escape
+    await page.keyboard.press('Escape');
+    await expect(pettyCashDialog).not.toBeVisible();
+
+    // Reopen from Add account -> Select Petty cash -> Continue
+    await addAccountButton.click();
+    await expect(selectionDialog).toBeVisible();
+    await selectionDialog.getByRole('radio', { name: /petty cash/i }).click();
+    await continueButton.click();
+    await expect(pettyCashDialog).toBeVisible();
+
+    // Intercept POST creation request and verify payload
+    let capturedRequestBody: IPettyCashAccountCreationReq | null = null;
+    await page.route(createPettyCashEndpoint, async (route) => {
+      if (route.request().method() === 'POST') {
+        capturedRequestBody = JSON.parse(route.request().postData() ?? '{}');
+        await route.fulfill({
+          status: 201,
+          json: { id: 'new-petty-cash-account' },
+        });
+      } else {
+        await route.fallback();
+      }
+    });
+
+    // Fill form fields
+    await pettyCashDialog
+      .getByRole('textbox', { name: 'Account name' })
+      .fill('Main Office Cash');
+    await pettyCashDialog
+      .getByRole('textbox', { name: 'Opening balance' })
+      .fill('500');
+
+    // Select opening date via DateInput calendar popover
+    await pettyCashDialog
+      .getByRole('button', { name: /opening date/i })
+      .click();
+    await page.getByRole('gridcell', { name: '15' }).first().click();
+
+    // Submit form
+    const createButton = pettyCashDialog.getByRole('button', {
+      name: /create account/i,
+    });
+    await expect(createButton).toBeEnabled();
+    await createButton.click();
+
+    // Assert success feedback toast and dialog closure
+    await expect(
+      page.getByText('Petty cash account created successfully')
+    ).toBeVisible();
+    await expect(pettyCashDialog).not.toBeVisible();
+
+    // Assert request payload sent to backend
+    expect(capturedRequestBody).toMatchObject({
+      name: 'Main Office Cash',
+      currencyCode: 'NGN',
+      isControlAccount: false,
+      openingBalance: {
+        amount: {
+          amount: 500,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        date: expect.stringMatching(/^\d{4}-\d{2}-15$/),
+        exchangeRate: null,
+      },
+    });
   });
 });

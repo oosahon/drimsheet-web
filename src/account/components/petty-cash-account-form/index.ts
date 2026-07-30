@@ -1,2 +1,5 @@
-export * from './petty-cash-account-form';
-export * from './validation';
+export { PettyCashAccountForm } from './petty-cash-account-form';
+export type {
+  IPettyCashAccountFormValues,
+  PettyCashAccountFormProps,
+} from './types';

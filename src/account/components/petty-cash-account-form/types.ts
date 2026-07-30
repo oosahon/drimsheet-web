@@ -1,6 +1,6 @@
 import type { ICurrencyDto } from '@/shared/lib/api/Api';
 
-export interface IPettyCashFormValues {
+export interface IPettyCashAccountFormValues {
   name: string;
   currencyCode: string;
   createWithoutOpeningBalance: boolean;
@@ -10,11 +10,11 @@ export interface IPettyCashFormValues {
   isSubAccount: boolean;
 }
 
-export interface PettyCashFormProps {
+export interface PettyCashAccountFormProps {
   accountingCurrencyCode: string;
   currencies: ICurrencyDto[];
-  initialValues?: Partial<IPettyCashFormValues>;
+  initialValues?: Partial<IPettyCashAccountFormValues>;
   loading?: boolean;
   disabled?: boolean;
-  onSubmit: (values: IPettyCashFormValues) => Promise<void> | void;
+  onSubmit: (values: IPettyCashAccountFormValues) => Promise<void> | void;
 }
