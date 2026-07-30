@@ -644,26 +644,6 @@ export interface IPaginationDto {
   page?: number;
 }
 
-export interface IJournalLineReq {
-  accountId: string;
-  amount: IMoneyDto;
-  exchangeRate: IExchangeRateDto | null;
-  description: string | null;
-  /** @format double */
-  sequenceOrder: number;
-}
-
-export interface ITransactionJournalEntryReq {
-  sourceLine: IJournalLineReq;
-  destinationLines: IJournalLineReq[];
-  status: UJournalEntryStatus;
-  /** @format date-time */
-  effectiveDate: string;
-  /** @format date-time */
-  postedAt: string | null;
-  memo: string | null;
-}
-
 export interface ICurrencyDto {
   code: string;
   symbol: string;
@@ -691,6 +671,16 @@ export interface IExchangeRateQueryParam {
   type?: UExchangeRateType;
   /** @format date-time */
   asOf?: string;
+}
+
+export interface IBankDirectoryDto {
+  countryCode: string;
+  bankCode: string;
+  bankName: string;
+}
+
+export interface IGetBanksQuery {
+  countryCode: string;
 }
 
 export interface IUserSignupReq {
@@ -721,6 +711,20 @@ export interface IResetPasswordReq {
   token: string;
   password: string;
   confirmPassword: string;
+}
+
+export interface IBankDetailsCreationReq {
+  bankName: string;
+  accountName: string;
+  accountNumber: string;
+}
+
+export interface IBankAccountCreationReq {
+  name: string;
+  currencyCode: string;
+  controlAccountCode?: string;
+  bankAccount: IBankDetailsCreationReq;
+  openingBalance: IOpeningBalanceDto | null;
 }
 
 export interface IAccountingEntity {
@@ -1017,7 +1021,7 @@ export class Api<
      *
      * @tags Ledger
      * @name GetLedgerAccounts
-     * @request GET:/ledger/accounts
+     * @request GET:/ledger
      */
     getLedgerAccounts: (
       query?: {
@@ -1036,7 +1040,7 @@ export class Api<
       params: RequestParams = {}
     ) =>
       this.request<IPaginatedResponseILedgerAccountDto, IHttpErrorDto>({
-        path: `/ledger/accounts`,
+        path: `/ledger`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -1048,14 +1052,14 @@ export class Api<
      *
      * @tags Asset Accounts, Ledger
      * @name CreatePettyCashAccount
-     * @request POST:/ledger/accounts/asset/petty-cash
+     * @request POST:/ledger/asset/petty-cash
      */
     createPettyCashAccount: (
       data: IPettyCashAccountCreationReq,
       params: RequestParams = {}
     ) =>
       this.request<ILedgerAccountDto, IHttpErrorDto>({
-        path: `/ledger/accounts/asset/petty-cash`,
+        path: `/ledger/asset/petty-cash`,
         method: 'POST',
         body: data,
         type: EContentType.Json,
@@ -1068,11 +1072,11 @@ export class Api<
      *
      * @tags Ledger
      * @name GetLedgerAccount
-     * @request GET:/ledger/accounts/{accountId}
+     * @request GET:/ledger/{accountId}
      */
     getLedgerAccount: (accountId: string, params: RequestParams = {}) =>
       this.request<ILedgerAccountDto, IHttpErrorDto>({
-        path: `/ledger/accounts/${accountId}`,
+        path: `/ledger/${accountId}`,
         method: 'GET',
         format: 'json',
         ...params,
@@ -1083,7 +1087,7 @@ export class Api<
      *
      * @tags Ledger
      * @name ListTransactions
-     * @request GET:/ledger/accounts/{accountId}/transactions
+     * @request GET:/ledger/{accountId}/transactions
      */
     listTransactions: (
       accountId: string,
@@ -1099,49 +1103,10 @@ export class Api<
       params: RequestParams = {}
     ) =>
       this.request<IPaginatedResponseIAccountTransactionRes, IHttpErrorDto>({
-        path: `/ledger/accounts/${accountId}/transactions`,
+        path: `/ledger/${accountId}/transactions`,
         method: 'GET',
         query: query,
         format: 'json',
-        ...params,
-      }),
-  };
-  journalEntry = {
-    /**
-     * @description Create a payment journal entry
-     *
-     * @tags Journal Entries
-     * @name CreatePayment
-     * @request POST:/journal-entry/payment
-     */
-    createPayment: (
-      data: ITransactionJournalEntryReq,
-      params: RequestParams = {}
-    ) =>
-      this.request<void, IHttpErrorDto>({
-        path: `/journal-entry/payment`,
-        method: 'POST',
-        body: data,
-        type: EContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * @description Create a transfer journal entry
-     *
-     * @tags Journal Entries
-     * @name CreateTransfer
-     * @request POST:/journal-entry/transfer
-     */
-    createTransfer: (
-      data: ITransactionJournalEntryReq,
-      params: RequestParams = {}
-    ) =>
-      this.request<void, IHttpErrorDto>({
-        path: `/journal-entry/transfer`,
-        method: 'POST',
-        body: data,
-        type: EContentType.Json,
         ...params,
       }),
   };
@@ -1184,6 +1149,28 @@ export class Api<
     ) =>
       this.request<IExchangeRate[], any>({
         path: `/currencies/exchange-rates`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+  };
+  banks = {
+    /**
+     * @description Get bank directory for a country
+     *
+     * @tags Bank
+     * @name GetBanks
+     * @request GET:/banks
+     */
+    getBanks: (
+      query: {
+        countryCode: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<IBankDirectoryDto[], IHttpErrorDto>({
+        path: `/banks`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -1331,6 +1318,27 @@ export class Api<
       this.request<void, IHttpErrorDto>({
         path: `/auth/logout`,
         method: 'POST',
+        ...params,
+      }),
+  };
+  accounts = {
+    /**
+     * @description Create a new asset bank sub account
+     *
+     * @tags Asset Accounts, Accounts
+     * @name CreateBankAccount
+     * @request POST:/accounts/asset/bank
+     */
+    createBankAccount: (
+      data: IBankAccountCreationReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<ILedgerAccountDto, IHttpErrorDto>({
+        path: `/accounts/asset/bank`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
         ...params,
       }),
   };

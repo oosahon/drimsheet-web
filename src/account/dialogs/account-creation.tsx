@@ -2,6 +2,7 @@ import {
   AccountCreationForm,
   type IAccountCreationFormValues,
 } from '@/account/components/account-creation-form';
+import { useAccountTypeOptions } from '@/account/hooks/use-account-type-options';
 import { useCreatePettyCashAccount } from '@/account/hooks/use-create-petty-cash-account';
 import { useAccountingEntity } from '@/accounting/hooks/use-accounting-entity';
 import {
@@ -27,6 +28,9 @@ export function AccountCreationDialog({
 }: Readonly<AccountCreationDialogProps>) {
   const { t } = useTranslation(['ledger-accounts', 'shared']);
   const handleApiError = useApiErrorHandler();
+
+  const accountTypeOptions = useAccountTypeOptions();
+
   const { data: currencies = [], isPending: isCurrenciesPending } =
     useCurrencies();
   const { data: accountingEntity, isPending: isAccountingEntityPending } =
@@ -54,7 +58,6 @@ export function AccountCreationDialog({
   const create_petty_cash_account_title = t(
     'ledger-accounts:create_petty_cash_account'
   );
-  const petty_cash_label = t('shared:petty_cash');
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -65,12 +68,7 @@ export function AccountCreationDialog({
 
         <AccountCreationForm
           accountingCurrencyCode={accountingCurrencyCode}
-          accountTypes={[
-            {
-              value: ELedgerAccountBehavior.PettyCash,
-              label: petty_cash_label,
-            },
-          ]}
+          accountTypes={accountTypeOptions}
           currencies={currencies}
           disabled={formDisabled}
           initialValues={{
