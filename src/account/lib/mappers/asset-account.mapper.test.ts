@@ -1,14 +1,10 @@
-import type { IAccountCreationFormValues } from '@/account/components/account-creation-form';
+import type { IPettyCashFormValues } from '@/account/components/petty-cash-form';
 import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
-import {
-  EExchangeRateType,
-  ELedgerAccountBehavior,
-} from '@/shared/lib/api/Api';
+import { EExchangeRateType } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
-const values: IAccountCreationFormValues = {
+const values: IPettyCashFormValues = {
   name: 'Office cash',
-  accountType: ELedgerAccountBehavior.PettyCash,
   currencyCode: 'NGN',
   createWithoutOpeningBalance: false,
   openingBalance: 100,

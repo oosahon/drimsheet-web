@@ -1,3 +1,5 @@
+import { AccountBehaviorNote } from '@/account/components/account-behavior-note';
+import { OpeningBalanceFields } from '@/account/components/opening-balance-fields';
 import { Button } from '@/shared/components/button';
 import { Checkbox } from '@/shared/components/checkbox';
 import { CurrencySelect } from '@/shared/components/currency-select';
@@ -9,28 +11,15 @@ import {
 } from '@/shared/components/field';
 import { Input } from '@/shared/components/input';
 import { Label } from '@/shared/components/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/shared/components/select';
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
+import { ELedgerAccountBehavior } from '@/shared/lib/api/Api';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
-import { AccountBehaviorNote } from './parts/account-behavior-note';
-import { OpeningBalanceFields } from './parts/opening-balance-fields';
-import type {
-  AccountCreationFormProps,
-  IAccountCreationFormValues,
-} from './types';
-import { useAccountCreationFormValidation } from './validation';
+import type { IPettyCashFormValues, PettyCashFormProps } from './types';
+import { usePettyCashFormValidation } from './validation';
 
-const defaultInitialValues: IAccountCreationFormValues = {
+const defaultInitialValues: IPettyCashFormValues = {
   name: '',
-  accountType: '',
   currencyCode: '',
   createWithoutOpeningBalance: false,
   openingBalance: '',
@@ -39,21 +28,18 @@ const defaultInitialValues: IAccountCreationFormValues = {
   isSubAccount: false,
 };
 
-export function AccountCreationForm({
+export function PettyCashForm({
   accountingCurrencyCode,
-  accountTypes,
   currencies,
   initialValues,
   loading = false,
   disabled = false,
   onSubmit,
-}: Readonly<AccountCreationFormProps>) {
+}: Readonly<PettyCashFormProps>) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
-  const validationSchema = useAccountCreationFormValidation(
-    accountingCurrencyCode
-  );
+  const validationSchema = usePettyCashFormValidation(accountingCurrencyCode);
 
-  const formik = useFormik<IAccountCreationFormValues>({
+  const formik = useFormik<IPettyCashFormValues>({
     enableReinitialize: true,
     initialValues: { ...defaultInitialValues, ...initialValues },
     validationSchema,
@@ -76,10 +62,6 @@ export function AccountCreationForm({
     touched: formik.touched,
   });
 
-  const handleAccountTypeChange = (value: string) => {
-    void formik.setFieldValue('accountType', value);
-  };
-
   const handleCurrencyChange = (value: string) => {
     void formik.setFieldValue('currencyCode', value);
   };
@@ -93,8 +75,6 @@ export function AccountCreationForm({
   };
 
   const account_name_label = t('account_name');
-  const account_type_label = t('account_type_label');
-  const account_type_placeholder = t('select_account_type_placeholder');
   const currency_label = t('currency_label');
   const create_as_sub_account_label = t('create_as_sub_account_label');
   const create_account_text = t('create_account_text');
@@ -120,48 +100,14 @@ export function AccountCreationForm({
             <FieldError errors={getErrorMessage('name')} />
           </Field>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <Field
-              data-invalid={Boolean(getErrorMessage('accountType').length)}
-            >
-              <Label htmlFor="accountType">{account_type_label}</Label>
-              <Select
-                disabled={disabled || loading}
-                onValueChange={handleAccountTypeChange}
-                value={formik.values.accountType}
-              >
-                <SelectTrigger
-                  aria-invalid={Boolean(getErrorMessage('accountType').length)}
-                  className="w-full"
-                  id="accountType"
-                >
-                  <SelectValue placeholder={account_type_placeholder} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    {accountTypes.map((accountType) => (
-                      <SelectItem
-                        key={accountType.value}
-                        value={accountType.value}
-                      >
-                        {accountType.label}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              <FieldError errors={getErrorMessage('accountType')} />
-            </Field>
-
-            <CurrencySelect
-              currencies={currencies}
-              displayCode
-              error={getErrorMessage('currencyCode')}
-              label={currency_label}
-              onChange={handleCurrencyChange}
-              value={formik.values.currencyCode}
-            />
-          </div>
+          <CurrencySelect
+            currencies={currencies}
+            displayCode
+            error={getErrorMessage('currencyCode')}
+            label={currency_label}
+            onChange={handleCurrencyChange}
+            value={formik.values.currencyCode}
+          />
 
           <OpeningBalanceFields
             accountingCurrencyCode={accountingCurrencyCode}
@@ -198,9 +144,7 @@ export function AccountCreationForm({
             <Label htmlFor="isSubAccount">{create_as_sub_account_label}</Label>
           </Field>
 
-          {formik.values.accountType && (
-            <AccountBehaviorNote behavior={formik.values.accountType} />
-          )}
+          <AccountBehaviorNote behavior={ELedgerAccountBehavior.PettyCash} />
 
           <Field>
             <Button

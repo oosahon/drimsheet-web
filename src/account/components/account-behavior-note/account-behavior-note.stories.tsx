@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AccountBehaviorNote } from './account-behavior-note';
 
 const meta = {
-  title: 'Ledger Accounts/AccountCreationForm/AccountBehaviorNote',
+  title: 'Ledger Accounts/AccountBehaviorNote',
   component: AccountBehaviorNote,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },

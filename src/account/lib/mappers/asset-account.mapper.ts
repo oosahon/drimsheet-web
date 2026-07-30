@@ -1,4 +1,4 @@
-import type { IAccountCreationFormValues } from '@/account/components/account-creation-form';
+import type { IPettyCashFormValues } from '@/account/components/petty-cash-form';
 import type {
   IExchangeRateDto,
   IPettyCashAccountCreationReq,
@@ -7,7 +7,7 @@ import { currencyMapper } from '@/shared/lib/mappers/currency.mapper';
 import { moneyMapper } from '@/shared/lib/mappers/money.mapper';
 
 function toPettyCashAccountCreationDto(
-  values: IAccountCreationFormValues,
+  values: IPettyCashFormValues,
   accountingCurrencyCode: string
 ): IPettyCashAccountCreationReq {
   if (values.createWithoutOpeningBalance) {

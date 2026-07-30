@@ -39,7 +39,7 @@ export function AccountTypeSelectionDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent
         aria-describedby={undefined}
-        className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-md"
+        className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-lg"
       >
         <DialogHeader className="sr-only">
           <DialogTitle>{title}</DialogTitle>

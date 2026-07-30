@@ -5,9 +5,7 @@ import { Field, FieldError, FieldGroup } from '@/shared/components/field';
 import { Label } from '@/shared/components/label';
 import { MoneyInput } from '@/shared/components/money-input';
 import { useTranslation } from 'react-i18next';
-// Private parts import owner-local contracts directly by repository rule.
-// eslint-disable-next-line no-relative-import-paths/no-relative-import-paths
-import type { OpeningBalanceFieldsProps } from '../types';
+import type { OpeningBalanceFieldsProps } from './types';
 
 export function OpeningBalanceFields({
   accountingCurrencyCode,

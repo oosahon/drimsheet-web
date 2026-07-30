@@ -5,10 +5,7 @@ import {
 } from '@/shared/lib/api/Api';
 import { InfoIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-
-interface AccountBehaviorNoteProps {
-  behavior: ULedgerAccountBehavior;
-}
+import type { AccountBehaviorNoteProps } from './types';
 
 export function AccountBehaviorNote({
   behavior,

@@ -1,14 +1,9 @@
-import {
-  AccountCreationForm,
-  type AccountCreationFormProps,
-} from '@/account/components/account-creation-form';
-import {
-  ELedgerAccountBehavior,
-  type ICurrencyDto,
-} from '@/shared/lib/api/Api';
+import type { ICurrencyDto } from '@/shared/lib/api/Api';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { PettyCashForm } from './petty-cash-form';
+import type { PettyCashFormProps } from './types';
 
 const currencies: ICurrencyDto[] = [
   {
@@ -25,32 +20,19 @@ const currencies: ICurrencyDto[] = [
   },
 ];
 
-const accountTypes = [
-  {
-    value: ELedgerAccountBehavior.Bank,
-    label: 'Bank account',
-  },
-  {
-    value: ELedgerAccountBehavior.PettyCash,
-    label: 'Petty cash',
-  },
-];
-
 const validInitialValues = {
-  name: 'Operating account',
-  accountType: ELedgerAccountBehavior.Bank,
+  name: 'Office petty cash',
   currencyCode: 'NGN',
   openingBalance: 100,
   openingDate: '2026-07-01',
 };
 
-function renderForm(props?: Partial<AccountCreationFormProps>) {
+function renderForm(props?: Partial<PettyCashFormProps>) {
   const onSubmit = props?.onSubmit ?? vi.fn();
 
   render(
-    <AccountCreationForm
+    <PettyCashForm
       accountingCurrencyCode="NGN"
-      accountTypes={accountTypes}
       currencies={currencies}
       onSubmit={onSubmit}
       {...props}
@@ -60,7 +42,7 @@ function renderForm(props?: Partial<AccountCreationFormProps>) {
   return { onSubmit };
 }
 
-describe('AccountCreationForm', () => {
+describe('PettyCashForm', () => {
   beforeAll(() => {
     window.HTMLElement.prototype.hasPointerCapture = vi.fn(
       () => false
@@ -77,7 +59,6 @@ describe('AccountCreationForm', () => {
     renderForm();
 
     expect(screen.getByLabelText('Account name')).toBeInTheDocument();
-    expect(screen.getByLabelText('Account type')).toBeInTheDocument();
     expect(screen.getByLabelText('Currency')).toBeInTheDocument();
     expect(screen.getByLabelText('Opening balance')).toBeInTheDocument();
     expect(screen.getByLabelText('Opening date')).toBeInTheDocument();
@@ -86,6 +67,11 @@ describe('AccountCreationForm', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Create account' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Tracks small, routine purchases paid from an on-hand cash fund.'
+      )
     ).toBeInTheDocument();
   });
 
@@ -98,7 +84,6 @@ describe('AccountCreationForm', () => {
     expect(
       await screen.findByText('Account name is required')
     ).toBeInTheDocument();
-    expect(screen.getByText('Account type is required')).toBeInTheDocument();
     expect(screen.getByText('Currency is required')).toBeInTheDocument();
     expect(screen.getByText('Opening balance is required')).toBeInTheDocument();
     expect(screen.getByText('Opening date is required')).toBeInTheDocument();
@@ -118,9 +103,8 @@ describe('AccountCreationForm', () => {
 
   it('only shows exchange rate for a foreign currency', () => {
     const { rerender } = render(
-      <AccountCreationForm
+      <PettyCashForm
         accountingCurrencyCode="NGN"
-        accountTypes={accountTypes}
         currencies={currencies}
         initialValues={{ currencyCode: 'NGN' }}
         onSubmit={vi.fn()}
@@ -130,9 +114,8 @@ describe('AccountCreationForm', () => {
     expect(screen.queryByLabelText('Exchange rate')).not.toBeInTheDocument();
 
     rerender(
-      <AccountCreationForm
+      <PettyCashForm
         accountingCurrencyCode="NGN"
-        accountTypes={accountTypes}
         currencies={currencies}
         initialValues={{ currencyCode: 'USD' }}
         onSubmit={vi.fn()}
@@ -140,28 +123,6 @@ describe('AccountCreationForm', () => {
     );
 
     expect(screen.getByLabelText('Exchange rate')).toBeInTheDocument();
-  });
-
-  it('updates the guidance when the account behavior changes', async () => {
-    const user = userEvent.setup();
-    renderForm({
-      initialValues: { accountType: ELedgerAccountBehavior.Bank },
-    });
-
-    expect(
-      screen.getByText(
-        'Tracks money held at a bank or financial institution, including deposits, withdrawals, and transfers.'
-      )
-    ).toBeInTheDocument();
-
-    await user.click(screen.getByLabelText('Account type'));
-    await user.click(await screen.findByRole('option', { name: 'Petty cash' }));
-
-    expect(
-      screen.getByText(
-        'Tracks small, routine purchases paid from an on-hand cash fund.'
-      )
-    ).toBeInTheDocument();
   });
 
   it('submits a valid same-currency account', async () => {
@@ -174,8 +135,7 @@ describe('AccountCreationForm', () => {
 
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith({
-        name: 'Operating account',
-        accountType: ELedgerAccountBehavior.Bank,
+        name: 'Office petty cash',
         currencyCode: 'NGN',
         createWithoutOpeningBalance: false,
         openingBalance: 100,

@@ -1,12 +1,10 @@
-import { ELedgerAccountBehavior } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
-import { createAccountCreationFormValidation } from './validation';
+import { createPettyCashFormValidation } from './validation';
 
 const messages = {
   accountNameRequired: 'Account name is required',
   accountNameMinLength: 'Account name is too short',
   accountNameMaxLength: 'Account name is too long',
-  accountTypeRequired: 'Account type is required',
   currencyRequired: 'Currency is required',
   openingBalanceRequired: 'Opening balance is required',
   openingBalanceNumber: 'Opening balance must be a number',
@@ -16,11 +14,10 @@ const messages = {
   exchangeRatePositive: 'Exchange rate must be positive',
 };
 
-const schema = createAccountCreationFormValidation('NGN', messages);
+const schema = createPettyCashFormValidation('NGN', messages);
 
 const validValues = {
-  name: 'Operating account',
-  accountType: ELedgerAccountBehavior.Bank,
+  name: 'Office cash',
   currencyCode: 'NGN',
   createWithoutOpeningBalance: false,
   openingBalance: 100,
@@ -29,7 +26,7 @@ const validValues = {
   isSubAccount: false,
 };
 
-describe('account creation form validation', () => {
+describe('petty cash form validation', () => {
   it('accepts a same-currency opening balance', async () => {
     await expect(schema.validate(validValues)).resolves.toBeDefined();
   });

@@ -1,4 +1,4 @@
-import type { IAccountCreationFormValues } from '@/account/components/account-creation-form';
+import type { IPettyCashFormValues } from '@/account/components/petty-cash-form';
 import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
 import { assetAccountService } from '@/account/lib/services/asset-account.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 export function useCreatePettyCashAccount(accountingCurrencyCode: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (values: IAccountCreationFormValues) => {
+    mutationFn: (values: IPettyCashFormValues) => {
       const payload = assetAccountMapper.toPettyCashAccountCreationDto(
         values,
         accountingCurrencyCode

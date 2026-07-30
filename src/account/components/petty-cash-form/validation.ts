@@ -2,11 +2,10 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-interface AccountCreationValidationMessages {
+interface PettyCashValidationMessages {
   accountNameRequired: string;
   accountNameMinLength: string;
   accountNameMaxLength: string;
-  accountTypeRequired: string;
   currencyRequired: string;
   openingBalanceRequired: string;
   openingBalanceNumber: string;
@@ -25,9 +24,9 @@ const optionalNumber = (typeErrorMessage: string) =>
     })
     .typeError(typeErrorMessage);
 
-export function createAccountCreationFormValidation(
+export function createPettyCashFormValidation(
   accountingCurrencyCode: string,
-  messages: AccountCreationValidationMessages
+  messages: PettyCashValidationMessages
 ) {
   return yup.object({
     name: yup
@@ -35,7 +34,6 @@ export function createAccountCreationFormValidation(
       .required(messages.accountNameRequired)
       .min(3, messages.accountNameMinLength)
       .max(100, messages.accountNameMaxLength),
-    accountType: yup.string().required(messages.accountTypeRequired),
     currencyCode: yup.string().required(messages.currencyRequired),
     createWithoutOpeningBalance: yup.boolean().required(),
     openingBalance: optionalNumber(messages.openingBalanceNumber).when(
@@ -69,15 +67,12 @@ export function createAccountCreationFormValidation(
   });
 }
 
-export function useAccountCreationFormValidation(
-  accountingCurrencyCode: string
-) {
+export function usePettyCashFormValidation(accountingCurrencyCode: string) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
 
   const account_name_required_text = t('account_name_required_text');
   const account_name_min_length_text = t('account_name_min_length_text');
   const account_name_max_length_text = t('account_name_max_length_text');
-  const account_type_required_text = t('account_type_required_text');
   const currency_required_text = t('currency_required_text');
   const opening_balance_required_text = t('opening_balance_required_text');
   const opening_balance_number_text = t('opening_balance_number_text');
@@ -88,11 +83,10 @@ export function useAccountCreationFormValidation(
 
   return useMemo(
     () =>
-      createAccountCreationFormValidation(accountingCurrencyCode, {
+      createPettyCashFormValidation(accountingCurrencyCode, {
         accountNameRequired: account_name_required_text,
         accountNameMinLength: account_name_min_length_text,
         accountNameMaxLength: account_name_max_length_text,
-        accountTypeRequired: account_type_required_text,
         currencyRequired: currency_required_text,
         openingBalanceRequired: opening_balance_required_text,
         openingBalanceNumber: opening_balance_number_text,
@@ -106,7 +100,6 @@ export function useAccountCreationFormValidation(
       account_name_required_text,
       account_name_min_length_text,
       account_name_max_length_text,
-      account_type_required_text,
       currency_required_text,
       opening_balance_required_text,
       opening_balance_number_text,

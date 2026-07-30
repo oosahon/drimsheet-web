@@ -1,0 +1,69 @@
+import type { ICurrencyDto } from '@/shared/lib/api/Api';
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { PettyCashForm } from './petty-cash-form';
+
+const currencies: ICurrencyDto[] = [
+  {
+    code: 'NGN',
+    name: 'Nigerian Naira',
+    symbol: '₦',
+    minorUnit: 2,
+  },
+  {
+    code: 'USD',
+    name: 'US Dollar',
+    symbol: '$',
+    minorUnit: 2,
+  },
+];
+
+const meta = {
+  title: 'Ledger Accounts/PettyCashForm',
+  component: PettyCashForm,
+  tags: ['autodocs'],
+  parameters: { layout: 'centered' },
+  decorators: [
+    (Story) => (
+      <div className="w-[min(42rem,calc(100vw-2rem))]">
+        <Story />
+      </div>
+    ),
+  ],
+  args: {
+    accountingCurrencyCode: 'NGN',
+    currencies,
+    onSubmit: () => {},
+  },
+  argTypes: {
+    onSubmit: { action: 'submitted' },
+  },
+} satisfies Meta<typeof PettyCashForm>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const Default: Story = {};
+
+export const ForeignCurrency: Story = {
+  args: {
+    initialValues: {
+      name: 'Travel Cash',
+      currencyCode: 'USD',
+      openingBalance: 100,
+      openingDate: '2026-07-01',
+      exchangeRate: 1500,
+    },
+  },
+};
+
+export const Loading: Story = {
+  args: {
+    loading: true,
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    disabled: true,
+  },
+};
