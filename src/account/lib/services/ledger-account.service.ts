@@ -14,7 +14,7 @@ function getPettyBaseCashFilters(): IGetLedgerAccountsQuery {
   return {
     type: ELedgerType.Asset,
     subType: ELedgerAccountSubType.CashAndCashEquivalent,
-    behavior: 'petty_cash',
+    isControlAccount: false,
   };
 }
 

@@ -1,14 +1,11 @@
-import type { IAccountCreationFormValues } from '@/account/components/account-creation-form';
+import type { IBankAccountFormValues } from '@/account/components/bank-account-form';
+import type { IPettyCashAccountFormValues } from '@/account/components/petty-cash-account-form';
 import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
-import {
-  EExchangeRateType,
-  ELedgerAccountBehavior,
-} from '@/shared/lib/api/Api';
+import { EExchangeRateType } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
-const values: IAccountCreationFormValues = {
+const values: IPettyCashAccountFormValues = {
   name: 'Office cash',
-  accountType: ELedgerAccountBehavior.PettyCash,
   currencyCode: 'NGN',
   createWithoutOpeningBalance: false,
   openingBalance: 100,
@@ -17,87 +14,188 @@ const values: IAccountCreationFormValues = {
   isSubAccount: false,
 };
 
+const bankFormValues: IBankAccountFormValues = {
+  name: 'Operating Account',
+  currencyCode: 'NGN',
+  bankLocation: 'NG',
+  bankName: 'Access Bank',
+  accountNumber: '0123456789',
+  accountName: 'Acme Ltd',
+  createWithoutOpeningBalance: false,
+  openingBalance: 5000,
+  openingDate: '2026-07-01',
+  exchangeRate: '',
+  isSubAccount: false,
+};
+
 describe('assetAccountMapper', () => {
-  it('maps an account without an opening balance', () => {
-    expect(
-      assetAccountMapper.toPettyCashAccountCreationDto(
-        {
-          ...values,
-          createWithoutOpeningBalance: true,
-          openingBalance: '',
-          openingDate: '',
+  describe('toPettyCashAccountCreationDto', () => {
+    it('maps an account without an opening balance', () => {
+      expect(
+        assetAccountMapper.toPettyCashAccountCreationDto(
+          {
+            ...values,
+            createWithoutOpeningBalance: true,
+            openingBalance: '',
+            openingDate: '',
+          },
+          'NGN'
+        )
+      ).toEqual({
+        name: 'Office cash',
+        currencyCode: 'NGN',
+        isControlAccount: false,
+        openingBalance: null,
+      });
+    });
+
+    it('maps a same-currency opening balance without an exchange rate', () => {
+      expect(
+        assetAccountMapper.toPettyCashAccountCreationDto(values, 'NGN')
+      ).toEqual({
+        name: 'Office cash',
+        currencyCode: 'NGN',
+        isControlAccount: false,
+        openingBalance: {
+          amount: {
+            amount: 100,
+            currencyCode: 'NGN',
+            isMinorUnit: false,
+          },
+          date: '2026-07-01',
+          exchangeRate: null,
         },
-        'NGN'
-      )
-    ).toEqual({
-      name: 'Office cash',
-      currencyCode: 'NGN',
-      isControlAccount: false,
-      openingBalance: null,
+      });
+    });
+
+    it('maps a foreign-currency opening balance with its entered rate', () => {
+      expect(
+        assetAccountMapper.toPettyCashAccountCreationDto(
+          {
+            ...values,
+            name: 'Travel cash',
+            currencyCode: 'USD',
+            exchangeRate: 1500,
+          },
+          'NGN'
+        )
+      ).toEqual({
+        name: 'Travel cash',
+        currencyCode: 'USD',
+        isControlAccount: false,
+        openingBalance: {
+          amount: {
+            amount: 100,
+            currencyCode: 'USD',
+            isMinorUnit: false,
+          },
+          date: '2026-07-01',
+          exchangeRate: {
+            baseCurrencyCode: 'USD',
+            targetCurrencyCode: 'NGN',
+            rate: 1500,
+            type: EExchangeRateType.Market,
+            asOf: '2026-07-01',
+            source: 'manual',
+          },
+        },
+      });
+    });
+
+    it('ignores the sub-account form value', () => {
+      expect(
+        assetAccountMapper.toPettyCashAccountCreationDto(
+          { ...values, isSubAccount: true },
+          'NGN'
+        )
+      ).toMatchObject({
+        isControlAccount: false,
+      });
     });
   });
 
-  it('maps a same-currency opening balance without an exchange rate', () => {
-    expect(
-      assetAccountMapper.toPettyCashAccountCreationDto(values, 'NGN')
-    ).toEqual({
-      name: 'Office cash',
-      currencyCode: 'NGN',
-      isControlAccount: false,
-      openingBalance: {
-        amount: {
-          amount: 100,
-          currencyCode: 'NGN',
-          isMinorUnit: false,
+  describe('toBankAccountCreationDto', () => {
+    it('maps a bank account without an opening balance', () => {
+      expect(
+        assetAccountMapper.toBankAccountCreationDto(
+          {
+            ...bankFormValues,
+            createWithoutOpeningBalance: true,
+            openingBalance: '',
+            openingDate: '',
+          },
+          'NGN'
+        )
+      ).toEqual({
+        name: 'Operating Account',
+        currencyCode: 'NGN',
+        bankAccount: {
+          bankName: 'Access Bank',
+          accountName: 'Acme Ltd',
+          accountNumber: '0123456789',
         },
-        date: '2026-07-01',
-        exchangeRate: null,
-      },
+        openingBalance: null,
+      });
     });
-  });
 
-  it('maps a foreign-currency opening balance with its entered rate', () => {
-    expect(
-      assetAccountMapper.toPettyCashAccountCreationDto(
-        {
-          ...values,
-          name: 'Travel cash',
-          currencyCode: 'USD',
-          exchangeRate: 1500,
+    it('maps a same-currency bank account opening balance', () => {
+      expect(
+        assetAccountMapper.toBankAccountCreationDto(bankFormValues, 'NGN')
+      ).toEqual({
+        name: 'Operating Account',
+        currencyCode: 'NGN',
+        bankAccount: {
+          bankName: 'Access Bank',
+          accountName: 'Acme Ltd',
+          accountNumber: '0123456789',
         },
-        'NGN'
-      )
-    ).toEqual({
-      name: 'Travel cash',
-      currencyCode: 'USD',
-      isControlAccount: false,
-      openingBalance: {
-        amount: {
-          amount: 100,
-          currencyCode: 'USD',
-          isMinorUnit: false,
+        openingBalance: {
+          amount: {
+            amount: 5000,
+            currencyCode: 'NGN',
+            isMinorUnit: false,
+          },
+          date: '2026-07-01',
+          exchangeRate: null,
         },
-        date: '2026-07-01',
-        exchangeRate: {
-          baseCurrencyCode: 'USD',
-          targetCurrencyCode: 'NGN',
-          rate: 1500,
-          type: EExchangeRateType.Market,
-          asOf: '2026-07-01',
-          source: 'manual',
-        },
-      },
+      });
     });
-  });
 
-  it('ignores the sub-account form value', () => {
-    expect(
-      assetAccountMapper.toPettyCashAccountCreationDto(
-        { ...values, isSubAccount: true },
-        'NGN'
-      )
-    ).toMatchObject({
-      isControlAccount: false,
+    it('maps a foreign-currency bank account opening balance with exchange rate', () => {
+      expect(
+        assetAccountMapper.toBankAccountCreationDto(
+          {
+            ...bankFormValues,
+            currencyCode: 'USD',
+            exchangeRate: 1500,
+          },
+          'NGN'
+        )
+      ).toEqual({
+        name: 'Operating Account',
+        currencyCode: 'USD',
+        bankAccount: {
+          bankName: 'Access Bank',
+          accountName: 'Acme Ltd',
+          accountNumber: '0123456789',
+        },
+        openingBalance: {
+          amount: {
+            amount: 5000,
+            currencyCode: 'USD',
+            isMinorUnit: false,
+          },
+          date: '2026-07-01',
+          exchangeRate: {
+            baseCurrencyCode: 'USD',
+            targetCurrencyCode: 'NGN',
+            rate: 1500,
+            type: EExchangeRateType.Market,
+            asOf: '2026-07-01',
+            source: 'manual',
+          },
+        },
+      });
     });
   });
 });

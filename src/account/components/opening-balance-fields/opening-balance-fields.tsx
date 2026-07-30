@@ -5,9 +5,7 @@ import { Field, FieldError, FieldGroup } from '@/shared/components/field';
 import { Label } from '@/shared/components/label';
 import { MoneyInput } from '@/shared/components/money-input';
 import { useTranslation } from 'react-i18next';
-// Private parts import owner-local contracts directly by repository rule.
-// eslint-disable-next-line no-relative-import-paths/no-relative-import-paths
-import type { OpeningBalanceFieldsProps } from '../types';
+import type { OpeningBalanceFieldsProps } from './types';
 
 export function OpeningBalanceFields({
   accountingCurrencyCode,
@@ -42,7 +40,7 @@ export function OpeningBalanceFields({
   const exchange_rate_label = t('exchange_rate_label');
 
   return (
-    <FieldGroup className="gap-5">
+    <FieldGroup>
       <Field orientation="horizontal">
         <Checkbox
           aria-label={create_without_opening_balance_label}
@@ -88,23 +86,25 @@ export function OpeningBalanceFields({
         </Field>
       </div>
 
-      {showExchangeRate && (
-        <Field data-invalid={Boolean(exchangeRateError?.length)}>
-          <Label htmlFor="exchangeRate">{exchange_rate_label}</Label>
-          <CurrencyExchangeRateInput
-            aria-invalid={Boolean(exchangeRateError?.length)}
-            aria-label={exchange_rate_label}
-            baseCurrency={currencyCode}
-            disabled={disabled}
-            id="exchangeRate"
-            name="exchangeRate"
-            onChange={onExchangeRateChange}
-            targetCurrency={accountingCurrencyCode}
-            value={exchangeRate}
-          />
-          <FieldError errors={exchangeRateError} />
-        </Field>
-      )}
+      <div className="min-h-[76px]">
+        {showExchangeRate && (
+          <Field data-invalid={Boolean(exchangeRateError?.length)}>
+            <Label htmlFor="exchangeRate">{exchange_rate_label}</Label>
+            <CurrencyExchangeRateInput
+              aria-invalid={Boolean(exchangeRateError?.length)}
+              aria-label={exchange_rate_label}
+              baseCurrency={currencyCode}
+              disabled={disabled}
+              id="exchangeRate"
+              name="exchangeRate"
+              onChange={onExchangeRateChange}
+              targetCurrency={accountingCurrencyCode}
+              value={exchangeRate}
+            />
+            <FieldError errors={exchangeRateError} />
+          </Field>
+        )}
+      </div>
     </FieldGroup>
   );
 }

@@ -1,26 +1,24 @@
-import { ELedgerAccountBehavior } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
-import { createAccountCreationFormValidation } from './validation';
+import { createPettyCashAccountFormValidation } from './validation';
 
 const messages = {
   accountNameRequired: 'Account name is required',
   accountNameMinLength: 'Account name is too short',
   accountNameMaxLength: 'Account name is too long',
-  accountTypeRequired: 'Account type is required',
   currencyRequired: 'Currency is required',
   openingBalanceRequired: 'Opening balance is required',
   openingBalanceNumber: 'Opening balance must be a number',
+  openingBalanceNegative: 'Opening balance cannot be negative',
   openingDateRequired: 'Opening date is required',
   exchangeRateRequired: 'Exchange rate is required',
   exchangeRateNumber: 'Exchange rate must be a number',
   exchangeRatePositive: 'Exchange rate must be positive',
 };
 
-const schema = createAccountCreationFormValidation('NGN', messages);
+const schema = createPettyCashAccountFormValidation('NGN', messages);
 
 const validValues = {
-  name: 'Operating account',
-  accountType: ELedgerAccountBehavior.Bank,
+  name: 'Office cash',
   currencyCode: 'NGN',
   createWithoutOpeningBalance: false,
   openingBalance: 100,
@@ -29,9 +27,27 @@ const validValues = {
   isSubAccount: false,
 };
 
-describe('account creation form validation', () => {
+describe('petty cash account form validation', () => {
   it('accepts a same-currency opening balance', async () => {
     await expect(schema.validate(validValues)).resolves.toBeDefined();
+  });
+
+  it('accepts a zero opening balance', async () => {
+    await expect(
+      schema.validate({
+        ...validValues,
+        openingBalance: 0,
+      })
+    ).resolves.toBeDefined();
+  });
+
+  it('rejects a negative opening balance', async () => {
+    await expect(
+      schema.validate({
+        ...validValues,
+        openingBalance: -50,
+      })
+    ).rejects.toThrow('Opening balance cannot be negative');
   });
 
   it('requires an opening balance when opening balance is enabled', async () => {

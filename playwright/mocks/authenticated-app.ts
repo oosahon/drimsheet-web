@@ -38,6 +38,9 @@ export async function registerAuthenticatedAppRoutes(page: Page) {
       await route.fulfill({ json: [accountingEntity] });
     }
   );
+  await page.route('**/api/v1/accounting/accounting-entity', async (route) => {
+    await route.fulfill({ json: accountingEntity });
+  });
 }
 
 export async function registerLogoutRoute(page: Page) {

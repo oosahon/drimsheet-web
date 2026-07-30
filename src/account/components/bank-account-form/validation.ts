@@ -2,12 +2,15 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-interface AccountCreationValidationMessages {
+export interface BankAccountValidationMessages {
   accountNameRequired: string;
   accountNameMinLength: string;
   accountNameMaxLength: string;
-  accountTypeRequired: string;
   currencyRequired: string;
+  bankLocationRequired: string;
+  bankNameRequired: string;
+  bankAccountNumberRequired: string;
+  bankAccountNameRequired: string;
   openingBalanceRequired: string;
   openingBalanceNumber: string;
   openingDateRequired: string;
@@ -25,9 +28,9 @@ const optionalNumber = (typeErrorMessage: string) =>
     })
     .typeError(typeErrorMessage);
 
-export function createAccountCreationFormValidation(
+export function createBankAccountFormValidation(
   accountingCurrencyCode: string,
-  messages: AccountCreationValidationMessages
+  messages: BankAccountValidationMessages
 ) {
   return yup.object({
     name: yup
@@ -35,8 +38,11 @@ export function createAccountCreationFormValidation(
       .required(messages.accountNameRequired)
       .min(3, messages.accountNameMinLength)
       .max(100, messages.accountNameMaxLength),
-    accountType: yup.string().required(messages.accountTypeRequired),
     currencyCode: yup.string().required(messages.currencyRequired),
+    bankLocation: yup.string().required(messages.bankLocationRequired),
+    bankName: yup.string().required(messages.bankNameRequired),
+    accountNumber: yup.string().required(messages.bankAccountNumberRequired),
+    accountName: yup.string().required(messages.bankAccountNameRequired),
     createWithoutOpeningBalance: yup.boolean().required(),
     openingBalance: optionalNumber(messages.openingBalanceNumber).when(
       'createWithoutOpeningBalance',
@@ -69,16 +75,19 @@ export function createAccountCreationFormValidation(
   });
 }
 
-export function useAccountCreationFormValidation(
-  accountingCurrencyCode: string
-) {
+export function useBankAccountFormValidation(accountingCurrencyCode: string) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
 
   const account_name_required_text = t('account_name_required_text');
   const account_name_min_length_text = t('account_name_min_length_text');
   const account_name_max_length_text = t('account_name_max_length_text');
-  const account_type_required_text = t('account_type_required_text');
   const currency_required_text = t('currency_required_text');
+  const bank_location_required_text = t('bank_location_required_text');
+  const bank_name_required_text = t('bank_name_required_text');
+  const bank_account_number_required_text = t(
+    'bank_account_number_required_text'
+  );
+  const bank_account_name_required_text = t('bank_account_name_required_text');
   const opening_balance_required_text = t('opening_balance_required_text');
   const opening_balance_number_text = t('opening_balance_number_text');
   const opening_date_required_text = t('opening_date_required_text');
@@ -88,12 +97,15 @@ export function useAccountCreationFormValidation(
 
   return useMemo(
     () =>
-      createAccountCreationFormValidation(accountingCurrencyCode, {
+      createBankAccountFormValidation(accountingCurrencyCode, {
         accountNameRequired: account_name_required_text,
         accountNameMinLength: account_name_min_length_text,
         accountNameMaxLength: account_name_max_length_text,
-        accountTypeRequired: account_type_required_text,
         currencyRequired: currency_required_text,
+        bankLocationRequired: bank_location_required_text,
+        bankNameRequired: bank_name_required_text,
+        bankAccountNumberRequired: bank_account_number_required_text,
+        bankAccountNameRequired: bank_account_name_required_text,
         openingBalanceRequired: opening_balance_required_text,
         openingBalanceNumber: opening_balance_number_text,
         openingDateRequired: opening_date_required_text,
@@ -106,8 +118,11 @@ export function useAccountCreationFormValidation(
       account_name_required_text,
       account_name_min_length_text,
       account_name_max_length_text,
-      account_type_required_text,
       currency_required_text,
+      bank_location_required_text,
+      bank_name_required_text,
+      bank_account_number_required_text,
+      bank_account_name_required_text,
       opening_balance_required_text,
       opening_balance_number_text,
       opening_date_required_text,

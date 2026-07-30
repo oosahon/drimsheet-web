@@ -2,7 +2,78 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-export function usePettyCashAccountFormValidation() {
+interface PettyCashAccountValidationMessages {
+  accountNameRequired: string;
+  accountNameMinLength: string;
+  accountNameMaxLength: string;
+  currencyRequired: string;
+  openingBalanceRequired: string;
+  openingBalanceNumber: string;
+  openingBalanceNegative: string;
+  openingDateRequired: string;
+  exchangeRateRequired: string;
+  exchangeRateNumber: string;
+  exchangeRatePositive: string;
+}
+
+const optionalNumber = (typeErrorMessage: string) =>
+  yup
+    .number()
+    .transform((value, originalValue) => {
+      if (originalValue === '') return undefined;
+      return value;
+    })
+    .typeError(typeErrorMessage);
+
+export function createPettyCashAccountFormValidation(
+  accountingCurrencyCode: string,
+  messages: PettyCashAccountValidationMessages
+) {
+  return yup.object({
+    name: yup
+      .string()
+      .required(messages.accountNameRequired)
+      .min(3, messages.accountNameMinLength)
+      .max(100, messages.accountNameMaxLength),
+    currencyCode: yup.string().required(messages.currencyRequired),
+    createWithoutOpeningBalance: yup.boolean().required(),
+    openingBalance: optionalNumber(messages.openingBalanceNumber).when(
+      'createWithoutOpeningBalance',
+      {
+        is: false,
+        then: (schema) =>
+          schema
+            .required(messages.openingBalanceRequired)
+            .min(0, messages.openingBalanceNegative),
+        otherwise: (schema) => schema.notRequired(),
+      }
+    ),
+    openingDate: yup.string().when('createWithoutOpeningBalance', {
+      is: false,
+      then: (schema) => schema.required(messages.openingDateRequired),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    exchangeRate: optionalNumber(messages.exchangeRateNumber).when(
+      ['createWithoutOpeningBalance', 'currencyCode'],
+      {
+        is: (createWithoutOpeningBalance: boolean, currencyCode: string) =>
+          !createWithoutOpeningBalance &&
+          Boolean(currencyCode) &&
+          currencyCode !== accountingCurrencyCode,
+        then: (schema) =>
+          schema
+            .required(messages.exchangeRateRequired)
+            .moreThan(0, messages.exchangeRatePositive),
+        otherwise: (schema) => schema.notRequired(),
+      }
+    ),
+    isSubAccount: yup.boolean().required(),
+  });
+}
+
+export function usePettyCashAccountFormValidation(
+  accountingCurrencyCode: string
+) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
 
   const account_name_required_text = t('account_name_required_text');
@@ -10,29 +81,41 @@ export function usePettyCashAccountFormValidation() {
   const account_name_max_length_text = t('account_name_max_length_text');
   const currency_required_text = t('currency_required_text');
   const opening_balance_required_text = t('opening_balance_required_text');
+  const opening_balance_number_text = t('opening_balance_number_text');
   const opening_balance_negative_text = t('opening_balance_negative_text');
+  const opening_date_required_text = t('opening_date_required_text');
+  const exchange_rate_required_text = t('exchange_rate_required_text');
+  const exchange_rate_number_text = t('exchange_rate_number_text');
+  const exchange_rate_positive_text = t('exchange_rate_positive_text');
 
   return useMemo(
     () =>
-      yup.object({
-        name: yup
-          .string()
-          .required(account_name_required_text)
-          .min(3, account_name_min_length_text)
-          .max(100, account_name_max_length_text),
-        currencyCode: yup.string().required(currency_required_text),
-        openingBalance: yup
-          .number()
-          .required(opening_balance_required_text)
-          .min(0, opening_balance_negative_text),
+      createPettyCashAccountFormValidation(accountingCurrencyCode, {
+        accountNameRequired: account_name_required_text,
+        accountNameMinLength: account_name_min_length_text,
+        accountNameMaxLength: account_name_max_length_text,
+        currencyRequired: currency_required_text,
+        openingBalanceRequired: opening_balance_required_text,
+        openingBalanceNumber: opening_balance_number_text,
+        openingBalanceNegative: opening_balance_negative_text,
+        openingDateRequired: opening_date_required_text,
+        exchangeRateRequired: exchange_rate_required_text,
+        exchangeRateNumber: exchange_rate_number_text,
+        exchangeRatePositive: exchange_rate_positive_text,
       }),
     [
+      accountingCurrencyCode,
       account_name_required_text,
       account_name_min_length_text,
       account_name_max_length_text,
       currency_required_text,
       opening_balance_required_text,
+      opening_balance_number_text,
       opening_balance_negative_text,
+      opening_date_required_text,
+      exchange_rate_required_text,
+      exchange_rate_number_text,
+      exchange_rate_positive_text,
     ]
   );
 }

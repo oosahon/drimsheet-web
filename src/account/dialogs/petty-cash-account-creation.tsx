@@ -1,32 +1,33 @@
 import {
-  AccountCreationForm,
-  type IAccountCreationFormValues,
-} from '@/account/components/account-creation-form';
+  PettyCashAccountForm,
+  type IPettyCashAccountFormValues,
+} from '@/account/components/petty-cash-account-form';
 import { useCreatePettyCashAccount } from '@/account/hooks/use-create-petty-cash-account';
 import { useAccountingEntity } from '@/accounting/hooks/use-accounting-entity';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/shared/components/dialog';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useCurrencies } from '@/shared/hooks/use-currencies';
-import { ELedgerAccountBehavior } from '@/shared/lib/api/Api';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
-interface AccountCreationDialogProps {
+export interface PettyCashAccountCreationDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onClose: () => void;
 }
 
-export function AccountCreationDialog({
+export function PettyCashAccountCreationDialog({
   open,
-  onOpenChange,
-}: Readonly<AccountCreationDialogProps>) {
+  onClose,
+}: Readonly<PettyCashAccountCreationDialogProps>) {
   const { t } = useTranslation(['ledger-accounts', 'shared']);
   const handleApiError = useApiErrorHandler();
+
   const { data: currencies = [], isPending: isCurrenciesPending } =
     useCurrencies();
   const { data: accountingEntity, isPending: isAccountingEntityPending } =
@@ -39,13 +40,19 @@ export function AccountCreationDialog({
   const formDisabled =
     isCurrenciesPending || isAccountingEntityPending || !accountingCurrencyCode;
 
-  const handleSubmit = async (values: IAccountCreationFormValues) => {
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      onClose();
+    }
+  };
+
+  const handleSubmit = async (values: IPettyCashAccountFormValues) => {
     try {
       await createPettyCashAccount(values);
       toast.success(
         t('ledger-accounts:petty_cash_account_created_success_text')
       );
-      onOpenChange(false);
+      onClose();
     } catch (error) {
       handleApiError(error, { showToast: true });
     }
@@ -54,27 +61,25 @@ export function AccountCreationDialog({
   const create_petty_cash_account_title = t(
     'ledger-accounts:create_petty_cash_account'
   );
-  const petty_cash_label = t('shared:petty_cash');
+  const create_petty_cash_account_description = t(
+    'ledger-accounts:create_petty_cash_account_description'
+  );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-lg">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{create_petty_cash_account_title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {create_petty_cash_account_description}
+          </DialogDescription>
         </DialogHeader>
 
-        <AccountCreationForm
+        <PettyCashAccountForm
           accountingCurrencyCode={accountingCurrencyCode}
-          accountTypes={[
-            {
-              value: ELedgerAccountBehavior.PettyCash,
-              label: petty_cash_label,
-            },
-          ]}
           currencies={currencies}
           disabled={formDisabled}
           initialValues={{
-            accountType: ELedgerAccountBehavior.PettyCash,
             currencyCode: accountingCurrencyCode,
           }}
           loading={isCreating}

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { OpeningBalanceFields } from './opening-balance-fields';
 
 const meta = {
-  title: 'Ledger Accounts/AccountCreationForm/OpeningBalanceFields',
+  title: 'Ledger Accounts/OpeningBalanceFields',
   component: OpeningBalanceFields,
   tags: ['autodocs'],
   parameters: { layout: 'centered' },

@@ -1,96 +1,166 @@
+import { OpeningBalanceFields } from '@/account/components/opening-balance-fields';
 import { Button } from '@/shared/components/button';
+import { Checkbox } from '@/shared/components/checkbox';
 import { CurrencySelect } from '@/shared/components/currency-select';
-import { Field, FieldError, FieldGroup } from '@/shared/components/field';
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldSet,
+} from '@/shared/components/field';
 import { Input } from '@/shared/components/input';
 import { Label } from '@/shared/components/label';
-import { MoneyInput } from '@/shared/components/money-input';
-import { useCurrencies } from '@/shared/hooks/use-currencies';
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
+import type {
+  IPettyCashAccountFormValues,
+  PettyCashAccountFormProps,
+} from './types';
 import { usePettyCashAccountFormValidation } from './validation';
 
-export interface IPettyCashAccountFormValues {
-  name: string;
-  currencyCode: string;
-  openingBalance: number;
-}
-
-export interface IPettyCashAccountFormProps {
-  onSubmit: (values: IPettyCashAccountFormValues) => void;
-  loading: boolean;
-}
-
-const initialValues: IPettyCashAccountFormValues = {
+const defaultInitialValues: IPettyCashAccountFormValues = {
   name: '',
   currencyCode: '',
-  openingBalance: 0,
+  createWithoutOpeningBalance: false,
+  openingBalance: '',
+  openingDate: '',
+  exchangeRate: '',
+  isSubAccount: false,
 };
 
 export function PettyCashAccountForm({
+  accountingCurrencyCode,
+  currencies,
+  initialValues,
+  loading = false,
+  disabled = false,
   onSubmit,
-  loading,
-}: Readonly<IPettyCashAccountFormProps>) {
-  const { data: currencies = [] } = useCurrencies();
-  const validationSchema = usePettyCashAccountFormValidation();
+}: Readonly<PettyCashAccountFormProps>) {
+  const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
+  const validationSchema = usePettyCashAccountFormValidation(
+    accountingCurrencyCode
+  );
 
-  const { handleChange, values, setFieldValue, handleSubmit, errors, touched } =
-    useFormik<IPettyCashAccountFormValues>({
-      initialValues,
-      validationSchema,
-      onSubmit,
-    });
+  const formik = useFormik<IPettyCashAccountFormValues>({
+    enableReinitialize: true,
+    initialValues: { ...defaultInitialValues, ...initialValues },
+    validationSchema,
+    onSubmit: (values) => {
+      const hasOpeningBalance = !values.createWithoutOpeningBalance;
+      const needsExchangeRate =
+        hasOpeningBalance && values.currencyCode !== accountingCurrencyCode;
 
-  const getErrorMessage = useFieldErrorMessage({
-    errors,
-    touched,
+      return onSubmit({
+        ...values,
+        openingBalance: hasOpeningBalance ? values.openingBalance : '',
+        openingDate: hasOpeningBalance ? values.openingDate : '',
+        exchangeRate: needsExchangeRate ? values.exchangeRate : '',
+      });
+    },
   });
 
-  const { t } = useTranslation(['ledger-accounts']);
-  const petty_cash_name_label = t('petty_cash_name_label');
+  const getErrorMessage = useFieldErrorMessage({
+    errors: formik.errors,
+    touched: formik.touched,
+  });
+
+  const handleCurrencyChange = (value: string) => {
+    void formik.setFieldValue('currencyCode', value);
+  };
+
+  const handleCreateWithoutOpeningBalanceChange = (checked: boolean) => {
+    void formik.setFieldValue('createWithoutOpeningBalance', checked);
+  };
+
+  const handleOpeningDateChange = (value: string) => {
+    void formik.setFieldValue('openingDate', value);
+  };
+
+  const account_name_label = t('account_name');
   const currency_label = t('currency_label');
-  const starting_balance_label = t('starting_balance_label');
-  const save_cash_account_text = t('save_cash_account_text');
+  const create_as_sub_account_label = t('create_as_sub_account_label');
+  const create_account_text = t('create_account_text');
 
   return (
-    <div className="w-xs max-w-full">
-      <form onSubmit={handleSubmit}>
+    <form
+      className="w-full max-w-2xl"
+      noValidate
+      onSubmit={formik.handleSubmit}
+    >
+      <FieldSet disabled={disabled || loading}>
         <FieldGroup>
-          <Field>
-            <Label htmlFor="name">{petty_cash_name_label}</Label>
-            <Input id="name" onChange={handleChange} value={values.name} />
-            <FieldError errors={getErrorMessage('name')} />
-          </Field>
-
-          <div className="grid grid-cols-[2fr_3fr]  gap-x-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-[1fr_1fr]">
             <CurrencySelect
-              label={currency_label}
-              value={values.currencyCode}
               currencies={currencies}
-              onChange={(val) => setFieldValue('currencyCode', val)}
-              error={getErrorMessage('currencyCode')}
               displayCode
+              error={getErrorMessage('currencyCode')}
+              label={currency_label}
+              onChange={handleCurrencyChange}
+              value={formik.values.currencyCode}
             />
 
-            <Field>
-              <Label htmlFor="openingBalance">{starting_balance_label}</Label>
-              <MoneyInput
-                id="openingBalance"
-                currencyCode={values.currencyCode}
-                onChange={handleChange}
-                value={values.openingBalance}
+            <Field data-invalid={Boolean(getErrorMessage('name').length)}>
+              <Label htmlFor="name">{account_name_label}</Label>
+              <Input
+                aria-invalid={Boolean(getErrorMessage('name').length)}
+                id="name"
+                name="name"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                value={formik.values.name}
               />
-              <FieldError errors={getErrorMessage('openingBalance')} />
+              <FieldError errors={getErrorMessage('name')} />
             </Field>
           </div>
 
-          <Field className="mt-2">
-            <Button type="submit" loading={loading}>
-              {save_cash_account_text}
+          <OpeningBalanceFields
+            accountingCurrencyCode={accountingCurrencyCode}
+            createWithoutOpeningBalance={
+              formik.values.createWithoutOpeningBalance
+            }
+            currencyCode={formik.values.currencyCode}
+            disabled={disabled || loading}
+            exchangeRate={formik.values.exchangeRate}
+            exchangeRateError={getErrorMessage('exchangeRate')}
+            onCreateWithoutOpeningBalanceChange={
+              handleCreateWithoutOpeningBalanceChange
+            }
+            onExchangeRateChange={formik.handleChange}
+            onOpeningBalanceChange={formik.handleChange}
+            onOpeningDateChange={handleOpeningDateChange}
+            openingBalance={formik.values.openingBalance}
+            openingBalanceError={getErrorMessage('openingBalance')}
+            openingDate={formik.values.openingDate}
+            openingDateError={getErrorMessage('openingDate')}
+          />
+
+          <Field orientation="horizontal">
+            <Checkbox
+              aria-label={create_as_sub_account_label}
+              checked={formik.values.isSubAccount}
+              disabled={disabled || loading}
+              id="isSubAccount"
+              name="isSubAccount"
+              onCheckedChange={(checked) => {
+                void formik.setFieldValue('isSubAccount', checked === true);
+              }}
+            />
+            <Label htmlFor="isSubAccount">{create_as_sub_account_label}</Label>
+          </Field>
+
+          <Field>
+            <Button
+              className="w-full sm:ml-auto sm:w-auto"
+              disabled={disabled}
+              loading={loading}
+              type="submit"
+            >
+              {create_account_text}
             </Button>
           </Field>
         </FieldGroup>
-      </form>
-    </div>
+      </FieldSet>
+    </form>
   );
 }

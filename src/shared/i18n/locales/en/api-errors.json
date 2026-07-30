@@ -260,5 +260,6 @@
   "user_error_user_preferences_invalid_app_usage_mode": "Invalid app usage mode",
   "accounting_error_period_posting_date_not_covered": "Posting date not covered",
   "accounting_error_period_posting_period_not_open": "Posting period not open",
-  "ledger_error_asset_account_invalid_control_account": "Invalid control account"
+  "ledger_error_asset_account_invalid_control_account": "Invalid control account",
+  "ledger_error_asset_account_duplicate_bank_account": "This bank account has already been created."
 }

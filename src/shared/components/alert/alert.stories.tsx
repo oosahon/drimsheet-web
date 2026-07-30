@@ -1,6 +1,11 @@
 import { Alert, AlertDescription, AlertTitle } from '@/shared/components/alert';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AlertCircleIcon } from 'lucide-react';
+import {
+  AlertCircleIcon,
+  CheckCircle2Icon,
+  InfoIcon,
+  TriangleAlertIcon,
+} from 'lucide-react';
 
 const meta = {
   title: 'Shared UI/Alert',
@@ -42,6 +47,63 @@ export const Destructive: Story = {
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>
             Your session has expired. Please sign in again.
+          </AlertDescription>
+        </div>
+      </div>
+    </Alert>
+  ),
+};
+
+export const Success: Story = {
+  args: {
+    variant: 'success',
+  },
+  render: (args) => (
+    <Alert {...args}>
+      <div className="flex gap-2">
+        <CheckCircle2Icon className="h-4 w-4" />
+        <div>
+          <AlertTitle>Success</AlertTitle>
+          <AlertDescription>
+            Your changes have been saved successfully.
+          </AlertDescription>
+        </div>
+      </div>
+    </Alert>
+  ),
+};
+
+export const Info: Story = {
+  args: {
+    variant: 'info',
+  },
+  render: (args) => (
+    <Alert {...args}>
+      <div className="flex gap-2">
+        <InfoIcon className="h-4 w-4" />
+        <div>
+          <AlertTitle>Information</AlertTitle>
+          <AlertDescription>
+            A new version of the application is available.
+          </AlertDescription>
+        </div>
+      </div>
+    </Alert>
+  ),
+};
+
+export const Warning: Story = {
+  args: {
+    variant: 'warning',
+  },
+  render: (args) => (
+    <Alert {...args}>
+      <div className="flex gap-2">
+        <TriangleAlertIcon className="h-4 w-4" />
+        <div>
+          <AlertTitle>Warning</AlertTitle>
+          <AlertDescription>
+            Please back up your data before proceeding with the operation.
           </AlertDescription>
         </div>
       </div>
