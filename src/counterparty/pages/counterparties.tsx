@@ -1,3 +1,4 @@
+import { CounterpartiesTableContainer } from '@/counterparty/components/counterparties-table';
 import type { UCounterpartyRoleSelectValue } from '@/counterparty/components/counterparty-role-select/types';
 import { ContractorCreationDialog } from '@/counterparty/dialogs/contractor-creation';
 import { CounterpartyCreationDialog } from '@/counterparty/dialogs/counterparty-creation';
@@ -5,7 +6,6 @@ import { CounterpartyRoleSelectionDialog } from '@/counterparty/dialogs/counterp
 import { EmployerCreationDialog } from '@/counterparty/dialogs/employer-creation';
 import { VendorCreationDialog } from '@/counterparty/dialogs/vendor-creation';
 import { AppBody, AppHeader } from '@/shared/components/app';
-import { Button } from '@/shared/components/button';
 import { ECounterpartyRole } from '@/shared/lib/api/Api';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -23,20 +23,15 @@ export function CounterpartiesPage() {
   };
 
   const counterparties_label = t('shared:counterparties');
-  const create_counterparty_button = t(
-    'counterparty:create_counterparty_button'
-  );
 
   return (
     <>
       <AppHeader breadcrumbs={[{ label: counterparties_label }]} />
 
       <AppBody>
-        <div>{counterparties_label}</div>
-
-        <Button onClick={() => setShowRoleSelection(true)}>
-          {create_counterparty_button}
-        </Button>
+        <CounterpartiesTableContainer
+          onAddCounterparty={() => setShowRoleSelection(true)}
+        />
 
         <CounterpartyRoleSelectionDialog
           open={showRoleSelection}

@@ -63,6 +63,25 @@ async function registerCounterpartyPageRoutes(page: Page) {
       ],
     });
   });
+
+  await page.route(/\/api\/v1\/counterparties(\?|$)/, async (route) => {
+    if (route.request().method() === 'GET') {
+      await route.fulfill({
+        status: 200,
+        json: {
+          data: [],
+          meta: {
+            page: 1,
+            limit: 10,
+            total: 0,
+            totalPages: 1,
+          },
+        },
+      });
+    } else {
+      await route.fallback();
+    }
+  });
 }
 
 async function signInAndNavigateToCounterparties(page: Page) {
@@ -85,7 +104,7 @@ test.describe('Counterparty Selection and Creation Flow', () => {
     await signInAndNavigateToCounterparties(page);
 
     const triggerButton = page.getByRole('button', {
-      name: /create counterparty/i,
+      name: /add counterparty/i,
     });
     await expect(triggerButton).toBeVisible();
     await triggerButton.click();
@@ -115,7 +134,7 @@ test.describe('Counterparty Selection and Creation Flow', () => {
   test('successfully creates a default counterparty', async ({ page }) => {
     await signInAndNavigateToCounterparties(page);
 
-    await page.getByRole('button', { name: /create counterparty/i }).click();
+    await page.getByRole('button', { name: /add counterparty/i }).click();
     const selectionDialog = page.getByRole('dialog').filter({
       has: page.getByRole('heading', { name: /select counterparty role/i }),
     });
@@ -162,7 +181,7 @@ test.describe('Counterparty Selection and Creation Flow', () => {
   }) => {
     await signInAndNavigateToCounterparties(page);
 
-    await page.getByRole('button', { name: /create counterparty/i }).click();
+    await page.getByRole('button', { name: /add counterparty/i }).click();
     const selectionDialog = page.getByRole('dialog').filter({
       has: page.getByRole('heading', { name: /select counterparty role/i }),
     });
@@ -224,7 +243,7 @@ test.describe('Counterparty Selection and Creation Flow', () => {
   test('successfully creates a contractor counterparty', async ({ page }) => {
     await signInAndNavigateToCounterparties(page);
 
-    await page.getByRole('button', { name: /create counterparty/i }).click();
+    await page.getByRole('button', { name: /add counterparty/i }).click();
     const selectionDialog = page.getByRole('dialog').filter({
       has: page.getByRole('heading', { name: /select counterparty role/i }),
     });
@@ -285,7 +304,7 @@ test.describe('Counterparty Selection and Creation Flow', () => {
   }) => {
     await signInAndNavigateToCounterparties(page);
 
-    await page.getByRole('button', { name: /create counterparty/i }).click();
+    await page.getByRole('button', { name: /add counterparty/i }).click();
     const selectionDialog = page.getByRole('dialog').filter({
       has: page.getByRole('heading', { name: /select counterparty role/i }),
     });
@@ -353,7 +372,7 @@ test.describe('Counterparty Selection and Creation Flow', () => {
       });
     });
 
-    await page.getByRole('button', { name: /create counterparty/i }).click();
+    await page.getByRole('button', { name: /add counterparty/i }).click();
     const selectionDialog = page.getByRole('dialog').filter({
       has: page.getByRole('heading', { name: /select counterparty role/i }),
     });
@@ -379,7 +398,7 @@ test.describe('Counterparty Selection and Creation Flow', () => {
   test('resets form state after dismissal and reopening', async ({ page }) => {
     await signInAndNavigateToCounterparties(page);
 
-    await page.getByRole('button', { name: /create counterparty/i }).click();
+    await page.getByRole('button', { name: /add counterparty/i }).click();
     const selectionDialog = page.getByRole('dialog').filter({
       has: page.getByRole('heading', { name: /select counterparty role/i }),
     });
@@ -399,7 +418,7 @@ test.describe('Counterparty Selection and Creation Flow', () => {
     await expect(creationDialog).not.toBeVisible();
 
     // Reopen and verify it's clean
-    await page.getByRole('button', { name: /create counterparty/i }).click();
+    await page.getByRole('button', { name: /add counterparty/i }).click();
     await selectionDialog.getByRole('radio', { name: /default/i }).click();
     await selectionDialog.getByRole('button', { name: /continue/i }).click();
 
