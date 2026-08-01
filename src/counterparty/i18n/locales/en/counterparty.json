@@ -41,5 +41,8 @@
   "contractor_created_success_text": "Contractor created successfully",
   "create_employer_title": "Create employer",
   "create_employer_description": "Create an employer to track wages and payroll.",
-  "employer_created_success_text": "Employer created successfully"
+  "employer_created_success_text": "Employer created successfully",
+  "roles_label": "Roles",
+  "search_placeholder": "Search counterparties...",
+  "add_counterparty": "Add counterparty"
 }

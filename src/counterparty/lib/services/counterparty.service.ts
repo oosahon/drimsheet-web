@@ -3,10 +3,17 @@ import type {
   IContractorCreateReq,
   ICounterpartyCreateReq,
   IEmployerCreateReq,
+  IGetCounterpartiesQuery,
   IVendorCreateReq,
 } from '@/shared/lib/api/Api';
 
 export const counterpartyService = {
+  async getCounterparties(query: IGetCounterpartiesQuery) {
+    const response =
+      await purpleLedgerApi.counterparties.getCounterparties(query);
+    return response.data;
+  },
+
   async createCounterparty(data: ICounterpartyCreateReq) {
     const response =
       await purpleLedgerApi.counterparties.createCounterparty(data);

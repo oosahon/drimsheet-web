@@ -201,6 +201,13 @@ export const EAccountingEntityType = {
 export type UAccountingEntityType =
   (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
 
+export const ECounterpartySortBy = {
+  CreatedAt: 'createdAt',
+  Name: 'name',
+} as const;
+export type UCounterpartySortBy =
+  (typeof ECounterpartySortBy)[keyof typeof ECounterpartySortBy];
+
 export const ECounterpartyRole = {
   Employer: 'employer',
   Vendor: 'vendor',
@@ -745,6 +752,24 @@ export interface IEmployerCreateReq {
   address: IAddressDto;
 }
 
+export interface IPaginatedResponseICounterpartyDto {
+  data: ICounterpartyDto[];
+  meta: IPaginationResponseMeta;
+}
+
+export interface IGetCounterpartiesQuery {
+  /** @format double */
+  limit?: number;
+  orderBy?: UCounterpartySortBy;
+  sortDirection?: UPaginationSortDirection;
+  search?: string;
+  /** @format double */
+  page?: number;
+  roles?: UCounterpartyRole[];
+  type?: UCounterpartyType;
+  status?: UCounterpartyStatus;
+}
+
 export interface IBankDirectoryDto {
   countryCode: string;
   bankCode: string;
@@ -1244,6 +1269,36 @@ export class Api<
         method: 'POST',
         body: data,
         type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Get counterparties
+     *
+     * @tags Counterparty
+     * @name GetCounterparties
+     * @request GET:/counterparties
+     */
+    getCounterparties: (
+      query?: {
+        /** @format double */
+        limit?: number;
+        orderBy?: UCounterpartySortBy;
+        sortDirection?: UPaginationSortDirection;
+        search?: string;
+        /** @format double */
+        page?: number;
+        roles?: UCounterpartyRole[];
+        type?: UCounterpartyType;
+        status?: UCounterpartyStatus;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<IPaginatedResponseICounterpartyDto, IHttpErrorDto>({
+        path: `/counterparties`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),
