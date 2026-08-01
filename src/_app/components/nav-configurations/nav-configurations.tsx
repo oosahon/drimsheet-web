@@ -5,21 +5,28 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/shared/components/sidebar';
+import { useTranslation } from 'react-i18next';
 
-export function NavConfigurations({
-  projects,
-}: Readonly<{
-  projects: {
+interface NavConfigurationsProps {
+  items: {
     name: string;
     url: string;
     icon: React.ReactNode;
   }[];
-}>) {
+}
+
+export function NavConfigurations({ items }: Readonly<NavConfigurationsProps>) {
+  const { t } = useTranslation('shared');
+
+  const configurations_text = t('configurations');
+
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Configurations</SidebarGroupLabel>
+      <SidebarGroupLabel className="uppercase text-xs">
+        {configurations_text}
+      </SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
+        {items.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
               <a href={item.url}>
