@@ -201,6 +201,28 @@ export const EAccountingEntityType = {
 export type UAccountingEntityType =
   (typeof EAccountingEntityType)[keyof typeof EAccountingEntityType];
 
+export const ECounterpartyRole = {
+  Employer: 'employer',
+  Vendor: 'vendor',
+  Contractor: 'contractor',
+} as const;
+export type UCounterpartyRole =
+  (typeof ECounterpartyRole)[keyof typeof ECounterpartyRole];
+
+export const ECounterpartyType = {
+  Individual: 'individual',
+  Organization: 'organization',
+} as const;
+export type UCounterpartyType =
+  (typeof ECounterpartyType)[keyof typeof ECounterpartyType];
+
+export const ECounterpartyStatus = {
+  Active: 'active',
+  Archived: 'archived',
+} as const;
+export type UCounterpartyStatus =
+  (typeof ECounterpartyStatus)[keyof typeof ECounterpartyStatus];
+
 export const EJournalSide = {
   Debit: 'debit',
   Credit: 'credit',
@@ -671,6 +693,56 @@ export interface IExchangeRateQueryParam {
   type?: UExchangeRateType;
   /** @format date-time */
   asOf?: string;
+}
+
+export interface ICounterpartyDto {
+  id: string;
+  accountingEntityId: string;
+  name: string;
+  status: UCounterpartyStatus;
+  type: UCounterpartyType;
+  roles: UCounterpartyRole[];
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+}
+
+export interface ICounterpartyCreateReq {
+  name: string;
+  status: UCounterpartyStatus;
+  type: UCounterpartyType;
+}
+
+export interface IAddressDto {
+  line1: string;
+  line2?: string;
+  city: string;
+  region?: string;
+  postalCode?: string;
+  countryCode: string;
+}
+
+export interface IVendorCreateReq {
+  name: string;
+  status: UCounterpartyStatus;
+  type: UCounterpartyType;
+  address?: IAddressDto;
+}
+
+export interface IContractorCreateReq {
+  name: string;
+  status: UCounterpartyStatus;
+  type: UCounterpartyType;
+  address: IAddressDto;
+}
+
+export interface IEmployerCreateReq {
+  name: string;
+  status: UCounterpartyStatus;
+  type: UCounterpartyType;
+  displayName?: string | null;
+  address: IAddressDto;
 }
 
 export interface IBankDirectoryDto {
@@ -1151,6 +1223,81 @@ export class Api<
         path: `/currencies/exchange-rates`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+  };
+  counterparties = {
+    /**
+     * @description Create a new counterparty
+     *
+     * @tags Counterparty
+     * @name CreateCounterparty
+     * @request POST:/counterparties
+     */
+    createCounterparty: (
+      data: ICounterpartyCreateReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<ICounterpartyDto, IHttpErrorDto>({
+        path: `/counterparties`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a new vendor
+     *
+     * @tags Counterparty
+     * @name CreateVendor
+     * @request POST:/counterparties/vendor
+     */
+    createVendor: (data: IVendorCreateReq, params: RequestParams = {}) =>
+      this.request<ICounterpartyDto, IHttpErrorDto>({
+        path: `/counterparties/vendor`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a new contractor
+     *
+     * @tags Counterparty
+     * @name CreateContractor
+     * @request POST:/counterparties/contractor
+     */
+    createContractor: (
+      data: IContractorCreateReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<ICounterpartyDto, IHttpErrorDto>({
+        path: `/counterparties/contractor`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Create a new employer
+     *
+     * @tags Counterparty
+     * @name CreateEmployer
+     * @request POST:/counterparties/employer
+     */
+    createEmployer: (data: IEmployerCreateReq, params: RequestParams = {}) =>
+      this.request<ICounterpartyDto, IHttpErrorDto>({
+        path: `/counterparties/employer`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),

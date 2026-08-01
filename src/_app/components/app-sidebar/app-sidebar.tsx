@@ -73,10 +73,10 @@ export function AppSidebar({
           icon: <CircleMinus />,
         },
       ],
-      projects: [
+      configurations: [
         {
-          name: t('shared:third_parties'),
-          url: '#',
+          name: t('shared:counterparties'),
+          url: '/counterparties',
           icon: <UsersRound />,
         },
         {
@@ -118,7 +118,7 @@ export function AppSidebar({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={sidebarData.navMain} />
-        <NavConfigurations projects={sidebarData.projects} />
+        <NavConfigurations items={sidebarData.configurations} />
       </SidebarContent>
       {footer && <SidebarFooter>{footer}</SidebarFooter>}
       <SidebarRail />

@@ -15,6 +15,7 @@ import {
 } from '@/shared/components/sidebar';
 import { ChevronRightIcon } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 interface NavSubItem {
@@ -34,9 +35,15 @@ interface NavMainProps extends PropsWithChildren {
   items: NavItem[];
 }
 export function NavMain({ items }: Readonly<NavMainProps>) {
+  const { t } = useTranslation('shared');
+
+  const accounting_text = t('accounting');
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Accounting</SidebarGroupLabel>
+      <SidebarGroupLabel className="uppercase text-xs">
+        {accounting_text}
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => {
           if (!item.items || item.items.length === 0) {
