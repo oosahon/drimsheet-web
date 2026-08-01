@@ -75,8 +75,8 @@ export function AppSidebar({
       ],
       configurations: [
         {
-          name: t('shared:third_parties'),
-          url: '#',
+          name: t('shared:counterparties'),
+          url: '/counterparties',
           icon: <UsersRound />,
         },
         {

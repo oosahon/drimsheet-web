@@ -6,6 +6,7 @@ import ledgerAccountsEn from '@/account/i18n/locales/en/ledger-accounts.json';
 import accountingEn from '@/accounting/i18n/locales/en/accounting.json';
 import authEn from '@/auth/i18n/locales/en/auth.json';
 import bookkeepingEn from '@/bookkeeping/i18n/locales/en/bookkeeping.json';
+import counterpartyEn from '@/counterparty/i18n/locales/en/counterparty.json';
 import apiErrorsEn from '@/shared/i18n/locales/en/api-errors.json';
 import sharedEn from '@/shared/i18n/locales/en/shared.json';
 
@@ -14,6 +15,7 @@ const resources = {
     auth: authEn,
     shared: sharedEn,
     bookkeeping: bookkeepingEn,
+    counterparty: counterpartyEn,
     'ledger-accounts': ledgerAccountsEn,
     accounting: accountingEn,
     'api-errors': apiErrorsEn,

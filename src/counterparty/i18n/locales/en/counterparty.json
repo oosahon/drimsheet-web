@@ -1,0 +1,12 @@
+{
+  "select_counterparty_role_title": "Select counterparty role",
+  "continue": "Continue",
+  "default_counterparty_label": "Default",
+  "employer_label": "Employer",
+  "contractor_label": "Contractor",
+  "vendor_label": "Vendor",
+  "select_counterparty_role_default_description": "Track a general counterparty without assigning a specialized role.",
+  "select_counterparty_role_employer_description": "Track employment income and organizations that pay wages or salaries.",
+  "select_counterparty_role_contractor_description": "Track independent professionals and service providers paid for contract work.",
+  "select_counterparty_role_vendor_description": "Track suppliers that provide goods, services, or operating expenses."
+}
