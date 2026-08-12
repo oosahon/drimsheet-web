@@ -6,15 +6,15 @@ import type { ILedgerAccountDto } from '@/shared/lib/api/Api';
 
 export function createInflowFormInitialValues(
   initialValues: IInflowFormInitialValues | undefined,
-  accounts: ILedgerAccountDto[],
+  destinationAccounts: ILedgerAccountDto[],
   functionalCurrencyCode: string
 ): IInflowFormValues {
-  const selectedAccountCurrency = accounts.find(
-    (account) => account.id === initialValues?.sourceAccountId
+  const selectedAccountCurrency = destinationAccounts.find(
+    (account) => account.id === initialValues?.destinationAccountId
   )?.balance.currencyCode;
 
   return {
-    sourceAccountId: initialValues?.sourceAccountId ?? '',
+    destinationAccountId: initialValues?.destinationAccountId ?? '',
     categoryAccountId: initialValues?.categoryAccountId ?? '',
     amount: {
       amount: initialValues?.amount?.amount ?? Number.NaN,

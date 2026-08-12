@@ -24,7 +24,7 @@ async function getLedgerAccount(id: string) {
   return res.data;
 }
 
-async function getPostingAccountBySource(
+async function getPermittedPostingAccounts(
   query: IGetPermittedPostingAccountsQuery
 ) {
   const res = await purpleLedgerApi.ledger.getPermittedPostingAccounts(query);
@@ -35,5 +35,5 @@ export const ledgerAccountService = Object.freeze({
   getLedgerAccounts,
   getPettyBaseCashFilters,
   getLedgerAccount,
-  getPostingAccountBySource,
+  getPermittedPostingAccounts,
 });

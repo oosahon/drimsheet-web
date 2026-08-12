@@ -2,7 +2,7 @@ import type { ILedgerAccountDto } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 import { createInflowFormInitialValues } from './create-inflow-form-initial-values.helper';
 
-const accounts = [
+const destinationAccounts = [
   {
     id: 'usd-bank',
     balance: { amount: 0, currencyCode: 'USD', isMinorUnit: false },
@@ -11,8 +11,10 @@ const accounts = [
 
 describe('createInflowFormInitialValues', () => {
   it('creates empty values with the functional currency defaults', () => {
-    expect(createInflowFormInitialValues(undefined, accounts, 'NGN')).toEqual({
-      sourceAccountId: '',
+    expect(
+      createInflowFormInitialValues(undefined, destinationAccounts, 'NGN')
+    ).toEqual({
+      destinationAccountId: '',
       categoryAccountId: '',
       amount: {
         amount: Number.NaN,
@@ -33,7 +35,7 @@ describe('createInflowFormInitialValues', () => {
     expect(
       createInflowFormInitialValues(
         {
-          sourceAccountId: 'usd-bank',
+          destinationAccountId: 'usd-bank',
           categoryAccountId: 'sales',
           amount: {
             amount: 125,
@@ -44,11 +46,11 @@ describe('createInflowFormInitialValues', () => {
           payer: { id: 'payer-1', name: 'Acme', type: 'organization' },
           description: 'Consulting',
         },
-        accounts,
+        destinationAccounts,
         'NGN'
       )
     ).toEqual({
-      sourceAccountId: 'usd-bank',
+      destinationAccountId: 'usd-bank',
       categoryAccountId: 'sales',
       amount: {
         amount: 125,
@@ -64,7 +66,7 @@ describe('createInflowFormInitialValues', () => {
   it('uses a supplied amount currency when no selected account resolves', () => {
     const values = createInflowFormInitialValues(
       { amount: { currencyCode: 'EUR' } },
-      accounts,
+      destinationAccounts,
       'NGN'
     );
 

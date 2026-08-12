@@ -29,6 +29,8 @@
   "inflow_exchange_rate_required_text": "Exchange rate is required",
   "inflow_exchange_rate_number_text": "Exchange rate must be a number",
   "inflow_exchange_rate_positive_text": "Exchange rate must be greater than zero",
+  "inflow_receipt_created_success_text": "Receipt created successfully",
+  "inflow_form_loading_status": "Loading inflow form",
   "upload_title": "Create from a receipt or bank statement",
   "upload_description": "Choose a file to keep with this transaction in your browser.",
   "upload_action": "Choose file",

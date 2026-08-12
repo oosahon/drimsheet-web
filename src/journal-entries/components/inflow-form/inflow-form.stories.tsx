@@ -5,7 +5,7 @@ import type {
 } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const accounts = [
+const destinationAccounts = [
   {
     id: 'ngn-bank',
     code: '1000',
@@ -20,6 +20,9 @@ const accounts = [
     type: 'asset',
     balance: { amount: 0, currencyCode: 'USD', isMinorUnit: false },
   },
+] as unknown as ILedgerAccountDto[];
+
+const sourceAccounts = [
   {
     id: 'sales',
     code: '4000',
@@ -39,10 +42,11 @@ const meta = {
   component: InflowForm,
   tags: ['autodocs'],
   args: {
-    accounts,
+    destinationAccounts,
     functionalCurrencyCode: 'NGN',
     onSubmit: () => undefined,
     payerOptions,
+    sourceAccounts,
   },
 } satisfies Meta<typeof InflowForm>;
 
@@ -54,7 +58,7 @@ export const ScreenshotLayout: Story = {};
 export const ForeignCurrencyAccount: Story = {
   args: {
     initialValues: {
-      sourceAccountId: 'usd-bank',
+      destinationAccountId: 'usd-bank',
       categoryAccountId: 'sales',
       amount: { amount: 1250 },
       exchangeRate: '1500',
@@ -67,7 +71,7 @@ export const ForeignCurrencyAccount: Story = {
 export const FunctionalCurrencyAccount: Story = {
   args: {
     initialValues: {
-      sourceAccountId: 'ngn-bank',
+      destinationAccountId: 'ngn-bank',
       categoryAccountId: 'sales',
       amount: { amount: 125000 },
       payer: payerOptions[1],

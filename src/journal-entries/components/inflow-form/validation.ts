@@ -17,22 +17,22 @@ export interface IInflowFormValidationMessages {
 }
 
 function requiresExchangeRate(
-  sourceAccountId: string,
-  accounts: ILedgerAccountDto[],
+  destinationAccountId: string,
+  destinationAccounts: ILedgerAccountDto[],
   functionalCurrencyCode: string
 ) {
-  const sourceCurrencyCode = accounts.find(
-    (account) => account.id === sourceAccountId
+  const destinationCurrencyCode = destinationAccounts.find(
+    (account) => account.id === destinationAccountId
   )?.balance.currencyCode;
 
   return isInflowFormExchangeRateRequired(
-    sourceCurrencyCode,
+    destinationCurrencyCode,
     functionalCurrencyCode
   );
 }
 
 export function createInflowFormValidation(
-  accounts: ILedgerAccountDto[],
+  destinationAccounts: ILedgerAccountDto[],
   functionalCurrencyCode: string,
   messages: IInflowFormValidationMessages
 ) {
@@ -41,8 +41,8 @@ export function createInflowFormValidation(
     .test('required-exchange-rate', messages.exchangeRateRequired, function () {
       const values = this.parent as IInflowFormValues;
       const required = requiresExchangeRate(
-        values.sourceAccountId,
-        accounts,
+        values.destinationAccountId,
+        destinationAccounts,
         functionalCurrencyCode
       );
 
@@ -51,8 +51,8 @@ export function createInflowFormValidation(
     .test('numeric-exchange-rate', messages.exchangeRateNumber, function () {
       const values = this.parent as IInflowFormValues;
       const required = requiresExchangeRate(
-        values.sourceAccountId,
-        accounts,
+        values.destinationAccountId,
+        destinationAccounts,
         functionalCurrencyCode
       );
       const exchangeRate = values.exchangeRate?.trim();
@@ -64,8 +64,8 @@ export function createInflowFormValidation(
     .test('positive-exchange-rate', messages.exchangeRatePositive, function () {
       const values = this.parent as IInflowFormValues;
       const required = requiresExchangeRate(
-        values.sourceAccountId,
-        accounts,
+        values.destinationAccountId,
+        destinationAccounts,
         functionalCurrencyCode
       );
       const exchangeRate = values.exchangeRate?.trim();
@@ -82,7 +82,7 @@ export function createInflowFormValidation(
     });
 
   return yup.object({
-    sourceAccountId: yup.string().required(messages.accountRequired),
+    destinationAccountId: yup.string().required(messages.accountRequired),
     categoryAccountId: yup.string().required(messages.categoryRequired),
     amount: yup.object({
       amount: yup
@@ -104,14 +104,14 @@ export function createInflowFormValidation(
 }
 
 export function useInflowFormValidation(
-  accounts: ILedgerAccountDto[],
+  destinationAccounts: ILedgerAccountDto[],
   functionalCurrencyCode: string
 ) {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
 
   return useMemo(
     () =>
-      createInflowFormValidation(accounts, functionalCurrencyCode, {
+      createInflowFormValidation(destinationAccounts, functionalCurrencyCode, {
         accountRequired: t('inflow_account_required_text'),
         amountPositive: t('inflow_amount_positive_text'),
         amountRequired: t('inflow_amount_required_text'),
@@ -121,6 +121,6 @@ export function useInflowFormValidation(
         exchangeRateRequired: t('inflow_exchange_rate_required_text'),
         payerRequired: t('inflow_payer_required_text'),
       }),
-    [accounts, functionalCurrencyCode, t]
+    [destinationAccounts, functionalCurrencyCode, t]
   );
 }

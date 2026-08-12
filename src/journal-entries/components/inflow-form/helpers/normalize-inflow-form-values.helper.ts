@@ -13,7 +13,7 @@ export function normalizeInflowFormValues(
   if (values.payer.type !== undefined) payer.type = values.payer.type;
 
   return {
-    sourceAccountId: values.sourceAccountId,
+    destinationAccountId: values.destinationAccountId,
     categoryAccountId: values.categoryAccountId,
     amount: {
       amount: values.amount.amount,

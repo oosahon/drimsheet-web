@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { normalizeInflowFormValues } from './normalize-inflow-form-values.helper';
 
 const values: IInflowFormValues = {
-  sourceAccountId: 'usd-bank',
+  destinationAccountId: 'usd-bank',
   categoryAccountId: 'sales',
   amount: { amount: 125, currencyCode: 'USD', isMinorUnit: false },
   exchangeRate: ' 1500 ',
@@ -14,7 +14,7 @@ const values: IInflowFormValues = {
 describe('normalizeInflowFormValues', () => {
   it('maps every value and trims payer and required exchange-rate text', () => {
     expect(normalizeInflowFormValues(values, true)).toEqual({
-      sourceAccountId: 'usd-bank',
+      destinationAccountId: 'usd-bank',
       categoryAccountId: 'sales',
       amount: { amount: 125, currencyCode: 'USD', isMinorUnit: false },
       exchangeRate: '1500',
@@ -34,7 +34,7 @@ describe('normalizeInflowFormValues', () => {
         false
       )
     ).toEqual({
-      sourceAccountId: 'usd-bank',
+      destinationAccountId: 'usd-bank',
       categoryAccountId: 'sales',
       amount: { amount: 125, currencyCode: 'USD', isMinorUnit: false },
       exchangeRate: '',

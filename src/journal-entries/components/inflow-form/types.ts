@@ -5,7 +5,7 @@ import type {
 } from '@/shared/lib/api/Api';
 
 export interface IInflowFormValues {
-  sourceAccountId: string;
+  destinationAccountId: string;
   categoryAccountId: string;
   amount: IMoneyDto;
   exchangeRate: string;
@@ -14,7 +14,7 @@ export interface IInflowFormValues {
 }
 
 export interface IInflowFormInitialValues {
-  sourceAccountId?: string;
+  destinationAccountId?: string;
   categoryAccountId?: string;
   amount?: Partial<IMoneyDto>;
   exchangeRate?: string;
@@ -23,7 +23,7 @@ export interface IInflowFormInitialValues {
 }
 
 export interface InflowFormProps {
-  accounts: ILedgerAccountDto[];
+  destinationAccounts: ILedgerAccountDto[];
   disabled?: boolean;
   functionalCurrencyCode: string;
   initialValues?: IInflowFormInitialValues;
@@ -31,4 +31,5 @@ export interface InflowFormProps {
   onSplit?: (values: IInflowFormValues) => void;
   onSubmit: (values: IInflowFormValues) => void;
   payerOptions?: IJournalCounterpartyReq[];
+  sourceAccounts: ILedgerAccountDto[];
 }

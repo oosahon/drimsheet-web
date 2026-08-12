@@ -21,7 +21,7 @@ import type { IInflowFormValues, InflowFormProps } from './types';
 import { useInflowFormValidation } from './validation';
 
 export function InflowForm({
-  accounts,
+  destinationAccounts,
   disabled = false,
   functionalCurrencyCode,
   initialValues,
@@ -29,11 +29,12 @@ export function InflowForm({
   onSplit,
   onSubmit,
   payerOptions = [],
+  sourceAccounts,
 }: Readonly<InflowFormProps>) {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
 
   const validationSchema = useInflowFormValidation(
-    accounts,
+    destinationAccounts,
     functionalCurrencyCode
   );
 
@@ -41,22 +42,22 @@ export function InflowForm({
     () =>
       createInflowFormInitialValues(
         initialValues,
-        accounts,
+        destinationAccounts,
         functionalCurrencyCode
       ),
-    [accounts, functionalCurrencyCode, initialValues]
+    [destinationAccounts, functionalCurrencyCode, initialValues]
   );
 
   const handleSubmit = (values: IInflowFormValues) => {
-    const sourceCurrencyCode = accounts.find(
-      (account) => account.id === values.sourceAccountId
+    const destinationCurrencyCode = destinationAccounts.find(
+      (account) => account.id === values.destinationAccountId
     )?.balance.currencyCode;
 
     onSubmit(
       normalizeInflowFormValues(
         values,
         isInflowFormExchangeRateRequired(
-          sourceCurrencyCode,
+          destinationCurrencyCode,
           functionalCurrencyCode
         )
       )
@@ -70,23 +71,23 @@ export function InflowForm({
     onSubmit: handleSubmit,
   });
 
-  const selectedAccount = accounts.find(
-    (account) => account.id === formik.values.sourceAccountId
+  const selectedAccount = destinationAccounts.find(
+    (account) => account.id === formik.values.destinationAccountId
   );
 
-  const sourceCurrencyCode = selectedAccount?.balance.currencyCode ?? '';
+  const destinationCurrencyCode = selectedAccount?.balance.currencyCode ?? '';
 
   const exchangeRateRequired = isInflowFormExchangeRateRequired(
-    sourceCurrencyCode,
+    destinationCurrencyCode,
     functionalCurrencyCode
   );
 
   const interactionDisabled = disabled || loading;
   const exchangeRateDisabled = interactionDisabled || !exchangeRateRequired;
 
-  const handleAccountChange = (sourceAccountId: string) => {
-    const currencyCode = accounts.find(
-      (account) => account.id === sourceAccountId
+  const handleAccountChange = (destinationAccountId: string) => {
+    const currencyCode = destinationAccounts.find(
+      (account) => account.id === destinationAccountId
     )?.balance.currencyCode;
     const requiresExchangeRate = isInflowFormExchangeRateRequired(
       currencyCode,
@@ -95,14 +96,14 @@ export function InflowForm({
 
     void formik.setValues({
       ...formik.values,
-      sourceAccountId,
+      destinationAccountId,
       amount: {
         ...formik.values.amount,
         currencyCode: currencyCode ?? '',
       },
       exchangeRate: requiresExchangeRate ? formik.values.exchangeRate : '',
     });
-    void formik.setFieldTouched('sourceAccountId', true, false);
+    void formik.setFieldTouched('destinationAccountId', true, false);
   };
 
   const handleCategoryChange = (categoryAccountId: string) => {
@@ -131,7 +132,7 @@ export function InflowForm({
   };
 
   const accountError = getInflowFormErrorMessage(
-    'sourceAccountId',
+    'destinationAccountId',
     formik.touched,
     formik.errors
   );
@@ -178,13 +179,13 @@ export function InflowForm({
     >
       <FieldGroup className="gap-5">
         <AccountCombobox
-          id="inflow-source-account"
-          accounts={accounts}
+          id="inflow-destination-account"
+          accounts={destinationAccounts}
           disabled={interactionDisabled}
           error={accountError}
           label={account_label}
           onChange={handleAccountChange}
-          value={formik.values.sourceAccountId}
+          value={formik.values.destinationAccountId}
         />
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -215,7 +216,7 @@ export function InflowForm({
               }
               aria-invalid={isExchangeRateInvalid}
               aria-label={exchange_rate_label}
-              baseCurrency={sourceCurrencyCode}
+              baseCurrency={destinationCurrencyCode}
               disabled={exchangeRateDisabled}
               layout="compact"
               name="exchangeRate"
@@ -235,7 +236,7 @@ export function InflowForm({
 
         <AccountCombobox
           id="inflow-category"
-          accounts={accounts}
+          accounts={sourceAccounts}
           disabled={interactionDisabled}
           error={categoryError}
           label={category_label}

@@ -1,4 +1,5 @@
 export { InflowForm } from './inflow-form';
+export { InflowFormSkeleton } from './inflow-form-skeleton';
 export type {
   IInflowFormInitialValues,
   IInflowFormValues,

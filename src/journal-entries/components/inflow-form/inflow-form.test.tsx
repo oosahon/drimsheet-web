@@ -12,7 +12,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-const accounts = [
+const destinationAccounts = [
   {
     id: 'ngn-bank',
     code: '1000',
@@ -27,6 +27,9 @@ const accounts = [
     type: 'asset',
     balance: { amount: 0, currencyCode: 'USD', isMinorUnit: false },
   },
+] as unknown as ILedgerAccountDto[];
+
+const sourceAccounts = [
   {
     id: 'sales',
     code: '4000',
@@ -52,7 +55,7 @@ const validationMessages: IInflowFormValidationMessages = {
 };
 
 const validFunctionalValues: IInflowFormValues = {
-  sourceAccountId: 'ngn-bank',
+  destinationAccountId: 'ngn-bank',
   categoryAccountId: 'sales',
   amount: { amount: 250, currencyCode: 'NGN', isMinorUnit: false },
   exchangeRate: '',
@@ -62,7 +65,7 @@ const validFunctionalValues: IInflowFormValues = {
 
 describe('InflowForm validation', () => {
   const schema = createInflowFormValidation(
-    accounts,
+    destinationAccounts,
     'NGN',
     validationMessages
   );
@@ -71,7 +74,7 @@ describe('InflowForm validation', () => {
     await expect(
       schema.validate(
         {
-          sourceAccountId: '',
+          destinationAccountId: '',
           categoryAccountId: '',
           amount: {
             amount: Number.NaN,
@@ -114,7 +117,7 @@ describe('InflowForm validation', () => {
       await expect(
         schema.validate({
           ...validFunctionalValues,
-          sourceAccountId: 'usd-bank',
+          destinationAccountId: 'usd-bank',
           amount: { ...validFunctionalValues.amount, currencyCode: 'USD' },
           exchangeRate,
         })
@@ -127,7 +130,7 @@ describe('InflowForm validation', () => {
     await expect(
       schema.validate({
         ...validFunctionalValues,
-        sourceAccountId: 'usd-bank',
+        destinationAccountId: 'usd-bank',
         amount: { ...validFunctionalValues.amount, currencyCode: 'USD' },
         exchangeRate: '1500',
       })
@@ -151,9 +154,10 @@ describe('InflowForm', () => {
   it('renders fields in screenshot order without create-another', () => {
     render(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="NGN"
         onSubmit={() => undefined}
+        sourceAccounts={sourceAccounts}
       />
     );
 
@@ -184,13 +188,45 @@ describe('InflowForm', () => {
     );
   });
 
+  it('keeps destination and source account options in their permitted fields', async () => {
+    const user = userEvent.setup();
+    render(
+      <InflowForm
+        destinationAccounts={destinationAccounts}
+        functionalCurrencyCode="NGN"
+        onSubmit={() => undefined}
+        sourceAccounts={sourceAccounts}
+      />
+    );
+
+    await user.click(screen.getByRole('combobox', { name: 'Account' }));
+
+    expect(
+      await screen.findByRole('option', { name: 'NGN bank account' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('option', { name: 'Sales revenue' })
+    ).not.toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    await user.click(screen.getByRole('combobox', { name: 'Category' }));
+
+    expect(
+      await screen.findByRole('option', { name: 'Sales revenue' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('option', { name: 'NGN bank account' })
+    ).not.toBeInTheDocument();
+  });
+
   it('keeps exchange rate visible and disables it until it is needed', () => {
     const { rerender } = render(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="EUR"
-        initialValues={{ sourceAccountId: 'ngn-bank' }}
+        initialValues={{ destinationAccountId: 'ngn-bank' }}
         onSubmit={() => undefined}
+        sourceAccounts={sourceAccounts}
       />
     );
 
@@ -199,10 +235,11 @@ describe('InflowForm', () => {
 
     rerender(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="NGN"
-        initialValues={{ sourceAccountId: 'ngn-bank' }}
+        initialValues={{ destinationAccountId: 'ngn-bank' }}
         onSubmit={() => undefined}
+        sourceAccounts={sourceAccounts}
       />
     );
 
@@ -213,9 +250,10 @@ describe('InflowForm', () => {
     const user = userEvent.setup();
     render(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="NGN"
         onSubmit={() => undefined}
+        sourceAccounts={sourceAccounts}
       />
     );
 
@@ -235,11 +273,12 @@ describe('InflowForm', () => {
     const onSubmit = vi.fn();
     render(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="NGN"
         initialValues={validFunctionalValues}
         onSubmit={onSubmit}
         payerOptions={payerOptions}
+        sourceAccounts={sourceAccounts}
       />
     );
 
@@ -268,11 +307,12 @@ describe('InflowForm', () => {
     const onSubmit = vi.fn();
     render(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="NGN"
         initialValues={{ ...validFunctionalValues, payer: { name: '' } }}
         onSubmit={onSubmit}
         payerOptions={payerOptions}
+        sourceAccounts={sourceAccounts}
       />
     );
 
@@ -297,11 +337,12 @@ describe('InflowForm', () => {
     const onSubmit = vi.fn();
     render(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="NGN"
         initialValues={validFunctionalValues}
         onSplit={onSplit}
         onSubmit={onSubmit}
+        sourceAccounts={sourceAccounts}
       />
     );
 
@@ -318,9 +359,10 @@ describe('InflowForm', () => {
     const onSubmit = vi.fn();
     render(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="NGN"
         onSubmit={onSubmit}
+        sourceAccounts={sourceAccounts}
       />
     );
 
@@ -338,10 +380,11 @@ describe('InflowForm', () => {
     const onSubmit = vi.fn();
     render(
       <InflowForm
-        accounts={accounts}
+        destinationAccounts={destinationAccounts}
         functionalCurrencyCode="NGN"
         initialValues={{ ...validFunctionalValues, exchangeRate: '99' }}
         onSubmit={onSubmit}
+        sourceAccounts={sourceAccounts}
       />
     );
 

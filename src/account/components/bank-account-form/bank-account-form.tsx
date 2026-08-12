@@ -120,6 +120,7 @@ export function BankAccountForm({
             />
 
             <Field data-invalid={Boolean(getErrorMessage('name').length)}>
+              {/* TODO: rename to Display name */}
               <Label htmlFor="name">{account_name_label}</Label>
               <Input
                 aria-invalid={Boolean(getErrorMessage('name').length)}
