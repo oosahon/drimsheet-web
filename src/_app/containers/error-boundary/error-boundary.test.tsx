@@ -1,4 +1,4 @@
-import { DefaultErrorBoundary } from '@/_app/containers/error-boundary';
+import { DefaultErrorBoundary } from '@/_app/containers/error-boundary/error-boundary';
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

@@ -1,4 +1,8 @@
-import { DefaultErrorBoundary } from '@/_app/containers/error-boundary';
+import { DefaultErrorBoundary } from '@/_app/containers/error-boundary/error-boundary';
+import {
+  LaunchDarklyContextSynchronizerContainer,
+  LaunchDarklyProvider,
+} from '@/_app/containers/launchdarkly';
 import { AppRoutes } from '@/_app/index.routes';
 import { AccessTokenManagerContainer } from '@/auth/components/access-token-manager';
 import { authService } from '@/auth/lib/services/auth.service';
@@ -38,13 +42,16 @@ export function App() {
     <DefaultErrorBoundary>
       <AccessTokenManagerContainer>
         <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <BrowserRouter>
-              <AppRoutes />
-            </BrowserRouter>
-          </TooltipProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <Toaster />
+          <LaunchDarklyProvider>
+            <TooltipProvider>
+              <BrowserRouter>
+                <LaunchDarklyContextSynchronizerContainer />
+                <AppRoutes />
+              </BrowserRouter>
+            </TooltipProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <Toaster />
+          </LaunchDarklyProvider>
         </QueryClientProvider>
       </AccessTokenManagerContainer>
     </DefaultErrorBoundary>
