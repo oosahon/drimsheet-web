@@ -33,6 +33,7 @@ export default defineConfig([
       'no-relative-import-paths': noRelativeImportPaths,
     },
     rules: {
+      'no-nested-ternary': 'error',
       'no-relative-import-paths/no-relative-import-paths': [
         'warn',
         { allowSameFolder: true, rootDir: 'src', prefix: '@' },

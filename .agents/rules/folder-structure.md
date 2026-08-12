@@ -74,8 +74,9 @@ src/<feature>/
   responsibility-based subdirectories such as `configs/`, `mappers/`,
   `services/`, `types/`, and `utils/` when those concerns exist.
 - Do not place implementation files directly in `lib/`.
-- Do not create empty responsibility directories or a generic `helpers/`
-  directory; use the narrowest descriptive responsibility.
+- Do not create empty responsibility directories or a feature-level generic
+  `helpers/` directory; use the narrowest descriptive responsibility.
+  Component-owned `helpers/` directories follow the component layout below.
 - `routes/` contains route definitions that render pages only.
 
 ## Component Folder Layout
@@ -94,6 +95,9 @@ components/<name>/
     <part>.tsx
     <part>.stories.tsx
     <part>.test.tsx
+  helpers/
+    <descriptive-helper-name>.helper.ts
+    <descriptive-helper-name>.helper.test.ts
   types.ts
   validation.ts
   index.ts
@@ -105,11 +109,20 @@ components/<name>/
 - Use `<ui>.container.tsx` only when the component requires side effects or orchestration.
 - Use `parts/` only for substantial UI subcomponents consumed exclusively by
   the owning component directory.
+- Use `helpers/` as the mandatory location for deterministic non-UI helpers
+  consumed exclusively by the owning component directory.
+- Keep one helper in each `<descriptive-helper-name>.helper.ts` file with a
+  matching `<descriptive-helper-name>.helper.test.ts`; do not add a
+  `helpers/index.ts` barrel.
+- Name helpers for their owner and operation, such as
+  `create-inflow-form-initial-values.helper.ts`. Avoid context-free names such
+  as `create-initial-values.helper.ts` or `normalize-values.helper.ts`.
 - Use `types.ts` for component-specific types.
 - Use `validation.ts` for validation logic related to the component.
 - Use `index.ts` as the public barrel for the component directory.
 - Do not add a barrel to `parts/` or re-export parts from the owner's
   `index.ts`.
+- Do not re-export component helpers from the owner's `index.ts`.
 - Promote a part to its own component directory when another owner needs it.
 
 ## Shared Folder Layout
@@ -157,6 +170,9 @@ components/<name>/
     <part>.tsx
     <part>.stories.tsx
     <part>.test.tsx
+  helpers/
+    <descriptive-helper-name>.helper.ts
+    <descriptive-helper-name>.helper.test.ts
   types.ts
   index.ts
 ```

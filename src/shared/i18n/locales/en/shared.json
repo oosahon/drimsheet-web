@@ -53,6 +53,7 @@
   "file_type_svg": "SVG",
   "file_type_jpegs": "JPEGs",
   "file_type_pngs": "PNGs",
+  "file_type_excel": "Excel files",
   "file_upload_accepts": "{{types}} only",
   "add": "Add",
   "cancel": "Cancel",

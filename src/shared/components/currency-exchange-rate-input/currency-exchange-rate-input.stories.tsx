@@ -29,3 +29,17 @@ export const Invalid: Story = {
     defaultValue: '0',
   },
 };
+
+export const Compact: Story = {
+  args: {
+    defaultValue: 1500,
+    layout: 'compact',
+  },
+  decorators: [
+    (Story) => (
+      <div className="w-64">
+        <Story />
+      </div>
+    ),
+  ],
+};

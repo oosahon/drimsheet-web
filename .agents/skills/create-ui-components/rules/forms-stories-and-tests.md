@@ -13,6 +13,9 @@ Every form component must keep its types outside the component file:
   parts/
     <part-name>.tsx
     <part-name>.stories.tsx
+  helpers/
+    <descriptive-helper-name>.helper.ts
+    <descriptive-helper-name>.helper.test.ts
   types.ts
   validation.ts
   index.ts
@@ -24,6 +27,12 @@ Every form component must keep its types outside the component file:
 - Re-export public form types from `index.ts` with `export type`.
 - Put schemas, validation functions, and translation-aware validation hooks in
   `validation.ts`.
+- Put non-trivial initial-value factories, value normalizers, serializers,
+  error projections, and reusable predicates in separate files under the
+  form's private `helpers/` directory.
+- Name form helpers for the owning form and operation, use the `.helper.ts`
+  suffix, and give each one a matching `.helper.test.ts` that imports its
+  implementation directly. Do not expose helpers through the form barrel.
 - Keep validation deterministic apart from translation lookup; do not fetch data
   or mutate state while validating.
 - Pass option data, loading state, initial values, and submit callbacks into the

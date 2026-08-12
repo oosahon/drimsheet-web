@@ -10,13 +10,12 @@ import {
   SidebarRail,
 } from '@/shared/components/sidebar';
 import {
+  ArrowLeftRight,
   Calculator,
   CircleMinus,
   Landmark,
   LayoutDashboard,
   Tags,
-  TrendingDown,
-  TrendingUp,
   UsersRound,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
@@ -58,14 +57,10 @@ export function AppSidebar({
           isActive: isRouteActive(currentPath, '/accounts'),
         },
         {
-          title: t('shared:income'),
-          url: '#',
-          icon: <TrendingUp />,
-        },
-        {
-          title: t('shared:expenses'),
-          url: '#',
-          icon: <TrendingDown />,
+          title: t('shared:transactions'),
+          url: '/transactions',
+          icon: <ArrowLeftRight />,
+          isActive: isRouteActive(currentPath, '/transactions'),
         },
         {
           title: t('shared:liabilities'),

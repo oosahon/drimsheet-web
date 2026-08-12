@@ -78,7 +78,7 @@ export function AccountPage() {
               account={account}
               hideIcon
               actionButtonText={new_transaction_label}
-              onActionButtonClick={() => navigate('transactions/new')}
+              onActionButtonClick={() => navigate('/transactions')}
             />
           )}
 

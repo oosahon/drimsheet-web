@@ -5,6 +5,8 @@ export const EFileType = {
   Png: 'image/png',
   Pdf: 'application/pdf',
   Svg: 'image/svg+xml',
+  Xls: '.xls',
+  Xlsx: '.xlsx',
 } as const;
 
 export type UFileType = (typeof EFileType)[keyof typeof EFileType];

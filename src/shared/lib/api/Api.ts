@@ -216,19 +216,19 @@ export const ECounterpartyRole = {
 export type UCounterpartyRole =
   (typeof ECounterpartyRole)[keyof typeof ECounterpartyRole];
 
-export const ECounterpartyType = {
-  Individual: 'individual',
-  Organization: 'organization',
-} as const;
-export type UCounterpartyType =
-  (typeof ECounterpartyType)[keyof typeof ECounterpartyType];
-
 export const ECounterpartyStatus = {
   Active: 'active',
   Archived: 'archived',
 } as const;
 export type UCounterpartyStatus =
   (typeof ECounterpartyStatus)[keyof typeof ECounterpartyStatus];
+
+export const ECounterpartyType = {
+  Individual: 'individual',
+  Organization: 'organization',
+} as const;
+export type UCounterpartyType =
+  (typeof ECounterpartyType)[keyof typeof ECounterpartyType];
 
 export const EJournalSide = {
   Debit: 'debit',
@@ -245,22 +245,6 @@ export const EJournalEntryStatus = {
 export type UJournalEntryStatus =
   (typeof EJournalEntryStatus)[keyof typeof EJournalEntryStatus];
 
-export const EJournalEntrySourceType = {
-  System: 'system',
-  Expense: 'expense',
-  OpeningBalance: 'opening_balance',
-  Sale: 'sale',
-  Purchase: 'purchase',
-  CreditNote: 'credit_note',
-  DebitNote: 'debit_note',
-  Transfer: 'transfer',
-  Payment: 'payment',
-  Receipt: 'receipt',
-  Adjustment: 'adjustment',
-} as const;
-export type UJournalEntrySourceType =
-  (typeof EJournalEntrySourceType)[keyof typeof EJournalEntrySourceType];
-
 export const ELedgerAccountBalanceEffect = {
   Increase: 'increase',
   Decrease: 'decrease',
@@ -276,6 +260,22 @@ export const EExchangeRateType = {
 } as const;
 export type UExchangeRateType =
   (typeof EExchangeRateType)[keyof typeof EExchangeRateType];
+
+export const EJournalEntrySourceType = {
+  System: 'system',
+  Expense: 'expense',
+  OpeningBalance: 'opening_balance',
+  Sale: 'sale',
+  Purchase: 'purchase',
+  CreditNote: 'credit_note',
+  DebitNote: 'debit_note',
+  Transfer: 'transfer',
+  Payment: 'payment',
+  Receipt: 'receipt',
+  Adjustment: 'adjustment',
+} as const;
+export type UJournalEntrySourceType =
+  (typeof EJournalEntrySourceType)[keyof typeof EJournalEntrySourceType];
 
 export const EPaginationSortDirection = {
   Asc: 'asc',
@@ -301,6 +301,8 @@ export const ELedgerAccountSubType = {
   InterestIncome: 'interest_income',
   GainOnAssetSale: 'gain_on_asset_sale',
   UnrealizedGains: 'unrealized_gains',
+  Grants: 'grants',
+  Gifts: 'gifts',
   PayrollAndPersonnel: 'payroll_and_personnel',
   RentAndUtilities: 'rent_and_utilities',
   AdminAndGeneral: 'admin_and_general',
@@ -397,6 +399,8 @@ export const ELedgerAccountBehavior = {
   InterestIncome: 'interest_income',
   GainOnAssetSale: 'gain_on_asset_sale',
   UnrealizedGains: 'unrealized_gains',
+  Grants: 'grants',
+  Gifts: 'gifts',
   Cogs: 'cogs',
   CostOfServices: 'cost_of_services',
   CostOfRevenue: 'cost_of_revenue',
@@ -576,6 +580,16 @@ export interface IGetLedgerAccountsQuery {
   isControlAccount?: boolean;
 }
 
+export interface IGetPermittedPostingAccountsQuery {
+  sourceType: UJournalEntrySourceType;
+  side: 'source' | 'destination';
+  currencyCode?: string;
+  /** @format double */
+  page?: number;
+  /** @format double */
+  limit?: number;
+}
+
 export interface IExchangeRateDto {
   baseCurrencyCode: string;
   targetCurrencyCode: string;
@@ -598,13 +612,12 @@ export interface IPettyCashAccountCreationReq {
   name: string;
   currencyCode: string;
   isControlAccount: boolean;
-  controlAccountCode?: string;
+  controlAccountId?: string;
   openingBalance: IOpeningBalanceDto | null;
 }
 
 export interface IJournalHeaderDto {
   sourceType: UJournalEntrySourceType;
-  counterpartyId: string | null;
   memo: string | null;
   status: UJournalEntryStatus;
   /** @format date-time */
@@ -641,6 +654,7 @@ export interface IAccountTransactionRes {
   id: string;
   entryId: string;
   accountId: string;
+  counterpartyId: string | null;
   /** @format double */
   sequenceOrder: number;
   amount: IMoneyDto;
@@ -671,6 +685,75 @@ export interface IPaginationDto {
   search?: string;
   /** @format double */
   page?: number;
+}
+
+export interface IJournalLineDto {
+  id: string;
+  entryId: string;
+  accountId: string;
+  counterpartyId: string | null;
+  /** @format double */
+  sequenceOrder: number;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRate | null;
+  functionalAmount: IMoneyDto;
+  side: UJournalSide;
+  description: string | null;
+  /** @format double */
+  version: number;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+}
+
+export interface IJournalEntryDto {
+  sourceType: UJournalEntrySourceType;
+  memo: string | null;
+  status: UJournalEntryStatus;
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  /** @format date-time */
+  voidedAt: string | null;
+  voidingEntryId: string | null;
+  /** @format double */
+  version: number;
+  createdBy: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  id: string;
+  accountingEntityId: string;
+  lines: IJournalLineDto[];
+}
+
+export interface IJournalCounterpartyReq {
+  id?: string;
+  name: string;
+  type?: UCounterpartyType;
+}
+
+export interface IReceiptEntryLineReq {
+  accountId: string;
+  counterparty: IJournalCounterpartyReq;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+  description: string | null;
+  /** @format double */
+  sequenceOrder: number;
+}
+
+export interface IReceiptEntryReq {
+  sourceLine: IReceiptEntryLineReq;
+  destinationLines: IReceiptEntryLineReq[];
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  memo: string | null;
 }
 
 export interface ICurrencyDto {
@@ -819,7 +902,7 @@ export interface IBankDetailsCreationReq {
 export interface IBankAccountCreationReq {
   name: string;
   currencyCode: string;
-  controlAccountCode?: string;
+  controlAccountId?: string;
   bankAccount: IBankDetailsCreationReq;
   openingBalance: IOpeningBalanceDto | null;
 }
@@ -1145,6 +1228,33 @@ export class Api<
       }),
 
     /**
+     * @description Get paginated posting accounts permitted by a journal-entry rule
+     *
+     * @tags Ledger
+     * @name GetPermittedPostingAccounts
+     * @request GET:/ledger/posting-accounts
+     */
+    getPermittedPostingAccounts: (
+      query: {
+        sourceType: UJournalEntrySourceType;
+        side: 'source' | 'destination';
+        currencyCode?: string;
+        /** @format double */
+        page?: number;
+        /** @format double */
+        limit?: number;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<IPaginatedResponseILedgerAccountDto, IHttpErrorDto>({
+        path: `/ledger/posting-accounts`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * @description Create a new petty cash sub account
      *
      * @tags Asset Accounts, Ledger
@@ -1203,6 +1313,24 @@ export class Api<
         path: `/ledger/${accountId}/transactions`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+  };
+  journalEntries = {
+    /**
+     * @description Create receipt journal entry
+     *
+     * @tags Journal Entry
+     * @name CreateReceipt
+     * @request POST:/journal-entries/receipt
+     */
+    createReceipt: (data: IReceiptEntryReq, params: RequestParams = {}) =>
+      this.request<IJournalEntryDto, IHttpErrorDto>({
+        path: `/journal-entries/receipt`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),

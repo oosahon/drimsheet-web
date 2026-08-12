@@ -111,8 +111,10 @@ const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
     const [localValue, setLocalValue] = useState(() =>
       formatVal(parseRawValue(value))
     );
+    const shouldSyncLocalValue =
+      !Object.is(value, prevValueProp) || formatVal !== prevFormatVal;
 
-    if (value !== prevValueProp || formatVal !== prevFormatVal) {
+    if (shouldSyncLocalValue) {
       setPrevValueProp(value);
       setPrevFormatVal(() => formatVal);
 

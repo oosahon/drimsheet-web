@@ -24,7 +24,8 @@ type FileTypeLabelKey =
   | 'file_type_pdfs'
   | 'file_type_svg'
   | 'file_type_jpegs'
-  | 'file_type_pngs';
+  | 'file_type_pngs'
+  | 'file_type_excel';
 
 function mapAcceptToLabel(
   accept: UFileType[],
@@ -44,6 +45,9 @@ function mapAcceptToLabel(
         return translate('file_type_jpegs');
       case EFileType.Png:
         return translate('file_type_pngs');
+      case EFileType.Xls:
+      case EFileType.Xlsx:
+        return translate('file_type_excel');
       default:
         return type;
     }

@@ -77,6 +77,48 @@ describe('DataTable', () => {
     expect(screen.getByTestId('btn-action-3')).toBeInTheDocument();
   });
 
+  it('preserves custom header priority and a null cell renderer result', () => {
+    const headerRender = vi.fn(() => null);
+    const renderHeader = vi.fn(() => 'Legacy header');
+    const customColumns: ITableColumn<ITestRow>[] = [
+      {
+        dataIndex: 'name',
+        title: 'Name fallback',
+        headerRender,
+        renderHeader,
+        render: () => null,
+      },
+    ];
+
+    render(<DataTable columns={customColumns} data={[mockData[0]]} />);
+
+    expect(headerRender).toHaveBeenCalledWith(customColumns[0]);
+    expect(renderHeader).not.toHaveBeenCalled();
+    expect(screen.queryByText('Name fallback')).not.toBeInTheDocument();
+    expect(screen.queryByText('Apple')).not.toBeInTheDocument();
+    expect(screen.getByRole('cell')).toBeEmptyDOMElement();
+  });
+
+  it('renders a nullish cell as empty when no custom renderer exists', () => {
+    interface INullishRow {
+      id: string;
+      value: string | null;
+    }
+
+    const nullishColumns: ITableColumn<INullishRow>[] = [
+      { dataIndex: 'value', title: 'Value' },
+    ];
+
+    render(
+      <DataTable
+        columns={nullishColumns}
+        data={[{ id: 'row-1', value: null }]}
+      />
+    );
+
+    expect(screen.getByRole('cell')).toBeEmptyDOMElement();
+  });
+
   it('handles internal sorting toggles correctly via controlled wrapper', async () => {
     const user = userEvent.setup();
     render(<ControlledDataTableWrapper columns={columns} data={mockData} />);
