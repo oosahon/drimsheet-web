@@ -32,6 +32,11 @@ provides.
 - Keep `useCallback` with the other handlers instead of with derived memos.
 - Put user-triggered logic in the handler rather than setting state for an
   effect to observe.
+- Give a callback a named handler when it contains branching, lookup,
+  transformation, or multiple statements. Keep only short single-expression
+  adapters inline.
+- Do not use nested ternaries. Use guard clauses, explicit `if`/`else`, nullish
+  coalescing when semantically equivalent, or a named resolver.
 - When a handler needs a translated notification, translate inline in the
   handler or extract that one string immediately before use.
 - Extract render-only translation strings near the returned UI.

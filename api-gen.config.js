@@ -1,6 +1,6 @@
 export default {
-  org: 'purple-ledger',
-  repo: 'purple-ledger-core',
+  org: 'Drimsheet',
+  repo: 'drimsheet-core',
   branch: 'main',
   swaggerPath: 'generated/swagger.json',
 };

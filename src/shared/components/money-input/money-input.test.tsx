@@ -26,6 +26,12 @@ describe('MoneyInput', () => {
     expect(screen.getByLabelText('Amount')).toBeInTheDocument();
   });
 
+  it('renders a non-finite controlled value as an empty input', () => {
+    render(<MoneyInput aria-label="Amount" value={Number.NaN} />);
+
+    expect(screen.getByLabelText('Amount')).toHaveValue('');
+  });
+
   it('formats input values correctly', async () => {
     const user = userEvent.setup();
     const handleChange = vi.fn();

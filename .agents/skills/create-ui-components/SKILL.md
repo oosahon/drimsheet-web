@@ -47,15 +47,19 @@ are useful examples, but some predate the current rules.
 6. Assess the primary UI file for substantial internal components. Keep trivial
    render helpers inline, but move private UI sections with their own contract,
    hooks, handlers, or meaningful conditional rendering into `parts/`.
-7. Create the smallest applicable colocated file set and expose only its public
+7. Inspect the primary UI file for deterministic value helpers, substantial
+   callback bodies, and nested ternaries. Apply the linked helper and handler
+   rules before adding new logic.
+8. Create the smallest applicable colocated file set and expose only its public
    contract from `index.ts`.
-8. Add realistic stories and focused behavior tests. Use real owned components
+9. Add realistic stories and focused behavior tests. Use real owned components
    and hooks in component tests. For containers, mock external systems only when
    necessary. For forms, keep all types and validation outside the component
    file.
    If the task requires dialog, page, route, or other browser integration
    coverage, also use `$write-playwright-integration-tests`.
-9. Verify the focused change, then inspect the final diff for architecture drift.
+10. Verify the focused change, then inspect the final diff for architecture
+    drift and readability-rule violations.
 
 ## Verification
 
@@ -88,4 +92,10 @@ or risk warrants them. Report any check that could not be run.
 - Imports obey feature-to-shared dependency direction.
 - Substantial private UI sections live in `parts/`, remain owner-private, and
   are not re-exported.
+- Deterministic component helpers have descriptive owner-qualified names, live
+  one per `.helper.ts` file under `helpers/`, have matching `.helper.test.ts`
+  files, and are not re-exported.
+- Callbacks with branching, lookup, transformation, or multiple statements use
+  named handlers; short single-expression adapters may remain inline.
+- Component code contains no nested ternaries.
 - No internal helper is exported accidentally.

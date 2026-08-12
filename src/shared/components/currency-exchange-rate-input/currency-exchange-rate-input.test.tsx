@@ -68,6 +68,22 @@ describe('CurrencyExchangeRateInput', () => {
 
     expect(onChange).toHaveBeenCalled();
   });
+
+  it('supports an opt-in compact responsive layout', () => {
+    render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        layout="compact"
+        targetCurrency="NGN"
+      />
+    );
+
+    expect(
+      screen
+        .getByLabelText('NGN exchange rate')
+        .closest('[data-slot="currency-exchange-rate-input"]')
+    ).toHaveAttribute('data-layout', 'compact');
+  });
 });
 
 describe('currencyExchangeRateInputValidation', () => {

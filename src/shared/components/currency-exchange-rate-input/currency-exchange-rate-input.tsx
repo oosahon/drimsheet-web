@@ -13,6 +13,7 @@ export interface CurrencyExchangeRateInputProps extends Omit<
   baseCurrency: string;
   targetCurrency: string;
   defaultValue?: string | number;
+  layout?: 'default' | 'compact';
 }
 
 const moneyInputClassName =
@@ -26,14 +27,22 @@ export function CurrencyExchangeRateInput({
   className,
   'aria-label': ariaLabel,
   disabled,
+  layout = 'default',
   ...props
 }: Readonly<CurrencyExchangeRateInputProps>) {
+  const isCompact = layout === 'compact';
+
   return (
     <div
-      className="flex items-center gap-4"
+      className={cn(
+        'flex items-center gap-4',
+        isCompact &&
+          'grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1.25fr)] gap-2'
+      )}
       data-slot="currency-exchange-rate-input"
+      data-layout={layout}
     >
-      <InputGroup className="w-28" data-disabled>
+      <InputGroup className={cn('w-28', isCompact && 'w-full')} data-disabled>
         <MoneyInput
           aria-label={`${baseCurrency} base amount`}
           className={moneyInputClassName}
@@ -49,7 +58,10 @@ export function CurrencyExchangeRateInput({
 
       <ArrowRightLeft aria-hidden="true" className="size-4 shrink-0" />
 
-      <InputGroup className="w-36" data-disabled={disabled || undefined}>
+      <InputGroup
+        className={cn('w-36', isCompact && 'w-full')}
+        data-disabled={disabled || undefined}
+      >
         <MoneyInput
           {...props}
           aria-label={ariaLabel ?? `${targetCurrency} exchange rate`}

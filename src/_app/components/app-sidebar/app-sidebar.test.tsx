@@ -43,22 +43,28 @@ describe('AppSidebar', () => {
     expect(screen.queryByText('Petty cash accounts')).not.toBeInTheDocument();
   });
 
-  it('keeps Accounts highlighted on a nested account route', () => {
+  it('highlights Transactions and removes Income and Expenses', () => {
     render(
-      <MemoryRouter initialEntries={['/accounts/account-1/transactions/new']}>
+      <MemoryRouter initialEntries={['/transactions/transfer']}>
         <QueryClientProvider client={queryClient}>
           <SidebarProvider>
             <TooltipProvider>
-              <AppSidebar currentPath="/accounts/account-1/transactions/new" />
+              <AppSidebar currentPath="/transactions/transfer" />
             </TooltipProvider>
           </SidebarProvider>
         </QueryClientProvider>
       </MemoryRouter>
     );
 
-    expect(screen.getByRole('link', { name: 'Accounts' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Transactions' })).toHaveAttribute(
       'data-active',
       'true'
     );
+    expect(
+      screen.queryByRole('link', { name: 'Income' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('link', { name: 'Expenses' })
+    ).not.toBeInTheDocument();
   });
 });

@@ -12,6 +12,11 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 - Keep trivial render helpers inline, but move coherent UI sections with their
   own props, hooks, handlers, or meaningful conditional rendering into the
   owner's `parts/` directory.
+- Give a callback a `handle*` name when its body contains branching, lookup,
+  transformation, or multiple statements. A short single-expression adapter
+  may remain inline.
+- Do not use nested ternaries. Prefer guard clauses, `if`/`else`, nullish
+  coalescing when it preserves semantics, or a named resolver.
 
 ## `parts/`
 
@@ -23,6 +28,25 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 - Do not add a `parts/index.ts` barrel or expose parts through the owner's public
   API.
 - Promote a part when it gains a consumer outside its owner.
+
+## Component `helpers/`
+
+- Use a component's `helpers/` directory for deterministic non-UI logic owned
+  exclusively by that component.
+- Extract initial-value factories, value normalizers, serializers, error
+  projections, and reusable predicates from the primary UI `.tsx` file.
+- Use the `.helper.ts` suffix and keep one helper in each file. Add a matching
+  `.helper.test.ts` that tests its deterministic contract directly.
+- Include the owning component and operation in helper file and function names,
+  such as `create-inflow-form-initial-values.helper.ts` and
+  `createInflowFormInitialValues`. Do not use context-free names such as
+  `create-initial-values.helper.ts` or `normalizeValues`.
+- Do not add a helpers barrel or expose helpers through the component's public
+  `index.ts`.
+- Promote logic to the feature or shared `lib/` responsibility directory when
+  it gains a consumer outside the component directory.
+- Do not use component `helpers/` as a bucket for UI parts, hooks, services,
+  validation, or reusable feature logic.
 
 ## `*.container.tsx` Files
 
@@ -72,7 +96,9 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
   `lib/types/`.
 - Put small, deterministic, general-purpose functions in `lib/utils/`.
 - Do not place implementation files directly in `lib/`.
-- Avoid a generic `helpers/` directory; classify the responsibility precisely.
+- Avoid a generic feature or shared `helpers/` directory; classify reusable
+  logic precisely. Component-owned helpers are the scoped exception described
+  above.
 - `lib/` should contain reusable logic that is not tied to a single UI component.
 - Keep `lib/` free of page-specific orchestration.
 

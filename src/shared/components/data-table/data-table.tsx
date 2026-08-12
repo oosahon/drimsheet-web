@@ -230,11 +230,13 @@ export function DataTableHeaderCell<T extends IDataWithId>({
   const isSorted = currentSortKey === column.dataIndex;
   const sortDir = isSorted ? currentSortDirection : null;
 
-  const headerContent = column.headerRender
-    ? column.headerRender(column)
-    : column.renderHeader
-      ? column.renderHeader(column)
-      : column.title;
+  let headerContent: React.ReactNode = column.title;
+
+  if (column.headerRender) {
+    headerContent = column.headerRender(column);
+  } else if (column.renderHeader) {
+    headerContent = column.renderHeader(column);
+  }
 
   const handleSelectFilter = useCallback(
     (val: string | number) => {
@@ -406,6 +408,14 @@ export function DataTableRow<T extends IDataWithId>({
       )}
       {columns.map((column) => {
         const cellData = row[column.dataIndex];
+        let cellContent: React.ReactNode = '';
+
+        if (column.render) {
+          cellContent = column.render(cellData, row);
+        } else if (cellData !== null && cellData !== undefined) {
+          cellContent = String(cellData);
+        }
+
         return (
           <TableCell
             key={String(column.dataIndex)}
@@ -414,11 +424,7 @@ export function DataTableRow<T extends IDataWithId>({
               'transition-all duration-200'
             )}
           >
-            {column.render
-              ? column.render(cellData, row)
-              : cellData !== null && cellData !== undefined
-                ? String(cellData)
-                : ''}
+            {cellContent}
           </TableCell>
         );
       })}

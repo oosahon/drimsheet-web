@@ -30,6 +30,11 @@ const invalidFile = new File(['text'], 'document.txt', {
   lastModified: new Date('2026-06-02').getTime(),
 });
 
+const excelFile = new File(['spreadsheet'], 'statement.xlsx', {
+  type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  lastModified: new Date('2026-06-02').getTime(),
+});
+
 describe('DocumentUpload', () => {
   it('renders translated accepted file type labels below the empty state action', () => {
     render(<DocumentUpload {...defaultProps} />);
@@ -47,6 +52,27 @@ describe('DocumentUpload', () => {
     );
 
     expect(screen.getByText('JPEGs & PNGs only')).toBeInTheDocument();
+  });
+
+  it('accepts Excel files by extension and labels them as one file type', async () => {
+    const user = userEvent.setup();
+    const onUpload = vi.fn();
+    render(
+      <DocumentUpload
+        {...defaultProps}
+        accept={[EFileType.Xls, EFileType.Xlsx]}
+        onUpload={onUpload}
+      />
+    );
+
+    expect(screen.getByText('Excel files only')).toBeInTheDocument();
+
+    const input = document.querySelector(
+      'input[type="file"]'
+    ) as HTMLInputElement;
+    await user.upload(input, excelFile);
+
+    expect(onUpload).toHaveBeenCalledWith([excelFile]);
   });
 
   it('handles custom / unknown file types in mapAcceptToLabel', () => {

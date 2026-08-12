@@ -3,6 +3,7 @@ import {
   ELedgerAccountSubType,
   ELedgerType,
   type IGetLedgerAccountsQuery,
+  type IGetPermittedPostingAccountsQuery,
 } from '@/shared/lib/api/Api';
 
 async function getLedgerAccounts(query: IGetLedgerAccountsQuery) {
@@ -23,8 +24,16 @@ async function getLedgerAccount(id: string) {
   return res.data;
 }
 
+async function getPermittedPostingAccounts(
+  query: IGetPermittedPostingAccountsQuery
+) {
+  const res = await purpleLedgerApi.ledger.getPermittedPostingAccounts(query);
+  return res.data;
+}
+
 export const ledgerAccountService = Object.freeze({
   getLedgerAccounts,
   getPettyBaseCashFilters,
   getLedgerAccount,
+  getPermittedPostingAccounts,
 });
