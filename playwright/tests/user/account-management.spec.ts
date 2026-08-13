@@ -1,4 +1,7 @@
-import type { IAccountingEntity } from '@/shared/lib/api/Api';
+import type {
+  IAccountingEntity,
+  IAccountingEntitySwitchReq,
+} from '@/shared/lib/api/Api';
 import { expect, test } from '@integration/fixtures/test';
 import {
   alternateAccountingEntity,
@@ -12,32 +15,44 @@ const refreshEndpoint = '**/api/v1/auth/refresh-access-token';
 const profileEndpoint = '**/api/v1/users/profile';
 const entityListEndpoint = '**/api/v1/accounting/accounting-entities';
 const activeEntityEndpoint = '**/api/v1/accounting/accounting-entity';
+const switchEntityEndpoint = '**/api/v1/accounting/accounting-entity/switch';
 
 async function registerAccountManagementRoutes(page: Page) {
+  const accountingEntities: IAccountingEntity[] = [
+    authenticatedAccountingEntity,
+    alternateAccountingEntity,
+  ];
+
   await page.route(profileEndpoint, async (route) => {
     await route.fulfill({ json: authenticatedUser });
   });
   await page.route(entityListEndpoint, async (route) => {
-    const selectedEntityId = route.request().headers()[
-      'x-accounting-entity-id'
-    ];
-    const entities: IAccountingEntity[] =
-      selectedEntityId === alternateAccountingEntity.id
-        ? [alternateAccountingEntity, authenticatedAccountingEntity]
-        : [authenticatedAccountingEntity, alternateAccountingEntity];
-
-    await route.fulfill({ json: entities });
+    await route.fulfill({ json: accountingEntities });
   });
   await page.route(activeEntityEndpoint, async (route) => {
-    const selectedEntityId = route.request().headers()[
+    const accountingEntityId = route.request().headers()[
       'x-accounting-entity-id'
     ];
-    const entity =
-      selectedEntityId === alternateAccountingEntity.id
-        ? alternateAccountingEntity
-        : authenticatedAccountingEntity;
+    const activeAccountingEntity = accountingEntities.find(
+      ({ id }) => id === accountingEntityId
+    );
 
-    await route.fulfill({ json: entity });
+    if (!activeAccountingEntity) {
+      await route.fulfill({ status: 404 });
+      return;
+    }
+
+    await route.fulfill({ json: activeAccountingEntity });
+  });
+  await page.route(switchEntityEndpoint, async (route) => {
+    const payload = route
+      .request()
+      .postDataJSON() as IAccountingEntitySwitchReq;
+    const activeAccountingEntity = accountingEntities.find(
+      ({ id }) => id === payload.accountingEntityId
+    );
+
+    await route.fulfill({ json: activeAccountingEntity });
   });
 }
 
@@ -87,6 +102,11 @@ async function signIn(page: Page) {
   await page.getByLabel('Password', { exact: true }).fill('Password1!');
   await page.getByRole('button', { name: 'Sign In' }).click();
   await expect(page).toHaveURL('/dashboard');
+  await expect(
+    page.getByRole('button', {
+      name: 'Open account management for Integration Entity',
+    })
+  ).toBeVisible();
 }
 
 test('opens account management with active and alternate account details', async ({
@@ -121,7 +141,7 @@ test('opens account management with active and alternate account details', async
   await expect(trigger).toBeFocused();
 });
 
-test('persists another accounting entity and reloads under its request header', async ({
+test('switches accounting entity and reloads with the active entity', async ({
   page,
 }) => {
   await signIn(page);
@@ -132,18 +152,30 @@ test('persists another accounting entity and reloads under its request header', 
     })
     .click();
 
-  const selectedEntityRequest = page.waitForRequest((request) => {
-    return (
-      request.url().includes('/api/v1/accounting/accounting-entities') &&
+  const switchRequestPromise = page.waitForRequest(switchEntityEndpoint);
+  const reloadRequestPromise = page.waitForRequest(
+    (request) =>
+      request.isNavigationRequest() &&
+      request.url() === 'http://127.0.0.1:4000/dashboard'
+  );
+  const activeEntityRequestPromise = page.waitForRequest(
+    (request) =>
+      request.url().includes('/api/v1/accounting/accounting-entity') &&
+      request.method() === 'GET' &&
       request.headers()['x-accounting-entity-id'] ===
         alternateAccountingEntity.id
-    );
-  });
+  );
 
   await page
     .getByRole('button', { name: 'Switch to Purple Ledger Limited' })
     .click();
-  await selectedEntityRequest;
+  const switchRequest = await switchRequestPromise;
+  await reloadRequestPromise;
+  await activeEntityRequestPromise;
+
+  expect(switchRequest.postDataJSON()).toEqual({
+    accountingEntityId: alternateAccountingEntity.id,
+  });
 
   await expect(
     page.getByRole('button', {
@@ -152,7 +184,38 @@ test('persists another accounting entity and reloads under its request header', 
   ).toBeVisible();
   expect(
     await page.evaluate(() => localStorage.getItem('accounting-entity-id'))
-  ).toBe(alternateAccountingEntity.id);
+  ).toBeNull();
+});
+
+test('keeps the current entity when switching fails', async ({ page }) => {
+  await signIn(page);
+  await page.route(switchEntityEndpoint, async (route) => {
+    await route.fulfill({
+      status: 400,
+      json: {
+        name: 'AccountingError',
+        errorKey: 'accounting_error_accounting_entity_unauthorized',
+        validationErrors: [],
+      },
+    });
+  });
+
+  await page
+    .getByRole('button', {
+      name: 'Open account management for Integration Entity',
+    })
+    .click();
+  await page
+    .getByRole('button', { name: 'Switch to Purple Ledger Limited' })
+    .click();
+
+  await expect(page.getByText('Unauthorized')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(
+    page.getByRole('button', {
+      name: 'Open account management for Integration Entity',
+    })
+  ).toBeVisible();
 });
 
 test('opens the existing accounting entity creation dialog', async ({

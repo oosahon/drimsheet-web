@@ -4,7 +4,7 @@ import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 interface PurpleLedgerApiAuthConfig {
   getToken?: () => string | undefined;
   getAccessToken?: () => Promise<string>;
-  getAccountingEntityId?: () => string | null;
+  getAccountingEntityId?: () => string | undefined;
 }
 
 export const purpleLedgerApi = new Api({
