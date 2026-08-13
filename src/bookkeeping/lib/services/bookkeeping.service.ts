@@ -1,15 +1,15 @@
 import type { ITransferTransactionFormValues } from '@/bookkeeping/components/transfer-transaction-form';
 import { purpleLedgerApi } from '@/shared/lib/api';
 import {
-  type IJournalLineReq,
-  type IPaginationDto,
-  type ITransferTransactionReq,
+  EContentType,
   EJournalEntryStatus,
   EJournalSide,
+  type IHttpErrorDto,
+  type IPaginationDto,
 } from '@/shared/lib/api/Api';
 
 async function recordTransaction(payload: ITransferTransactionFormValues) {
-  const sourceLine: IJournalLineReq = {
+  const sourceLine = {
     accountId: payload.sourceAccountId,
     amount: payload.amount,
     exchangeRate: null,
@@ -18,7 +18,7 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
     sequenceOrder: 1,
   };
 
-  const destinationLine: IJournalLineReq = {
+  const destinationLine = {
     accountId: payload.destinationAccountId,
     amount: payload.amountReceived,
     exchangeRate: null,
@@ -27,7 +27,7 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
     sequenceOrder: 2,
   };
 
-  const journalEntry: ITransferTransactionReq = {
+  const journalEntry = {
     sourceLine,
     destinationLines: [destinationLine],
     status: payload.pending
@@ -38,8 +38,13 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
     memo: payload.description,
   };
 
-  const { data } =
-    await purpleLedgerApi.journalEntry.recordTransfer(journalEntry);
+  const { data } = await purpleLedgerApi.request<unknown, IHttpErrorDto>({
+    path: '/journal-entry/transfer',
+    method: 'POST',
+    body: journalEntry,
+    type: EContentType.Json,
+    format: 'json',
+  });
   return data;
 }
 

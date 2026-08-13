@@ -53,6 +53,7 @@ const createAccount = (
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   };
 
   return { ...baseAccount, ...overrides };

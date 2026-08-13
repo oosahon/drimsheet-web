@@ -22,7 +22,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    projects: [
+    items: [
       { name: 'Settings', url: '#', icon: <Settings className="size-4" /> },
     ],
   },

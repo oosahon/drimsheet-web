@@ -92,6 +92,8 @@ export function AccountBehaviorNote({
     [ELedgerAccountBehavior.UnrealizedGains]: t(
       'account_behavior_unrealized_gains_description'
     ),
+    [ELedgerAccountBehavior.Grants]: t('account_behavior_grants_description'),
+    [ELedgerAccountBehavior.Gifts]: t('account_behavior_gifts_description'),
     [ELedgerAccountBehavior.Cogs]: t('account_behavior_cogs_description'),
     [ELedgerAccountBehavior.CostOfServices]: t(
       'account_behavior_cost_of_services_description'

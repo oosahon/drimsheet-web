@@ -16,6 +16,7 @@ const baseAccount: ILedgerAccountDto = {
   code: '1000',
   materializedPath: '',
   accountingEntityId: 'entity-1' as TEntityId,
+  openingBalanceDate: null,
   type: ELedgerType.Asset,
   normalBalance: ENormalBalance.Debit,
   subType: ELedgerAccountSubType.CashAndCashEquivalent,
