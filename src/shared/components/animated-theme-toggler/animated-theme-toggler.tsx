@@ -1,6 +1,7 @@
 import { Moon, Sun } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/shared/lib/utils/cn';
 
@@ -13,6 +14,7 @@ export const AnimatedThemeToggler = forwardRef<
   HTMLButtonElement,
   AnimatedThemeTogglerProps
 >(({ className, duration = 400, showText, onClick, ...props }, ref) => {
+  const { t } = useTranslation('shared');
   const [isDark, setIsDark] = useState(true);
   const innerRef = useRef<HTMLButtonElement>(null);
 
@@ -100,6 +102,10 @@ export const AnimatedThemeToggler = forwardRef<
     [isDark, duration, onClick]
   );
 
+  const switch_to_light_mode_action = t('switch_to_light_mode_action');
+  const switch_to_dark_mode_action = t('switch_to_dark_mode_action');
+  const toggle_theme_aria_label = t('toggle_theme_aria_label');
+
   return (
     <button
       type="button"
@@ -109,8 +115,12 @@ export const AnimatedThemeToggler = forwardRef<
       {...props}
     >
       {isDark ? <Sun /> : <Moon />}
-      {showText && <span>{isDark ? 'Switch to light' : 'Switch to dark'}</span>}
-      <span className="sr-only">Toggle theme</span>
+      {showText && (
+        <span>
+          {isDark ? switch_to_light_mode_action : switch_to_dark_mode_action}
+        </span>
+      )}
+      <span className="sr-only">{toggle_theme_aria_label}</span>
     </button>
   );
 });

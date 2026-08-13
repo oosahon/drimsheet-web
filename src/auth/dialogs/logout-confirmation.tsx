@@ -19,22 +19,33 @@ import { useNavigate } from 'react-router-dom';
 
 interface LogoutConfirmationDialogProps {
   children?: ReactNode;
+  onOpenChange?: (open: boolean) => void;
+  open?: boolean;
 }
 
 export function LogoutConfirmationDialog({
   children,
+  onOpenChange,
+  open,
 }: Readonly<LogoutConfirmationDialogProps>) {
   const navigate = useNavigate();
   const { t } = useTranslation('auth');
   const handleApiError = useApiErrorHandler();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
   const { mutateAsync: logout, isPending } = useLogout();
+
+  const isOpen = open ?? internalOpen;
+
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (open === undefined) setInternalOpen(nextOpen);
+    onOpenChange?.(nextOpen);
+  };
 
   const handleLogout = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
       await logout();
-      setOpen(false);
+      handleOpenChange(false);
       navigate('/auth/signin', { replace: true });
     } catch (error) {
       handleApiError(error, { showToast: true });
@@ -48,8 +59,8 @@ export function LogoutConfirmationDialog({
   const log_out_text = t('log_out_text');
 
   return (
-    <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
+      {children && <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>}
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogMedia>

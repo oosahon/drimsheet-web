@@ -49,6 +49,21 @@ async function registerConfigurationRoutes(page: Page) {
   });
 }
 
+async function completeAccountingEntityForm(page: Page) {
+  const dialog = page.getByRole('dialog', { name: 'Account setup' });
+  await dialog
+    .getByRole('combobox', { name: 'Who is this account for?' })
+    .click();
+  await page.getByRole('option', { name: 'A Company' }).click();
+  await dialog.getByRole('textbox', { name: 'Name' }).fill('Purple Limited');
+  await dialog.getByRole('button', { name: 'Next' }).click();
+  await expect(
+    dialog.getByText('What currency should your reports use?')
+  ).toBeVisible();
+  await dialog.getByRole('button', { name: 'Next' }).click();
+  await dialog.getByRole('button', { name: 'Complete setup' }).click();
+}
+
 test('does not show onboarding when the entity query returns an entity', async ({
   page,
 }) => {
@@ -58,7 +73,11 @@ test('does not show onboarding when the entity query returns an entity', async (
   await expect(
     page.getByRole('dialog', { name: 'Account setup' })
   ).not.toBeVisible();
-  await expect(page.getByText(authenticatedUser.email)).toBeVisible();
+  await expect(
+    page.getByRole('button', {
+      name: 'Open account management for Integration Entity',
+    })
+  ).toBeVisible();
 });
 
 test('shows a non-dismissible onboarding dialog for an empty entity result', async ({
@@ -113,17 +132,7 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
   await signIn(page);
 
   const dialog = page.getByRole('dialog', { name: 'Account setup' });
-  await dialog
-    .getByRole('combobox', { name: 'Who is this account for?' })
-    .click();
-  await page.getByRole('option', { name: 'A Company' }).click();
-  await dialog.getByRole('textbox', { name: 'Name' }).fill('Purple Limited');
-  await dialog.getByRole('button', { name: 'Next' }).click();
-  await expect(
-    dialog.getByText('What currency should your reports use?')
-  ).toBeVisible();
-  await dialog.getByRole('button', { name: 'Next' }).click();
-  await dialog.getByRole('button', { name: 'Complete setup' }).click();
+  await completeAccountingEntityForm(page);
 
   await expect(dialog).not.toBeVisible();
   expect(entityListRequestCount).toBeGreaterThanOrEqual(2);
@@ -138,4 +147,33 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
       appUsageMode: 'non_power_user',
     })
   );
+});
+
+test('handles an entity creation API error without crashing onboarding', async ({
+  page,
+}) => {
+  await registerAuthenticatedAppRoutes(page);
+  await page.route(entityListEndpoint, async (route) => {
+    await route.fulfill({ json: [] });
+  });
+  await page.route(entityCreationEndpoint, async (route) => {
+    await route.fulfill({
+      status: 400,
+      json: {
+        name: 'AccountingError',
+        errorKey: 'accounting_error_accounting_entity_invalid_type',
+        validationErrors: [],
+      },
+    });
+  });
+  await registerConfigurationRoutes(page);
+  await signIn(page);
+
+  await completeAccountingEntityForm(page);
+
+  await expect(page.getByText('Invalid accounting entity type')).toBeVisible();
+  await expect(
+    page.getByRole('dialog', { name: 'Account setup' })
+  ).toBeVisible();
+  await expect(page).toHaveURL('/dashboard');
 });

@@ -22,11 +22,13 @@ import { toast } from 'sonner';
 interface AccountingEntityCreationDialogProps {
   open: boolean;
   done: () => Promise<void>;
+  onClose?: () => void;
 }
 
 export function AccountingEntityCreationDialog({
   open,
   done,
+  onClose,
 }: Readonly<AccountingEntityCreationDialogProps>) {
   const { t } = useTranslation('accounting');
   const handleApiError = useApiErrorHandler();
@@ -56,9 +58,13 @@ export function AccountingEntityCreationDialog({
   const dialog_title = t('account_setup_title');
   const dialog_description = t('account_setup_description');
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) onClose?.();
+  };
+
   return (
-    <Dialog open={open} modal>
-      <DialogContent className="sm:max-w-sm" showCloseButton={false}>
+    <Dialog open={open} onOpenChange={handleOpenChange} modal>
+      <DialogContent className="sm:max-w-sm" showCloseButton={Boolean(onClose)}>
         <DialogHeader>
           <DialogTitle>{dialog_title}</DialogTitle>
           <DialogDescription className="text-sm">

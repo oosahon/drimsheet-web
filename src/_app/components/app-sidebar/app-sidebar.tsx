@@ -5,7 +5,6 @@ import { Badge } from '@/shared/components/badge';
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarRail,
 } from '@/shared/components/sidebar';
@@ -18,13 +17,11 @@ import {
   Tags,
   UsersRound,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   currentPath: string;
-  footer?: ReactNode;
 }
 
 function isRouteActive(currentPath: string, itemUrl: string) {
@@ -36,7 +33,6 @@ function isRouteActive(currentPath: string, itemUrl: string) {
 
 export function AppSidebar({
   currentPath,
-  footer,
   ...props
 }: Readonly<AppSidebarProps>) {
   const { t } = useTranslation(['shared']);
@@ -115,7 +111,6 @@ export function AppSidebar({
         <NavMain items={sidebarData.navMain} />
         <NavConfigurations items={sidebarData.configurations} />
       </SidebarContent>
-      {footer && <SidebarFooter>{footer}</SidebarFooter>}
       <SidebarRail />
     </Sidebar>
   );
