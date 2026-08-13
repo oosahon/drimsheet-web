@@ -38,7 +38,11 @@ async function registerConfigurationRoutes(page: Page) {
           code: 'NG',
           name: 'Nigeria',
           currencyCode: 'NGN',
-          accountingStandards: { individual: ['IFRS'] },
+          accountingStandards: {
+            individual: ['IFRS'],
+            sole_trader: ['IFRS'],
+            private_company: ['IFRS'],
+          },
         },
       ],
     });
@@ -86,8 +90,8 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
   let submittedPayload: unknown;
   const createdEntity = {
     id: '00000000-0000-4000-8000-000000000003',
-    name: 'Integration User',
-    type: 'individual',
+    name: 'Purple Limited',
+    type: 'private_company',
     ownerId: authenticatedUser.id,
     functionalCurrencyCode: 'NGN',
     jurisdictionCode: 'NG',
@@ -109,10 +113,15 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
   await signIn(page);
 
   const dialog = page.getByRole('dialog', { name: 'Account setup' });
+  await dialog
+    .getByRole('combobox', { name: 'Who is this account for?' })
+    .click();
+  await page.getByRole('option', { name: 'A Company' }).click();
+  await dialog.getByRole('textbox', { name: 'Name' }).fill('Purple Limited');
   await dialog.getByRole('button', { name: 'Next' }).click();
   await expect(
-    dialog.getByRole('heading', { name: 'Reporting details' })
-  ).toBeFocused();
+    dialog.getByText('What currency should your reports use?')
+  ).toBeVisible();
   await dialog.getByRole('button', { name: 'Next' }).click();
   await dialog.getByRole('button', { name: 'Complete setup' }).click();
 
@@ -120,8 +129,8 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
   expect(entityListRequestCount).toBeGreaterThanOrEqual(2);
   expect(submittedPayload).toEqual(
     expect.objectContaining({
-      name: 'Integration User',
-      entityType: 'individual',
+      name: 'Purple Limited',
+      entityType: 'private_company',
       jurisdictionCode: 'NG',
       functionalCurrencyCode: 'NGN',
       reportingCurrencyCode: 'NGN',

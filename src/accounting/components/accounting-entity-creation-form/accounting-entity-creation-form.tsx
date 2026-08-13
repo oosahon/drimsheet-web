@@ -14,6 +14,7 @@ import { useAccountingEntityCreationFormValidation } from './validation';
 
 function AccountingEntityCreationForm({
   onSubmit,
+  individualName = '',
   loading,
   currencies = [],
   jurisdictions = [],
@@ -36,9 +37,8 @@ function AccountingEntityCreationForm({
 
   const formik = useFormik<IAccountingEntityFormValues>({
     initialValues: {
-      // This was removed to simplify the form. It will be injected by the caller
       name: '',
-      entityType: 'individual',
+      entityType: '',
       countryCode: 'NG',
       functionalCurrency: 'NGN',
       reportingCurrency: 'NGN',
@@ -92,6 +92,7 @@ function AccountingEntityCreationForm({
             <AccountingEntityCreationFormStep1
               formik={formik}
               getErrorMessage={getErrorMessage}
+              individualName={individualName}
               jurisdictions={jurisdictions}
               onNext={() => handleNext(2)}
             />

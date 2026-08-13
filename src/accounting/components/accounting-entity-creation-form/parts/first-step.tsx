@@ -4,33 +4,56 @@ import { FISCAL_YEAR_STARTS } from '@/accounting/lib/configs/fiscal-year-start.c
 import { AlertTitle, WarningAlert } from '@/shared/components/alert';
 import { Button } from '@/shared/components/button';
 import { CountryComboBox } from '@/shared/components/country-combobox';
-import { FieldGroup } from '@/shared/components/field';
+import { Field, FieldError, FieldGroup } from '@/shared/components/field';
+import { Input } from '@/shared/components/input';
+import { Label } from '@/shared/components/label';
 import {
   EAccountingEntityType,
+  type UAccountingEntityType,
   type UJurisdictionCode,
 } from '@/shared/lib/api/Api';
 import { dateUtils } from '@/shared/lib/utils/date';
 import { AlertCircleIcon, ArrowRight } from 'lucide-react';
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function AccountingEntityCreationFormStep1({
   formik,
   getErrorMessage,
+  individualName,
   jurisdictions,
   onNext,
 }: Readonly<AccountingEntityCreationFormStep1Props>) {
   const { t } = useTranslation('accounting');
   const [accountingStandard, setAccountingStandard] = useState('IFRS');
-  const focusHeading = useCallback((heading: HTMLHeadingElement | null) => {
-    heading?.focus();
-  }, []);
 
+  const nameErrors = getErrorMessage('name');
+  const isNameInvalid = Boolean(nameErrors?.length);
   const isComplete =
+    !!formik.values.name.trim() &&
     !!formik.values.entityType &&
     !!formik.values.countryCode &&
+    !formik.errors.name &&
     !formik.errors.entityType &&
     !formik.errors.countryCode;
+
+  const handleEntityTypeChange = (entityType: UAccountingEntityType) => {
+    const selectedCountry = jurisdictions.find(
+      (jurisdiction) => jurisdiction.code === formik.values.countryCode
+    );
+    const standards = selectedCountry?.accountingStandards[entityType];
+    const accountingStandardCode = standards?.[0] || 'IFRS';
+    const name =
+      entityType === EAccountingEntityType.Individual ? individualName : '';
+
+    formik.setValues({
+      ...formik.values,
+      name,
+      entityType,
+      accountingStandardCode,
+    });
+    setAccountingStandard(standards?.join(', ') || 'IFRS');
+  };
 
   const handleCountryChange = (val: string) => {
     const selectedCountry = jurisdictions.find((c) => c.code === val);
@@ -49,10 +72,10 @@ function AccountingEntityCreationFormStep1({
       expectedStart.day
     );
 
-    const accountingStandardCode =
-      selectedCountry?.accountingStandards[
-        EAccountingEntityType.Individual
-      ]?.[0] || 'IFRS';
+    const standards = formik.values.entityType
+      ? selectedCountry?.accountingStandards[formik.values.entityType]
+      : undefined;
+    const accountingStandardCode = standards?.[0] || 'IFRS';
 
     formik.setValues({
       ...formik.values,
@@ -64,11 +87,7 @@ function AccountingEntityCreationFormStep1({
       accountingStandardCode,
     });
 
-    setAccountingStandard(
-      selectedCountry?.accountingStandards[
-        EAccountingEntityType.Individual
-      ]?.join(', ') || 'IFRS'
-    );
+    setAccountingStandard(standards?.join(', ') || 'IFRS');
   };
 
   const showTaxWarning =
@@ -81,24 +100,32 @@ function AccountingEntityCreationFormStep1({
   });
   const nigerian_tax_only_warning = t('nigerian_tax_only_warning');
   const next_button_label = t('next_button_label');
-  const step_title = t('entity_details_step_title');
+  const entity_name_label = t('entity_name_label');
 
   return (
     <div className="flex flex-col gap-6">
-      <h2
-        ref={focusHeading}
-        tabIndex={-1}
-        className="text-base font-semibold outline-none"
-      >
-        {step_title}
-      </h2>
       <FieldGroup>
         <AccountingEntityTypeSelect
           value={formik.values.entityType}
-          // NB: only individual is supported for now
-          onChange={() => {}}
+          onChange={handleEntityTypeChange}
           error={getErrorMessage('entityType')}
         />
+        <Field data-invalid={isNameInvalid}>
+          <Label htmlFor="accounting-entity-name">{entity_name_label}</Label>
+          <Input
+            id="accounting-entity-name"
+            name="name"
+            type="text"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            aria-invalid={isNameInvalid || undefined}
+            aria-describedby={
+              isNameInvalid ? 'accounting-entity-name-error' : undefined
+            }
+          />
+          <FieldError id="accounting-entity-name-error" errors={nameErrors} />
+        </Field>
         <CountryComboBox
           label={residence_country_label}
           value={formik.values.countryCode}

@@ -309,5 +309,6 @@
   "ledger_error_ledger_account_invalid_sort_code": "Invalid sort code",
   "ledger_error_ledger_account_invalid_swift_code": "Invalid SWIFT code",
   "ledger_error_ledger_account_invalid_tax_authority": "Invalid tax authority",
-  "ledger_error_ledger_account_invalid_tax_type": "Invalid tax type"
+  "ledger_error_ledger_account_invalid_tax_type": "Invalid tax type",
+  "accounting_error_accounting_entity_only_one_individual_accounting_entity_allowed": "You can only onboard one individual account."
 }

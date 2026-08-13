@@ -3,7 +3,6 @@ import { Button } from '@/shared/components/button';
 import { FieldGroup } from '@/shared/components/field';
 import { AppUsageModeRadioGroup } from '@/user/components/app-usage-mode-radio-group';
 import { ArrowLeft } from 'lucide-react';
-import { useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 function AccountingEntityCreationFormStep3({
@@ -13,24 +12,13 @@ function AccountingEntityCreationFormStep3({
   isSubmitting,
 }: Readonly<AccountingEntityCreationFormStep3Props>) {
   const { t } = useTranslation('accounting');
-  const focusHeading = useCallback((heading: HTMLHeadingElement | null) => {
-    heading?.focus();
-  }, []);
   const isComplete = formik.isValid;
 
   const back_button_label = t('back_button_label');
   const complete_setup_button_label = t('complete_setup_button_label');
-  const step_title = t('usage_preferences_step_title');
 
   return (
     <div className="flex flex-col gap-6">
-      <h2
-        ref={focusHeading}
-        tabIndex={-1}
-        className="text-base font-semibold outline-none"
-      >
-        {step_title}
-      </h2>
       <FieldGroup>
         <AppUsageModeRadioGroup
           value={formik.values.appUsageMode}

@@ -1,9 +1,13 @@
-import type { ICurrencyDto, IJurisdictionDto } from '@/shared/lib/api/Api';
+import type {
+  ICurrencyDto,
+  IJurisdictionDto,
+  UAccountingEntityType,
+} from '@/shared/lib/api/Api';
 import type { FormikProps } from 'formik';
 
 export interface IAccountingEntityFormValues {
   name: string;
-  entityType: string;
+  entityType: UAccountingEntityType | '';
   countryCode: string;
   functionalCurrency: string;
   reportingCurrency: string;
@@ -15,6 +19,7 @@ export interface IAccountingEntityFormValues {
 
 export interface AccountingEntityCreationFormProps {
   onSubmit: (values: IAccountingEntityFormValues) => Promise<void> | void;
+  individualName?: string;
   loading?: boolean;
   currencies?: ICurrencyDto[];
   jurisdictions?: IJurisdictionDto[];
@@ -28,6 +33,7 @@ interface StepProps {
 }
 
 export interface AccountingEntityCreationFormStep1Props extends StepProps {
+  individualName: string;
   jurisdictions: IJurisdictionDto[];
   onNext: () => void;
 }

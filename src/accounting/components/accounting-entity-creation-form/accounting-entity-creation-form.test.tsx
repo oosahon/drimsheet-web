@@ -38,6 +38,7 @@ const jurisdictions: IJurisdictionDto[] = [
 ];
 
 const validationMessages = {
+  nameRequired: 'Name is required',
   entityTypeRequired: 'Entity type is required',
   countryRequired: 'Country is required',
   functionalCurrencyRequired: 'Functional currency is required',
@@ -80,19 +81,52 @@ describe('AccountingEntityCreationForm', () => {
   const setup = () => {
     const onSubmit = vi.fn();
     const user = userEvent.setup();
-    render(<AccountingEntityCreationForm onSubmit={onSubmit} />);
+    render(
+      <AccountingEntityCreationForm
+        onSubmit={onSubmit}
+        individualName="Ada Lovelace"
+      />
+    );
     return { onSubmit, user };
   };
 
   it('renders step 1 by default', () => {
     setup();
+
     expect(screen.getByText('Where do you reside?')).toBeInTheDocument();
+    expect(
+      screen.getByRole('combobox', { name: 'Who is this account for?' })
+    ).toHaveTextContent('Select an entity');
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('');
+    expect(screen.getByRole('button', { name: /Next/i })).toBeDisabled();
   });
 
-  it('can navigate through the steps and submit default values', async () => {
+  it("populates the user's name when an individual is selected", async () => {
+    const { user } = setup();
+
+    await user.click(
+      screen.getByRole('combobox', { name: 'Who is this account for?' })
+    );
+    await user.click(screen.getByRole('option', { name: 'An Individual' }));
+
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue(
+      'Ada Lovelace'
+    );
+  });
+
+  it('can select a company, navigate through the steps, and submit it', async () => {
     const { onSubmit, user } = setup();
 
     // Step 1
+    await user.click(
+      screen.getByRole('combobox', { name: 'Who is this account for?' })
+    );
+    await user.click(screen.getByRole('option', { name: 'A Company' }));
+    const nameInput = screen.getByRole('textbox', { name: 'Name' });
+    expect(nameInput).toHaveValue('');
+    expect(screen.getByRole('button', { name: /Next/i })).toBeDisabled();
+    await user.type(nameInput, 'Purple Limited');
+
     const nextBtn1 = screen.getByRole('button', { name: /Next/i });
     expect(nextBtn1).toBeEnabled();
     await user.click(nextBtn1);
@@ -101,18 +135,14 @@ describe('AccountingEntityCreationForm', () => {
     expect(
       screen.getByText('What currency should your reports use?')
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: 'Reporting details' })
-    ).toHaveFocus();
+    expect(screen.getByRole('status')).toHaveTextContent('Step 2 of 3');
     const nextBtn2 = screen.getByRole('button', { name: /Next/i });
     await user.click(nextBtn2);
 
     // Step 3
     const submitBtn = screen.getByRole('button', { name: /Complete setup/i });
     expect(submitBtn).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: 'Usage preferences' })
-    ).toHaveFocus();
+    expect(screen.getByRole('status')).toHaveTextContent('Step 3 of 3');
 
     // Submit
     await user.click(submitBtn);
@@ -122,8 +152,8 @@ describe('AccountingEntityCreationForm', () => {
     });
 
     expect(onSubmit).toHaveBeenCalledWith({
-      name: '',
-      entityType: 'individual',
+      name: 'Purple Limited',
+      entityType: EAccountingEntityType.PrivateCompany,
       countryCode: 'NG',
       functionalCurrency: 'NGN',
       reportingCurrency: 'NGN',
@@ -138,6 +168,10 @@ describe('AccountingEntityCreationForm', () => {
     const { user } = setup();
 
     // Go to step 2
+    await user.click(
+      screen.getByRole('combobox', { name: 'Who is this account for?' })
+    );
+    await user.click(screen.getByRole('option', { name: 'An Individual' }));
     await user.click(screen.getByRole('button', { name: /Next/i }));
     expect(
       screen.getByText('What currency should your reports use?')
@@ -154,10 +188,20 @@ describe('AccountingEntityCreationForm', () => {
   });
 
   it('renders loading state on the submit button when loading prop is true', async () => {
-    render(<AccountingEntityCreationForm onSubmit={vi.fn()} loading={true} />);
+    render(
+      <AccountingEntityCreationForm
+        onSubmit={vi.fn()}
+        individualName="Ada Lovelace"
+        loading={true}
+      />
+    );
     const user = userEvent.setup();
 
     // Navigate to step 3
+    await user.click(
+      screen.getByRole('combobox', { name: 'Who is this account for?' })
+    );
+    await user.click(screen.getByRole('option', { name: 'An Individual' }));
     await user.click(screen.getByRole('button', { name: /Next/i }));
     await user.click(screen.getByRole('button', { name: /Next/i }));
 
@@ -176,11 +220,16 @@ describe('AccountingEntityCreationForm', () => {
     render(
       <AccountingEntityCreationForm
         onSubmit={vi.fn()}
+        individualName="Ada Lovelace"
         jurisdictions={[limitedJurisdiction]}
       />
     );
     const user = userEvent.setup();
 
+    await user.click(
+      screen.getByRole('combobox', { name: 'Who is this account for?' })
+    );
+    await user.click(screen.getByRole('option', { name: 'An Individual' }));
     await user.click(screen.getByRole('button', { name: /Next/i }));
 
     const nextButton = screen.getByRole('button', { name: /Next/i });
@@ -243,9 +292,29 @@ describe('AccountingEntityCreationFormSkeleton', () => {
 });
 
 describe('AccountingEntityCreationForm Validation', () => {
+  it('requires an entity name', async () => {
+    const fiscalYearStart = dayjs().startOf('year');
+
+    await expect(
+      validationSchema.validate({
+        name: ' ',
+        entityType: 'private_company',
+        countryCode: 'NG',
+        functionalCurrency: 'NGN',
+        reportingCurrency: 'NGN',
+        fiscalYearStart: fiscalYearStart.toDate(),
+        fiscalYearEnd: fiscalYearStart
+          .add(12, 'months')
+          .subtract(1, 'day')
+          .toDate(),
+      })
+    ).rejects.toThrow('Name is required');
+  });
+
   it('validates that fiscalYearStart is not more than 2 years in the past', async () => {
     const fiscalYearStart = dayjs().subtract(1, 'year');
     const validData = {
+      name: 'Ada Lovelace',
       entityType: 'individual',
       countryCode: 'NG',
       functionalCurrency: 'NGN',
@@ -277,6 +346,7 @@ describe('AccountingEntityCreationForm Validation', () => {
   it('uses the selected jurisdiction maximum as an inclusive boundary', async () => {
     const fiscalYearStart = dayjs().startOf('year');
     const validData = {
+      name: 'Ada Lovelace',
       entityType: 'individual',
       countryCode: 'NG',
       functionalCurrency: 'NGN',
@@ -305,6 +375,7 @@ describe('AccountingEntityCreationForm Validation', () => {
 
     await expect(
       validationSchema.validate({
+        name: 'Ada Lovelace',
         entityType: 'individual',
         countryCode: 'NG',
         functionalCurrency: 'NGN',
@@ -321,6 +392,7 @@ describe('AccountingEntityCreationForm Validation', () => {
   it('uses the maximum belonging to the selected country', async () => {
     const fiscalYearStart = dayjs().startOf('year');
     const data = {
+      name: 'Ada Lovelace',
       entityType: 'individual',
       countryCode: 'US',
       functionalCurrency: 'USD',
