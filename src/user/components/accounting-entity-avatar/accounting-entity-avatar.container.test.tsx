@@ -1,10 +1,10 @@
 import { useAccountingEntities } from '@/accounting/hooks/use-accounting-entities';
+import { useAccountingEntity } from '@/accounting/hooks/use-accounting-entity';
 import type {
   IAccountingEntity,
   IUserProfileDto,
   TEntityId,
 } from '@/shared/lib/api/Api';
-import { localStorageService } from '@/shared/lib/services/local-storage.service';
 import { AccountingEntityAvatarContainer } from '@/user/components/accounting-entity-avatar';
 import { useProfile } from '@/user/hooks/use-profile';
 import type { UseQueryResult } from '@tanstack/react-query';
@@ -22,15 +22,16 @@ vi.mock('@/accounting/hooks/use-accounting-entities', () => ({
   useAccountingEntities: vi.fn(),
 }));
 
-vi.mock('@/user/hooks/use-profile', () => ({
-  useProfile: vi.fn(),
+vi.mock('@/accounting/hooks/use-accounting-entity', () => ({
+  useAccountingEntity: vi.fn(),
 }));
 
-vi.mock('@/shared/lib/services/local-storage.service', () => ({
-  localStorageService: {
-    getAccountingEntityId: vi.fn(),
-    setAccountingEntityId: vi.fn(),
-  },
+vi.mock('@/accounting/hooks/use-switch-accounting-entity', () => ({
+  useSwitchAccountingEntity: () => ({ mutateAsync: vi.fn() }),
+}));
+
+vi.mock('@/user/hooks/use-profile', () => ({
+  useProfile: vi.fn(),
 }));
 
 const timestamp = '2026-01-01T00:00:00.000Z';
@@ -80,18 +81,27 @@ function mockProfile(isLoading = false) {
   } as unknown as UseQueryResult<IUserProfileDto, Error>);
 }
 
+function mockActiveEntity(
+  data: IAccountingEntity | undefined,
+  isLoading = false
+) {
+  vi.mocked(useAccountingEntity).mockReturnValue({
+    data,
+    isLoading,
+  } as unknown as UseQueryResult<IAccountingEntity, Error>);
+}
+
 describe('AccountingEntityAvatarContainer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockProfile();
+    mockActiveEntity(undefined);
   });
 
-  it('resolves the stored accounting entity and exposes its account details', async () => {
+  it('renders the active accounting entity returned by the API', async () => {
     const user = userEvent.setup();
     mockEntities([firstEntity, activeEntity]);
-    vi.mocked(localStorageService.getAccountingEntityId).mockReturnValue(
-      activeEntity.id
-    );
+    mockActiveEntity(activeEntity);
 
     render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
 
@@ -111,9 +121,9 @@ describe('AccountingEntityAvatarContainer', () => {
     expect(dialog).toHaveTextContent('First Account');
   });
 
-  it('falls back to the first returned entity when no ID is stored', () => {
+  it('renders the active entity independently of list order', () => {
     mockEntities([firstEntity, activeEntity]);
-    vi.mocked(localStorageService.getAccountingEntityId).mockReturnValue(null);
+    mockActiveEntity(firstEntity);
 
     render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
 
@@ -125,7 +135,8 @@ describe('AccountingEntityAvatarContainer', () => {
   });
 
   it('renders an accessible loading state while account data loads', () => {
-    mockEntities(undefined, true);
+    mockEntities([firstEntity, activeEntity]);
+    mockActiveEntity(undefined, true);
 
     render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
 
@@ -136,7 +147,6 @@ describe('AccountingEntityAvatarContainer', () => {
 
   it('disables account management when the user has no accounting entity', () => {
     mockEntities([]);
-    vi.mocked(localStorageService.getAccountingEntityId).mockReturnValue(null);
 
     render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
 

@@ -1,13 +1,15 @@
 import { AccountingEntityCreationDialog } from '@/accounting/dialogs/accounting-entity-creation';
 import { useAccountingEntities } from '@/accounting/hooks/use-accounting-entities';
+import { useSwitchAccountingEntity } from '@/accounting/hooks/use-switch-accounting-entity';
+import { accountingService } from '@/accounting/lib/services/accounting.service';
 import { AnimatedThemeToggler } from '@/shared/components/animated-theme-toggler';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/shared/components/popover';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import type { IAccountingEntity } from '@/shared/lib/api/Api';
-import { localStorageService } from '@/shared/lib/services/local-storage.service';
 import { AccountManagement } from '@/user/components/account-management';
 import { useProfile } from '@/user/hooks/use-profile';
 import { type ReactNode, useId, useRef, useState } from 'react';
@@ -26,14 +28,21 @@ export function AccountManagementDialog({
   const [open, setOpen] = useState(false);
   const [showAccountCreation, setShowAccountCreation] = useState(false);
   const logoutRequestedRef = useRef(false);
+  const titleId = useId();
   const { data: accountingEntities = [] } = useAccountingEntities();
   const { data: profile } = useProfile();
-  const titleId = useId();
+  const { mutateAsync: switchAccountingEntity } = useSwitchAccountingEntity();
+  const handleApiError = useApiErrorHandler();
 
-  const handleSelectEntity = (entityId: string) => {
-    setOpen(false);
-    localStorageService.setAccountingEntityId(entityId);
-    window.location.reload();
+  const handleSelectEntity = async (accountingEntityId: string) => {
+    try {
+      await switchAccountingEntity({ accountingEntityId });
+      setOpen(false);
+      accountingService.prepareAccountingEntityReload();
+      window.location.reload();
+    } catch (error) {
+      handleApiError(error, { showToast: true });
+    }
   };
 
   const handleAddAccount = () => {

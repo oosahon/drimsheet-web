@@ -466,6 +466,7 @@ export interface IUserAppPreferences {
 export interface IUserPreferences {
   id: TEntityId;
   appPreferences: IUserAppPreferences;
+  lastActiveAccountingEntityId: TEntityId | null;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
@@ -951,6 +952,10 @@ export interface IAccountingEntityCreationDto {
   accountingPeriod: IPeriodCreationDto;
   reportingPeriod: IPeriodCreationDto;
   appUsageMode: UAppUsageModePreference;
+}
+
+export interface IAccountingEntitySwitchReq {
+  accountingEntityId: string;
 }
 
 export interface IAccountingStandardDto {
@@ -1704,6 +1709,26 @@ export class Api<
       this.request<IAccountingEntity, IHttpErrorDto>({
         path: `/accounting/accounting-entity`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Switch the current accounting entity
+     *
+     * @tags Accounting
+     * @name SwitchAccountingEntity
+     * @request POST:/accounting/accounting-entity/switch
+     */
+    switchAccountingEntity: (
+      data: IAccountingEntitySwitchReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<IAccountingEntity, IHttpErrorDto>({
+        path: `/accounting/accounting-entity/switch`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),

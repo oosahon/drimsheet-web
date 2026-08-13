@@ -124,6 +124,11 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
     await route.fulfill({ json: entityCreated ? [createdEntity] : [] });
   });
   await page.route(entityCreationEndpoint, async (route) => {
+    if (route.request().method() === 'GET') {
+      await route.fulfill({ status: 200, json: createdEntity });
+      return;
+    }
+
     submittedPayload = route.request().postDataJSON();
     entityCreated = true;
     await route.fulfill({ status: 201, json: createdEntity });

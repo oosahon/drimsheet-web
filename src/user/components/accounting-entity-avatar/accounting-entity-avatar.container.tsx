@@ -1,7 +1,7 @@
 import { useAccountingEntities } from '@/accounting/hooks/use-accounting-entities';
+import { useAccountingEntity } from '@/accounting/hooks/use-accounting-entity';
 import { Button } from '@/shared/components/button';
 import { Skeleton } from '@/shared/components/skeleton';
-import { localStorageService } from '@/shared/lib/services/local-storage.service';
 import { AccountingEntityAvatar } from '@/user/components/accounting-entity-avatar/accounting-entity-avatar';
 import { AccountManagementDialog } from '@/user/dialogs/account-management';
 import { useTranslation } from 'react-i18next';
@@ -14,11 +14,18 @@ export function AccountingEntityAvatarContainer({
   onLogoutClick,
 }: Readonly<AccountingEntityAvatarContainerProps>) {
   const { t } = useTranslation('user');
-  const { data: accountingEntities = [], isLoading } = useAccountingEntities();
-  const activeEntityId = localStorageService.getAccountingEntityId();
-  const activeEntity =
-    accountingEntities.find((entity) => entity.id === activeEntityId) ??
-    accountingEntities[0];
+  const {
+    data: accountingEntities = [],
+    isLoading: isLoadingAccountingEntities,
+  } = useAccountingEntities();
+  const hasAccountingEntities = accountingEntities.length > 0;
+  const { data: activeEntity, isLoading: isLoadingAccountingEntity } =
+    useAccountingEntity({
+      disabled: isLoadingAccountingEntities || !hasAccountingEntities,
+    });
+  const isLoading =
+    isLoadingAccountingEntities ||
+    (hasAccountingEntities && isLoadingAccountingEntity);
 
   if (isLoading) {
     return (
