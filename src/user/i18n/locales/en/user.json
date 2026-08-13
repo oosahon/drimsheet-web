@@ -1,0 +1,16 @@
+{
+  "account_management_title": "Account management",
+  "account_management_loading_status": "Loading account management",
+  "account_management_unavailable_aria_label": "Account management unavailable",
+  "open_account_management_aria_label": "Open account management for {{name}}",
+  "notifications_aria_label": "Notifications",
+  "drop_feedback_action": "Drop a feedback",
+  "profile_settings_action": "Profile settings",
+  "other_accounts_title": "Other accounts",
+  "no_other_accounts_text": "No other accounts",
+  "switch_account_aria_label": "Switch to {{name}}",
+  "add_new_account_action": "Add a new account",
+  "individual_entity_type": "Individual",
+  "sole_trader_entity_type": "Sole trader",
+  "private_company_entity_type": "Private company"
+}

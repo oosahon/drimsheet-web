@@ -127,7 +127,11 @@ test('signs in with email and password', async ({ page }) => {
 
   expect(request.postDataJSON()).toEqual({ email, password });
   await expect(page).toHaveURL('/dashboard');
-  await expect(page.getByText(email)).toBeVisible();
+  await expect(
+    page.getByRole('button', {
+      name: 'Open account management for Integration Entity',
+    })
+  ).toBeVisible();
 });
 
 test('shows invalid credentials returned by the API and preserves entered email', async ({

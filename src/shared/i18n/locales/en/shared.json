@@ -69,5 +69,8 @@
   "exchange_rate_number_text": "Exchange rate must be a number",
   "exchange_rate_positive_text": "Exchange rate must be greater than zero",
   "open_options_aria_label": "Open options",
-  "clear_selection_aria_label": "Clear selection"
+  "clear_selection_aria_label": "Clear selection",
+  "switch_to_light_mode_action": "Switch to light",
+  "switch_to_dark_mode_action": "Switch to dark",
+  "toggle_theme_aria_label": "Toggle theme"
 }

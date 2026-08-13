@@ -6,9 +6,26 @@ import {
 } from '@/shared/components/breadcrumb';
 import { SidebarTrigger } from '@/shared/components/sidebar';
 import { cn } from '@/shared/lib/utils/cn';
-import type { PropsWithChildren } from 'react';
-import { Fragment } from 'react';
+import type { PropsWithChildren, ReactNode } from 'react';
+import { createContext, Fragment, useContext } from 'react';
 import { Link } from 'react-router-dom';
+
+const AppHeaderActionsContext = createContext<ReactNode>(null);
+
+interface AppHeaderActionsProviderProps extends PropsWithChildren {
+  actions?: ReactNode;
+}
+
+export function AppHeaderActionsProvider({
+  actions,
+  children,
+}: Readonly<AppHeaderActionsProviderProps>) {
+  return (
+    <AppHeaderActionsContext.Provider value={actions}>
+      {children}
+    </AppHeaderActionsContext.Provider>
+  );
+}
 
 // ==========================================
 // 1. AppBody
@@ -41,6 +58,8 @@ export function AppHeader({
   className,
   ...props
 }: Readonly<AppHeaderProps>) {
+  const actions = useContext(AppHeaderActionsContext);
+
   return (
     <header
       {...props}
@@ -80,6 +99,9 @@ export function AppHeader({
           </Breadcrumb>
         )}
         {children}
+        {actions && (
+          <div className="ml-auto flex items-center gap-2">{actions}</div>
+        )}
       </div>
     </header>
   );

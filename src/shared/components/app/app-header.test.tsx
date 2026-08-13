@@ -1,4 +1,4 @@
-import { AppHeader } from '@/shared/components/app';
+import { AppHeader, AppHeaderActionsProvider } from '@/shared/components/app';
 import { SidebarProvider } from '@/shared/components/sidebar';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -61,5 +61,35 @@ describe('AppHeader', () => {
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
     expect(screen.getByText('Accounts').tagName).toBe('SPAN');
     expect(screen.getByText('Petty Cash').tagName).toBe('SPAN');
+  });
+
+  it('renders provided actions at the inline end of the header', () => {
+    render(
+      <MemoryRouter>
+        <SidebarProvider>
+          <AppHeaderActionsProvider
+            actions={<button type="button">Account management</button>}
+          >
+            <AppHeader>Header content</AppHeader>
+          </AppHeaderActionsProvider>
+        </SidebarProvider>
+      </MemoryRouter>
+    );
+
+    const action = screen.getByRole('button', { name: 'Account management' });
+    expect(action).toBeInTheDocument();
+    expect(action.parentElement).toHaveClass('ml-auto');
+  });
+
+  it('does not add an empty action wrapper without a provider value', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <SidebarProvider>
+          <AppHeader />
+        </SidebarProvider>
+      </MemoryRouter>
+    );
+
+    expect(container.querySelector('.ml-auto')).not.toBeInTheDocument();
   });
 });

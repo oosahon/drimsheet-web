@@ -36,6 +36,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   },
   {
     id: '2' as TEntityId,
@@ -60,6 +61,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   },
   {
     id: '3' as TEntityId,
@@ -84,6 +86,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   },
 ];
 

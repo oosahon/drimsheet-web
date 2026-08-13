@@ -6,6 +6,5 @@ export function useCreateAccountingEntity() {
   return useMutation({
     mutationFn: (data: IAccountingEntityCreationDto) =>
       accountingService.createAccountingEntity(data),
-    throwOnError: true,
   });
 }

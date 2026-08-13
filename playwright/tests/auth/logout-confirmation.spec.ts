@@ -38,16 +38,27 @@ async function signIn(page: Page) {
   await page.getByRole('button', { name: 'Sign In' }).click();
 
   await expect(page).toHaveURL('/dashboard');
-  await expect(page.getByText(email)).toBeVisible();
+  await expect(
+    page.getByRole('button', {
+      name: 'Open account management for Integration Entity',
+    })
+  ).toBeVisible();
 }
 
 async function openLogoutDialog(page: Page) {
   await page
     .getByRole('button', {
-      name: new RegExp(`Integration.*${email.replace('.', '\\.')}`),
+      name: 'Open account management for Integration Entity',
     })
     .click();
-  await page.getByRole('menuitem', { name: 'Log out' }).click();
+  const accountManagementDialog = page.getByRole('dialog', {
+    name: 'Account management',
+  });
+  await accountManagementDialog
+    .getByRole('button', { name: 'Log out' })
+    .click();
+
+  await expect(accountManagementDialog).not.toBeVisible();
 
   return page.getByRole('alertdialog', { name: dialogTitle });
 }
@@ -142,13 +153,17 @@ test('logs out, replaces dashboard history, and blocks cached protected UI', asy
   await page.goBack();
 
   await expect(page).toHaveURL('/auth/signin');
-  await expect(page.getByText(email)).not.toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /open account management/i })
+  ).not.toBeVisible();
   await expect(page.getByText('Dashboard')).not.toBeVisible();
 
   await page.goto('/dashboard');
 
   await expect(page).toHaveURL('/auth/signin');
-  await expect(page.getByText(email)).not.toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /open account management/i })
+  ).not.toBeVisible();
   await expect(page.getByText('Dashboard')).not.toBeVisible();
 });
 
@@ -177,7 +192,13 @@ test('keeps the authenticated context and reports API errors when logout fails',
   await expect(page.getByText(logoutFailureMessage)).toBeVisible();
   await expect(dialog).toBeVisible();
   await expect(page).toHaveURL('/dashboard');
-  await expect(page.getByText(email).first()).toBeVisible();
+  await dialog.getByRole('button', { name: 'Cancel' }).click();
+  await expect(dialog).not.toBeVisible();
+  await expect(
+    page.getByRole('button', {
+      name: 'Open account management for Integration Entity',
+    })
+  ).toBeVisible();
   expect(await page.evaluate(() => localStorage.getItem('isLoggedIn'))).toBe(
     'true'
   );

@@ -67,6 +67,8 @@
   "account_behavior_interest_income_description": "Tracks interest earned on cash balances, loans, or investments.",
   "account_behavior_gain_on_asset_sale_description": "Tracks gains recognised when an asset is sold for more than its carrying value.",
   "account_behavior_unrealized_gains_description": "Tracks increases in asset value that have been recognised but not realised through a sale.",
+  "account_behavior_grants_description": "Tracks revenue received through grants awarded by governments, institutions, or other funding bodies.",
+  "account_behavior_gifts_description": "Tracks revenue received as voluntary gifts or donations.",
   "account_behavior_cogs_description": "Tracks the direct cost of goods that were sold during the reporting period.",
   "account_behavior_cost_of_services_description": "Tracks direct labour, materials, and other costs incurred to deliver services.",
   "account_behavior_cost_of_revenue_description": "Tracks direct costs attributable to generating revenue when no more specific direct-cost account applies.",

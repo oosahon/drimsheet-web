@@ -14,6 +14,7 @@ const mockTransactions: IAccountTransactionRes[] = [
     id: 'txn-1',
     entryId: 'entry-1',
     accountId: 'account-1',
+    counterpartyId: null,
     sequenceOrder: 1,
     amount: { amount: 125000, currencyCode: 'NGN', isMinorUnit: false },
     exchangeRate: null,
@@ -30,7 +31,6 @@ const mockTransactions: IAccountTransactionRes[] = [
     balanceEffect: ELedgerAccountBalanceEffect.Increase,
     header: {
       sourceType: EJournalEntrySourceType.Transfer,
-      counterpartyId: null,
       memo: 'Petty cash funding',
       status: EJournalEntryStatus.Posted,
       effectiveDate: '2026-05-21T00:00:00Z',
@@ -47,6 +47,7 @@ const mockTransactions: IAccountTransactionRes[] = [
     id: 'txn-2',
     entryId: 'entry-2',
     accountId: 'account-1',
+    counterpartyId: null,
     sequenceOrder: 1,
     amount: { amount: 18500, currencyCode: 'NGN', isMinorUnit: false },
     exchangeRate: null,
@@ -63,7 +64,6 @@ const mockTransactions: IAccountTransactionRes[] = [
     balanceEffect: ELedgerAccountBalanceEffect.Decrease,
     header: {
       sourceType: EJournalEntrySourceType.Payment,
-      counterpartyId: null,
       memo: 'Stationery purchase',
       status: EJournalEntryStatus.Posted,
       effectiveDate: '2026-05-22T00:00:00Z',
@@ -80,6 +80,7 @@ const mockTransactions: IAccountTransactionRes[] = [
     id: 'txn-3',
     entryId: 'entry-3',
     accountId: 'account-1',
+    counterpartyId: null,
     sequenceOrder: 1,
     amount: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
     exchangeRate: null,
@@ -96,7 +97,6 @@ const mockTransactions: IAccountTransactionRes[] = [
     balanceEffect: ELedgerAccountBalanceEffect.Noop,
     header: {
       sourceType: EJournalEntrySourceType.Adjustment,
-      counterpartyId: null,
       memo: 'Opening review',
       status: EJournalEntryStatus.Draft,
       effectiveDate: '2026-05-23T00:00:00Z',

@@ -29,7 +29,7 @@ describe('BankAccountFormContainer', () => {
           { code: 'NG', name: 'Nigeria' },
           { code: 'US', name: 'United States' },
         ]}
-        currencies={[{ code: 'NGN', name: 'Naira', symbol: '₦' }]}
+        currencies={[{ code: 'NGN', name: 'Naira', symbol: '₦', minorUnit: 2 }]}
         initialBankLocation="NG"
         initialValues={{ currencyCode: 'NGN', bankLocation: 'NG' }}
         onSubmit={vi.fn()}

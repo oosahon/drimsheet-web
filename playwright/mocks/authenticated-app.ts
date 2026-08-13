@@ -17,7 +17,7 @@ export const authenticatedUser = {
   updatedAt: timestamp,
 } satisfies IUserProfileDto;
 
-const accountingEntity = {
+export const authenticatedAccountingEntity = {
   id: '00000000-0000-4000-8000-000000000002' as TEntityId,
   name: 'Integration Entity',
   type: 'individual',
@@ -28,6 +28,13 @@ const accountingEntity = {
   updatedAt: timestamp,
 } satisfies IAccountingEntity;
 
+export const alternateAccountingEntity = {
+  ...authenticatedAccountingEntity,
+  id: '00000000-0000-4000-8000-000000000003' as TEntityId,
+  name: 'Purple Ledger Limited',
+  type: 'private_company',
+} satisfies IAccountingEntity;
+
 export async function registerAuthenticatedAppRoutes(page: Page) {
   await page.route('**/api/v1/users/profile', async (route) => {
     await route.fulfill({ json: authenticatedUser });
@@ -35,11 +42,11 @@ export async function registerAuthenticatedAppRoutes(page: Page) {
   await page.route(
     '**/api/v1/accounting/accounting-entities',
     async (route) => {
-      await route.fulfill({ json: [accountingEntity] });
+      await route.fulfill({ json: [authenticatedAccountingEntity] });
     }
   );
   await page.route('**/api/v1/accounting/accounting-entity', async (route) => {
-    await route.fulfill({ json: accountingEntity });
+    await route.fulfill({ json: authenticatedAccountingEntity });
   });
 }
 

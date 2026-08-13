@@ -6,6 +6,7 @@ import counterpartyEn from '@/counterparty/i18n/locales/en/counterparty.json';
 import journalEntriesEn from '@/journal-entries/i18n/locales/en/journal-entries.json';
 import apiErrorsEn from '@/shared/i18n/locales/en/api-errors.json';
 import sharedEn from '@/shared/i18n/locales/en/shared.json';
+import userEn from '@/user/i18n/locales/en/user.json';
 import 'i18next';
 
 declare module 'i18next' {
@@ -20,6 +21,7 @@ declare module 'i18next' {
       'ledger-accounts': typeof ledgerAccountsEn;
       accounting: typeof accountingEn;
       'api-errors': typeof apiErrorsEn;
+      user: typeof userEn;
     };
   }
 }

@@ -1,4 +1,4 @@
-import { AppHeader } from '@/shared/components/app';
+import { AppHeader, AppHeaderActionsProvider } from '@/shared/components/app';
 import { SidebarProvider } from '@/shared/components/sidebar';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
@@ -39,5 +39,22 @@ export const WithBreadcrumbs: Story = {
       { label: 'Accounts', to: '/accounts' },
       { label: 'Petty Cash' },
     ],
+  },
+};
+
+export const WithHeaderActions: Story = {
+  render: (args) => (
+    <AppHeaderActionsProvider
+      actions={
+        <button type="button" className="rounded-full border px-3 py-2">
+          Account
+        </button>
+      }
+    >
+      <AppHeader {...args} />
+    </AppHeaderActionsProvider>
+  ),
+  args: {
+    breadcrumbs: [{ label: 'Dashboard' }],
   },
 };

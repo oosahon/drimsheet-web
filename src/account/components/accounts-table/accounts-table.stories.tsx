@@ -36,6 +36,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   },
   {
     id: '2' as TEntityId,
@@ -44,7 +45,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     type: ELedgerType.Liability,
     normalBalance: 'credit' as UNormalBalance,
     subType: 'payable',
-    behavior: 'standard',
+    behavior: 'trade_payable',
     isControlAccount: true,
     status: ELedgerAccountStatus.Active,
     contraAccountRule: 'contra_not_applicable' as UContraAccountRule,
@@ -60,6 +61,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   },
   {
     id: '3' as TEntityId,
@@ -68,7 +70,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     type: ELedgerType.Revenue,
     normalBalance: 'credit' as UNormalBalance,
     subType: 'subscriptions',
-    behavior: 'standard',
+    behavior: 'subscriptions',
     isControlAccount: false,
     status: ELedgerAccountStatus.Active,
     contraAccountRule: 'contra_not_applicable' as UContraAccountRule,
@@ -84,6 +86,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   },
   {
     id: '4' as TEntityId,
@@ -92,7 +95,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     type: ELedgerType.Expense,
     normalBalance: 'debit' as UNormalBalance,
     subType: 'rent_and_utilities',
-    behavior: 'standard',
+    behavior: 'rent_and_utilities',
     isControlAccount: false,
     status: ELedgerAccountStatus.Active,
     contraAccountRule: 'contra_not_applicable' as UContraAccountRule,
@@ -108,6 +111,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   },
   {
     id: '5' as TEntityId,
@@ -116,7 +120,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     type: ELedgerType.Equity,
     normalBalance: 'credit' as UNormalBalance,
     subType: 'retained_earnings',
-    behavior: 'standard',
+    behavior: 'retained_earnings',
     isControlAccount: false,
     status: ELedgerAccountStatus.Archived,
     contraAccountRule: 'contra_not_applicable' as UContraAccountRule,
@@ -128,6 +132,7 @@ const mockAccounts: ILedgerAccountDto[] = [
     createdBy: 'user-1' as TEntityId,
     materializedPath: '',
     accountingEntityId: 'entity-1' as TEntityId,
+    openingBalanceDate: null,
   },
 ];
 

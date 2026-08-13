@@ -2,7 +2,7 @@ import { DefaultErrorBoundary } from '@/_app/containers/error-boundary/error-bou
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-function ExplodingChild() {
+function ExplodingChild(): never {
   throw new Error('boom');
 }
 
