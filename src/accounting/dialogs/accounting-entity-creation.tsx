@@ -5,6 +5,7 @@ import {
 } from '@/accounting/components/accounting-entity-creation-form';
 import { useCreateAccountingEntity } from '@/accounting/hooks/use-create-accounting-entity';
 import { useJurisdictions } from '@/accounting/hooks/use-jurisdictions';
+import { accountingEntityMapper } from '@/accounting/lib/mappers/accounting-entity.mapper';
 import {
   Dialog,
   DialogContent,
@@ -32,15 +33,18 @@ export function AccountingEntityCreationDialog({
 
   const { mutateAsync: createAccountingEntity, isPending } =
     useCreateAccountingEntity();
+
   const { data: profile, isLoading: isLoadingProfile } = useProfile();
   const { data: currencies = [] } = useCurrencies();
   const { data: jurisdictions = [] } = useJurisdictions();
+  const individualName =
+    `${profile?.firstName ?? ''} ${profile?.lastName ?? ''}`.trim();
 
   const handleSubmit = async (values: IAccountingEntityFormValues) => {
     try {
-      const userName =
-        `${profile?.firstName ?? ''} ${profile?.lastName ?? ''}`.trim();
-      await createAccountingEntity({ ...values, name: userName });
+      const payload =
+        accountingEntityMapper.toAccountingEntityCreationDto(values);
+      await createAccountingEntity(payload);
 
       await done();
       toast.success(t('welcome_to_the_purple_side_text'));
@@ -65,6 +69,7 @@ export function AccountingEntityCreationDialog({
           <AccountingEntityCreationFormSkeleton />
         ) : (
           <AccountingEntityCreationForm
+            individualName={individualName}
             loading={isPending}
             onSubmit={handleSubmit}
             currencies={currencies}

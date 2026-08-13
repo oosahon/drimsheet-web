@@ -1,7 +1,8 @@
+import { AccountingEntityTypeSelect } from '@/accounting/components/accounting-entity-type-select';
+import { EAccountingEntityType } from '@/shared/lib/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
-import { AccountingEntityTypeSelect } from './accounting-entity-type-select';
 
 describe('AccountingEntityTypeSelect', () => {
   beforeAll(() => {
@@ -42,7 +43,7 @@ describe('AccountingEntityTypeSelect', () => {
 
     await user.click(option);
 
-    expect(onChange).toHaveBeenCalledWith('individual');
+    expect(onChange).toHaveBeenCalledWith(EAccountingEntityType.Individual);
   });
 
   it('displays an error when error prop is provided', () => {
@@ -65,17 +66,17 @@ describe('AccountingEntityTypeSelect', () => {
     );
   });
 
-  it('marks unsupported entity types as unavailable', async () => {
+  it.each([
+    ['A Sole Proprietorship', EAccountingEntityType.SoleTrader],
+    ['A Company', EAccountingEntityType.PrivateCompany],
+  ])('allows selecting %s', async (optionName, entityType) => {
     const user = userEvent.setup();
-    render(<AccountingEntityTypeSelect value="" onChange={vi.fn()} />);
+    const onChange = vi.fn();
+    render(<AccountingEntityTypeSelect value="" onChange={onChange} />);
 
     await user.click(screen.getByRole('combobox'));
+    await user.click(screen.getByRole('option', { name: optionName }));
 
-    expect(
-      screen.getByRole('option', { name: /Sole Proprietorship/ })
-    ).toHaveAttribute('data-disabled');
-    expect(screen.getByRole('option', { name: /Company/ })).toHaveAttribute(
-      'data-disabled'
-    );
+    expect(onChange).toHaveBeenCalledWith(entityType);
   });
 });

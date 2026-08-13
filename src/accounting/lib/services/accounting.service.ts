@@ -1,61 +1,8 @@
 import { purpleLedgerApi } from '@/shared/lib/api';
-import {
-  EAccountingEntityType,
-  EPeriodUnit,
-  type IAccountingEntityCreationDto,
-} from '@/shared/lib/api/Api';
+import type { IAccountingEntityCreationDto } from '@/shared/lib/api/Api';
 import { localStorageService } from '@/shared/lib/services/local-storage.service';
-import { dateUtils } from '@/shared/lib/utils/date';
-
-export interface CreateAccountingEntityInput {
-  name: string;
-  countryCode: string;
-  functionalCurrency: string;
-  reportingCurrency: string;
-  fiscalYearStart: Date | null;
-  fiscalYearEnd: Date | null;
-  appUsageMode: 'power_user' | 'non_power_user';
-  accountingStandardCode: string;
-}
 
 export const accountingService = {
-  toCreateAccountingEntityPayload(
-    data: CreateAccountingEntityInput
-  ): IAccountingEntityCreationDto {
-    if (!data.fiscalYearStart || !data.fiscalYearEnd) {
-      throw new Error('Fiscal year start and end dates are required');
-    }
-
-    const startDateStr = dateUtils.formatDateForApi(data.fiscalYearStart);
-    const endDateStr = dateUtils.formatDateForApi(data.fiscalYearEnd);
-    const periodCount = dateUtils.getDurationInMonths(
-      data.fiscalYearStart,
-      data.fiscalYearEnd
-    );
-
-    return {
-      name: data.name,
-      entityType: EAccountingEntityType.Individual,
-      jurisdictionCode: data.countryCode,
-      accountingStandardCode: data.accountingStandardCode,
-      functionalCurrencyCode: data.functionalCurrency,
-      reportingCurrencyCode: data.reportingCurrency,
-      fiscalYear: {
-        startDate: startDateStr,
-        endDate: endDateStr,
-      },
-      accountingPeriod: {
-        unit: EPeriodUnit.Month,
-        count: periodCount,
-      },
-      reportingPeriod: {
-        unit: EPeriodUnit.Month,
-        count: periodCount,
-      },
-      appUsageMode: data.appUsageMode,
-    };
-  },
-
   async getAccountingEntities() {
     const res = await purpleLedgerApi.accounting.getUserAccountingEntities();
     localStorageService.setAccountingEntityId(res.data[0]?.id ?? '');
@@ -72,11 +19,11 @@ export const accountingService = {
     return res.data;
   },
 
-  async createAccountingEntity(payload: CreateAccountingEntityInput) {
-    const parsedPayload = this.toCreateAccountingEntityPayload(payload);
-    const { data: accountingEntity } =
-      await purpleLedgerApi.accounting.createAccountingEntity(parsedPayload);
-    localStorageService.setAccountingEntityId(accountingEntity.id);
-    return accountingEntity;
+  async createAccountingEntity(payload: IAccountingEntityCreationDto) {
+    const { data } =
+      await purpleLedgerApi.accounting.createAccountingEntity(payload);
+
+    localStorageService.setAccountingEntityId(data.id);
+    return data;
   },
 };

@@ -7,10 +7,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/shared/components/select';
+import {
+  EAccountingEntityType,
+  type UAccountingEntityType,
+} from '@/shared/lib/api/Api';
 import { useTranslation } from 'react-i18next';
 export interface AccountingEntityTypeSelectProps {
-  value: string;
-  onChange: (value: string) => void;
+  value: UAccountingEntityType | '';
+  onChange: (value: UAccountingEntityType) => void;
   error?: Array<{ message?: string } | undefined>;
 }
 
@@ -33,7 +37,12 @@ export function AccountingEntityTypeSelect({
   return (
     <Field>
       <Label htmlFor="accounting-entity-type">{account_for_label}</Label>
-      <Select value={value} onValueChange={onChange}>
+      <Select
+        value={value}
+        onValueChange={(selectedValue) =>
+          onChange(selectedValue as UAccountingEntityType)
+        }
+      >
         <SelectTrigger
           id="accounting-entity-type"
           aria-invalid={hasError}
@@ -42,11 +51,13 @@ export function AccountingEntityTypeSelect({
           <SelectValue placeholder={select_entity_placeholder} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="individual">{individual_entity_type}</SelectItem>
-          <SelectItem value="sole_proprietorship" disabled>
+          <SelectItem value={EAccountingEntityType.Individual}>
+            {individual_entity_type}
+          </SelectItem>
+          <SelectItem value={EAccountingEntityType.SoleTrader}>
             {sole_proprietorship_entity_type}
           </SelectItem>
-          <SelectItem value="company" disabled>
+          <SelectItem value={EAccountingEntityType.PrivateCompany}>
             {company_entity_type}
           </SelectItem>
         </SelectContent>

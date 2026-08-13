@@ -8,6 +8,7 @@ import type { IAccountingEntityFormValues } from './types';
 const DEFAULT_MAX_FISCAL_MONTHS = 23;
 
 interface IAccountingEntityCreationValidationMessages {
+  nameRequired: string;
   entityTypeRequired: string;
   countryRequired: string;
   functionalCurrencyRequired: string;
@@ -27,6 +28,7 @@ function createAccountingEntityCreationFormValidation(
   messages: IAccountingEntityCreationValidationMessages
 ) {
   return yup.object({
+    name: yup.string().trim().required(messages.nameRequired),
     entityType: yup.string().required(messages.entityTypeRequired),
     countryCode: yup.string().required(messages.countryRequired),
     functionalCurrency: yup
@@ -94,6 +96,7 @@ function useAccountingEntityCreationFormValidation(
   return useMemo(
     () =>
       createAccountingEntityCreationFormValidation(jurisdictions, {
+        nameRequired: t('entity_name_required_text'),
         entityTypeRequired: t('entity_type_required_text'),
         countryRequired: t('country_required_text'),
         functionalCurrencyRequired: t('functional_currency_required_text'),

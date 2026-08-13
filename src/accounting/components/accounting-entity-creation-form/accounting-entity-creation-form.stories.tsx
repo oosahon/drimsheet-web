@@ -1,3 +1,4 @@
+import { AccountingEntityCreationForm } from '@/accounting/components/accounting-entity-creation-form';
 import {
   EAccountingEntityType,
   type ICurrencyDto,
@@ -5,7 +6,6 @@ import {
 } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { MemoryRouter } from 'react-router-dom';
-import { AccountingEntityCreationForm } from './accounting-entity-creation-form';
 
 const sampleJurisdictions: IJurisdictionDto[] = [
   {
@@ -65,6 +65,7 @@ const meta = {
   tags: ['autodocs'],
   args: {
     onSubmit: () => {},
+    individualName: 'Ada Lovelace',
     jurisdictions: sampleJurisdictions,
     currencies: sampleCurrencies,
   },
