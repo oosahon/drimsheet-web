@@ -12,7 +12,7 @@ const logoutEndpoint = '**/api/v1/auth/logout';
 const dialogTitle = 'Are you sure you want to log out?';
 const dialogDescription =
   'You will need to log back in to access your account.';
-const logoutFailureMessage = 'Missing token';
+const logoutFailureMessage = 'Missing token.';
 
 function createResponseGate() {
   let resolve = () => {};
@@ -179,7 +179,7 @@ test('keeps the authenticated context and reports API errors when logout fails',
       status: 400,
       json: {
         name: 'AuthenticationError',
-        errorKey: 'auth_error_missing_token',
+        errorKey: 'auth_error_token_missing_unauthorized',
         validationErrors: [],
       },
     });

@@ -143,7 +143,7 @@ test('shows invalid credentials returned by the API and preserves entered email'
       contentType: 'application/json',
       body: JSON.stringify({
         name: 'AuthenticationError',
-        errorKey: 'auth_error_invalid_credentials',
+        errorKey: 'auth_error_credentials_invalid_unauthorized',
         validationErrors: [],
       }),
     });
@@ -153,7 +153,7 @@ test('shows invalid credentials returned by the API and preserves entered email'
   await page.getByLabel('Password', { exact: true }).fill('WrongPassword1!');
   await page.getByRole('button', { name: 'Sign In' }).click();
 
-  await expect(page.getByText('Invalid email or password')).toBeVisible();
+  await expect(page.getByText('Invalid email or password.')).toBeVisible();
   await expect(page).toHaveURL('/auth/signin');
   await expect(page.getByLabel('Email')).toHaveValue(email);
 });
