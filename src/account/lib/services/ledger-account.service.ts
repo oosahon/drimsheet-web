@@ -1,4 +1,4 @@
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 import {
   ELedgerAccountSubType,
   ELedgerType,
@@ -7,7 +7,7 @@ import {
 } from '@/shared/lib/api/Api';
 
 async function getLedgerAccounts(query: IGetLedgerAccountsQuery) {
-  const response = await purpleLedgerApi.ledger.getLedgerAccounts(query);
+  const response = await drimsheetApi.ledger.getLedgerAccounts(query);
   return response.data;
 }
 
@@ -20,14 +20,14 @@ function getPettyBaseCashFilters(): IGetLedgerAccountsQuery {
 }
 
 async function getLedgerAccount(id: string) {
-  const res = await purpleLedgerApi.ledger.getLedgerAccount(id);
+  const res = await drimsheetApi.ledger.getLedgerAccount(id);
   return res.data;
 }
 
 async function getPermittedPostingAccounts(
   query: IGetPermittedPostingAccountsQuery
 ) {
-  const res = await purpleLedgerApi.ledger.getPermittedPostingAccounts(query);
+  const res = await drimsheetApi.ledger.getPermittedPostingAccounts(query);
   return res.data;
 }
 

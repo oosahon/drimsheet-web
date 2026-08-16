@@ -54,7 +54,7 @@ export function ResetPasswordPage() {
   const reset_password_title = t('reset_password_title');
   const back_to_sign_in_text = t('back_to_sign_in_text');
   const invalid_link_text = t('invalid_verification_link_text');
-  const purple_ledger_limited = tShared('purple_ledger_limited');
+  const drimsheet_limited = tShared('drimsheet_limited');
 
   const isLoading = inFlight || isPending;
   const isTokenMissing = !token;
@@ -67,7 +67,7 @@ export function ResetPasswordPage() {
             <div className="mb-1 flex size-8 items-center justify-center rounded-md">
               <img src="/logo.svg" alt="" className="min-w-12 rounded-2xl" />
             </div>
-            <span className="sr-only">{purple_ledger_limited}</span>
+            <span className="sr-only">{drimsheet_limited}</span>
           </Link>
         </div>
         <h1 className="text-2xl font-bold text-center tracking-tight">

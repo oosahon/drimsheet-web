@@ -1,4 +1,4 @@
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 import type {
   IAccountingEntity,
   IAccountingEntityCreationDto,
@@ -37,13 +37,13 @@ export const accountingService = {
   },
 
   async getAccountingEntities() {
-    const res = await purpleLedgerApi.accounting.getUserAccountingEntities();
+    const res = await drimsheetApi.accounting.getUserAccountingEntities();
     return res.data;
   },
 
   async getAccountingEntity() {
     try {
-      const res = await purpleLedgerApi.accounting.getActiveAccountingEntity();
+      const res = await drimsheetApi.accounting.getActiveAccountingEntity();
       setActiveAccountingEntity(res.data);
       return res.data;
     } catch (error) {
@@ -59,20 +59,19 @@ export const accountingService = {
   },
 
   async switchAccountingEntity(payload: IAccountingEntitySwitchReq) {
-    const res =
-      await purpleLedgerApi.accounting.switchAccountingEntity(payload);
+    const res = await drimsheetApi.accounting.switchAccountingEntity(payload);
     setActiveAccountingEntity(res.data);
     return res.data;
   },
 
   async getJurisdiction() {
-    const res = await purpleLedgerApi.accounting.getJurisdictions();
+    const res = await drimsheetApi.accounting.getJurisdictions();
     return res.data;
   },
 
   async createAccountingEntity(payload: IAccountingEntityCreationDto) {
     const { data } =
-      await purpleLedgerApi.accounting.createAccountingEntity(payload);
+      await drimsheetApi.accounting.createAccountingEntity(payload);
 
     setActiveAccountingEntity(data);
     return data;

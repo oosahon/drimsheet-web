@@ -6,7 +6,7 @@ const meta = {
   component: FullPageLoader,
   tags: ['autodocs'],
   args: {
-    label: 'Loading Purple Ledger',
+    label: 'Loading Drimsheet',
   },
 } satisfies Meta<typeof FullPageLoader>;
 export default meta;

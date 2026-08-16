@@ -81,7 +81,7 @@ export function LedgerAccountsTable({
         render: (value, row) => (
           <Link
             to={row.id}
-            className="hover:text-brand-purple group-hover/row:text-brand-purple transition-colors duration-200"
+            className="hover:text-brand-primary group-hover/row:text-brand-primary transition-colors duration-200"
           >
             {String(value)}
           </Link>

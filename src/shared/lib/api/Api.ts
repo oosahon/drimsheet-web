@@ -1154,13 +1154,13 @@ export class HttpClient<SecurityDataType = unknown> {
 }
 
 /**
- * @title purple-ledger-core
+ * @title drimsheet-core
  * @version 1.0.0
  * @license AGPL-3.0-or-later
  * @baseUrl /api/v1
  * @contact Osahon Oboite
  *
- * This repo contains the server-side source code for Purple Ledger's bookkeeping and tax app.
+ * This repo contains the server-side source code for Drimsheet's bookkeeping and tax app.
  */
 export class Api<
   SecurityDataType extends unknown,

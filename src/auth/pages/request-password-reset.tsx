@@ -21,7 +21,7 @@ export function RequestPasswordResetPage() {
   const reset_password_title = t('reset_password_title');
   const reset_password_description = t('reset_password_description');
   const email_sent_text = t('email_sent_text');
-  const purple_ledger_limited = tShared('purple_ledger_limited');
+  const drimsheet_limited = tShared('drimsheet_limited');
 
   const handleRequestReset = async (email: string) => {
     if (inFlight) return;
@@ -64,7 +64,7 @@ export function RequestPasswordResetPage() {
             <div className="mb-1 flex size-8 items-center justify-center rounded-md">
               <img src="/logo.svg" alt="" className="min-w-12 rounded-2xl" />
             </div>
-            <span className="sr-only">{purple_ledger_limited}</span>
+            <span className="sr-only">{drimsheet_limited}</span>
           </Link>
         </div>
 

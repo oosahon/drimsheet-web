@@ -42,7 +42,7 @@ export function SignUpPage() {
   const already_have_account_text = t('already_have_account_text');
   const sign_in_link_text = t('sign_in_link_text');
   const creating_an_account_action_text = t('creating_an_account_action_text');
-  const purple_ledger_limited = tShared('purple_ledger_limited');
+  const drimsheet_limited = tShared('drimsheet_limited');
 
   if (success) {
     return (
@@ -74,7 +74,7 @@ export function SignUpPage() {
             <div className="flex size-8 items-center justify-center rounded-md">
               <img src={logoImg} alt="" className="mb-6 min-w-12 rounded-2xl" />
             </div>
-            <span className="sr-only">{purple_ledger_limited}.</span>
+            <span className="sr-only">{drimsheet_limited}.</span>
           </Link>
           <h1 className="text-2xl font-bold tracking-tight">
             {create_account_text}

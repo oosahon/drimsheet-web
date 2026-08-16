@@ -20,7 +20,7 @@ const ENABLED_CONFIG: IObservabilityConfig = {
   dsn: 'https://public-key@o1.ingest.sentry.io/123',
   enabled: true,
   environment: 'staging',
-  release: 'pl-web@1.2.3',
+  release: 'drimsheet-web@1.2.3',
   tracesSampleRate: 1,
 };
 
@@ -62,7 +62,7 @@ describe('observabilityService', () => {
       expect.objectContaining({
         dsn: ENABLED_CONFIG.dsn,
         environment: 'staging',
-        release: 'pl-web@1.2.3',
+        release: 'drimsheet-web@1.2.3',
         sendDefaultPii: false,
         tracesSampleRate: 1,
         integrations: [expect.objectContaining({ name: expect.any(String) })],

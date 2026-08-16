@@ -55,7 +55,7 @@ async function completeAccountingEntityForm(page: Page) {
     .getByRole('combobox', { name: 'Who is this account for?' })
     .click();
   await page.getByRole('option', { name: 'A Company' }).click();
-  await dialog.getByRole('textbox', { name: 'Name' }).fill('Purple Limited');
+  await dialog.getByRole('textbox', { name: 'Name' }).fill('Drimsheet');
   await dialog.getByRole('button', { name: 'Next' }).click();
   await expect(
     dialog.getByText('What currency should your reports use?')
@@ -109,7 +109,7 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
   let submittedPayload: unknown;
   const createdEntity = {
     id: '00000000-0000-4000-8000-000000000003',
-    name: 'Purple Limited',
+    name: 'Drimsheet',
     type: 'private_company',
     ownerId: authenticatedUser.id,
     functionalCurrencyCode: 'NGN',
@@ -143,7 +143,7 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
   expect(entityListRequestCount).toBeGreaterThanOrEqual(2);
   expect(submittedPayload).toEqual(
     expect.objectContaining({
-      name: 'Purple Limited',
+      name: 'Drimsheet',
       entityType: 'private_company',
       jurisdictionCode: 'NG',
       functionalCurrencyCode: 'NGN',

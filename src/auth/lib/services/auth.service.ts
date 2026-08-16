@@ -1,5 +1,5 @@
 import type { ISignupFormValues } from '@/auth/components/signup-form/types';
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 import type {
   IEmailLoginReq,
   IResetPasswordReq,
@@ -12,7 +12,7 @@ let refreshPromise: Promise<string> | null = null;
 
 async function executeRefresh(): Promise<string> {
   try {
-    const { data } = await purpleLedgerApi.auth.refreshAccessToken();
+    const { data } = await drimsheetApi.auth.refreshAccessToken();
     authService.setToken(data.accessToken);
     return data.accessToken;
   } catch (error) {
@@ -74,25 +74,25 @@ export const authService = {
   },
 
   async signupWithEmail(payload: ISignupFormValues) {
-    return purpleLedgerApi.auth.signupWithEmail(payload);
+    return drimsheetApi.auth.signupWithEmail(payload);
   },
 
   async verifyEmail(token: string) {
-    const response = await purpleLedgerApi.auth.verifyEmail({ token });
+    const response = await drimsheetApi.auth.verifyEmail({ token });
     this.setToken(response.data.accessToken);
   },
 
   async loginWithEmail(payload: IEmailLoginReq) {
-    const response = await purpleLedgerApi.auth.loginWithEmail(payload);
+    const response = await drimsheetApi.auth.loginWithEmail(payload);
     this.setToken(response.data.accessToken);
   },
 
   async requestPasswordReset(email: string) {
-    await purpleLedgerApi.auth.getPasswordResetLink({ email });
+    await drimsheetApi.auth.getPasswordResetLink({ email });
   },
 
   async resetPassword(payload: IResetPasswordReq) {
-    const response = await purpleLedgerApi.auth.resetPassword(payload);
+    const response = await drimsheetApi.auth.resetPassword(payload);
     this.setToken(response.data.accessToken);
   },
 
@@ -106,7 +106,7 @@ export const authService = {
   },
 
   async logout() {
-    await purpleLedgerApi.auth.logout();
+    await drimsheetApi.auth.logout();
     this.removeToken();
   },
 };

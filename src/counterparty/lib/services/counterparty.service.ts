@@ -1,4 +1,4 @@
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 import type {
   IContractorCreateReq,
   ICounterpartyCreateReq,
@@ -9,30 +9,27 @@ import type {
 
 export const counterpartyService = {
   async getCounterparties(query: IGetCounterpartiesQuery) {
-    const response =
-      await purpleLedgerApi.counterparties.getCounterparties(query);
+    const response = await drimsheetApi.counterparties.getCounterparties(query);
     return response.data;
   },
 
   async createCounterparty(data: ICounterpartyCreateReq) {
-    const response =
-      await purpleLedgerApi.counterparties.createCounterparty(data);
+    const response = await drimsheetApi.counterparties.createCounterparty(data);
     return response.data;
   },
 
   async createVendor(data: IVendorCreateReq) {
-    const response = await purpleLedgerApi.counterparties.createVendor(data);
+    const response = await drimsheetApi.counterparties.createVendor(data);
     return response.data;
   },
 
   async createContractor(data: IContractorCreateReq) {
-    const response =
-      await purpleLedgerApi.counterparties.createContractor(data);
+    const response = await drimsheetApi.counterparties.createContractor(data);
     return response.data;
   },
 
   async createEmployer(data: IEmployerCreateReq) {
-    const response = await purpleLedgerApi.counterparties.createEmployer(data);
+    const response = await drimsheetApi.counterparties.createEmployer(data);
     return response.data;
   },
 };

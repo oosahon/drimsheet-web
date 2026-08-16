@@ -20,7 +20,7 @@ test('exposes page landmark, level-one heading, and exact brand accessible name'
     page.getByRole('heading', { level: 1, name: 'Sign In' })
   ).toBeVisible();
   await expect(
-    page.getByRole('link', { name: 'Purple Ledger Limited', exact: true })
+    page.getByRole('link', { name: 'Drimsheet', exact: true })
   ).toBeVisible();
 });
 

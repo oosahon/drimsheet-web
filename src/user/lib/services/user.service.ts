@@ -1,13 +1,13 @@
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 
 export const userService = {
   async getProfile() {
-    const res = await purpleLedgerApi.users.getAuthUserProfile();
+    const res = await drimsheetApi.users.getAuthUserProfile();
     return res.data;
   },
 
   async getPreferences() {
-    const res = await purpleLedgerApi.users.getUserPreferences();
+    const res = await drimsheetApi.users.getUserPreferences();
     window.localStorage.setItem('preferences', JSON.stringify(res.data));
 
     return res.data;

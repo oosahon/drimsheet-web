@@ -125,7 +125,7 @@ describe('AccountingEntityCreationForm', () => {
     const nameInput = screen.getByRole('textbox', { name: 'Name' });
     expect(nameInput).toHaveValue('');
     expect(screen.getByRole('button', { name: /Next/i })).toBeDisabled();
-    await user.type(nameInput, 'Purple Limited');
+    await user.type(nameInput, 'Drimsheet');
 
     const nextBtn1 = screen.getByRole('button', { name: /Next/i });
     expect(nextBtn1).toBeEnabled();
@@ -152,7 +152,7 @@ describe('AccountingEntityCreationForm', () => {
     });
 
     expect(onSubmit).toHaveBeenCalledWith({
-      name: 'Purple Limited',
+      name: 'Drimsheet',
       entityType: EAccountingEntityType.PrivateCompany,
       countryCode: 'NG',
       functionalCurrency: 'NGN',

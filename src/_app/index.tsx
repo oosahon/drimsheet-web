@@ -10,12 +10,12 @@ import { authService } from '@/auth/lib/services/auth.service';
 import { Toaster } from '@/shared/components/sonner';
 import { TooltipProvider } from '@/shared/components/tooltip';
 import { configureApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
-import { configurePurpleLedgerApi } from '@/shared/lib/api';
+import { configureDrimsheetApi } from '@/shared/lib/api';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { BrowserRouter } from 'react-router-dom';
 
-configurePurpleLedgerApi({
+configureDrimsheetApi({
   getToken: () => authService.getToken(),
   getAccessToken: () => authService.getAccessToken(),
   getAccountingEntityId: () => accountingService.getAccountingEntityId(),

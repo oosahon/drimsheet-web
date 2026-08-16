@@ -5,26 +5,26 @@ import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 export { parseApiError } from './errors';
 export type { TApiError, UApiFailureKind } from './errors';
 
-interface PurpleLedgerApiAuthConfig {
+interface IDrimsheetApiAuthConfig {
   getToken?: () => string | undefined;
   getAccessToken?: () => Promise<string>;
   getAccountingEntityId?: () => string | undefined;
 }
 
-export const purpleLedgerApi = new Api({
+export const drimsheetApi = new Api({
   baseURL: `${import.meta.env.VITE_API_URL}/api/v1`,
   withCredentials: true,
 });
 
-let authConfig: PurpleLedgerApiAuthConfig = {};
+let authConfig: IDrimsheetApiAuthConfig = {};
 
-export function configurePurpleLedgerApi(config: PurpleLedgerApiAuthConfig) {
+export function configureDrimsheetApi(config: IDrimsheetApiAuthConfig) {
   authConfig = config;
 }
 
-purpleLedgerApi.instance.defaults.withCredentials = true;
+drimsheetApi.instance.defaults.withCredentials = true;
 
-purpleLedgerApi.instance.interceptors.request.use(
+drimsheetApi.instance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = authConfig.getToken?.();
     const accountingEntityId = authConfig.getAccountingEntityId?.();
@@ -51,7 +51,7 @@ purpleLedgerApi.instance.interceptors.request.use(
   }
 );
 
-purpleLedgerApi.instance.interceptors.response.use(
+drimsheetApi.instance.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & {
@@ -71,7 +71,7 @@ purpleLedgerApi.instance.interceptors.response.use(
         throw error;
       }
       originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-      return purpleLedgerApi.instance(originalRequest);
+      return drimsheetApi.instance(originalRequest);
     }
 
     throw error;

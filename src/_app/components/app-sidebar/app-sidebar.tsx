@@ -85,7 +85,7 @@ export function AppSidebar({
     [currentPath, t]
   );
 
-  const purpleLedgerText = t('shared:purple_ledger');
+  const drimsheetText = t('shared:drimsheet');
   const betaText = t('shared:beta');
 
   return (
@@ -97,10 +97,10 @@ export function AppSidebar({
             width={40}
             height={40}
             className="rounded-lg"
-            alt={purpleLedgerText}
+            alt={drimsheetText}
           />
           <div className="flex flex-col group-data-[collapsible=icon]:hidden">
-            <p className="text-sm font-semibold">{purpleLedgerText}</p>
+            <p className="text-sm font-semibold">{drimsheetText}</p>
             <Badge variant="outline" className="w-fit">
               {betaText}
             </Badge>

@@ -1,4 +1,4 @@
 interface:
   display_name: 'Create UI Components'
-  short_description: 'Build components to Purple Ledger conventions'
+  short_description: 'Build components to Drimsheet conventions'
   default_prompt: 'Use $create-ui-components to create or refactor a UI component with its stories, tests, types, validation, and public exports.'

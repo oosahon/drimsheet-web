@@ -1,5 +1,5 @@
 {
-  "welcome_to_the_purple_side_text": "Welcome to the purple side!",
+  "welcome_to_drimsheet_text": "Welcome to Drimsheet!",
   "date_placeholder": "Select date",
   "residence_country_label": "Where do you reside?",
   "unsupported_standard_warning": "Your selected country uses {{standard}} standards, but we only support IFRS for now.",

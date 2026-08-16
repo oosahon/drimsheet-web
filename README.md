@@ -1,15 +1,15 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
-# PurpleLedger
+# Drimsheet
 
-PurpleLedger is an AI-powered, robust, auditable accounting software for companies, sole traders (business name owners), and individuals in Nigeria.\
+Drimsheet is an AI-powered, robust, auditable accounting software for companies, sole traders (business name owners), and individuals in Nigeria.\
 It's a software for accountants and non-accountants alike.
 
 Accounting-savvy users who want to be in control of everything can create journals, charts of accounts, etc.
 
-Users with no accounting background are not left out. They can also track their income, expenses and taxes. Under the hood, PurpleLedger will use accounting standards to set up their ledgers.\
+Users with no accounting background are not left out. They can also track their income, expenses and taxes. Under the hood, Drimsheet will use accounting standards to set up their ledgers.\
 \
-PurpleLedger was created with 💜 and distributed for free by [Osahon Oboite](https://osahon.dev)
+Drimsheet was created with 💜 and distributed for free by [Osahon Oboite](https://osahon.dev)
 
 ## Table of Contents
 
@@ -24,7 +24,7 @@ PurpleLedger was created with 💜 and distributed for free by [Osahon Oboite](h
 
 ## Introduction
 
-This repo contains the frontend web application of PurpleLedger. It provides the user interface for the core accounting module, NTA computation and filing integrations, open banking reconciliations, and connects with the backend API.
+This repo contains the frontend web application of Drimsheet. It provides the user interface for the core accounting module, NTA computation and filing integrations, open banking reconciliations, and connects with the backend API.
 
 ## Requirements
 

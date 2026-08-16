@@ -2,7 +2,7 @@
 
 ## Purpose and ownership
 
-Purple Ledger Web uses a dedicated Sentry project for browser errors and
+Drimsheet Web uses a dedicated Sentry project for browser errors and
 performance, Coolify for internal serving health, and Grafana Cloud Synthetic
 Monitoring (or the team's existing uptime service) for public availability.
 Create the frontend Sentry project in the same organization as Core so browser
@@ -27,14 +27,14 @@ Vite embeds every `VITE_` value at build time. Changing one requires a new
 build and deployment; changing a runtime container variable cannot update an
 already-built static bundle.
 
-| Value                           | Consumer                    | Default / failure semantics                                                                                              |
-| ------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `VITE_API_URL`                  | Generated Axios client      | Required by the deployed app. Supply the Core origin without `/api/v1`.                                                  |
-| `VITE_APP_ENV`                  | Sentry runtime              | `local`; accepts `local`, `development`, `staging`, `production`, or `test`. Invalid falls back to `local` sampling.     |
-| `VITE_SENTRY_DSN`               | Sentry runtime/build gate   | Empty disables Sentry. The DSN is public and may be embedded in the bundle.                                              |
-| `SENTRY_AUTH_TOKEN`             | Sentry Vite plugin          | Required for every build whose `VITE_SENTRY_DSN` is non-empty. Secret, build-only, and never `VITE_`-prefixed.           |
-| `SENTRY_ORG` / `SENTRY_PROJECT` | Sentry Vite plugin          | Required for every build whose `VITE_SENTRY_DSN` is non-empty. Use the dedicated frontend project.                       |
-| `package.json` name/version     | Sentry runtime/build plugin | Produces the shared `pl-web@<version>` runtime and source-map release. Bump it for every patch, minor, or major release. |
+| Value                           | Consumer                    | Default / failure semantics                                                                                                     |
+| ------------------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_API_URL`                  | Generated Axios client      | Required by the deployed app. Supply the Core origin without `/api/v1`.                                                         |
+| `VITE_APP_ENV`                  | Sentry runtime              | `local`; accepts `local`, `development`, `staging`, `production`, or `test`. Invalid falls back to `local` sampling.            |
+| `VITE_SENTRY_DSN`               | Sentry runtime/build gate   | Empty disables Sentry. The DSN is public and may be embedded in the bundle.                                                     |
+| `SENTRY_AUTH_TOKEN`             | Sentry Vite plugin          | Required for every build whose `VITE_SENTRY_DSN` is non-empty. Secret, build-only, and never `VITE_`-prefixed.                  |
+| `SENTRY_ORG` / `SENTRY_PROJECT` | Sentry Vite plugin          | Required for every build whose `VITE_SENTRY_DSN` is non-empty. Use the dedicated frontend project.                              |
+| `package.json` name/version     | Sentry runtime/build plugin | Produces the shared `drimsheet-web@<version>` runtime and source-map release. Bump it for every patch, minor, or major release. |
 
 Copy [`.env.example`](../../../.env.example) for local development. Trace
 sampling is code-owned by environment: local/test `0`, development/staging
@@ -62,7 +62,7 @@ before replacement to avoid routing flaps. The health target contains only the
 static marker `ok`; it must not call Core, Sentry, Grafana, or LaunchDarkly.
 
 The build derives the Sentry release directly from `package.json` as
-`pl-web@<version>`. Bump the package version for every deployable patch, minor,
+`drimsheet-web@<version>`. Bump the package version for every deployable patch, minor,
 or major release; do not deploy different client bundles under the same
 version. Treat every environment as a separate build. Store
 `SENTRY_AUTH_TOKEN` as a build-only secret, preferably with Coolify
@@ -91,8 +91,8 @@ failure remains non-fatal to users.
 2. Run `yarn build`. The build must fail if the plugin cannot authenticate or
    upload; a successful command is the first upload assertion.
 3. Confirm the project contains the uploaded artifacts under **Settings →
-   Projects → pl-web → Source Maps**, and confirm the release is exactly
-   `pl-web@<package.json version>`.
+   Projects → drimsheet-web → Source Maps**, and confirm the release is exactly
+   `drimsheet-web@<package.json version>`.
 4. Deploy that exact bundle and trigger a fresh staging error from compiled
    application code. Confirm the event shows original TypeScript/TSX frames
    rather than only minified bundle frames.
@@ -107,7 +107,7 @@ event to prove the upload itself.
 
 ## Sentry project and browser-to-Core tracing
 
-Create a `pl-web` browser project in Core's Sentry organization. Keep Sentry's
+Create a `drimsheet-web` browser project in Core's Sentry organization. Keep Sentry's
 project-side sensitive-data scrubbing enabled as defense in depth. Configure
 issue and trace retention according to the team's reviewed cost policy and
 record it below.
@@ -131,7 +131,7 @@ Verify in a real staging browser that:
 
 Create an external HTTPS synthetic check against the public application domain.
 Validate DNS, TLS, status `200`, and the stable
-`<title>PurpleLedger</title>` marker from `index.html`. The external check covers
+`<title>Drimsheet</title>` marker from `index.html`. The external check covers
 the public proxy path that Coolify's internal `/healthz.txt` check cannot.
 
 Use the shared Core notification route initially and configure:

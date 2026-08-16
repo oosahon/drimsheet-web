@@ -49,7 +49,7 @@ export function AccountingEntityCreationDialog({
       await createAccountingEntity(payload);
 
       await done();
-      toast.success(t('welcome_to_the_purple_side_text'));
+      toast.success(t('welcome_to_drimsheet_text'));
     } catch (error) {
       handleApiError(error, { showToast: true });
     }

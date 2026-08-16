@@ -13,7 +13,7 @@ interface IPayerOption {
 const payerOptions: IPayerOption[] = [
   { id: 'payer-1', name: 'Acme Consulting' },
   { id: 'payer-2', name: 'Northwind Traders' },
-  { id: 'payer-3', name: 'Purple Ledger Ltd' },
+  { id: 'payer-3', name: 'Drimsheet Ltd' },
 ];
 
 const meta = {

@@ -1,9 +1,9 @@
 import countries from '@/shared/configs/countries.json' with { type: 'json' };
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 
 export const currencyService = {
   async getAll() {
-    const res = await purpleLedgerApi.currencies.getAllCurrencies();
+    const res = await drimsheetApi.currencies.getAllCurrencies();
     return res.data;
   },
 

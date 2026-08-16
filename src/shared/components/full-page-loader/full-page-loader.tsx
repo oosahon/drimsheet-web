@@ -1,4 +1,4 @@
-import animatedLogoImg from '@/shared/assets/animated-purple-ledger.svg';
+import animatedLogoImg from '@/shared/assets/animated-drimsheet.svg';
 import type { FullPageLoaderProps } from './types';
 
 export function FullPageLoader({ label }: Readonly<FullPageLoaderProps>) {

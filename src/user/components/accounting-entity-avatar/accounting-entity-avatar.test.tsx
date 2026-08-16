@@ -4,9 +4,9 @@ import { describe, expect, it } from 'vitest';
 
 describe('AccountingEntityAvatar', () => {
   it.each([
-    ['Purple Ledger', 'PL'],
-    ['  Purple   Ledger Limited  ', 'PL'],
-    ['Purple', 'PU'],
+    ['Drimsheet', 'DR'],
+    ['  Drimsheet   Limited  ', 'DL'],
+    ['Freelancer', 'FR'],
     ['', '?'],
     ['   ', '?'],
   ])('renders initials for %j', (name, expected) => {

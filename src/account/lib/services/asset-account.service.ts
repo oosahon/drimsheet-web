@@ -1,4 +1,4 @@
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 import type {
   IBankAccountCreationReq,
   IPettyCashAccountCreationReq,
@@ -6,10 +6,10 @@ import type {
 
 export const assetAccountService = {
   async createPettyCashAccount(payload: IPettyCashAccountCreationReq) {
-    await purpleLedgerApi.ledger.createPettyCashAccount(payload);
+    await drimsheetApi.ledger.createPettyCashAccount(payload);
   },
 
   async createBankAccount(payload: IBankAccountCreationReq) {
-    await purpleLedgerApi.accounts.createBankAccount(payload);
+    await drimsheetApi.accounts.createBankAccount(payload);
   },
 };

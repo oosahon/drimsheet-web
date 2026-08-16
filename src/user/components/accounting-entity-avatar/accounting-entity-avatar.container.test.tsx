@@ -50,7 +50,7 @@ const firstEntity = {
 const activeEntity = {
   ...firstEntity,
   id: '00000000-0000-4000-8000-000000000002' as TEntityId,
-  name: 'Purple Ledger',
+  name: 'Drimsheet',
   type: 'private_company',
 } satisfies IAccountingEntity;
 
@@ -58,7 +58,7 @@ const profile = {
   id: firstEntity.ownerId,
   email: 'member@example.com',
   emailVerified: true,
-  firstName: 'Purple',
+  firstName: 'Dami',
   lastName: 'Member',
   createdAt: timestamp,
   updatedAt: timestamp,
@@ -106,16 +106,16 @@ describe('AccountingEntityAvatarContainer', () => {
     render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
 
     const trigger = screen.getByRole('button', {
-      name: 'Open account management for Purple Ledger',
+      name: 'Open account management for Drimsheet',
     });
-    expect(trigger).toHaveTextContent('PL');
+    expect(trigger).toHaveTextContent('DR');
 
     await user.click(trigger);
 
     const dialog = await screen.findByRole('dialog', {
       name: 'Account management',
     });
-    expect(dialog).toHaveTextContent('Purple Ledger');
+    expect(dialog).toHaveTextContent('Drimsheet');
     expect(dialog).toHaveTextContent('member@example.com');
     expect(dialog).toHaveTextContent('Private company');
     expect(dialog).toHaveTextContent('First Account');
