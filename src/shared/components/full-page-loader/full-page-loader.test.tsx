@@ -13,15 +13,13 @@ describe('FullPageLoader', () => {
   });
 
   it('keeps the animated logo decorative', () => {
-    render(<FullPageLoader label="Loading Purple Ledger" />);
+    render(<FullPageLoader label="Loading Drimsheet" />);
 
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
 
   it('disables the pulse animation when reduced motion is requested', () => {
-    const { container } = render(
-      <FullPageLoader label="Loading Purple Ledger" />
-    );
+    const { container } = render(<FullPageLoader label="Loading Drimsheet" />);
 
     expect(container.querySelector('img')).toHaveClass(
       'motion-reduce:animate-none'

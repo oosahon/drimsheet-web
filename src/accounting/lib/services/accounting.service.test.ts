@@ -1,5 +1,5 @@
 import { accountingService } from '@/accounting/lib/services/accounting.service';
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 import type {
   IAccountingEntity,
   IAccountingEntityCreationDto,
@@ -10,7 +10,7 @@ import type { AxiosError } from 'axios';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/shared/lib/api', () => ({
-  purpleLedgerApi: {
+  drimsheetApi: {
     accounting: {
       createAccountingEntity: vi.fn(),
       getActiveAccountingEntity: vi.fn(),
@@ -62,7 +62,7 @@ describe('accountingService', () => {
 
   it('stores the fetched active accounting entity in memory', async () => {
     vi.mocked(
-      purpleLedgerApi.accounting.getActiveAccountingEntity
+      drimsheetApi.accounting.getActiveAccountingEntity
     ).mockResolvedValue({ data: firstEntity } as never);
 
     await expect(accountingService.getAccountingEntity()).resolves.toEqual(
@@ -74,38 +74,38 @@ describe('accountingService', () => {
   it('switches to the first available entity when no active entity exists', async () => {
     const notFoundError = makeResponseError(404);
     vi.mocked(
-      purpleLedgerApi.accounting.getActiveAccountingEntity
+      drimsheetApi.accounting.getActiveAccountingEntity
     ).mockRejectedValue(notFoundError);
     vi.mocked(
-      purpleLedgerApi.accounting.getUserAccountingEntities
+      drimsheetApi.accounting.getUserAccountingEntities
     ).mockResolvedValue({ data: [firstEntity, secondEntity] } as never);
-    vi.mocked(
-      purpleLedgerApi.accounting.switchAccountingEntity
-    ).mockResolvedValue({ data: firstEntity } as never);
+    vi.mocked(drimsheetApi.accounting.switchAccountingEntity).mockResolvedValue(
+      { data: firstEntity } as never
+    );
 
     await expect(accountingService.getAccountingEntity()).resolves.toEqual(
       firstEntity
     );
-    expect(
-      purpleLedgerApi.accounting.switchAccountingEntity
-    ).toHaveBeenCalledWith({ accountingEntityId: firstEntity.id });
+    expect(drimsheetApi.accounting.switchAccountingEntity).toHaveBeenCalledWith(
+      { accountingEntityId: firstEntity.id }
+    );
     expect(accountingService.getAccountingEntityId()).toBe(firstEntity.id);
   });
 
   it('rethrows a missing active entity error when no entities exist', async () => {
     const notFoundError = makeResponseError(404);
     vi.mocked(
-      purpleLedgerApi.accounting.getActiveAccountingEntity
+      drimsheetApi.accounting.getActiveAccountingEntity
     ).mockRejectedValue(notFoundError);
     vi.mocked(
-      purpleLedgerApi.accounting.getUserAccountingEntities
+      drimsheetApi.accounting.getUserAccountingEntities
     ).mockResolvedValue({ data: [] } as never);
 
     await expect(accountingService.getAccountingEntity()).rejects.toBe(
       notFoundError
     );
     expect(
-      purpleLedgerApi.accounting.switchAccountingEntity
+      drimsheetApi.accounting.switchAccountingEntity
     ).not.toHaveBeenCalled();
     expect(accountingService.getAccountingEntityId()).toBeUndefined();
   });
@@ -113,17 +113,17 @@ describe('accountingService', () => {
   it('rethrows non-404 active entity errors without using the fallback', async () => {
     const serverError = makeResponseError(500);
     vi.mocked(
-      purpleLedgerApi.accounting.getActiveAccountingEntity
+      drimsheetApi.accounting.getActiveAccountingEntity
     ).mockRejectedValue(serverError);
 
     await expect(accountingService.getAccountingEntity()).rejects.toBe(
       serverError
     );
     expect(
-      purpleLedgerApi.accounting.getUserAccountingEntities
+      drimsheetApi.accounting.getUserAccountingEntities
     ).not.toHaveBeenCalled();
     expect(
-      purpleLedgerApi.accounting.switchAccountingEntity
+      drimsheetApi.accounting.switchAccountingEntity
     ).not.toHaveBeenCalled();
   });
 
@@ -131,22 +131,22 @@ describe('accountingService', () => {
     const payload = {
       accountingEntityId: secondEntity.id,
     } satisfies IAccountingEntitySwitchReq;
-    vi.mocked(
-      purpleLedgerApi.accounting.switchAccountingEntity
-    ).mockResolvedValue({ data: secondEntity } as never);
+    vi.mocked(drimsheetApi.accounting.switchAccountingEntity).mockResolvedValue(
+      { data: secondEntity } as never
+    );
 
     await expect(
       accountingService.switchAccountingEntity(payload)
     ).resolves.toEqual(secondEntity);
-    expect(
-      purpleLedgerApi.accounting.switchAccountingEntity
-    ).toHaveBeenCalledWith(payload);
+    expect(drimsheetApi.accounting.switchAccountingEntity).toHaveBeenCalledWith(
+      payload
+    );
     expect(accountingService.getAccountingEntityId()).toBe(secondEntity.id);
   });
 
   it('stores the active entity temporarily when preparing to reload', async () => {
     vi.mocked(
-      purpleLedgerApi.accounting.getActiveAccountingEntity
+      drimsheetApi.accounting.getActiveAccountingEntity
     ).mockResolvedValue({ data: firstEntity } as never);
     await accountingService.getAccountingEntity();
 
@@ -157,11 +157,11 @@ describe('accountingService', () => {
 
   it('keeps the current entity when switching fails', async () => {
     vi.mocked(
-      purpleLedgerApi.accounting.getActiveAccountingEntity
+      drimsheetApi.accounting.getActiveAccountingEntity
     ).mockResolvedValue({ data: firstEntity } as never);
-    vi.mocked(
-      purpleLedgerApi.accounting.switchAccountingEntity
-    ).mockRejectedValue(new Error('Switch failed'));
+    vi.mocked(drimsheetApi.accounting.switchAccountingEntity).mockRejectedValue(
+      new Error('Switch failed')
+    );
     await accountingService.getAccountingEntity();
 
     await expect(
@@ -174,7 +174,7 @@ describe('accountingService', () => {
 
   it('does not select an entity when listing available entities', async () => {
     vi.mocked(
-      purpleLedgerApi.accounting.getUserAccountingEntities
+      drimsheetApi.accounting.getUserAccountingEntities
     ).mockResolvedValue({ data: [firstEntity, secondEntity] } as never);
 
     await expect(accountingService.getAccountingEntities()).resolves.toEqual([
@@ -186,16 +186,16 @@ describe('accountingService', () => {
 
   it('stores a newly created accounting entity in memory', async () => {
     const payload = {} as IAccountingEntityCreationDto;
-    vi.mocked(
-      purpleLedgerApi.accounting.createAccountingEntity
-    ).mockResolvedValue({ data: firstEntity } as never);
+    vi.mocked(drimsheetApi.accounting.createAccountingEntity).mockResolvedValue(
+      { data: firstEntity } as never
+    );
 
     await expect(
       accountingService.createAccountingEntity(payload)
     ).resolves.toEqual(firstEntity);
-    expect(
-      purpleLedgerApi.accounting.createAccountingEntity
-    ).toHaveBeenCalledWith(payload);
+    expect(drimsheetApi.accounting.createAccountingEntity).toHaveBeenCalledWith(
+      payload
+    );
     expect(accountingService.getAccountingEntityId()).toBe(firstEntity.id);
   });
 });

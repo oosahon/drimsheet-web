@@ -28,7 +28,7 @@ describe('AppSidebar', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('Purple Ledger')).toBeInTheDocument();
+    expect(screen.getByText('Drimsheet')).toBeInTheDocument();
     expect(screen.getByText('Beta')).toBeInTheDocument();
 
     expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveAttribute(

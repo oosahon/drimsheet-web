@@ -40,7 +40,7 @@ export function SignInPage() {
   const no_account_text = t('no_account_text');
   const sign_up_text = t('sign_up_text');
   const logging_in_action_text = t('logging_in_action_text');
-  const purple_ledger_limited = tShared('purple_ledger_limited');
+  const drimsheet_limited = tShared('drimsheet_limited');
 
   return (
     <main className="flex min-h-svh w-full items-center justify-center p-4 sm:p-6 md:p-8">
@@ -54,7 +54,7 @@ export function SignInPage() {
                 className="mb-6 min-w-12 rounded-2xl"
               />
             </div>
-            <span className="sr-only">{purple_ledger_limited}</span>
+            <span className="sr-only">{drimsheet_limited}</span>
           </Link>
           <h1 className="text-2xl font-bold tracking-tight">{sign_in_text}</h1>
         </div>

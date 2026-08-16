@@ -6,7 +6,7 @@ const meta = {
   component: AccountingEntityAvatar,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
-  args: { name: 'Purple Ledger' },
+  args: { name: 'Drimsheet' },
 } satisfies Meta<typeof AccountingEntityAvatar>;
 
 export default meta;
@@ -23,7 +23,7 @@ export const Large: Story = {
 };
 
 export const SingleWord: Story = {
-  args: { name: 'Purple' },
+  args: { name: 'Drimsheet' },
 };
 
 export const EmptyName: Story = {
@@ -31,5 +31,5 @@ export const EmptyName: Story = {
 };
 
 export const LongName: Story = {
-  args: { name: 'Purple Ledger International Limited' },
+  args: { name: 'Drimsheet International Limited' },
 };

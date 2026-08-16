@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 describe('accountingEntityMapper', () => {
   it('maps validated form values to the complete creation DTO', () => {
     const payload = accountingEntityMapper.toAccountingEntityCreationDto({
-      name: 'Purple Limited',
+      name: 'Drimsheet',
       entityType: EAccountingEntityType.PrivateCompany,
       countryCode: 'NG',
       functionalCurrency: 'NGN',
@@ -17,7 +17,7 @@ describe('accountingEntityMapper', () => {
     });
 
     expect(payload).toEqual({
-      name: 'Purple Limited',
+      name: 'Drimsheet',
       entityType: EAccountingEntityType.PrivateCompany,
       jurisdictionCode: 'NG',
       accountingStandardCode: 'IFRS',

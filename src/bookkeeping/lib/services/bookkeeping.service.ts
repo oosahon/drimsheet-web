@@ -1,5 +1,5 @@
 import type { ITransferTransactionFormValues } from '@/bookkeeping/components/transfer-transaction-form';
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 import {
   EContentType,
   EJournalEntryStatus,
@@ -38,7 +38,7 @@ async function recordTransaction(payload: ITransferTransactionFormValues) {
     memo: payload.description,
   };
 
-  const { data } = await purpleLedgerApi.request<unknown, IHttpErrorDto>({
+  const { data } = await drimsheetApi.request<unknown, IHttpErrorDto>({
     path: '/journal-entry/transfer',
     method: 'POST',
     body: journalEntry,
@@ -52,7 +52,7 @@ async function getAccountTransactions(
   accountId: string,
   pagination: IPaginationDto
 ) {
-  const { data } = await purpleLedgerApi.ledger.listTransactions(
+  const { data } = await drimsheetApi.ledger.listTransactions(
     accountId,
     pagination
   );

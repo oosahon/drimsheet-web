@@ -1,11 +1,11 @@
-import { configurePurpleLedgerApi, purpleLedgerApi } from '@/shared/lib/api';
+import { configureDrimsheetApi, drimsheetApi } from '@/shared/lib/api';
 import { isValidUUID } from '@/shared/lib/utils/uuid';
 import type { AxiosAdapter, InternalAxiosRequestConfig } from 'axios';
 import { afterEach, describe, expect, it } from 'vitest';
 
-describe('purpleLedgerApi request correlation', () => {
+describe('drimsheetApi request correlation', () => {
   afterEach(() => {
-    configurePurpleLedgerApi({});
+    configureDrimsheetApi({});
   });
 
   it('generates a distinct valid correlation ID for every Core request', async () => {
@@ -22,11 +22,11 @@ describe('purpleLedgerApi request correlation', () => {
       };
     };
 
-    await purpleLedgerApi.instance.get('/first', {
+    await drimsheetApi.instance.get('/first', {
       adapter,
       headers: { 'x-correlation-id': 'caller-controlled-value' },
     });
-    await purpleLedgerApi.instance.get('/second', { adapter });
+    await drimsheetApi.instance.get('/second', { adapter });
 
     const correlationIds = requests.map(
       (request) => request.headers['x-correlation-id']

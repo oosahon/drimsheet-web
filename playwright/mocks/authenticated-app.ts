@@ -31,7 +31,7 @@ export const authenticatedAccountingEntity = {
 export const alternateAccountingEntity = {
   ...authenticatedAccountingEntity,
   id: '00000000-0000-4000-8000-000000000003' as TEntityId,
-  name: 'Purple Ledger Limited',
+  name: 'Drimsheet',
   type: 'private_company',
 } satisfies IAccountingEntity;
 

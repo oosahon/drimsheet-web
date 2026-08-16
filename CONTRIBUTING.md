@@ -1,4 +1,4 @@
-# Contributing to Purple Ledger Web
+# Contributing to Drimsheet Web
 
 This document provides guidelines for contributing to the web frontend project to ensure a smooth workflow and high-quality code.
 
@@ -155,7 +155,7 @@ To ensure high-quality presentation components, we require Storybook documentati
 
 ## Reporting Bugs
 
-If you find a bug, please create a ticket for it on our [GitHub Issues page](https://github.com/purple-ledger/purple-ledger-web/issues).
+If you find a bug, please create a ticket for it on our [GitHub Issues page](https://github.com/Drimsheet/drimsheet-web/issues).
 Before opening a new issue, please search existing issues to see if it has already been reported.
 
 - **Requirement**: Every bug report must have a corresponding ticket.

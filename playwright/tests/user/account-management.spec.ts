@@ -130,7 +130,7 @@ test('opens account management with active and alternate account details', async
   await expect(dialog).toContainText(authenticatedUser.email);
   await expect(dialog).toContainText('Individual');
   await expect(
-    dialog.getByRole('button', { name: 'Switch to Purple Ledger Limited' })
+    dialog.getByRole('button', { name: 'Switch to Drimsheet' })
   ).toBeVisible();
   await expect(
     dialog.getByRole('button', { name: 'Drop a feedback' })
@@ -166,9 +166,7 @@ test('switches accounting entity and reloads with the active entity', async ({
         alternateAccountingEntity.id
   );
 
-  await page
-    .getByRole('button', { name: 'Switch to Purple Ledger Limited' })
-    .click();
+  await page.getByRole('button', { name: 'Switch to Drimsheet' }).click();
   const switchRequest = await switchRequestPromise;
   await reloadRequestPromise;
   await activeEntityRequestPromise;
@@ -179,7 +177,7 @@ test('switches accounting entity and reloads with the active entity', async ({
 
   await expect(
     page.getByRole('button', {
-      name: 'Open account management for Purple Ledger Limited',
+      name: 'Open account management for Drimsheet',
     })
   ).toBeVisible();
   expect(
@@ -205,9 +203,7 @@ test('keeps the current entity when switching fails', async ({ page }) => {
       name: 'Open account management for Integration Entity',
     })
     .click();
-  await page
-    .getByRole('button', { name: 'Switch to Purple Ledger Limited' })
-    .click();
+  await page.getByRole('button', { name: 'Switch to Drimsheet' }).click();
 
   await expect(
     page.getByText('Accounting entity access denied.')

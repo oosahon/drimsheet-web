@@ -24,7 +24,7 @@ test('renders main landmark, level-one heading, exact brand link, and back-to-si
   const h1 = page.getByRole('heading', { level: 1 });
   await expect(h1).toHaveText('Reset your password');
 
-  const brandLink = page.getByRole('link', { name: 'Purple Ledger Limited' });
+  const brandLink = page.getByRole('link', { name: 'Drimsheet' });
   await expect(brandLink).toBeVisible();
   await expect(brandLink).toHaveAttribute('href', '/');
 

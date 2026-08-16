@@ -1,8 +1,8 @@
-import { purpleLedgerApi } from '@/shared/lib/api';
+import { drimsheetApi } from '@/shared/lib/api';
 
 export const bankService = {
   async getBanksByCountry(countryCode: string) {
-    const response = await purpleLedgerApi.banks.getBanks({ countryCode });
+    const response = await drimsheetApi.banks.getBanks({ countryCode });
     return response.data;
   },
 };
