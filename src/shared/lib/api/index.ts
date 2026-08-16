@@ -1,5 +1,9 @@
 import { Api } from '@/shared/lib/api/Api';
+import { generateUUID } from '@/shared/lib/utils/uuid';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
+
+export { parseApiError } from './errors';
+export type { TApiError, UApiFailureKind } from './errors';
 
 interface PurpleLedgerApiAuthConfig {
   getToken?: () => string | undefined;
@@ -24,8 +28,9 @@ purpleLedgerApi.instance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = authConfig.getToken?.();
     const accountingEntityId = authConfig.getAccountingEntityId?.();
-
     config.headers.withCredentials = true;
+
+    config.headers['x-correlation-id'] = generateUUID();
 
     if (config.url?.includes('signup/complete')) {
       return config;
@@ -61,18 +66,14 @@ purpleLedgerApi.instance.interceptors.response.use(
 
     if (shouldRetry) {
       originalRequest._retry = true;
-      try {
-        const newAccessToken = await authConfig.getAccessToken?.();
-        if (!newAccessToken) {
-          return Promise.reject(error);
-        }
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return purpleLedgerApi.instance(originalRequest);
-      } catch (refreshError) {
-        return Promise.reject(refreshError);
+      const newAccessToken = await authConfig.getAccessToken?.();
+      if (!newAccessToken) {
+        throw error;
       }
+      originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+      return purpleLedgerApi.instance(originalRequest);
     }
 
-    return Promise.reject(error);
+    throw error;
   }
 );

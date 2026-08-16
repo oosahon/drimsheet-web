@@ -6,6 +6,7 @@ import type {
   IAccountingEntitySwitchReq,
   TEntityId,
 } from '@/shared/lib/api/Api';
+import type { AxiosError } from 'axios';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/shared/lib/api', () => ({
@@ -37,6 +38,22 @@ const secondEntity = {
   name: 'Second Account',
 } satisfies IAccountingEntity;
 
+function makeResponseError(status: number): AxiosError {
+  return {
+    isAxiosError: true,
+    name: 'AxiosError',
+    message: 'Request failed',
+    response: {
+      status,
+      statusText: '',
+      headers: {},
+      config: { headers: {} as never },
+      data: {},
+    },
+    toJSON: () => ({}),
+  } as AxiosError;
+}
+
 describe('accountingService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -55,7 +72,7 @@ describe('accountingService', () => {
   });
 
   it('switches to the first available entity when no active entity exists', async () => {
-    const notFoundError = { response: { status: 404 } };
+    const notFoundError = makeResponseError(404);
     vi.mocked(
       purpleLedgerApi.accounting.getActiveAccountingEntity
     ).mockRejectedValue(notFoundError);
@@ -76,7 +93,7 @@ describe('accountingService', () => {
   });
 
   it('rethrows a missing active entity error when no entities exist', async () => {
-    const notFoundError = { response: { status: 404 } };
+    const notFoundError = makeResponseError(404);
     vi.mocked(
       purpleLedgerApi.accounting.getActiveAccountingEntity
     ).mockRejectedValue(notFoundError);
@@ -94,7 +111,7 @@ describe('accountingService', () => {
   });
 
   it('rethrows non-404 active entity errors without using the fallback', async () => {
-    const serverError = { response: { status: 500 } };
+    const serverError = makeResponseError(500);
     vi.mocked(
       purpleLedgerApi.accounting.getActiveAccountingEntity
     ).mockRejectedValue(serverError);

@@ -166,7 +166,7 @@ test('handles an entity creation API error without crashing onboarding', async (
       status: 400,
       json: {
         name: 'AccountingError',
-        errorKey: 'accounting_error_accounting_entity_invalid_type',
+        errorKey: 'accounting_error_accounting_entity_type_invalid',
         validationErrors: [],
       },
     });
@@ -176,7 +176,7 @@ test('handles an entity creation API error without crashing onboarding', async (
 
   await completeAccountingEntityForm(page);
 
-  await expect(page.getByText('Invalid accounting entity type')).toBeVisible();
+  await expect(page.getByText('Invalid accounting entity type.')).toBeVisible();
   await expect(
     page.getByRole('dialog', { name: 'Account setup' })
   ).toBeVisible();

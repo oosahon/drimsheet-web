@@ -194,7 +194,7 @@ test('keeps the current entity when switching fails', async ({ page }) => {
       status: 400,
       json: {
         name: 'AccountingError',
-        errorKey: 'accounting_error_accounting_entity_unauthorized',
+        errorKey: 'accounting_error_accounting_entity_access_forbidden',
         validationErrors: [],
       },
     });
@@ -209,7 +209,9 @@ test('keeps the current entity when switching fails', async ({ page }) => {
     .getByRole('button', { name: 'Switch to Purple Ledger Limited' })
     .click();
 
-  await expect(page.getByText('Unauthorized')).toBeVisible();
+  await expect(
+    page.getByText('Accounting entity access denied.')
+  ).toBeVisible();
   await page.keyboard.press('Escape');
   await expect(
     page.getByRole('button', {

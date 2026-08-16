@@ -36,6 +36,7 @@ This repo contains the frontend web application of PurpleLedger. It provides the
 - Clone the repo
 - Run `npm install` or `yarn install`
 - Copy the environment variables from Doppler (dev) and save them in a `.env` file in the root directory.
+- Use [`.env.example`](.env.example) as the public/build-time variable reference. Local development does not require Sentry credentials.
 
 ### Running the app
 
@@ -85,6 +86,10 @@ npm run lint
 ## Documentation
 
 **[Architecture Documentation](docs/README.md)**: A comprehensive guide to the system's architecture, including technical constraints, domain models, and architectural decisions.
+
+**[Frontend Observability Operations](src/_app/__docs__/observability.md)**:
+Sentry configuration, privacy controls, source maps, Coolify health, external
+availability checks, alert ownership, staging smoke tests, and rollback.
 
 ## Contributing
 

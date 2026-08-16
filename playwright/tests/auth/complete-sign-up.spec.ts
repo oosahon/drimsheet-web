@@ -27,7 +27,7 @@ test('announces pending verification and sends one request', async ({
       status: 400,
       json: {
         name: 'AuthenticationError',
-        errorKey: 'auth_error_invalid_token',
+        errorKey: 'auth_error_token_invalid_unauthorized',
         validationErrors: [],
       },
     });
@@ -84,7 +84,7 @@ test('shows an API error without retaining a replayable verification URL', async
       status: 400,
       json: {
         name: 'AuthenticationError',
-        errorKey: 'auth_error_invalid_token',
+        errorKey: 'auth_error_token_invalid_unauthorized',
         validationErrors: [],
       },
     });
@@ -92,7 +92,7 @@ test('shows an API error without retaining a replayable verification URL', async
 
   await page.goto(verificationUrl);
 
-  await expect(page.getByText('Invalid token')).toBeVisible();
+  await expect(page.getByText('Invalid token.')).toBeVisible();
   await expect(page).toHaveURL('/auth/signup');
 
   await page.goBack();
@@ -142,7 +142,7 @@ test('stops the pulse animation when reduced motion is requested', async ({
       status: 400,
       json: {
         name: 'AuthenticationError',
-        errorKey: 'auth_error_invalid_token',
+        errorKey: 'auth_error_token_invalid_unauthorized',
         validationErrors: [],
       },
     });

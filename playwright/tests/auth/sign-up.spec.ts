@@ -36,7 +36,7 @@ test('shows error toast when API returns an error', async ({ page }) => {
       contentType: 'application/json',
       body: JSON.stringify({
         name: 'ConflictError',
-        errorKey: 'auth_error_wrong_strategy',
+        errorKey: 'auth_error_inconsistent_user_auth_unexpected',
         validationErrors: [],
       }),
     });
@@ -50,9 +50,7 @@ test('shows error toast when API returns an error', async ({ page }) => {
     .fill(validUserData.password);
   await page.getByRole('button', { name: 'Create account' }).click();
 
-  await expect(
-    page.getByText('You created an account with a different method.')
-  ).toBeVisible();
+  await expect(page.getByText('Unable to verify your account.')).toBeVisible();
   await expect(page).toHaveURL('/auth/signup');
   await expect(page.getByLabel('First name')).toHaveValue(
     validUserData.firstName

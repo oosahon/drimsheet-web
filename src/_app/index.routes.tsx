@@ -5,7 +5,10 @@ import { useAuthRoutes } from '@/auth/routes/auth';
 import { useCounterpartiesRoutes } from '@/counterparty/routes/counterparties';
 import { useJournalEntriesRoutes } from '@/journal-entries/routes/journal-entries';
 import { useReportingRoutes } from '@/reporting/routes/reporting';
+import { wrapUseRoutesV7 } from '@sentry/react';
 import { useRoutes } from 'react-router-dom';
+
+const useSentryRoutes = wrapUseRoutesV7(useRoutes);
 
 export function AppRoutes() {
   const reportingRoutes = useReportingRoutes('/');
@@ -14,7 +17,7 @@ export function AppRoutes() {
   const counterpartiesRoutes = useCounterpartiesRoutes('/counterparties');
   const journalEntriesRoutes = useJournalEntriesRoutes('/transactions');
 
-  const routes = useRoutes([
+  const routes = useSentryRoutes([
     {
       element: (
         <ProtectedAppLayout>

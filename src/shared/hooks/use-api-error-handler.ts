@@ -1,6 +1,6 @@
 import apiErrorsJson from '@/shared/i18n/locales/en/api-errors.json';
+import { parseApiError } from '@/shared/lib/api';
 import type { IApiValidationError } from '@/shared/lib/api/Api';
-import { parseApiError } from '@/shared/lib/api/errors';
 import { observabilityService } from '@/shared/lib/services/observability.service';
 import i18n from 'i18next';
 import { useCallback } from 'react';
@@ -18,52 +18,66 @@ type THandleErrorOptions = {
   report?: boolean;
 };
 
-interface ApiErrorHandlerConfig {
+interface IApiErrorHandlerConfig {
   handleUnauthorized?: () => void;
 }
 
-let apiErrorHandlerConfig: ApiErrorHandlerConfig = {};
+let apiErrorHandlerConfig: IApiErrorHandlerConfig = {};
 
-export function configureApiErrorHandler(config: ApiErrorHandlerConfig) {
+export function configureApiErrorHandler(config: IApiErrorHandlerConfig) {
   apiErrorHandlerConfig = config;
+}
+
+function toError(value: unknown) {
+  return value instanceof Error ? value : new Error('API client failure');
 }
 
 export function useApiErrorHandler() {
   const handleApiError = useCallback(
-    (err: unknown, options?: THandleErrorOptions) => {
-      try {
-        const error = parseApiError(err);
+    (errorValue: unknown, options?: THandleErrorOptions) => {
+      const error = parseApiError(errorValue);
 
-        if (
-          error.code === 401 &&
-          !window.location.pathname.startsWith('/auth/')
-        ) {
-          apiErrorHandlerConfig.handleUnauthorized?.();
-          return;
-        }
+      observabilityService.addApiFailureBreadcrumb({
+        kind: error.kind,
+        ...(error.method ? { method: error.method } : {}),
+        ...(error.statusCode ? { statusCode: error.statusCode } : {}),
+        ...(error.errorKey ? { errorKey: error.errorKey } : {}),
+        ...(error.correlationId ? { correlationId: error.correlationId } : {}),
+      });
 
-        if (error.code === 500) {
-          observabilityService.report(
-            new Error('Server error'),
-            error as unknown as Record<string, unknown>
-          );
-        }
-
-        if (options?.showToast) {
-          const errorKey = error.errorKey;
-          if (errorKey && isApiErrorKey(errorKey)) {
-            toast.error(i18n.t(errorKey, { ns: 'api-errors' }));
-          } else {
-            toast.error(i18n.t('an_error_occurred', { ns: 'shared' }));
-          }
-        }
-
-        options?.setValidationError?.(error.validationErrors ?? []);
-
-        return error;
-      } catch (e) {
-        observabilityService.report(e as Error, {});
+      if (
+        error.kind === 'server-response' &&
+        error.code === 401 &&
+        !window.location.pathname.startsWith('/auth/')
+      ) {
+        apiErrorHandlerConfig.handleUnauthorized?.();
+        return;
       }
+
+      const isBrowserOwnedFailure = error.kind !== 'server-response';
+      if (isBrowserOwnedFailure && options?.report !== false) {
+        observabilityService.report(toError(errorValue), {
+          source: 'api-client',
+          operation: 'request',
+          ...(error.errorKey ? { errorKey: error.errorKey } : {}),
+          ...(error.correlationId
+            ? { correlationId: error.correlationId }
+            : {}),
+        });
+      }
+
+      if (options?.showToast) {
+        const errorKey = error.errorKey;
+        if (errorKey && isApiErrorKey(errorKey)) {
+          toast.error(i18n.t(errorKey, { ns: 'api-errors' }));
+        } else {
+          toast.error(i18n.t('an_error_occurred', { ns: 'shared' }));
+        }
+      }
+
+      options?.setValidationError?.(error.validationErrors ?? []);
+
+      return error;
     },
     []
   );
