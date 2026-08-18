@@ -22,11 +22,11 @@ export function AuthConsent({
   return (
     <FieldDescription className="px-6 text-center text-xs">
       {consent_text}{' '}
-      <Link to="/terms-of-service" className="text-xs hover:text-purple-500">
+      <Link to="/terms-of-service" className="hover:text-primary text-xs">
         {terms_of_service_text}
       </Link>{' '}
       {and_text}{' '}
-      <Link to="/privacy-policy" className="text-xs hover:text-purple-500">
+      <Link to="/privacy-policy" className="hover:text-primary text-xs">
         {privacy_policy_text}
       </Link>
       .

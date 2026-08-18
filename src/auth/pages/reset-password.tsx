@@ -3,6 +3,7 @@ import {
   type ResetPasswordFormProps,
 } from '@/auth/components/reset-password-form';
 import { useResetPassword } from '@/auth/hooks/use-reset-password';
+import logoImg from '@/shared/assets/logo.svg';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import type { IApiValidationError } from '@/shared/lib/api/Api';
 import { useState } from 'react';
@@ -65,7 +66,7 @@ export function ResetPasswordPage() {
         <div className="flex flex-col items-center gap-2 text-center">
           <Link to="/" className="flex flex-col items-center gap-2 font-medium">
             <div className="mb-1 flex size-8 items-center justify-center rounded-md">
-              <img src="/logo.svg" alt="" className="min-w-12 rounded-2xl" />
+              <img src={logoImg} alt="" className="mb-6 min-w-12 rounded-sm" />
             </div>
             <span className="sr-only">{drimsheet_limited}</span>
           </Link>
@@ -80,7 +81,7 @@ export function ResetPasswordPage() {
             </p>
             <Link
               to="/auth/forgot-password"
-              className="text-sm font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300"
+              className="text-primary hover:text-primary/80 text-sm font-medium"
             >
               {t('get_password_reset_link_text')}
             </Link>
@@ -93,7 +94,7 @@ export function ResetPasswordPage() {
         <div className="flex justify-center text-center">
           <Link
             to="/auth/signin"
-            className="text-sm font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300"
+            className="text-primary hover:text-primary/80 text-sm font-medium"
           >
             {back_to_sign_in_text}
           </Link>
