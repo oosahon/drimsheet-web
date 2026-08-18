@@ -465,8 +465,8 @@ export interface IUserAppPreferences {
 
 export interface IUserPreferences {
   id: TEntityId;
-  appPreferences: IUserAppPreferences;
   lastActiveAccountingEntityId: TEntityId | null;
+  appPreferences: IUserAppPreferences;
   /** @format date-time */
   createdAt: string;
   /** @format date-time */
@@ -1155,7 +1155,7 @@ export class HttpClient<SecurityDataType = unknown> {
 
 /**
  * @title drimsheet-core
- * @version 1.0.0
+ * @version 0.1.0-alpha.1
  * @license AGPL-3.0-or-later
  * @baseUrl /api/v1
  * @contact Osahon Oboite
