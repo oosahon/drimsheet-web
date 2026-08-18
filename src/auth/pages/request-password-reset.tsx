@@ -1,6 +1,7 @@
 import { RequestPasswordResetForm } from '@/auth/components/request-password-reset-form';
 import { RequestPasswordResetSuccessContainer } from '@/auth/components/reset-password-request-success';
 import { useRequestPasswordReset } from '@/auth/hooks/use-request-password-reset';
+import logoImg from '@/shared/assets/logo.svg';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -62,7 +63,7 @@ export function RequestPasswordResetPage() {
         <div className="flex flex-col items-center gap-2 text-center">
           <Link to="/" className="flex flex-col items-center gap-2 font-medium">
             <div className="mb-1 flex size-8 items-center justify-center rounded-md">
-              <img src="/logo.svg" alt="" className="min-w-12 rounded-2xl" />
+              <img src={logoImg} alt="" className="mb-6 min-w-12 rounded-sm" />
             </div>
             <span className="sr-only">{drimsheet_limited}</span>
           </Link>

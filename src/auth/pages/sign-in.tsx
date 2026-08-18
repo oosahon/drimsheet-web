@@ -3,6 +3,7 @@ import { GoogleAuthButtonContainer } from '@/auth/components/google-auth-button'
 import { LoginForm } from '@/auth/components/login-form';
 import type { ILoginFormValues } from '@/auth/components/login-form/types';
 import { useLoginWithEmail } from '@/auth/hooks/use-login-with-email';
+import logoImg from '@/shared/assets/logo.svg';
 import { FieldDescription, FieldSeparator } from '@/shared/components/field';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useState } from 'react';
@@ -47,12 +48,8 @@ export function SignInPage() {
       <div className="flex w-full max-w-sm flex-col gap-6">
         <div className="flex flex-col items-center gap-2 text-center">
           <Link to="/" className="flex flex-col items-center gap-2 font-medium">
-            <div className="flex size-8 items-center justify-center rounded-md">
-              <img
-                src="/logo.svg"
-                alt=""
-                className="mb-6 min-w-12 rounded-2xl"
-              />
+            <div className="flex size-8 items-center justify-center">
+              <img src={logoImg} alt="" className="mb-6 min-w-12 rounded-sm" />
             </div>
             <span className="sr-only">{drimsheet_limited}</span>
           </Link>
@@ -71,7 +68,7 @@ export function SignInPage() {
           {no_account_text}{' '}
           <Link
             to="/auth/signup"
-            className="text-purple-600 hover:text-purple-500"
+            className="text-primary hover:text-primary/80"
           >
             {sign_up_text}
           </Link>

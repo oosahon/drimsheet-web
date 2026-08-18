@@ -7,23 +7,18 @@ const gradientBoxVariants = cva(
   {
     variants: {
       variant: {
-        // Primary: Deep Purple to Gray
-        primary: 'text-white bg-linear-to-br from-[#8E33FF] to-gray-600',
+        primary:
+          'text-primary-foreground bg-linear-to-br from-primary to-brand-primary',
 
-        // Success: Emerald Green to Teal
-        success: 'text-white bg-linear-to-br from-[#10B981] to-teal-600',
+        success: 'text-background bg-linear-to-br from-success to-info',
 
-        // Info: Sky Blue to Indigo
-        info: 'text-white bg-linear-to-br from-[#4DA3FF] to-indigo-600',
+        info: 'text-background bg-linear-to-br from-info to-primary',
 
-        // Warning: Bright Yellow to Orange
-        warning: 'text-gray-900 bg-linear-to-br from-[#FFD60A] to-orange-500',
+        warning: 'text-background bg-linear-to-br from-warning to-chart-3',
 
-        // Danger: Bright Red to Rose
-        danger: 'text-white bg-linear-to-br from-[#FF4C4C] to-rose-600',
+        danger: 'text-background bg-linear-to-br from-error to-destructive',
 
-        // Grey: Dark Slate
-        grey: 'text-[#A6C3E0] bg-linear-to-br from-[#212B36] to-[#1C252E]',
+        grey: 'text-secondary-foreground bg-linear-to-br from-muted to-secondary',
       },
     },
     defaultVariants: {

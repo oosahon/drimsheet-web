@@ -72,7 +72,7 @@ export function SignUpPage() {
         <div className="flex flex-col items-center gap-2 text-center">
           <Link to="/" className="flex flex-col items-center gap-2 font-medium">
             <div className="flex size-8 items-center justify-center rounded-md">
-              <img src={logoImg} alt="" className="mb-6 min-w-12 rounded-2xl" />
+              <img src={logoImg} alt="" className="mb-6 min-w-12 rounded-sm" />
             </div>
             <span className="sr-only">{drimsheet_limited}.</span>
           </Link>
@@ -93,7 +93,7 @@ export function SignUpPage() {
           {already_have_account_text}{' '}
           <Link
             to="/auth/signin"
-            className="text-purple-600 hover:text-purple-500"
+            className="text-primary hover:text-primary/80"
           >
             {sign_in_link_text}
           </Link>

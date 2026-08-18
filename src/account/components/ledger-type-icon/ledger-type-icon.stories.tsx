@@ -26,7 +26,7 @@ const LEDGER_TYPE_LABELS: Record<ULedgerType, string> = {
   [ELedgerType.Expense]: 'Expense (Destructive Red)',
   [ELedgerType.Asset]: 'Asset (Info Blue)',
   [ELedgerType.Liability]: 'Liability (Warning Yellow)',
-  [ELedgerType.Equity]: 'Equity (Primary Purple)',
+  [ELedgerType.Equity]: 'Equity (Primary Blue)',
 };
 
 export const ShowcaseGrid: StoryObj<unknown> = {

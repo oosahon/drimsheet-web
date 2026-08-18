@@ -35,7 +35,7 @@ export function RequestPasswordResetSuccess({
 
       <Link
         to={signInHref}
-        className="text-sm font-medium text-purple-600 hover:text-purple-500 dark:text-purple-400 dark:hover:text-purple-300"
+        className="text-primary hover:text-primary/80 text-sm font-medium"
       >
         {back_to_sign_in_text}
       </Link>
