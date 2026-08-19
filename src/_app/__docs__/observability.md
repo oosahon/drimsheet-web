@@ -48,6 +48,10 @@ build and deployment.
 
 Configure the application in Coolify as follows:
 
+- use `main` for prerelease deployments to staging;
+- after the Web prerelease succeeds, promote the approved changes
+  independently to `release` for production deployment;
+
 - build pack: Nixpacks;
 - **Is it a static site?**: enabled;
 - publish directory: `dist`;

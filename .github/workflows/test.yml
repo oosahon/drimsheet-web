@@ -1,0 +1,58 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Check Structure
+        run: npm run check:structure
+
+      - name: Check Stories
+        run: npm run check-stories
+
+      - name: Run Component And Module Tests
+        run: npm test -- --run
+
+      - name: Build
+        run: npm run build
+
+      - name: Type-check Integration Tests
+        run: npm run typecheck:integration
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Integration Tests
+        run: npm run test:integration
+
+      - name: Upload Playwright Failure Artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore

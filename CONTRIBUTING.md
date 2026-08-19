@@ -77,19 +77,21 @@ To maintain a clean and organized codebase, please follow these strict git workf
 ### Branching Strategy
 
 - **`development`**: This is the main branch for development. All contributor Pull Requests (PRs) should be merged into `development`.
-- **`staging`**: This branch is for pre-release testing. Code from the `development` branch is merged here.
-- **`main`**: This is the production branch. Only the `staging` branch and hotfix branches are merged here.
+- **`main`**: This is the prerelease branch. Prerelease Pull Requests merge `development` into `main`, which deploys to staging for integration testing.
+- **`release`**: This is the production branch. After this repository's prerelease succeeds, the approved `main` changes are promoted to `release`, which deploys to production independently from Core.
 
 ### Feature Branches
 
 - **Source**: Every new branch must be created off the `development` branch.
 - **Target**: Every update must be submitted as a PR to the `development` branch.
+- **Prerelease**: Open a PR from `development` to `main` after the contributor changes are ready for staging.
+- **Release**: After the prerelease succeeds, promote the approved `main` changes to `release` through a PR.
 - **Naming Convention**:
-  - Branches should be named using the format: `<type>/<description-with-hyphens>/<optional-issue-id>`
+  - Branches should be named using the format: `<type>/<optional-issue-id>/<description-with-hyphens>`
   - **Types**: `feat`, `fix`, `chore`, `refactor`, `test`, `doc`
   - **Examples**:
-    - `feat/add-accounts-endpoint/49494`
-    - `fix/login-error/49494`
+    - `feat/49494/add-accounts-endpoint`
+    - `fix/49494/login-error`
 
 ### Commit Messages & Pull Requests
 
