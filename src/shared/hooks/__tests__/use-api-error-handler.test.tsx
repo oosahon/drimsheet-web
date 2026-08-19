@@ -152,7 +152,49 @@ describe('useApiErrorHandler', () => {
     expect(observabilityService.report).not.toHaveBeenCalled();
   });
 
-  it('preserves validation projection and localized generic toast behavior', () => {
+  it('shows distinct localized validation messages before the top-level error', () => {
+    const validationErrors = [
+      { field: 'email', message: 'auth_error_email_required_invalid' },
+      { field: 'password', message: 'auth_error_password_invalid' },
+      { field: 'passwordConfirmation', message: 'auth_error_password_invalid' },
+      { field: 'firstName', message: '' },
+    ];
+    const setValidationError = vi.fn();
+    const error = makeResponseError(422, {
+      name: 'ValidationError',
+      errorKey: 'app_error_validation_error',
+      validationErrors,
+    });
+    const { result } = renderHook(() => useApiErrorHandler());
+
+    act(() => {
+      result.current(error, { showToast: true, setValidationError });
+    });
+
+    expect(toast.error).toHaveBeenCalledTimes(2);
+    expect(toast.error).toHaveBeenNthCalledWith(1, 'Email is required.');
+    expect(toast.error).toHaveBeenNthCalledWith(2, 'Invalid password.');
+    expect(toast.error).not.toHaveBeenCalledWith('Validation error.');
+    expect(setValidationError).toHaveBeenCalledWith(validationErrors);
+  });
+
+  it('uses a localized top-level error when validation messages are unusable', () => {
+    const error = makeResponseError(422, {
+      name: 'ValidationError',
+      errorKey: 'app_error_validation_error',
+      validationErrors: [{ field: 'email', message: '' }],
+    });
+    const { result } = renderHook(() => useApiErrorHandler());
+
+    act(() => {
+      result.current(error, { showToast: true });
+    });
+
+    expect(toast.error).toHaveBeenCalledOnce();
+    expect(toast.error).toHaveBeenCalledWith('Validation error.');
+  });
+
+  it('preserves validation projection and shows untranslated API messages', () => {
     const validationErrors = [{ field: 'name', message: 'Name is required' }];
     const setValidationError = vi.fn();
     const error = makeResponseError(422, {
@@ -167,6 +209,20 @@ describe('useApiErrorHandler', () => {
     });
 
     expect(setValidationError).toHaveBeenCalledWith(validationErrors);
+    expect(toast.error).toHaveBeenCalledWith('Name is required');
+  });
+
+  it('uses the localized generic toast without validation or top-level keys', () => {
+    const error = makeResponseError(422, {
+      name: 'ValidationError',
+      errorKey: 'unknown_error_key',
+    });
+    const { result } = renderHook(() => useApiErrorHandler());
+
+    act(() => {
+      result.current(error, { showToast: true });
+    });
+
     expect(toast.error).toHaveBeenCalledWith('An error occurred');
   });
 });

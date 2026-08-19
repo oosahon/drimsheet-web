@@ -12,6 +12,27 @@ const isApiErrorKey = (key: string): key is TApiErrorKey => {
   return key in apiErrorsJson;
 };
 
+const getValidationToastMessages = (
+  validationErrors: IApiValidationError[]
+) => {
+  const messages = new Set<string>();
+
+  validationErrors.forEach(({ message }) => {
+    if (!message) {
+      return undefined;
+    }
+
+    if (isApiErrorKey(message)) {
+      messages.add(i18n.t(message, { ns: 'api-errors' }));
+    } else {
+      // TODO: report untranslated message
+      messages.add(message);
+    }
+  });
+
+  return [...messages];
+};
+
 type THandleErrorOptions = {
   showToast?: boolean;
   setValidationError?: (validationError: IApiValidationError[]) => void;
@@ -45,16 +66,18 @@ export function useApiErrorHandler() {
         ...(error.correlationId ? { correlationId: error.correlationId } : {}),
       });
 
-      if (
+      const isAuthActionFailure =
         error.kind === 'server-response' &&
         error.code === 401 &&
-        !window.location.pathname.startsWith('/auth/')
-      ) {
+        !window.location.pathname.startsWith('/auth/');
+
+      if (isAuthActionFailure) {
         apiErrorHandlerConfig.handleUnauthorized?.();
         return;
       }
 
       const isBrowserOwnedFailure = error.kind !== 'server-response';
+
       if (isBrowserOwnedFailure && options?.report !== false) {
         observabilityService.report(toError(errorValue), {
           source: 'api-client',
@@ -67,8 +90,14 @@ export function useApiErrorHandler() {
       }
 
       if (options?.showToast) {
+        const validationToastMessages = getValidationToastMessages(
+          error.validationErrors ?? []
+        );
         const errorKey = error.errorKey;
-        if (errorKey && isApiErrorKey(errorKey)) {
+
+        if (validationToastMessages.length > 0) {
+          validationToastMessages.forEach((message) => toast.error(message));
+        } else if (errorKey && isApiErrorKey(errorKey)) {
           toast.error(i18n.t(errorKey, { ns: 'api-errors' }));
         } else {
           toast.error(i18n.t('an_error_occurred', { ns: 'shared' }));
