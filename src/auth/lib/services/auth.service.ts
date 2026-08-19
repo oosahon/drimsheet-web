@@ -5,6 +5,7 @@ import type {
   IResetPasswordReq,
   IUserProfileDto,
 } from '@/shared/lib/api/Api';
+import { storageService } from '@/shared/lib/services/storage.service';
 import { jwtDecode } from 'jwt-decode';
 
 let accessToken: string;
@@ -23,7 +24,7 @@ async function executeRefresh(): Promise<string> {
 
 export const authService = {
   isLoggedIn() {
-    return localStorage.getItem('isLoggedIn') === 'true';
+    return storageService.get('isLoggedIn') ?? false;
   },
 
   getToken() {
@@ -31,12 +32,12 @@ export const authService = {
   },
 
   setToken(token: string) {
-    localStorage.setItem('isLoggedIn', 'true');
+    storageService.set({ isLoggedIn: true });
     accessToken = token;
   },
 
   removeToken() {
-    localStorage.removeItem('isLoggedIn');
+    storageService.set({ isLoggedIn: undefined });
     accessToken = '';
   },
 

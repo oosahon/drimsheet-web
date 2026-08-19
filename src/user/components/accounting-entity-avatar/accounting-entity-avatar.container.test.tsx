@@ -7,7 +7,11 @@ import type {
 } from '@/shared/lib/api/Api';
 import { AccountingEntityAvatarContainer } from '@/user/components/accounting-entity-avatar';
 import { useProfile } from '@/user/hooks/use-profile';
-import type { UseQueryResult } from '@tanstack/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  type UseQueryResult,
+} from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -91,6 +95,18 @@ function mockActiveEntity(
   } as unknown as UseQueryResult<IAccountingEntity, Error>);
 }
 
+function renderAvatarContainer() {
+  const queryClient = new QueryClient({
+    defaultOptions: { mutations: { retry: false } },
+  });
+
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <AccountingEntityAvatarContainer onLogoutClick={() => {}} />
+    </QueryClientProvider>
+  );
+}
+
 describe('AccountingEntityAvatarContainer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -103,7 +119,7 @@ describe('AccountingEntityAvatarContainer', () => {
     mockEntities([firstEntity, activeEntity]);
     mockActiveEntity(activeEntity);
 
-    render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
+    renderAvatarContainer();
 
     const trigger = screen.getByRole('button', {
       name: 'Open account management for Drimsheet',
@@ -125,7 +141,7 @@ describe('AccountingEntityAvatarContainer', () => {
     mockEntities([firstEntity, activeEntity]);
     mockActiveEntity(firstEntity);
 
-    render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
+    renderAvatarContainer();
 
     expect(
       screen.getByRole('button', {
@@ -138,7 +154,7 @@ describe('AccountingEntityAvatarContainer', () => {
     mockEntities([firstEntity, activeEntity]);
     mockActiveEntity(undefined, true);
 
-    render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
+    renderAvatarContainer();
 
     expect(
       screen.getByRole('status', { name: 'Loading account management' })
@@ -148,7 +164,7 @@ describe('AccountingEntityAvatarContainer', () => {
   it('disables account management when the user has no accounting entity', () => {
     mockEntities([]);
 
-    render(<AccountingEntityAvatarContainer onLogoutClick={() => {}} />);
+    renderAvatarContainer();
 
     expect(
       screen.getByRole('button', { name: 'Account management unavailable' })

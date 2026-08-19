@@ -125,10 +125,15 @@ The CI environment must run:
 
 ```bash
 npm ci
-npx playwright install --with-deps chromium
 npm run typecheck:integration
 npm run test:integration
 ```
+
+CI uses the Google Chrome installation provided by the GitHub-hosted runner.
+Configure the Playwright Chromium project with `channel: 'chrome'` in CI rather
+than installing a separate Playwright browser and operating-system dependencies
+for every workflow run. Local integration tests continue to use Playwright's
+bundled Chromium.
 
 Publish `playwright-report/` and `test-results/` when the integration job fails
 so traces and failure artifacts remain available. If CI is owned outside this

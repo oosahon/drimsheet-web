@@ -39,7 +39,9 @@ function toAccountingEntityCreationDto(
       unit: EPeriodUnit.Month,
       count: periodCount,
     },
-    appUsageMode: values.appUsageMode,
+    appPreferences: {
+      appUsageMode: values.appUsageMode,
+    },
   };
 }
 

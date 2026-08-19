@@ -1,6 +1,9 @@
 import type {
   IAccountingEntity,
   IAccountingEntitySwitchReq,
+  IUserPreferences,
+  IUserPreferencesUpdateDto,
+  TEntityId,
 } from '@/shared/lib/api/Api';
 import { expect, test } from '@integration/fixtures/test';
 import {
@@ -16,6 +19,7 @@ const profileEndpoint = '**/api/v1/users/profile';
 const entityListEndpoint = '**/api/v1/accounting/accounting-entities';
 const activeEntityEndpoint = '**/api/v1/accounting/accounting-entity';
 const switchEntityEndpoint = '**/api/v1/accounting/accounting-entity/switch';
+const preferencesEndpoint = '**/api/v1/users/preferences';
 
 async function registerAccountManagementRoutes(page: Page) {
   const accountingEntities: IAccountingEntity[] = [
@@ -139,6 +143,45 @@ test('opens account management with active and alternate account details', async
   await page.keyboard.press('Escape');
   await expect(dialog).not.toBeVisible();
   await expect(trigger).toBeFocused();
+});
+
+test('persists a selected color theme preference', async ({ page }) => {
+  await signIn(page);
+  const updatedPreferences = {
+    userId: authenticatedUser.id as TEntityId,
+    lastActiveAccountingEntityId: authenticatedAccountingEntity.id,
+    appPreferences: {
+      theme: 'light',
+      appUsageMode: 'power_user',
+    },
+    createdAt: authenticatedUser.createdAt,
+    updatedAt: authenticatedUser.updatedAt,
+  } satisfies IUserPreferences;
+  await page.route(preferencesEndpoint, async (route) => {
+    await route.fulfill({ json: updatedPreferences });
+  });
+
+  await page
+    .getByRole('button', {
+      name: 'Open account management for Integration Entity',
+    })
+    .click();
+
+  const preferencesRequestPromise = page.waitForRequest(
+    (request) =>
+      request.url().endsWith('/api/v1/users/preferences') &&
+      request.method() === 'PATCH'
+  );
+  await page.getByRole('button', { name: 'Toggle theme' }).click();
+  const preferencesRequest = await preferencesRequestPromise;
+
+  expect(
+    preferencesRequest.postDataJSON() as IUserPreferencesUpdateDto
+  ).toEqual({ theme: 'light' });
+  await expect(page.locator('html')).not.toHaveClass(/dark/);
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem('theme')))
+    .toBe('light');
 });
 
 test('switches accounting entity and reloads with the active entity', async ({

@@ -35,7 +35,9 @@ describe('accountingEntityMapper', () => {
         unit: EPeriodUnit.Month,
         count: 12,
       },
-      appUsageMode: 'non_power_user',
+      appPreferences: {
+        appUsageMode: 'non_power_user',
+      },
     });
   });
 });

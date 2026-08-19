@@ -459,12 +459,12 @@ export type TEntityId = string & {
 };
 
 export interface IUserAppPreferences {
-  theme?: UAppThemePreference | null;
-  appUsageMode?: UAppUsageModePreference | null;
+  theme?: UAppThemePreference;
+  appUsageMode: UAppUsageModePreference;
 }
 
 export interface IUserPreferences {
-  id: TEntityId;
+  userId: TEntityId;
   lastActiveAccountingEntityId: TEntityId | null;
   appPreferences: IUserAppPreferences;
   /** @format date-time */
@@ -488,6 +488,11 @@ export interface IHttpErrorDto {
   errorKey: string;
   validationErrors?: IApiValidationError[];
   cause?: TErrorCause;
+}
+
+export interface IUserPreferencesUpdateDto {
+  theme?: UAppThemePreference;
+  appUsageMode?: UAppUsageModePreference;
 }
 
 export interface IUserProfileDto {
@@ -951,7 +956,7 @@ export interface IAccountingEntityCreationDto {
   fiscalYear: IFiscalYearCreationDto;
   accountingPeriod: IPeriodCreationDto;
   reportingPeriod: IPeriodCreationDto;
-  appUsageMode: UAppUsageModePreference;
+  appPreferences: IUserAppPreferences;
 }
 
 export interface IAccountingEntitySwitchReq {
@@ -1179,6 +1184,28 @@ export class Api<
         path: `/users/preferences`,
         method: 'GET',
         secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Update user preferences
+     *
+     * @tags User
+     * @name UpdateUserPreferences
+     * @request PATCH:/users/preferences
+     * @secure
+     */
+    updateUserPreferences: (
+      data: IUserPreferencesUpdateDto,
+      params: RequestParams = {}
+    ) =>
+      this.request<IUserPreferences, IHttpErrorDto>({
+        path: `/users/preferences`,
+        method: 'PATCH',
+        body: data,
+        secure: true,
+        type: EContentType.Json,
         format: 'json',
         ...params,
       }),

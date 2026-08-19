@@ -9,9 +9,13 @@ import {
   PopoverTrigger,
 } from '@/shared/components/popover';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
-import type { IAccountingEntity } from '@/shared/lib/api/Api';
+import type {
+  IAccountingEntity,
+  UAppThemePreference,
+} from '@/shared/lib/api/Api';
 import { AccountManagement } from '@/user/components/account-management';
 import { useProfile } from '@/user/hooks/use-profile';
+import { useUpdatePreferences } from '@/user/hooks/use-update-preferences';
 import { type ReactNode, useId, useRef, useState } from 'react';
 
 interface AccountManagementDialogProps {
@@ -32,6 +36,7 @@ export function AccountManagementDialog({
   const { data: accountingEntities = [] } = useAccountingEntities();
   const { data: profile } = useProfile();
   const { mutateAsync: switchAccountingEntity } = useSwitchAccountingEntity();
+  const { mutate: updatePreferences } = useUpdatePreferences();
   const handleApiError = useApiErrorHandler();
 
   const handleSelectEntity = async (accountingEntityId: string) => {
@@ -68,6 +73,12 @@ export function AccountManagementDialog({
     window.location.reload();
   };
 
+  const handleThemeChange = (theme: UAppThemePreference) => {
+    updatePreferences(theme, {
+      onError: (error) => handleApiError(error, { showToast: true }),
+    });
+  };
+
   return (
     <>
       <Popover open={open} onOpenChange={setOpen}>
@@ -89,6 +100,7 @@ export function AccountManagementDialog({
             themeAction={
               <AnimatedThemeToggler
                 showText
+                onThemeChange={handleThemeChange}
                 className="flex h-9 w-full items-center justify-start gap-1.5 px-5 text-sm font-medium hover:bg-muted"
               />
             }
