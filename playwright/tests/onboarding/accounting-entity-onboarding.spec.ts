@@ -149,7 +149,9 @@ test('creates an entity, refetches eligibility, and closes onboarding', async ({
       functionalCurrencyCode: 'NGN',
       reportingCurrencyCode: 'NGN',
       accountingStandardCode: 'IFRS',
-      appUsageMode: 'non_power_user',
+      appPreferences: {
+        appUsageMode: 'non_power_user',
+      },
     })
   );
 });

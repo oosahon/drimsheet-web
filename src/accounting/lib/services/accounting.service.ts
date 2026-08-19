@@ -5,11 +5,10 @@ import type {
   IAccountingEntitySwitchReq,
 } from '@/shared/lib/api/Api';
 import { parseApiError } from '@/shared/lib/api/errors';
+import { storageService } from '@/shared/lib/services/storage.service';
 
-const accountingEntityReloadKey = 'accounting-entity-id';
-let reloadAccountingEntityId =
-  localStorage.getItem(accountingEntityReloadKey) ?? undefined;
-localStorage.removeItem(accountingEntityReloadKey);
+let reloadAccountingEntityId = storageService.get('accountingEntityId');
+storageService.set({ accountingEntityId: undefined });
 
 let activeAccountingEntity: IAccountingEntity | undefined;
 
@@ -26,14 +25,14 @@ export const accountingService = {
   removeAccountingEntity() {
     activeAccountingEntity = undefined;
     reloadAccountingEntityId = undefined;
-    localStorage.removeItem(accountingEntityReloadKey);
+    storageService.set({ accountingEntityId: undefined });
   },
 
   prepareAccountingEntityReload() {
     const accountingEntityId = this.getAccountingEntityId();
     if (!accountingEntityId) return;
 
-    localStorage.setItem(accountingEntityReloadKey, accountingEntityId);
+    storageService.set({ accountingEntityId });
   },
 
   async getAccountingEntities() {

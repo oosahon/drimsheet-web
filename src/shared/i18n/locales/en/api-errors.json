@@ -269,5 +269,9 @@
   "user_error_user_value_object_too_long_invalid": "User value is too long.",
   "user_error_user_value_object_too_short_invalid": "User value is too short.",
   "user_error_user_value_object_type_invalid": "Invalid user value type.",
-  "user_error_value_invalid": "Invalid user value."
+  "user_error_value_invalid": "Invalid user value.",
+  "app_error_ledger_balance_propagation_outbox_not_found": "An error occurred.",
+  "app_error_user_preferences_app_preferences_invalid": "Invalid app preferences.",
+  "app_error_user_preferences_app_theme_invalid": "Invalid theme option.",
+  "app_error_user_preferences_app_usage_mode_invalid": "Invalid app usage mode."
 }
