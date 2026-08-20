@@ -62,6 +62,7 @@
   "or_text": "Or",
   "date": "Date",
   "loading_application_status": "Loading Drimsheet",
+  "feature_flag_synchronization_error": "Unable to verify feature access.",
   "something_went_wrong_title": "Something went wrong",
   "unexpected_error_description": "An unexpected error occurred. Our technical team has been notified.",
   "try_again_text": "Try Again",
@@ -72,5 +73,8 @@
   "clear_selection_aria_label": "Clear selection",
   "switch_to_light_mode_action": "Switch to light",
   "switch_to_dark_mode_action": "Switch to dark",
-  "toggle_theme_aria_label": "Toggle theme"
+  "toggle_theme_aria_label": "Toggle theme",
+  "feature_not_available_title": "This feature isn't available to you",
+  "feature_not_available_description": "Your account does not currently have access to this feature.",
+  "request_access_action": "Request access"
 }

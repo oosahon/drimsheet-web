@@ -1,6 +1,7 @@
 import {
   featureFlagKeys,
   useCanAccessAlpha1,
+  useFeatureFlags,
 } from '@/shared/hooks/use-feature-flag';
 import { useBoolVariation } from '@launchdarkly/react-sdk';
 import { renderHook } from '@testing-library/react';
@@ -10,7 +11,7 @@ vi.mock('@launchdarkly/react-sdk', () => ({
   useBoolVariation: vi.fn(),
 }));
 
-describe('useCanAccessAlpha1', () => {
+describe('feature flag hooks', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -25,5 +26,40 @@ describe('useCanAccessAlpha1', () => {
       featureFlagKeys.accessAlpha1,
       false
     );
+  });
+
+  it('returns true when every required feature flag is enabled', () => {
+    vi.mocked(useBoolVariation).mockReturnValue(true);
+
+    const { result } = renderHook(() =>
+      useFeatureFlags([
+        featureFlagKeys.accessAlpha1,
+        featureFlagKeys.accessAlpha1,
+      ])
+    );
+
+    expect(result.current).toBe(true);
+  });
+
+  it('returns false when a required feature flag is disabled', () => {
+    vi.mocked(useBoolVariation).mockReturnValue(false);
+
+    const { result } = renderHook(() =>
+      useFeatureFlags([featureFlagKeys.accessAlpha1])
+    );
+
+    expect(result.current).toBe(false);
+    expect(useBoolVariation).toHaveBeenCalledWith(
+      featureFlagKeys.accessAlpha1,
+      false
+    );
+  });
+
+  it('returns true when no feature flags are required', () => {
+    vi.mocked(useBoolVariation).mockReturnValue(false);
+
+    const { result } = renderHook(() => useFeatureFlags([]));
+
+    expect(result.current).toBe(true);
   });
 });

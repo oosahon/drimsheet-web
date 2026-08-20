@@ -1,8 +1,9 @@
+import { useLaunchDarklyContextSynchronization } from '@/_app/containers/launchdarkly/launchdarkly-context-synchronization';
 import { LaunchDarklyContextSynchronizerContainer } from '@/_app/containers/launchdarkly/launchdarkly-context-synchronizer.container';
 import { authService } from '@/auth/lib/services/auth.service';
 import { useProfile } from '@/user/hooks/use-profile';
 import { useLDClient } from '@launchdarkly/react-sdk';
-import { render, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -23,6 +24,12 @@ vi.mock('@/user/hooks/use-profile', () => ({
   useProfile: vi.fn(),
 }));
 
+vi.mock('@/shared/lib/services/observability.service', () => ({
+  observabilityService: {
+    report: vi.fn(),
+  },
+}));
+
 vi.mock('@launchdarkly/react-sdk', () => ({
   useLDClient: vi.fn(),
 }));
@@ -41,6 +48,12 @@ describe('LaunchDarklyContextSynchronizerContainer', () => {
     vi.mocked(useLDClient).mockReturnValue({ identify, getContext } as never);
   });
 
+  function SynchronizationStatus() {
+    const synchronizationState = useLaunchDarklyContextSynchronization();
+
+    return <p>{synchronizationState.status}</p>;
+  }
+
   it('identifies the authenticated profile', async () => {
     vi.mocked(authService.isLoggedIn).mockReturnValue(true);
     vi.mocked(useProfile).mockReturnValue({
@@ -54,7 +67,7 @@ describe('LaunchDarklyContextSynchronizerContainer', () => {
     await waitFor(() => {
       expect(identify).toHaveBeenCalledWith({
         kind: 'user',
-        key: 'profile-id',
+        key: 'profile@example.com',
         email: 'profile@example.com',
         _meta: {
           privateAttributes: ['email'],
@@ -66,7 +79,10 @@ describe('LaunchDarklyContextSynchronizerContainer', () => {
   it('restores an anonymous context after logout', async () => {
     vi.mocked(authService.isLoggedIn).mockReturnValue(false);
     vi.mocked(useProfile).mockReturnValue({ data: undefined } as never);
-    getContext.mockReturnValue({ kind: 'user', key: 'profile-id' });
+    getContext.mockReturnValue({
+      kind: 'user',
+      key: 'profile@example.com',
+    });
 
     render(<LaunchDarklyContextSynchronizerContainer />);
 
@@ -86,7 +102,7 @@ describe('LaunchDarklyContextSynchronizerContainer', () => {
     } as never);
     getContext.mockReturnValue({
       kind: 'user',
-      key: 'profile-id',
+      key: 'profile@example.com',
       email: 'profile@example.com',
     });
 
@@ -100,19 +116,116 @@ describe('LaunchDarklyContextSynchronizerContainer', () => {
     vi.mocked(useProfile).mockReturnValue({
       data: { id: 'profile-id', email: 'profile@example.com' },
     } as never);
-    getContext.mockReturnValue({ kind: 'user', key: 'profile-id' });
+    getContext.mockReturnValue({
+      kind: 'user',
+      key: 'profile@example.com',
+    });
 
     render(<LaunchDarklyContextSynchronizerContainer />);
 
     await waitFor(() => {
       expect(identify).toHaveBeenCalledWith({
         kind: 'user',
-        key: 'profile-id',
+        key: 'profile@example.com',
         email: 'profile@example.com',
         _meta: {
           privateAttributes: ['email'],
         },
       });
     });
+  });
+
+  it('remains synchronizing until identify completes', async () => {
+    let completeIdentify:
+      | ((value: { status: 'completed' }) => void)
+      | undefined;
+    identify.mockReturnValueOnce(
+      new Promise((resolve) => {
+        completeIdentify = resolve;
+      })
+    );
+    vi.mocked(authService.isLoggedIn).mockReturnValue(true);
+    vi.mocked(useProfile).mockReturnValue({
+      data: { id: 'profile-id', email: 'profile@example.com' },
+      error: null,
+    } as never);
+    getContext.mockReturnValue({ kind: 'user', anonymous: true });
+
+    render(
+      <LaunchDarklyContextSynchronizerContainer>
+        <SynchronizationStatus />
+      </LaunchDarklyContextSynchronizerContainer>
+    );
+
+    expect(screen.getByText('synchronizing')).toBeInTheDocument();
+
+    completeIdentify?.({ status: 'completed' });
+
+    await waitFor(() => {
+      expect(screen.getByText('ready')).toBeInTheDocument();
+    });
+  });
+
+  it('becomes ready immediately when the signed-in context already matches', async () => {
+    vi.mocked(authService.isLoggedIn).mockReturnValue(true);
+    vi.mocked(useProfile).mockReturnValue({
+      data: { id: 'profile-id', email: 'profile@example.com' },
+      error: null,
+    } as never);
+    getContext.mockReturnValue({
+      kind: 'user',
+      key: 'profile@example.com',
+      email: 'profile@example.com',
+    });
+
+    render(
+      <LaunchDarklyContextSynchronizerContainer>
+        <SynchronizationStatus />
+      </LaunchDarklyContextSynchronizerContainer>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('ready')).toBeInTheDocument();
+    });
+    expect(identify).not.toHaveBeenCalled();
+  });
+
+  it('exposes an identify failure', async () => {
+    const error = new Error('identify failed');
+    identify.mockResolvedValueOnce({ status: 'error', error });
+    vi.mocked(authService.isLoggedIn).mockReturnValue(true);
+    vi.mocked(useProfile).mockReturnValue({
+      data: { id: 'profile-id', email: 'profile@example.com' },
+      error: null,
+    } as never);
+    getContext.mockReturnValue({ kind: 'user', anonymous: true });
+
+    render(
+      <LaunchDarklyContextSynchronizerContainer>
+        <SynchronizationStatus />
+      </LaunchDarklyContextSynchronizerContainer>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('failed')).toBeInTheDocument();
+    });
+  });
+
+  it('exposes a profile bootstrap failure without identifying', () => {
+    vi.mocked(authService.isLoggedIn).mockReturnValue(true);
+    vi.mocked(useProfile).mockReturnValue({
+      data: undefined,
+      error: new Error('profile failed'),
+    } as never);
+    getContext.mockReturnValue({ kind: 'user', anonymous: true });
+
+    render(
+      <LaunchDarklyContextSynchronizerContainer>
+        <SynchronizationStatus />
+      </LaunchDarklyContextSynchronizerContainer>
+    );
+
+    expect(screen.getByText('failed')).toBeInTheDocument();
+    expect(identify).not.toHaveBeenCalled();
   });
 });

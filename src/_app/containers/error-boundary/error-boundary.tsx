@@ -1,30 +1,22 @@
+import type {
+  DefaultErrorBoundaryProps,
+  DefaultErrorFallbackProps,
+  IErrorBoundaryFallbackData,
+} from '@/_app/containers/error-boundary/types';
 import { Button } from '@/shared/components/button';
+import { FeatureNotAvailable } from '@/shared/components/feature-not-available';
 import { FullPageLoader } from '@/shared/components/full-page-loader';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
+import { isFeatureFlagApiError } from '@/shared/lib/api';
 import { ErrorBoundary as SentryErrorBoundary } from '@sentry/react';
 import { isAxiosError } from 'axios';
-import { type ReactElement, type ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-
-export interface DefaultErrorBoundaryProps {
-  children: ReactNode;
-  fallback?:
-    | ReactElement
-    | ((errorData: {
-        error: unknown;
-        componentStack: string;
-        eventId: string;
-        resetError: () => void;
-      }) => ReactElement);
-}
 
 const DefaultErrorFallback = ({
   error,
   resetError,
-}: {
-  error: unknown;
-  resetError: () => void;
-}) => {
+}: Readonly<DefaultErrorFallbackProps>) => {
   const { t } = useTranslation('shared');
   const [show, setShow] = useState(false);
 
@@ -66,12 +58,23 @@ const DefaultErrorFallback = ({
 export const DefaultErrorBoundary = ({
   children,
   fallback,
-}: DefaultErrorBoundaryProps) => {
+}: Readonly<DefaultErrorBoundaryProps>) => {
   const handleApiError = useApiErrorHandler();
+  const renderFallback = (errorData: IErrorBoundaryFallbackData) => {
+    if (isFeatureFlagApiError(errorData.error)) {
+      return <FeatureNotAvailable />;
+    }
+
+    if (typeof fallback === 'function') {
+      return fallback(errorData);
+    }
+
+    return fallback ?? <DefaultErrorFallback {...errorData} />;
+  };
 
   return (
     <SentryErrorBoundary
-      fallback={fallback || DefaultErrorFallback}
+      fallback={renderFallback}
       onError={(error: unknown) => {
         if (isAxiosError(error)) {
           handleApiError(error, { report: false });

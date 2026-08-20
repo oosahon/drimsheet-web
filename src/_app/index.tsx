@@ -45,8 +45,9 @@ export function App() {
           <LaunchDarklyProvider>
             <TooltipProvider>
               <BrowserRouter>
-                <LaunchDarklyContextSynchronizerContainer />
-                <AppRoutes />
+                <LaunchDarklyContextSynchronizerContainer>
+                  <AppRoutes />
+                </LaunchDarklyContextSynchronizerContainer>
               </BrowserRouter>
             </TooltipProvider>
             <ReactQueryDevtools initialIsOpen={false} />

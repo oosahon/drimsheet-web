@@ -273,5 +273,6 @@
   "app_error_ledger_balance_propagation_outbox_not_found": "An error occurred.",
   "app_error_user_preferences_app_preferences_invalid": "Invalid app preferences.",
   "app_error_user_preferences_app_theme_invalid": "Invalid theme option.",
-  "app_error_user_preferences_app_usage_mode_invalid": "Invalid app usage mode."
+  "app_error_user_preferences_app_usage_mode_invalid": "Invalid app usage mode.",
+  "feature_flag_error_forbidden": "You are not permitted to access this feature."
 }

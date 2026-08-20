@@ -1,3 +1,4 @@
+import { FeatureFlagGuard } from '@/_app/containers/feature-flag-guard';
 import { AppLayout } from '@/_app/layouts/app-layout';
 import { ProtectedAppLayout } from '@/_app/layouts/protected-app-layout';
 import { useLedgerAccountRoutes } from '@/account/routes/ledger-account';
@@ -5,6 +6,7 @@ import { useAuthRoutes } from '@/auth/routes/auth';
 import { useCounterpartiesRoutes } from '@/counterparty/routes/counterparties';
 import { useJournalEntriesRoutes } from '@/journal-entries/routes/journal-entries';
 import { useReportingRoutes } from '@/reporting/routes/reporting';
+import { featureFlagKeys } from '@/shared/hooks/use-feature-flag';
 import { wrapUseRoutesV7 } from '@sentry/react';
 import { useRoutes } from 'react-router-dom';
 
@@ -21,7 +23,9 @@ export function AppRoutes() {
     {
       element: (
         <ProtectedAppLayout>
-          <AppLayout />
+          <FeatureFlagGuard flagKeys={[featureFlagKeys.accessAlpha1]}>
+            <AppLayout />
+          </FeatureFlagGuard>
         </ProtectedAppLayout>
       ),
       children: [

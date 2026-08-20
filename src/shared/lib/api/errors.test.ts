@@ -1,5 +1,5 @@
 import type { IHttpErrorDto } from '@/shared/lib/api/Api';
-import { parseApiError } from '@/shared/lib/api/errors';
+import { isFeatureFlagApiError, parseApiError } from '@/shared/lib/api/errors';
 import type { AxiosError } from 'axios';
 import { describe, expect, it } from 'vitest';
 
@@ -107,5 +107,48 @@ describe('parseApiError', () => {
       validationErrors: [],
       kind: 'client',
     });
+  });
+});
+
+describe('isFeatureFlagApiError', () => {
+  it('matches a normalized Core feature-flag response', () => {
+    const error = makeAxiosError({
+      response: {
+        status: 403,
+        statusText: 'Forbidden',
+        config: { headers: {} as never },
+        headers: {},
+        data: {
+          name: 'FeatureFlagError',
+          errorKey: 'feature_flag_error_forbidden',
+          validationErrors: [],
+        },
+      },
+    });
+
+    expect(isFeatureFlagApiError(error)).toBe(true);
+  });
+
+  it('does not match an unrelated forbidden response', () => {
+    const error = makeAxiosError({
+      response: {
+        status: 403,
+        statusText: 'Forbidden',
+        config: { headers: {} as never },
+        headers: {},
+        data: {
+          name: 'ForbiddenError',
+          errorKey: 'authorization_error_forbidden',
+          validationErrors: [],
+        },
+      },
+    });
+
+    expect(isFeatureFlagApiError(error)).toBe(false);
+  });
+
+  it('does not match client or network failures', () => {
+    expect(isFeatureFlagApiError(new Error('client failure'))).toBe(false);
+    expect(isFeatureFlagApiError(makeAxiosError({ request: {} }))).toBe(false);
   });
 });
