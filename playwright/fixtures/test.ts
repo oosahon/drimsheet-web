@@ -1,11 +1,27 @@
+import {
+  defaultLaunchDarklyFlagValues,
+  registerLaunchDarklyRoutes,
+  type TLaunchDarklyFlagValues,
+} from '@integration/mocks/launchdarkly';
 import { test as base, expect } from '@playwright/test';
 import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const applicationSourcePathPrefix = '/src/';
 
-export const test = base.extend({
-  page: async ({ browserName, page }, use, testInfo) => {
+interface IFeatureFlagFixtures {
+  launchDarklyFlagValues: TLaunchDarklyFlagValues;
+}
+
+export const test = base.extend<IFeatureFlagFixtures>({
+  launchDarklyFlagValues: [defaultLaunchDarklyFlagValues, { option: true }],
+  page: async (
+    { browserName, launchDarklyFlagValues, page },
+    use,
+    testInfo
+  ) => {
+    await registerLaunchDarklyRoutes(page, launchDarklyFlagValues);
+
     const collectCoverage = testInfo.config.metadata.collectCoverage === true;
 
     if (!collectCoverage) {

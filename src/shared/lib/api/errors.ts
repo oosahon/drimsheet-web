@@ -58,3 +58,12 @@ export const parseApiError = (error: unknown): TApiError => {
     ...(method ? { method } : {}),
   };
 };
+
+export const isFeatureFlagApiError = (error: unknown) => {
+  const apiError = parseApiError(error);
+
+  return (
+    apiError.kind === 'server-response' &&
+    apiError.errorKey.startsWith('feature_flag_error_')
+  );
+};

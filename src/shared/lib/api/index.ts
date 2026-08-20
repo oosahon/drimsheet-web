@@ -2,7 +2,7 @@ import { Api } from '@/shared/lib/api/Api';
 import { generateUUID } from '@/shared/lib/utils/uuid';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-export { parseApiError } from './errors';
+export { isFeatureFlagApiError, parseApiError } from './errors';
 export type { TApiError, UApiFailureKind } from './errors';
 
 interface IDrimsheetApiAuthConfig {
