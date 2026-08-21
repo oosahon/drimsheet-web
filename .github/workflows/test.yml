@@ -32,8 +32,39 @@ jobs:
       - name: Check Stories
         run: npm run check-stories
 
-      - name: Run Component And Module Tests
-        run: npm test -- --run
+      - name: Run Shared Component Tests
+        run: npm test -- --run src/shared/components/ --maxWorkers=2
+
+      - name: Run Shared Hook And Library Tests
+        run: >-
+          npm test -- --run
+          src/shared/hooks/
+          src/shared/lib/
+          --maxWorkers=2
+
+      - name: Run Account And Bookkeeping Tests
+        run: >-
+          npm test -- --run
+          src/account/
+          src/accounting/
+          src/bookkeeping/
+          --maxWorkers=2
+
+      - name: Run Application Auth And User Tests
+        run: >-
+          npm test -- --run
+          src/_app/
+          src/auth/
+          src/onboarding/
+          src/user/
+          --maxWorkers=2
+
+      - name: Run Counterparty And Journal Entry Tests
+        run: >-
+          npm test -- --run
+          src/counterparty/
+          src/journal-entries/
+          --maxWorkers=2
 
       - name: Build
         run: npm run build
@@ -41,15 +72,50 @@ jobs:
       - name: Type-check Integration Tests
         run: npm run typecheck:integration
 
-      # - name: Run Integration Tests
-      #   run: npm run test:integration
+      - name: Run Auth Session Integration Tests
+        run: >-
+          npm run test:integration --
+          playwright/tests/auth/complete-sign-up.spec.ts
+          playwright/tests/auth/logout-confirmation.spec.ts
+          playwright/tests/auth/oauth-confirmation.spec.ts
+          --workers=2
 
-      # - name: Upload Playwright Failure Artifacts
-      #   if: failure()
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: playwright-failure-artifacts
-      #     path: |
-      #       playwright-report/
-      #       test-results/
-      #     if-no-files-found: ignore
+      - name: Run Auth Password Integration Tests
+        run: >-
+          npm run test:integration --
+          playwright/tests/auth/request-password-reset.spec.ts
+          playwright/tests/auth/reset-password.spec.ts
+          --workers=2
+
+      - name: Run Auth Access Integration Tests
+        run: >-
+          npm run test:integration --
+          playwright/tests/auth/sign-in.spec.ts
+          playwright/tests/auth/sign-up.spec.ts
+          --workers=2
+
+      - name: Run Account And Counterparty Integration Tests
+        run: >-
+          npm run test:integration --
+          playwright/tests/account/
+          playwright/tests/counterparty/
+          --workers=2
+
+      - name: Run Application Integration Tests
+        run: >-
+          npm run test:integration --
+          playwright/tests/app/
+          playwright/tests/journal-entries/
+          playwright/tests/onboarding/
+          playwright/tests/user/
+          --workers=2
+
+      - name: Upload Playwright Failure Artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-failure-artifacts
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
