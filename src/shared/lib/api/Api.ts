@@ -762,6 +762,31 @@ export interface IReceiptEntryReq {
   memo: string | null;
 }
 
+/** Make all properties in T readonly */
+export type ReadonlyRecordStringString = Record<string, string>;
+
+export interface IFileAttachment {
+  url: string;
+  name: string;
+  type: string;
+  /** @format double */
+  size: number;
+}
+
+export interface IFileUploadDto {
+  uploadUrl: string;
+  /** Make all properties in T readonly */
+  headers: ReadonlyRecordStringString;
+  file: IFileAttachment;
+}
+
+export interface IFileUploadReq {
+  name: string;
+  type: string;
+  /** @format double */
+  size: number;
+}
+
 export interface ICurrencyDto {
   code: string;
   symbol: string;
@@ -1161,7 +1186,6 @@ export class HttpClient<SecurityDataType = unknown> {
 /**
  * @title drimsheet-core
  * @version 0.1.0-alpha.1
- * @license AGPL-3.0-or-later
  * @baseUrl /api/v1
  * @contact Osahon Oboite
  *
@@ -1360,6 +1384,24 @@ export class Api<
     createReceipt: (data: IReceiptEntryReq, params: RequestParams = {}) =>
       this.request<IJournalEntryDto, IHttpErrorDto>({
         path: `/journal-entries/receipt`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+  };
+  files = {
+    /**
+     * @description Create a direct-to-Blackblaze file upload instruction
+     *
+     * @tags File
+     * @name CreateFileUpload
+     * @request POST:/files/upload
+     */
+    createFileUpload: (data: IFileUploadReq, params: RequestParams = {}) =>
+      this.request<IFileUploadDto, IHttpErrorDto>({
+        path: `/files/upload`,
         method: 'POST',
         body: data,
         type: EContentType.Json,
