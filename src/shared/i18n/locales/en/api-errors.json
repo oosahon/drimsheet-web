@@ -274,5 +274,7 @@
   "app_error_user_preferences_app_preferences_invalid": "Invalid app preferences.",
   "app_error_user_preferences_app_theme_invalid": "Invalid theme option.",
   "app_error_user_preferences_app_usage_mode_invalid": "Invalid app usage mode.",
-  "feature_flag_error_forbidden": "You are not permitted to access this feature."
+  "feature_flag_error_forbidden": "You are not permitted to access this feature.",
+  "app_error_file_upload_unexpected": "An error occurred while uploading your file.",
+  "journal_entry_error_journal_line_account_currency_mismatch_invalid": "Transaction currency does not match account's currency."
 }
