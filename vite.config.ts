@@ -75,6 +75,7 @@ export default defineConfig(({ command, mode }) => {
       environment: 'jsdom',
       setupFiles: './setup-test.ts',
       exclude: [...configDefaults.exclude, 'playwright/**'],
+      maxWorkers: '50%',
     },
   };
 });
