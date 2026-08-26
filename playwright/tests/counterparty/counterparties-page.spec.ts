@@ -291,25 +291,22 @@ test.describe('Counterparties Page Flow', () => {
     const statusHeader = page.getByTestId('column-header-status');
     await statusHeader.getByTestId('table-filter-trigger').click();
     await page.getByRole('button', { name: 'Active', exact: true }).click();
-    // Dismiss popover by clicking header
-    await statusHeader.click();
-    expect(lastFilters.status).toBe('active');
+    await page.keyboard.press('Escape');
+    await expect.poll(() => lastFilters.status).toBe('active');
 
     // 2. Filter by Type -> Individual
     const typeHeader = page.getByTestId('column-header-type');
     await typeHeader.getByTestId('table-filter-trigger').click();
     await page.getByRole('button', { name: 'Individual', exact: true }).click();
-    // Dismiss popover
-    await typeHeader.click();
-    expect(lastFilters.type).toBe('individual');
+    await page.keyboard.press('Escape');
+    await expect.poll(() => lastFilters.type).toBe('individual');
 
     // 3. Filter by Role -> Vendor
     const rolesHeader = page.getByTestId('column-header-roles');
     await rolesHeader.getByTestId('table-filter-trigger').click();
     await page.getByRole('button', { name: 'Vendor', exact: true }).click();
-    // Dismiss popover
-    await rolesHeader.click();
-    expect(lastFilters.roles).toContain('vendor');
+    await page.keyboard.press('Escape');
+    await expect.poll(() => lastFilters.roles).toContain('vendor');
   });
 
   test('supports sorting counterparties by Name', async ({ page }) => {
