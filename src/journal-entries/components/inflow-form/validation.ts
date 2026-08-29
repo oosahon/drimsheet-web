@@ -19,6 +19,7 @@ export interface IInflowFormValidationMessages {
   amountPositive: string;
   amountRequired: string;
   categoryRequired: string;
+  dateBeforeAccountOpening: string;
   dateFuture: string;
   dateRequired: string;
   exchangeRateNumber: string;
@@ -162,6 +163,22 @@ export function createInflowFormValidation(
       .required(messages.dateRequired)
       .test('not-in-future', messages.dateFuture, (value) =>
         value ? dateUtils.isNotInTheFuture(value) : true
+      )
+      .test(
+        'not-before-account-opening',
+        messages.dateBeforeAccountOpening,
+        function (value) {
+          if (!value) return true;
+
+          const values = this.parent as IInflowFormValues;
+          const openingBalanceDate = destinationAccounts.find(
+            (account) => account.id === values.destinationAccountId
+          )?.openingBalanceDate;
+
+          return openingBalanceDate
+            ? dateUtils.isOnOrAfter(value, openingBalanceDate)
+            : true;
+        }
       ),
     exchangeRate: exchangeRateValidation,
     isItemized: yup.boolean().defined(),
@@ -215,6 +232,9 @@ export function useInflowFormValidation(
           amountPositive: t('inflow_amount_positive_text'),
           amountRequired: t('inflow_amount_required_text'),
           categoryRequired: t('inflow_category_required_text'),
+          dateBeforeAccountOpening: t(
+            'inflow_date_before_account_opening_text'
+          ),
           dateFuture: t('inflow_date_future_text'),
           dateRequired: t('inflow_date_required_text'),
           exchangeRateNumber: t('inflow_exchange_rate_number_text'),

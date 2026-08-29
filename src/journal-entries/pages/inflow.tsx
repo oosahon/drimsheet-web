@@ -41,9 +41,32 @@ const requiredQueryOptions: IReactQueryOptions = {
   throwOnError: true,
 };
 
+function getExchangeRateQuery(
+  currencyContext: IInflowCurrencyContext | undefined,
+  functionalCurrencyCode: string
+): IExchangeRateQueryParam | undefined {
+  if (
+    !currencyContext?.currencyCode ||
+    !currencyContext.date ||
+    !functionalCurrencyCode ||
+    currencyContext.currencyCode === functionalCurrencyCode
+  ) {
+    return undefined;
+  }
+
+  return {
+    currencyPair: `${currencyContext.currencyCode}/${functionalCurrencyCode}`,
+    type: EExchangeRateType.Official,
+    asOf: currencyContext.date,
+    limit: 1,
+  };
+}
+
 export function InflowPage() {
   const { t } = useTranslation('journal-entries');
+
   const handleApiError = useApiErrorHandler();
+
   const [currencyContext, setCurrencyContext] =
     useState<IInflowCurrencyContext>();
   const [files, setFiles] = useState<File[]>([]);
@@ -74,19 +97,10 @@ export function InflowPage() {
     useAccountingEntity(requiredQueryOptions);
 
   const functionalCurrencyCode = accountingEntity?.functionalCurrencyCode ?? '';
-  const exchangeRateQuery: IExchangeRateQueryParam | undefined =
-    currencyContext?.currencyCode &&
-    currencyContext.date &&
-    functionalCurrencyCode &&
-    currencyContext.currencyCode !== functionalCurrencyCode
-      ? {
-          currencyPair: `${currencyContext.currencyCode}/${functionalCurrencyCode}`,
-          type: EExchangeRateType.Official,
-          asOf: currencyContext.date,
-          limit: 1,
-        }
-      : undefined;
-  const { data: officialExchangeRates } = useExchangeRates(exchangeRateQuery);
+
+  const { data: officialExchangeRates } = useExchangeRates(
+    getExchangeRateQuery(currencyContext, functionalCurrencyCode)
+  );
   const { mutateAsync: createReceipt, isPending: isCreatingReceipt } =
     useCreateReceipt();
 
@@ -105,6 +119,7 @@ export function InflowPage() {
       const attachmentReferences = values.receipt
         ? [await fileUploadService.uploadFile(values.receipt)]
         : [];
+
       const payload = journalEntryMapper.toReceiptEntryReq(
         values,
         functionalCurrencyCode,

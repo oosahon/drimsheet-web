@@ -49,6 +49,7 @@
   "inflow_category_required_text": "Category is required",
   "inflow_date_required_text": "Date is required",
   "inflow_date_future_text": "Date cannot be in the future",
+  "inflow_date_before_account_opening_text": "Date cannot be before the account opening date",
   "inflow_item_amount_required_text": "Item amount is required",
   "inflow_item_amount_positive_text": "Item amount must be greater than zero",
   "inflow_item_category_required_text": "Item category is required",

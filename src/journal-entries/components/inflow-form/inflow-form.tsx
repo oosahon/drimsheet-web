@@ -24,6 +24,7 @@ import { Label } from '@/shared/components/label';
 import { MoneyWithCurrencyInput } from '@/shared/components/money-with-currency-input';
 import { useFieldErrorMessage } from '@/shared/hooks/use-field-error-message';
 import type { IJournalCounterpartyReq } from '@/shared/lib/api/Api';
+import { dateUtils } from '@/shared/lib/utils/date';
 import { generateUUID } from '@/shared/lib/utils/uuid';
 import { useFormik } from 'formik';
 import { ArrowLeft, ListCollapse } from 'lucide-react';
@@ -113,6 +114,7 @@ export function InflowForm({
   );
   const destinationCurrencyCode =
     selectedAccount?.balance.currencyCode ?? functionalCurrencyCode;
+  const destinationAccountOpeningDate = selectedAccount?.openingBalanceDate;
 
   const itemizedTotal = inflowFormHelpers.getItemTotal(formik.values.items);
 
@@ -153,6 +155,13 @@ export function InflowForm({
       currencyCode: destinationCurrencyCode,
       date,
     });
+  };
+
+  const handleDateDisabled = (date: Date) => {
+    if (!dateUtils.isNotInTheFuture(date)) return true;
+    if (!destinationAccountOpeningDate) return false;
+
+    return !dateUtils.isOnOrAfter(date, destinationAccountOpeningDate);
   };
 
   const handlePayerChange = (
@@ -326,7 +335,7 @@ export function InflowForm({
                 id="inflow-date"
                 aria-invalid={Boolean(dateError.length)}
                 disabled={interactionDisabled}
-                disabledDates={{ after: new Date() }}
+                disabledDates={handleDateDisabled}
                 onBlur={() => void formik.setFieldTouched('date', true)}
                 onValueChange={handleDateChange}
                 placeholder={date_placeholder}

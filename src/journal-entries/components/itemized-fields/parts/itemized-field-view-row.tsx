@@ -61,6 +61,7 @@ export function ItemizedFieldViewRow({
             <TruncatedText
               className="block text-xs text-muted-foreground"
               maxLength={45}
+              showTooltip
               tabIndex={-1}
               text={item.description}
             />

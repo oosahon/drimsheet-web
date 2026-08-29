@@ -11,6 +11,7 @@ export function TransactionLayout() {
     { value: 'outflow', label: t('outflow_tab') },
     { value: 'transfer', label: t('transfer_tab') },
   ];
+
   const activeValue = location.pathname.split('/').at(-1) ?? 'inflow';
   const tabs_aria_label = t('tabs_aria_label');
 

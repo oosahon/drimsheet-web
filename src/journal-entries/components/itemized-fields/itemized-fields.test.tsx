@@ -283,7 +283,7 @@ describe('ItemizedFields', () => {
     const description = 'A'.repeat(55);
     renderItemizedFields({ defaultValue: [{ ...item, description }] });
 
-    const truncatedDescription = screen.getByText(`${'A'.repeat(50)}…`);
+    const truncatedDescription = screen.getByText(`${'A'.repeat(45)}…`);
     await user.hover(truncatedDescription);
 
     expect(await screen.findByRole('tooltip')).toHaveTextContent(description);

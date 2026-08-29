@@ -15,6 +15,7 @@ const destinationAccounts = [
     code: '1000',
     name: 'NGN bank account',
     type: 'asset',
+    openingBalanceDate: '2026-08-08',
     balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
   },
   {
@@ -22,6 +23,7 @@ const destinationAccounts = [
     code: '1010',
     name: 'USD bank account',
     type: 'asset',
+    openingBalanceDate: '2026-08-01',
     balance: { amount: 0, currencyCode: 'USD', isMinorUnit: false },
   },
 ] as unknown as ILedgerAccountDto[];
@@ -41,6 +43,7 @@ const validationMessages: IInflowFormValidationMessages = {
   amountPositive: 'Amount must be greater than zero',
   amountRequired: 'Amount is required',
   categoryRequired: 'Category is required',
+  dateBeforeAccountOpening: 'Date cannot be before the account opening date',
   dateFuture: 'Date cannot be in the future',
   dateRequired: 'Date is required',
   exchangeRateNumber: 'Exchange rate must be a number',
@@ -123,6 +126,18 @@ describe('InflowForm validation', () => {
     await expect(
       schema.validate({ ...validValues, date: '2999-01-01' })
     ).rejects.toThrow('Date cannot be in the future');
+  });
+
+  it('rejects a date before the destination account opening date', async () => {
+    await expect(
+      schema.validate({ ...validValues, date: '2026-08-07' })
+    ).rejects.toThrow('Date cannot be before the account opening date');
+  });
+
+  it('accepts the destination account opening date', async () => {
+    await expect(
+      schema.validate({ ...validValues, date: '2026-08-08' })
+    ).resolves.toBeTruthy();
   });
 });
 
@@ -302,6 +317,29 @@ describe('InflowForm', () => {
       currencyCode: 'USD',
       date: '2026-08-09',
     });
+  });
+
+  it('disables dates before the selected account opening date', async () => {
+    const user = userEvent.setup();
+    render(
+      <InflowForm
+        destinationAccounts={destinationAccounts}
+        functionalCurrencyCode="NGN"
+        initialValues={validValues}
+        onCurrencyContextChange={() => undefined}
+        onSubmit={() => undefined}
+        sourceAccounts={sourceAccounts}
+      />
+    );
+
+    await user.click(screen.getByLabelText('Date'));
+
+    expect(
+      screen.getByRole('button', { name: /Friday, August 7/i })
+    ).toBeDisabled();
+    expect(
+      screen.getByRole('button', { name: /Saturday, August 8/i })
+    ).toBeEnabled();
   });
 
   it('does not show a required error after selecting an account for the first time', async () => {

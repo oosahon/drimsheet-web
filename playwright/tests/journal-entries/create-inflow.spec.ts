@@ -301,11 +301,7 @@ test.describe('Inflow receipt creation', () => {
       limit: '1',
       type: 'official',
     });
-    await expect(
-      page.getByText(`Official rate as of ${firstQuery.asOf} is 1401.`, {
-        exact: true,
-      })
-    ).toBeVisible();
+    await expect(page.getByRole('alert')).toHaveText('Official rate: 1401');
 
     const previousDate = new Date(`${firstQuery.asOf}T00:00:00.000Z`);
     previousDate.setUTCDate(previousDate.getUTCDate() - 1);
@@ -335,11 +331,7 @@ test.describe('Inflow receipt creation', () => {
       limit: '1',
       type: 'official',
     });
-    await expect(
-      page.getByText(`Official rate as of ${previousApiDate} is 1402.`, {
-        exact: true,
-      })
-    ).toBeVisible();
+    await expect(page.getByRole('alert')).toHaveText('Official rate: 1402');
 
     await account.fill('NGN');
     await page.getByRole('option', { name: 'NGN operating account' }).click();
@@ -402,7 +394,7 @@ test.describe('Inflow receipt creation', () => {
 
     await expect(createButton).toBeDisabled();
     await expect(page.locator('form')).toHaveAttribute('aria-busy', 'true');
-    expect(requestCount).toBe(1);
+    await expect.poll(() => requestCount).toBe(1);
 
     releaseReceiptResponse();
 

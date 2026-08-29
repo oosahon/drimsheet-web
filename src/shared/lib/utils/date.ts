@@ -121,10 +121,25 @@ function isNotInTheFuture(date: Date | string | number) {
   return dayjs(date).isBefore(dayjs());
 }
 
+function isOnOrAfter(
+  date: Date | string | number,
+  earliestDate: Date | string | number
+) {
+  const candidateDate = dayjs(date);
+  const boundaryDate = dayjs(earliestDate);
+
+  return (
+    candidateDate.isValid() &&
+    boundaryDate.isValid() &&
+    !candidateDate.isBefore(boundaryDate, 'day')
+  );
+}
+
 export const dateUtils = Object.freeze({
   isValidDate,
   isNotInThePast,
   isNotInTheFuture,
+  isOnOrAfter,
   formatFiscalDate,
   getFiscalYearDateRange,
   formatFiscalDateWithYear,
