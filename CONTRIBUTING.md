@@ -35,6 +35,8 @@ src/
 │  │     ├─ [component].stories.tsx
 │  │     ├─ [component].test.tsx
 │  │     ├─ [component].container.tsx
+│  │     ├─ [component].helper.ts
+│  │     ├─ [component].helper.test.ts
 │  │     ├─ types.ts
 │  │     ├─ validation.ts
 │  │     └─ index.ts

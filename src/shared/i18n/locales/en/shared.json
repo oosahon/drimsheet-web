@@ -69,6 +69,8 @@
   "exchange_rate_required_text": "Exchange rate is required",
   "exchange_rate_number_text": "Exchange rate must be a number",
   "exchange_rate_positive_text": "Exchange rate must be greater than zero",
+  "official_exchange_rate_available_text": "Official rate:",
+  "official_exchange_rate_unavailable_text": "No system official rate",
   "open_options_aria_label": "Open options",
   "clear_selection_aria_label": "Clear selection",
   "switch_to_light_mode_action": "Switch to light",

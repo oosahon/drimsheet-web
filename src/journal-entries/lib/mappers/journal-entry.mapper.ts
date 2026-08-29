@@ -2,6 +2,7 @@ import type { IInflowFormValues } from '@/journal-entries/components/inflow-form
 import type {
   IExchangeRateDto,
   IJournalCounterpartyReq,
+  IReceiptEntryLineReq,
   IReceiptEntryReq,
 } from '@/shared/lib/api/Api';
 import { currencyMapper } from '@/shared/lib/mappers/currency.mapper';
@@ -20,10 +21,33 @@ function toJournalCounterpartyReq(
   return counterparty;
 }
 
+function toReceiptLine(
+  accountId: string,
+  amount: IInflowFormValues['amount'],
+  payer: IInflowFormValues['payer'],
+  exchangeRate: IExchangeRateDto | null,
+  description: string | null,
+  sequenceOrder: number
+): IReceiptEntryLineReq {
+  return {
+    accountId,
+    counterparty: toJournalCounterpartyReq(payer),
+    amount: moneyMapper.toMoneyDto(
+      amount.amount,
+      amount.currencyCode,
+      amount.isMinorUnit
+    ),
+    exchangeRate,
+    description,
+    sequenceOrder,
+  };
+}
+
 function toReceiptEntryReq(
   values: IInflowFormValues,
   functionalCurrencyCode: string,
-  occurredAt: string
+  occurredAt: string,
+  attachmentReferences: string[] = []
 ): IReceiptEntryReq {
   const currencyCode = values.amount.currencyCode;
   const description = values.description.trim() || null;
@@ -34,38 +58,44 @@ function toReceiptEntryReq(
       baseCurrencyCode: currencyCode,
       targetCurrencyCode: functionalCurrencyCode,
       rate: Number(values.exchangeRate),
-      asOf: occurredAt,
+      asOf: values.date,
     });
   }
 
+  const sourceLines = values.isItemized
+    ? values.items.map((item, index) =>
+        toReceiptLine(
+          item.accountId,
+          item.amount,
+          values.payer,
+          exchangeRate,
+          item.description.trim() || null,
+          index + 1
+        )
+      )
+    : [
+        toReceiptLine(
+          values.sourceAccountId,
+          values.amount,
+          values.payer,
+          exchangeRate,
+          description,
+          1
+        ),
+      ];
+
   return {
-    sourceLine: {
-      accountId: values.categoryAccountId,
-      counterparty: toJournalCounterpartyReq(values.payer),
-      amount: moneyMapper.toMoneyDto(
-        values.amount.amount,
-        currencyCode,
-        values.amount.isMinorUnit
-      ),
+    attachmentReferences: attachmentReferences.map((reference) => reference),
+    sourceLines,
+    destinationLine: toReceiptLine(
+      values.destinationAccountId,
+      values.amount,
+      values.payer,
       exchangeRate,
       description,
-      sequenceOrder: 1,
-    },
-    destinationLines: [
-      {
-        accountId: values.destinationAccountId,
-        counterparty: toJournalCounterpartyReq(values.payer),
-        amount: moneyMapper.toMoneyDto(
-          values.amount.amount,
-          currencyCode,
-          values.amount.isMinorUnit
-        ),
-        exchangeRate,
-        description,
-        sequenceOrder: 2,
-      },
-    ],
-    effectiveDate: occurredAt,
+      sourceLines.length + 1
+    ),
+    effectiveDate: values.date,
     postedAt: occurredAt,
     memo: description,
   };

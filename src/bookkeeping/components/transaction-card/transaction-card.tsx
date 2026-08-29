@@ -1,4 +1,4 @@
-import { BalanceEffectIcon } from '@/bookkeeping/components/balance-effect-icon';
+import { BalanceEffectIcon } from '@/shared/components/balance-effect-icon';
 import {
   Item,
   ItemContent,

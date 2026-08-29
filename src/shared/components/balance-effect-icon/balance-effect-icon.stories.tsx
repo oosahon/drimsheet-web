@@ -1,9 +1,9 @@
+import { BalanceEffectIcon } from '@/shared/components/balance-effect-icon';
 import { ELedgerAccountBalanceEffect } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { BalanceEffectIcon } from './balance-effect-icon';
 
 const meta = {
-  title: 'Bookkeeping/BalanceEffectIcon',
+  title: 'Shared UI/BalanceEffectIcon',
   component: BalanceEffectIcon,
   parameters: {
     layout: 'centered',
@@ -11,7 +11,7 @@ const meta = {
   tags: ['autodocs'],
   decorators: [
     (Story) => (
-      <div className="p-8 bg-background border border-border rounded-xl">
+      <div className="rounded-xl border border-border bg-background p-8">
         <Story />
       </div>
     ),

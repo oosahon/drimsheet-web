@@ -24,13 +24,12 @@ components/<component-name>/
   <component-name>.container.tsx
   <component-name>.stories.tsx
   <component-name>.test.tsx
+  <component-name>.helper.ts
+  <component-name>.helper.test.ts
   parts/
     <part-name>.tsx
     <part-name>.stories.tsx
     <part-name>.test.tsx
-  helpers/
-    <descriptive-helper-name>.helper.ts
-    <descriptive-helper-name>.helper.test.ts
   types.ts
   validation.ts
   index.ts
@@ -50,9 +49,9 @@ Requirements:
   orchestration.
 - `parts/`: optional and reserved for extracted UI subcomponents used only by
   the owning component.
-- `helpers/`: required when the component owns deterministic non-UI helpers;
-  keep one helper in each `.helper.ts` file with a matching
-  `.helper.test.ts`.
+- `<component-name>.helper.ts`: required when the component owns deterministic
+  non-UI helpers; group all such functions in one frozen default helper object
+  and add one matching `<component-name>.helper.test.ts`.
 
 ## Private parts
 
@@ -97,12 +96,12 @@ Private parts follow these ownership rules:
   They must not import their own directory's `index.ts`.
 - Use explicit relative imports for private parts and their owner-local support
   files.
-- Import private helpers through explicit relative implementation paths. Do not
-  add `helpers/index.ts`, import a helper outside its owner, or re-export one
-  from the owner's public `index.ts`.
-- Name each helper file and exported function for both its owning component and
-  operation, such as `create-inflow-form-initial-values.helper.ts` exporting
-  `createInflowFormInitialValues`.
+- Import the private helper object through its explicit sibling path. Do not
+  create a `helpers/` directory, add operation-named helper modules, import the
+  helper outside its owner, or re-export it from the owner's public `index.ts`.
+- Keep helper functions local, expose only a frozen
+  `<componentName>Helpers` default object, and use concise operation names on
+  that object, such as `inflowFormHelpers.createInitialValues`.
 - Import through the public alias in stories and consumer-facing tests so they
   also verify the barrel contract. Use a direct sibling import only when a test
   intentionally targets a non-public module such as validation or a private

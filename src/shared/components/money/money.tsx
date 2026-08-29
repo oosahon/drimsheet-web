@@ -7,6 +7,7 @@ interface MoneyProps extends ComponentProps<'span'> {
   value: IMoneyDto;
   localCode?: string;
   hide?: boolean;
+  hideZeroMinorUnit?: boolean;
 }
 
 const getMoneyDisplayAmount = (value: IMoneyDto): number => {
@@ -33,6 +34,7 @@ export function Money({
   value,
   localCode,
   hide,
+  hideZeroMinorUnit = true,
   ...props
 }: Readonly<MoneyProps>) {
   const locale = currencyService.getJurisdictionLocale(
@@ -42,6 +44,7 @@ export function Money({
   const formatted = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: value.currencyCode,
+    trailingZeroDisplay: hideZeroMinorUnit ? 'stripIfInteger' : 'auto',
   }).format(getMoneyDisplayAmount(value));
 
   return <span {...props}>{hide ? '******' : formatted}</span>;

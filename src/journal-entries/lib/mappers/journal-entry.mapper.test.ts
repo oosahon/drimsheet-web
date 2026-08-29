@@ -5,36 +5,30 @@ import { describe, expect, it } from 'vitest';
 
 const occurredAt = '2026-08-12T10:30:00.000Z';
 
-describe('journalEntryMapper', () => {
-  it('maps a functional-currency receipt with a name-only payer and nullable descriptions', () => {
-    const values = {
-      destinationAccountId: 'ngn-bank',
-      categoryAccountId: 'sales-revenue',
-      amount: { amount: 250000, currencyCode: 'NGN', isMinorUnit: false },
-      exchangeRate: '',
-      payer: { name: 'New payer' },
-      description: '   ',
-      browserOnlyValue: 'must not leak',
-    } as IInflowFormValues;
+const values: IInflowFormValues = {
+  destinationAccountId: 'ngn-bank',
+  sourceAccountId: 'sales-revenue',
+  amount: { amount: 250000, currencyCode: 'NGN', isMinorUnit: false },
+  date: '2026-08-10',
+  exchangeRate: '',
+  isItemized: false,
+  items: [],
+  payer: { name: 'New payer' },
+  description: '  August receipt  ',
+  receipt: null,
+};
 
+describe('journalEntryMapper', () => {
+  it('maps a single functional-currency receipt and attachment references', () => {
     expect(
-      journalEntryMapper.toReceiptEntryReq(values, 'NGN', occurredAt)
+      journalEntryMapper.toReceiptEntryReq(values, 'NGN', occurredAt, [
+        'attachment-1',
+      ])
     ).toEqual({
-      sourceLine: {
-        accountId: 'sales-revenue',
-        counterparty: { name: 'New payer' },
-        amount: {
-          amount: 250000,
-          currencyCode: 'NGN',
-          isMinorUnit: false,
-        },
-        exchangeRate: null,
-        description: null,
-        sequenceOrder: 1,
-      },
-      destinationLines: [
+      attachmentReferences: ['attachment-1'],
+      sourceLines: [
         {
-          accountId: 'ngn-bank',
+          accountId: 'sales-revenue',
           counterparty: { name: 'New payer' },
           amount: {
             amount: 250000,
@@ -42,81 +36,119 @@ describe('journalEntryMapper', () => {
             isMinorUnit: false,
           },
           exchangeRate: null,
-          description: null,
-          sequenceOrder: 2,
+          description: 'August receipt',
+          sequenceOrder: 1,
         },
       ],
-      effectiveDate: occurredAt,
+      destinationLine: {
+        accountId: 'ngn-bank',
+        counterparty: { name: 'New payer' },
+        amount: {
+          amount: 250000,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        exchangeRate: null,
+        description: 'August receipt',
+        sequenceOrder: 2,
+      },
+      effectiveDate: '2026-08-10',
       postedAt: occurredAt,
-      memo: null,
+      memo: 'August receipt',
     });
   });
 
-  it('maps a foreign-currency receipt with a projected existing payer and exchange rates', () => {
-    const values = {
-      destinationAccountId: 'usd-bank',
-      categoryAccountId: 'consulting-revenue',
-      amount: { amount: 1250.5, currencyCode: 'USD', isMinorUnit: false },
-      exchangeRate: '1500',
-      payer: {
-        id: 'payer-1',
-        name: 'Acme Consulting',
-        type: 'organization',
-        status: 'active',
-        roles: ['customer'],
+  it('maps itemized accounts to source lines and the total to the destination', () => {
+    const result = journalEntryMapper.toReceiptEntryReq(
+      {
+        ...values,
+        sourceAccountId: 'inactive-source',
+        isItemized: true,
+        items: [
+          {
+            id: 'ui-only-1',
+            amount: {
+              amount: 100000,
+              currencyCode: 'NGN',
+              isMinorUnit: false,
+            },
+            accountId: 'sales',
+            description: ' Product ',
+          },
+          {
+            id: 'ui-only-2',
+            amount: {
+              amount: 150000,
+              currencyCode: 'NGN',
+              isMinorUnit: false,
+            },
+            accountId: 'services',
+            description: '',
+          },
+        ],
       },
-      description: '  August consulting retainer  ',
-    } as IInflowFormValues;
+      'NGN',
+      occurredAt
+    );
 
-    const exchangeRate = {
+    expect(result.sourceLines).toEqual([
+      expect.objectContaining({
+        accountId: 'sales',
+        amount: expect.objectContaining({ amount: 100000 }),
+        description: 'Product',
+        sequenceOrder: 1,
+      }),
+      expect.objectContaining({
+        accountId: 'services',
+        amount: expect.objectContaining({ amount: 150000 }),
+        description: null,
+        sequenceOrder: 2,
+      }),
+    ]);
+    expect(result.destinationLine).toEqual({
+      accountId: 'ngn-bank',
+      counterparty: { name: 'New payer' },
+      amount: {
+        amount: 250000,
+        currencyCode: 'NGN',
+        isMinorUnit: false,
+      },
+      exchangeRate: null,
+      description: 'August receipt',
+      sequenceOrder: 3,
+    });
+  });
+
+  it('uses the selected date for a manual foreign exchange rate', () => {
+    const result = journalEntryMapper.toReceiptEntryReq(
+      {
+        ...values,
+        destinationAccountId: 'usd-bank',
+        amount: { amount: 1250, currencyCode: 'USD', isMinorUnit: false },
+        exchangeRate: '1500',
+        payer: {
+          id: 'payer-1',
+          name: 'Acme',
+          type: 'organization',
+        },
+      },
+      'NGN',
+      occurredAt
+    );
+
+    expect(result.sourceLines[0]?.exchangeRate).toEqual({
       baseCurrencyCode: 'USD',
       targetCurrencyCode: 'NGN',
       rate: 1500,
       type: EExchangeRateType.Market,
-      asOf: occurredAt,
+      asOf: '2026-08-10',
       source: 'manual',
-    };
-
-    expect(
-      journalEntryMapper.toReceiptEntryReq(values, 'NGN', occurredAt)
-    ).toEqual({
-      sourceLine: {
-        accountId: 'consulting-revenue',
-        counterparty: {
-          id: 'payer-1',
-          name: 'Acme Consulting',
-          type: 'organization',
-        },
-        amount: {
-          amount: 1250.5,
-          currencyCode: 'USD',
-          isMinorUnit: false,
-        },
-        exchangeRate,
-        description: 'August consulting retainer',
-        sequenceOrder: 1,
-      },
-      destinationLines: [
-        {
-          accountId: 'usd-bank',
-          counterparty: {
-            id: 'payer-1',
-            name: 'Acme Consulting',
-            type: 'organization',
-          },
-          amount: {
-            amount: 1250.5,
-            currencyCode: 'USD',
-            isMinorUnit: false,
-          },
-          exchangeRate,
-          description: 'August consulting retainer',
-          sequenceOrder: 2,
-        },
-      ],
-      effectiveDate: occurredAt,
-      postedAt: occurredAt,
-      memo: 'August consulting retainer',
     });
+    expect(result.effectiveDate).toBe('2026-08-10');
+    expect(result.postedAt).toBe(occurredAt);
+    expect(result.attachmentReferences).toEqual([]);
+    expect(result.destinationLine.exchangeRate).toEqual(
+      result.sourceLines[0]?.exchangeRate
+    );
   });
 });

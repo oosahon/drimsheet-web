@@ -1,4 +1,5 @@
 import { CurrencyExchangeRateInput } from '@/shared/components/currency-exchange-rate-input';
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
@@ -38,6 +39,40 @@ export const Compact: Story = {
   decorators: [
     (Story) => (
       <div className="w-64">
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+export const WithoutOfficialRate: Story = {
+  args: {
+    displayOfficialRate: true,
+    layout: 'compact',
+  },
+  decorators: [
+    (Story) => (
+      <div className="w-xl max-w-full">
+        <Story />
+      </div>
+    ),
+  ],
+};
+
+export const WithOfficialRate: Story = {
+  args: {
+    displayOfficialRate: true,
+    layout: 'compact',
+    officialRate: {
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1500,
+      asOf: '2026-06-01T00:00:00.000Z',
+    } as IExchangeRate,
+  },
+  decorators: [
+    (Story) => (
+      <div className="w-xl max-w-full">
         <Story />
       </div>
     ),

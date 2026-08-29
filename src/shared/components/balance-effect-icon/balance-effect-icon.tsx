@@ -4,7 +4,7 @@ import { cn } from '@/shared/lib/utils/cn';
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import type { ComponentProps } from 'react';
 
-interface TransactionCardProps extends ComponentProps<'div'> {
+interface BalanceEffectIconProps extends ComponentProps<'div'> {
   effect: ULedgerAccountBalanceEffect;
 }
 
@@ -12,7 +12,7 @@ function BalanceEffectIcon({
   effect,
   className,
   ...props
-}: Readonly<TransactionCardProps>) {
+}: Readonly<BalanceEffectIconProps>) {
   const defaultClassName = 'self-center !translate-y-0 size-16 rounded-full';
 
   switch (effect) {

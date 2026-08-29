@@ -48,7 +48,7 @@ function formatWithJurisdiction(date: Date, countryCode?: string): string {
   let locale = DEFAULT_LOCALE;
   if (countryCode) {
     const country = countries.find((c) => c.code === countryCode);
-    if (country && country.locale) {
+    if (country?.locale) {
       locale = country.locale;
     }
   }

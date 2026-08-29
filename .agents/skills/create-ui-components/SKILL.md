@@ -92,9 +92,10 @@ or risk warrants them. Report any check that could not be run.
 - Imports obey feature-to-shared dependency direction.
 - Substantial private UI sections live in `parts/`, remain owner-private, and
   are not re-exported.
-- Deterministic component helpers have descriptive owner-qualified names, live
-  one per `.helper.ts` file under `helpers/`, have matching `.helper.test.ts`
-  files, and are not re-exported.
+- Deterministic component helpers live together in one root-level
+  `<component-name>.helper.ts`, expose only a frozen
+  `<componentName>Helpers` default object, have one matching helper test module,
+  and are not re-exported.
 - Callbacks with branching, lookup, transformation, or multiple statements use
   named handlers; short single-expression adapters may remain inline.
 - Component code contains no nested ternaries.

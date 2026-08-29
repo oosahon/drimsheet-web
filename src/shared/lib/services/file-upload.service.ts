@@ -1,20 +1,25 @@
 import { drimsheetApi } from '@/shared/lib/api';
-import type { IFileAttachment } from '@/shared/lib/api/Api';
+import { EFileUploadPurpose } from '@/shared/lib/api/Api';
 import axios from 'axios';
 
-async function uploadFile(file: File): Promise<IFileAttachment> {
-  const uploadInstructionResponse = await drimsheetApi.files.createFileUpload({
-    name: file.name,
-    type: file.type,
-    size: file.size,
-  });
-  const uploadInstruction = uploadInstructionResponse.data;
+async function uploadFile(file: File): Promise<string> {
+  const uploadInstructionResponse = await drimsheetApi.files.preSignUploads([
+    {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      purpose: EFileUploadPurpose.JournalEntryAttachment,
+    },
+  ]);
+  const uploadInstruction = uploadInstructionResponse.data[0];
+
+  if (!uploadInstruction) throw new Error('Missing file upload instruction');
 
   await axios.put(uploadInstruction.uploadUrl, file, {
     headers: uploadInstruction.headers,
   });
 
-  return uploadInstruction.file;
+  return uploadInstruction.reference;
 }
 
 export const fileUploadService = Object.freeze({

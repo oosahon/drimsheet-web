@@ -1,28 +1,19 @@
 import { drimsheetApi } from '@/shared/lib/api';
-import type { IFileUploadDto } from '@/shared/lib/api/Api';
+import { EFileUploadPurpose, type IFileUploadDto } from '@/shared/lib/api/Api';
 import { fileUploadService } from '@/shared/lib/services/file-upload.service';
 import axios from 'axios';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/shared/lib/api', () => ({
-  drimsheetApi: {
-    files: {
-      createFileUpload: vi.fn(),
-    },
-  },
+  drimsheetApi: { files: { preSignUploads: vi.fn() } },
 }));
 
-vi.mock('axios', () => ({
-  default: {
-    put: vi.fn(),
-  },
-}));
+vi.mock('axios', () => ({ default: { put: vi.fn() } }));
 
 const uploadInstruction = {
   uploadUrl: 'https://uploads.example.com/file?signature=secret',
-  headers: {
-    'Content-Type': 'image/png',
-  },
+  reference: 'upload-reference-1',
+  headers: { 'Content-Type': 'image/png' },
   file: {
     url: 'https://uploads.example.com/file',
     name: 'receipt.png',
@@ -32,54 +23,53 @@ const uploadInstruction = {
 } satisfies IFileUploadDto;
 
 describe('fileUploadService', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+  beforeEach(() => vi.clearAllMocks());
 
-  it('uploads a browser file directly with the Core-issued instruction', async () => {
+  it('prepares and uploads one journal-entry attachment', async () => {
     const file = new File(['file-content'], 'receipt.png', {
       type: 'image/png',
     });
-    vi.mocked(drimsheetApi.files.createFileUpload).mockResolvedValue({
-      data: uploadInstruction,
+    vi.mocked(drimsheetApi.files.preSignUploads).mockResolvedValue({
+      data: [uploadInstruction],
     } as never);
     vi.mocked(axios.put).mockResolvedValue({} as never);
 
-    await expect(fileUploadService.uploadFile(file)).resolves.toEqual(
-      uploadInstruction.file
+    await expect(fileUploadService.uploadFile(file)).resolves.toBe(
+      'upload-reference-1'
     );
-
-    expect(drimsheetApi.files.createFileUpload).toHaveBeenCalledWith({
-      name: 'receipt.png',
-      type: 'image/png',
-      size: file.size,
-    });
+    expect(drimsheetApi.files.preSignUploads).toHaveBeenCalledWith([
+      {
+        name: 'receipt.png',
+        type: 'image/png',
+        size: file.size,
+        purpose: EFileUploadPurpose.JournalEntryAttachment,
+      },
+    ]);
     expect(axios.put).toHaveBeenCalledWith(uploadInstruction.uploadUrl, file, {
       headers: uploadInstruction.headers,
     });
   });
 
-  it('does not contact Blackblaze when Core cannot create an upload instruction', async () => {
-    const coreError = new Error('Core unavailable');
-    const file = new File(['file-content'], 'receipt.png', {
-      type: 'image/png',
-    });
-    vi.mocked(drimsheetApi.files.createFileUpload).mockRejectedValue(coreError);
+  it('rejects before direct upload when no instruction is returned', async () => {
+    const file = new File(['content'], 'receipt.png', { type: 'image/png' });
+    vi.mocked(drimsheetApi.files.preSignUploads).mockResolvedValue({
+      data: [],
+    } as never);
 
-    await expect(fileUploadService.uploadFile(file)).rejects.toBe(coreError);
+    await expect(fileUploadService.uploadFile(file)).rejects.toThrow(
+      'Missing file upload instruction'
+    );
     expect(axios.put).not.toHaveBeenCalled();
   });
 
-  it('rejects without returning metadata when the direct upload fails', async () => {
-    const uploadError = new Error('Blackblaze unavailable');
-    const file = new File(['file-content'], 'receipt.png', {
-      type: 'image/png',
-    });
-    vi.mocked(drimsheetApi.files.createFileUpload).mockResolvedValue({
-      data: uploadInstruction,
+  it('propagates direct-upload failures', async () => {
+    const error = new Error('Upload unavailable');
+    const file = new File(['content'], 'receipt.png', { type: 'image/png' });
+    vi.mocked(drimsheetApi.files.preSignUploads).mockResolvedValue({
+      data: [uploadInstruction],
     } as never);
-    vi.mocked(axios.put).mockRejectedValue(uploadError);
+    vi.mocked(axios.put).mockRejectedValue(error);
 
-    await expect(fileUploadService.uploadFile(file)).rejects.toBe(uploadError);
+    await expect(fileUploadService.uploadFile(file)).rejects.toBe(error);
   });
 });

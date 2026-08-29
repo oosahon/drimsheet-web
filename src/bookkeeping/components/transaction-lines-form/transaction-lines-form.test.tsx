@@ -155,7 +155,7 @@ describe('TransactionLinesForm', () => {
     });
 
     expect(screen.getByText('Main Bank Account')).toBeInTheDocument();
-    expect(screen.getByText(/100\.00/)).toBeInTheDocument();
+    expect(screen.getByText('₦100')).toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Edit line 1' })
     ).toBeInTheDocument();

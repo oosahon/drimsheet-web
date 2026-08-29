@@ -1,4 +1,6 @@
+import type { IItemizedFieldValue } from '@/journal-entries/components/itemized-fields';
 import type {
+  IExchangeRate,
   IJournalCounterpartyReq,
   ILedgerAccountDto,
   IMoneyDto,
@@ -6,20 +8,33 @@ import type {
 
 export interface IInflowFormValues {
   destinationAccountId: string;
-  categoryAccountId: string;
+  sourceAccountId: string;
   amount: IMoneyDto;
+  date: string;
   exchangeRate: string;
+  isItemized: boolean;
+  items: IItemizedFieldValue[];
   payer: IJournalCounterpartyReq;
   description: string;
+  receipt: File | null;
 }
 
 export interface IInflowFormInitialValues {
   destinationAccountId?: string;
-  categoryAccountId?: string;
+  sourceAccountId?: string;
   amount?: Partial<IMoneyDto>;
+  date?: string;
   exchangeRate?: string;
+  isItemized?: boolean;
+  items?: IItemizedFieldValue[];
   payer?: Partial<IJournalCounterpartyReq>;
   description?: string;
+  receipt?: File | null;
+}
+
+export interface IInflowCurrencyContext {
+  currencyCode: string;
+  date: string;
 }
 
 export interface InflowFormProps {
@@ -28,7 +43,8 @@ export interface InflowFormProps {
   functionalCurrencyCode: string;
   initialValues?: IInflowFormInitialValues;
   loading?: boolean;
-  onSplit?: (values: IInflowFormValues) => void;
+  officialExchangeRate?: IExchangeRate;
+  onCurrencyContextChange: (context: IInflowCurrencyContext) => void;
   onSubmit: (values: IInflowFormValues) => void;
   payerOptions?: IJournalCounterpartyReq[];
   sourceAccounts: ILedgerAccountDto[];
