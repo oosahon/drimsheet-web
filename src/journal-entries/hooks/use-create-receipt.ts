@@ -1,19 +1,10 @@
-import type { IInflowFormValues } from '@/journal-entries/components/inflow-form';
-import { journalEntryMapper } from '@/journal-entries/lib/mappers/journal-entry.mapper';
 import journalEntryService from '@/journal-entries/lib/services/journal-entry.service';
+import type { IReceiptEntryReq } from '@/shared/lib/api/Api';
 import { useMutation } from '@tanstack/react-query';
 
-export function useCreateReceipt(functionalCurrencyCode: string) {
+export function useCreateReceipt() {
   return useMutation({
-    mutationFn: (values: IInflowFormValues) => {
-      const occurredAt = new Date().toISOString();
-      const payload = journalEntryMapper.toReceiptEntryReq(
-        values,
-        functionalCurrencyCode,
-        occurredAt
-      );
-
-      return journalEntryService.createReceipt(payload);
-    },
+    mutationFn: (payload: IReceiptEntryReq) =>
+      journalEntryService.createReceipt(payload),
   });
 }

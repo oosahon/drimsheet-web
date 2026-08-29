@@ -48,7 +48,7 @@ function formatWithJurisdiction(date: Date, countryCode?: string): string {
   let locale = DEFAULT_LOCALE;
   if (countryCode) {
     const country = countries.find((c) => c.code === countryCode);
-    if (country && country.locale) {
+    if (country?.locale) {
       locale = country.locale;
     }
   }
@@ -121,10 +121,25 @@ function isNotInTheFuture(date: Date | string | number) {
   return dayjs(date).isBefore(dayjs());
 }
 
+function isOnOrAfter(
+  date: Date | string | number,
+  earliestDate: Date | string | number
+) {
+  const candidateDate = dayjs(date);
+  const boundaryDate = dayjs(earliestDate);
+
+  return (
+    candidateDate.isValid() &&
+    boundaryDate.isValid() &&
+    !candidateDate.isBefore(boundaryDate, 'day')
+  );
+}
+
 export const dateUtils = Object.freeze({
   isValidDate,
   isNotInThePast,
   isNotInTheFuture,
+  isOnOrAfter,
   formatFiscalDate,
   getFiscalYearDateRange,
   formatFiscalDateWithYear,

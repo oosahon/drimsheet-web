@@ -20,11 +20,12 @@ Make imports predictable so the agent can change one part of the app without cau
 - Feature code may depend on shared code, but not the other way around.
 - A component's `parts/` files share the dependency permissions of their owner
   and may be imported only from within that owning component directory.
-- A component's `helpers/` files share the dependency permissions of their
-  owner and may be imported only from within that owning component directory.
-- Import component helpers through their explicit relative `.helper` paths. Do
-  not add a helpers barrel or re-export a helper from the owner's public
-  `index.ts`.
+- A component's root-level `<component-name>.helper.ts` shares the dependency
+  permissions of its owner and may be imported only from within that owning
+  component directory.
+- Import the component helper through its explicit sibling `.helper` path. Do
+  not create a `helpers/` directory, add another helper module, or re-export the
+  helper from the owner's public `index.ts`.
 - UI components must not reach into infrastructure concerns directly.
 - Pages and dialogs may orchestrate side effects, but they should not own reusable business logic.
 - Route files must remain thin and only wire URLs to pages.
@@ -34,8 +35,8 @@ Make imports predictable so the agent can change one part of the app without cau
 - Network access belongs in hooks or services, not in pure components.
 - Local storage, analytics, timers, subscriptions, and DOM mutation belong outside pure components.
 - Reusable data shaping and mapping belong in `lib/mappers/`. Deterministic
-  value shaping owned by one component belongs in that component's `helpers/`
-  directory.
+  value shaping owned by one component belongs in that component's root-level
+  helper module.
 - Validation logic belongs in `validation.ts` unless it is shared across multiple features.
 
 ## Shared Imports
@@ -61,7 +62,6 @@ Make imports predictable so the agent can change one part of the app without cau
 - Use barrels only for public entry points.
 - Do not create a barrel for a private `parts/` directory or re-export a private
   part from its owner.
-- Do not create a barrel for a private component `helpers/` directory or
-  re-export a component helper from its owner.
+- Do not re-export a private component helper module from its owner.
 - Do not create circular dependencies through barrels.
 - Keep import paths explicit when a barrel would hide important dependency direction.

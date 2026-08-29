@@ -41,7 +41,10 @@ export function InflowFormSkeleton() {
           <Skeleton className="h-9 w-full" />
         </div>
 
-        <Skeleton className="h-4 w-36" />
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-9 w-32" />
+        </div>
 
         <div className="flex justify-end pt-2">
           <Skeleton className="h-9 w-20" />

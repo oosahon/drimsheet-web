@@ -28,9 +28,11 @@ export interface MoneyWithCurrencyInputProps extends Omit<
   currencies?: ICurrencyDto[];
   currencyDisabled?: boolean;
   currencyLabel?: string;
+  currencyLabelFormat?: 'code' | 'symbol' | 'none';
   onChange?: (value: IMoneyDto, event?: ChangeEvent<HTMLInputElement>) => void;
   searchLabel?: string;
   searchPlaceholder?: string;
+  showFlag?: boolean;
   value?: IMoneyDto;
 }
 
@@ -89,11 +91,13 @@ const MoneyWithCurrencyInput = forwardRef<
       className,
       currencies = DEFAULT_CURRENCIES,
       currencyDisabled,
-      currencyLabel = 'Currency',
+      currencyLabel = 'Currency', // TODO: translate
+      currencyLabelFormat = 'symbol',
       disabled,
       onChange,
       searchLabel = 'Search currency',
       searchPlaceholder = 'Search',
+      showFlag = false,
       value,
       ...moneyInputProps
     },
@@ -131,6 +135,10 @@ const MoneyWithCurrencyInput = forwardRef<
 
     const currencyCodeLabel =
       selectedCurrency?.code || value?.currencyCode || 'Currency';
+    const currencyDisplayLabel =
+      currencyLabelFormat === 'code'
+        ? currencyCodeLabel
+        : selectedCurrency?.symbol || currencyCodeLabel;
 
     const currentMoneyValue: IMoneyDto = {
       amount: value?.amount ?? 0,
@@ -178,11 +186,15 @@ const MoneyWithCurrencyInput = forwardRef<
               currencyDisabled && !disabled && 'disabled:opacity-100'
             )}
           >
-            <CurrencyLogo
-              url={selectedCurrency?.logo}
-              className="size-5 shrink-0"
-            />
-            <span className="tabular-nums">{currencyCodeLabel}</span>
+            {showFlag && (
+              <CurrencyLogo
+                url={selectedCurrency?.logo}
+                className="size-5 shrink-0"
+              />
+            )}
+            {currencyLabelFormat !== 'none' && (
+              <span className="tabular-nums">{currencyDisplayLabel}</span>
+            )}
           </ComboboxTrigger>
           <MoneyInput
             {...moneyInputProps}

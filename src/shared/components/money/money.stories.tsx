@@ -44,3 +44,10 @@ export const Hidden: Story = {
     hide: true,
   },
 };
+
+export const WithZeroMinorUnit: Story = {
+  args: {
+    value: { amount: 1545000000, currencyCode: 'USD', isMinorUnit: true },
+    hideZeroMinorUnit: false,
+  },
+};

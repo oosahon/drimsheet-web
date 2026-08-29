@@ -29,24 +29,26 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
   API.
 - Promote a part when it gains a consumer outside its owner.
 
-## Component `helpers/`
+## Component `*.helper.ts`
 
-- Use a component's `helpers/` directory for deterministic non-UI logic owned
-  exclusively by that component.
+- Use one root-level `<component-name>.helper.ts` for deterministic non-UI logic
+  owned exclusively by that component.
 - Extract initial-value factories, value normalizers, serializers, error
   projections, and reusable predicates from the primary UI `.tsx` file.
-- Use the `.helper.ts` suffix and keep one helper in each file. Add a matching
-  `.helper.test.ts` that tests its deterministic contract directly.
-- Include the owning component and operation in helper file and function names,
-  such as `create-inflow-form-initial-values.helper.ts` and
-  `createInflowFormInitialValues`. Do not use context-free names such as
-  `create-initial-values.helper.ts` or `normalizeValues`.
-- Do not add a helpers barrel or expose helpers through the component's public
-  `index.ts`.
+- Keep each helper function local to the module, collect the functions in a
+  frozen `<componentName>Helpers` object, and expose only that default object.
+- Use concise operation names on the helper object, such as
+  `inflowFormHelpers.createInitialValues`, because the owning component is
+  already explicit in the object name and file path.
+- Add one matching `<component-name>.helper.test.ts` that imports the default
+  object and tests each method's deterministic contract directly.
+- Do not create a component `helpers/` directory, operation-named helper
+  modules, named helper exports, a helper barrel, or a public `index.ts`
+  re-export.
 - Promote logic to the feature or shared `lib/` responsibility directory when
   it gains a consumer outside the component directory.
-- Do not use component `helpers/` as a bucket for UI parts, hooks, services,
-  validation, or reusable feature logic.
+- Do not use the component helper module as a bucket for UI parts, hooks,
+  services, validation, or reusable feature logic.
 
 ## `*.container.tsx` Files
 
@@ -97,8 +99,8 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 - Put small, deterministic, general-purpose functions in `lib/utils/`.
 - Do not place implementation files directly in `lib/`.
 - Avoid a generic feature or shared `helpers/` directory; classify reusable
-  logic precisely. Component-owned helpers are the scoped exception described
-  above.
+  logic precisely. The root-level component helper module is the scoped
+  exception described above.
 - `lib/` should contain reusable logic that is not tied to a single UI component.
 - Keep `lib/` free of page-specific orchestration.
 

@@ -12,10 +12,15 @@ and transport.
 - Do not create intermediate request or payload types merely to bridge form
   values and a DTO.
 - Let services accept generated DTOs and perform transport only.
-- Let hooks or containers coordinate the mapper and service.
+- Invoke form-to-DTO mappers from an orchestration component such as a page,
+  dialog, or container.
+- Let API hooks accept the generated DTO used by the wrapped service method and
+  delegate it unchanged.
+- Do not import component form contracts or feature mappers into API hooks or
+  services.
 
 ```text
-FormValues -> feature mapper -> generated DTO -> service
+FormValues -> component orchestration -> feature mapper -> generated DTO -> API hook -> service
 ```
 
 ## Responsibilities

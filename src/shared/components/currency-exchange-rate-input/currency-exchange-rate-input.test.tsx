@@ -1,10 +1,18 @@
 import { CurrencyExchangeRateInput } from '@/shared/components/currency-exchange-rate-input';
 import { currencyExchangeRateInputValidation } from '@/shared/components/currency-exchange-rate-input/validation';
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('CurrencyExchangeRateInput', () => {
+  const officialRate = {
+    baseCurrencyCode: 'USD',
+    targetCurrencyCode: 'NGN',
+    rate: 1500,
+    asOf: '2026-06-01T00:00:00.000Z',
+  } as IExchangeRate;
+
   it('renders fixed base and target currencies without a selector', () => {
     render(
       <CurrencyExchangeRateInput baseCurrency="USD" targetCurrency="NGN" />
@@ -83,6 +91,51 @@ describe('CurrencyExchangeRateInput', () => {
         .getByLabelText('NGN exchange rate')
         .closest('[data-slot="currency-exchange-rate-input"]')
     ).toHaveAttribute('data-layout', 'compact');
+  });
+
+  it('shows a warning when official-rate display is enabled without a rate', () => {
+    render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        displayOfficialRate
+        targetCurrency="NGN"
+      />
+    );
+
+    const alert = screen.getByRole('alert');
+
+    expect(alert).toHaveTextContent('No system official rate');
+    expect(alert).toHaveClass('text-warning');
+  });
+
+  it('shows the official rate without a trailing period', () => {
+    render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        displayOfficialRate
+        officialRate={officialRate}
+        targetCurrency="NGN"
+      />
+    );
+
+    const alert = screen.getByRole('alert');
+
+    expect(alert).toHaveTextContent('Official rate: 1500');
+    expect(screen.getByLabelText('NGN exchange rate')).toHaveValue('1,500');
+    expect(screen.getByText('1500')).toHaveClass('font-semibold');
+    expect(alert).toHaveClass('text-success');
+  });
+
+  it('keeps the official-rate helper hidden unless display is enabled', () => {
+    render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        officialRate={officialRate}
+        targetCurrency="NGN"
+      />
+    );
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 });
 

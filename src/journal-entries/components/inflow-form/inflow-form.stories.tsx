@@ -1,5 +1,6 @@
 import { InflowForm } from '@/journal-entries/components/inflow-form';
 import type {
+  IExchangeRate,
   IJournalCounterpartyReq,
   ILedgerAccountDto,
 } from '@/shared/lib/api/Api';
@@ -44,6 +45,7 @@ const meta = {
   args: {
     destinationAccounts,
     functionalCurrencyCode: 'NGN',
+    onCurrencyContextChange: () => undefined,
     onSubmit: () => undefined,
     payerOptions,
     sourceAccounts,
@@ -59,11 +61,40 @@ export const ForeignCurrencyAccount: Story = {
   args: {
     initialValues: {
       destinationAccountId: 'usd-bank',
-      categoryAccountId: 'sales',
+      sourceAccountId: 'sales',
       amount: { amount: 1250 },
       exchangeRate: '1500',
       payer: payerOptions[0],
       description: 'August consulting retainer',
+    },
+    officialExchangeRate: {
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1500,
+      asOf: new Date().toISOString(),
+    } as IExchangeRate,
+  },
+};
+
+export const Itemized: Story = {
+  args: {
+    initialValues: {
+      destinationAccountId: 'ngn-bank',
+      amount: { amount: 125000 },
+      isItemized: true,
+      items: [
+        {
+          id: 'story-item-1',
+          amount: {
+            amount: 125000,
+            currencyCode: 'NGN',
+            isMinorUnit: false,
+          },
+          accountId: 'sales',
+          description: '',
+        },
+      ],
+      payer: payerOptions[0],
     },
   },
 };
@@ -72,7 +103,7 @@ export const FunctionalCurrencyAccount: Story = {
   args: {
     initialValues: {
       destinationAccountId: 'ngn-bank',
-      categoryAccountId: 'sales',
+      sourceAccountId: 'sales',
       amount: { amount: 125000 },
       payer: payerOptions[1],
     },

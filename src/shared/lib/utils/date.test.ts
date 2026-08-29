@@ -111,6 +111,23 @@ describe('date utils', () => {
     });
   });
 
+  describe('isOnOrAfter', () => {
+    it('returns true when the date is the same day as the earliest date', () => {
+      expect(dateUtils.isOnOrAfter('2026-08-10', '2026-08-10T12:00:00')).toBe(
+        true
+      );
+    });
+
+    it('returns false when the date is before the earliest date', () => {
+      expect(dateUtils.isOnOrAfter('2026-08-09', '2026-08-10')).toBe(false);
+    });
+
+    it('returns false when either date is invalid', () => {
+      expect(dateUtils.isOnOrAfter('invalid', '2026-08-10')).toBe(false);
+      expect(dateUtils.isOnOrAfter('2026-08-10', 'invalid')).toBe(false);
+    });
+  });
+
   describe('formatWithJurisdiction', () => {
     it('formats date using default locale if country code is missing', () => {
       const date = new Date(2026, 0, 15);

@@ -1,10 +1,14 @@
+import { Alert } from '@/shared/components/alert';
 import { InputGroup, InputGroupAddon } from '@/shared/components/input-group';
 import {
   MoneyInput,
   type MoneyInputProps,
 } from '@/shared/components/money-input';
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { cn } from '@/shared/lib/utils/cn';
-import { ArrowRightLeft } from 'lucide-react';
+import { ArrowRightLeft, CircleCheck, TriangleAlert } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import helpers from './currency-exchange-rate-input.helper';
 
 export interface CurrencyExchangeRateInputProps extends Omit<
   MoneyInputProps,
@@ -13,7 +17,9 @@ export interface CurrencyExchangeRateInputProps extends Omit<
   baseCurrency: string;
   targetCurrency: string;
   defaultValue?: string | number;
+  displayOfficialRate?: boolean;
   layout?: 'default' | 'compact';
+  officialRate?: IExchangeRate;
 }
 
 const moneyInputClassName =
@@ -23,58 +29,101 @@ export function CurrencyExchangeRateInput({
   baseCurrency,
   targetCurrency,
   defaultValue,
+  displayOfficialRate = false,
   value,
   className,
   'aria-label': ariaLabel,
   disabled,
   layout = 'default',
+  officialRate,
   ...props
 }: Readonly<CurrencyExchangeRateInputProps>) {
+  const { t } = useTranslation<'shared'>('shared');
+
   const isCompact = layout === 'compact';
+  const resolvedValue = helpers.getValue(value, defaultValue, officialRate);
+
+  const official_rate_available_text = t(
+    'official_exchange_rate_available_text'
+  );
+  const official_rate_unavailable_text = t(
+    'official_exchange_rate_unavailable_text'
+  );
 
   return (
     <div
       className={cn(
-        'flex items-center gap-4',
-        isCompact &&
-          'grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1.25fr)] gap-2'
+        displayOfficialRate &&
+          'flex w-full flex-col items-start gap-2 md:flex-row md:items-center'
       )}
       data-slot="currency-exchange-rate-input"
       data-layout={layout}
     >
-      <InputGroup className={cn('w-28', isCompact && 'w-full')} data-disabled>
-        <MoneyInput
-          aria-label={`${baseCurrency} base amount`}
-          className={moneyInputClassName}
-          currencyCode={baseCurrency}
-          data-slot="input-group-control"
-          disabled
-          value={1}
-        />
-        <InputGroupAddon align="inline-start" className="text-foreground">
-          {baseCurrency}
-        </InputGroupAddon>
-      </InputGroup>
-
-      <ArrowRightLeft aria-hidden="true" className="size-4 shrink-0" />
-
-      <InputGroup
-        className={cn('w-36', isCompact && 'w-full')}
-        data-disabled={disabled || undefined}
+      <div
+        className={cn(
+          'flex items-center gap-4',
+          isCompact &&
+            'grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1.25fr)] gap-2',
+          displayOfficialRate && 'w-full md:flex-[3_1_0%]'
+        )}
       >
-        <MoneyInput
-          {...props}
-          aria-label={ariaLabel ?? `${targetCurrency} exchange rate`}
-          className={cn(moneyInputClassName, className)}
-          currencyCode={targetCurrency}
-          data-slot="input-group-control"
-          disabled={disabled}
-          value={value ?? defaultValue}
-        />
-        <InputGroupAddon align="inline-start" className="text-foreground">
-          {targetCurrency}
-        </InputGroupAddon>
-      </InputGroup>
+        <InputGroup className={cn('w-28', isCompact && 'w-full')} data-disabled>
+          <MoneyInput
+            aria-label={`${baseCurrency} base amount`}
+            className={moneyInputClassName}
+            currencyCode={baseCurrency}
+            data-slot="input-group-control"
+            disabled
+            value={1}
+          />
+          <InputGroupAddon align="inline-start" className="text-foreground">
+            {baseCurrency}
+          </InputGroupAddon>
+        </InputGroup>
+
+        <ArrowRightLeft aria-hidden="true" className="size-4 shrink-0" />
+
+        <InputGroup
+          className={cn('w-36', isCompact && 'w-full')}
+          data-disabled={disabled || undefined}
+        >
+          <MoneyInput
+            {...props}
+            aria-label={ariaLabel ?? `${targetCurrency} exchange rate`}
+            className={cn(moneyInputClassName, className)}
+            currencyCode={targetCurrency}
+            data-slot="input-group-control"
+            disabled={disabled}
+            value={resolvedValue}
+          />
+          <InputGroupAddon align="inline-start" className="text-foreground">
+            {targetCurrency}
+          </InputGroupAddon>
+        </InputGroup>
+      </div>
+
+      {displayOfficialRate && officialRate && (
+        <Alert
+          className="w-full p-2 text-xs md:flex-[2_1_0%]"
+          variant="success"
+        >
+          <CircleCheck />
+          <span>
+            {official_rate_available_text}{' '}
+            <span className="font-semibold">{officialRate.rate}</span>
+          </span>
+        </Alert>
+      )}
+
+      {displayOfficialRate && !officialRate && (
+        <Alert
+          className="w-full p-2 text-xs md:flex-[2_1_0%]"
+          variant="warning"
+        >
+          <TriangleAlert />
+          {official_rate_unavailable_text}
+        </Alert>
+      )}
     </div>
   );
 }

@@ -57,6 +57,7 @@ export const WithAmount: Story = {
 
 export const NigerianNaira: Story = {
   args: {
+    showFlag: true,
     value: { amount: 30000, currencyCode: 'NGN', isMinorUnit: false },
   },
 };

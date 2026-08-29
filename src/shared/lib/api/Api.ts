@@ -223,6 +223,12 @@ export const ECounterpartyStatus = {
 export type UCounterpartyStatus =
   (typeof ECounterpartyStatus)[keyof typeof ECounterpartyStatus];
 
+export const EFileUploadPurpose = {
+  JournalEntryAttachment: 'journal_entry_attachment',
+} as const;
+export type UFileUploadPurpose =
+  (typeof EFileUploadPurpose)[keyof typeof EFileUploadPurpose];
+
 export const ECounterpartyType = {
   Individual: 'individual',
   Organization: 'organization',
@@ -693,6 +699,14 @@ export interface IPaginationDto {
   page?: number;
 }
 
+export interface IFileAttachment {
+  url: string;
+  name: string;
+  type: string;
+  /** @format double */
+  size: number;
+}
+
 export interface IJournalLineDto {
   id: string;
   entryId: string;
@@ -733,6 +747,7 @@ export interface IJournalEntryDto {
   updatedAt: string;
   id: string;
   accountingEntityId: string;
+  attachments: IFileAttachment[];
   lines: IJournalLineDto[];
 }
 
@@ -753,8 +768,13 @@ export interface IReceiptEntryLineReq {
 }
 
 export interface IReceiptEntryReq {
-  sourceLine: IReceiptEntryLineReq;
-  destinationLines: IReceiptEntryLineReq[];
+  /**
+   * Opaque handles returned when preparing file uploads. Each corresponding
+   * file must be uploaded before the receipt is created.
+   */
+  attachmentReferences?: string[];
+  sourceLines: IReceiptEntryLineReq[];
+  destinationLine: IReceiptEntryLineReq;
   /** @format date-time */
   effectiveDate: string;
   /** @format date-time */
@@ -765,16 +785,13 @@ export interface IReceiptEntryReq {
 /** Make all properties in T readonly */
 export type ReadonlyRecordStringString = Record<string, string>;
 
-export interface IFileAttachment {
-  url: string;
-  name: string;
-  type: string;
-  /** @format double */
-  size: number;
-}
-
 export interface IFileUploadDto {
   uploadUrl: string;
+  /**
+   * Opaque server-issued handle used to associate this upload with a later
+   * application request. It is not a file URL or cloud-storage object key.
+   */
+  reference: string;
   /** Make all properties in T readonly */
   headers: ReadonlyRecordStringString;
   file: IFileAttachment;
@@ -785,6 +802,7 @@ export interface IFileUploadReq {
   type: string;
   /** @format double */
   size: number;
+  purpose: UFileUploadPurpose;
 }
 
 export interface ICurrencyDto {
@@ -1393,14 +1411,14 @@ export class Api<
   };
   files = {
     /**
-     * @description Create a direct-to-Blackblaze file upload instruction
+     * @description Pre-sign direct-to-Blackblaze upload instructions
      *
      * @tags File
-     * @name CreateFileUpload
+     * @name PreSignUploads
      * @request POST:/files/upload
      */
-    createFileUpload: (data: IFileUploadReq, params: RequestParams = {}) =>
-      this.request<IFileUploadDto, IHttpErrorDto>({
+    preSignUploads: (data: IFileUploadReq[], params: RequestParams = {}) =>
+      this.request<IFileUploadDto[], IHttpErrorDto>({
         path: `/files/upload`,
         method: 'POST',
         body: data,

@@ -1,4 +1,4 @@
-import { BalanceEffectIcon } from '@/bookkeeping/components/balance-effect-icon';
+import { BalanceEffectIcon } from '@/shared/components/balance-effect-icon';
 import { Button } from '@/shared/components/button';
 import { DataTable, type ITableColumn } from '@/shared/components/data-table';
 import { FormattedDate } from '@/shared/components/date';

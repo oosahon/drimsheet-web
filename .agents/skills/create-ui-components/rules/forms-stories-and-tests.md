@@ -10,12 +10,11 @@ Every form component must keep its types outside the component file:
   <form-name>.container.tsx
   <form-name>.stories.tsx
   <form-name>.test.tsx
+  <form-name>.helper.ts
+  <form-name>.helper.test.ts
   parts/
     <part-name>.tsx
     <part-name>.stories.tsx
-  helpers/
-    <descriptive-helper-name>.helper.ts
-    <descriptive-helper-name>.helper.test.ts
   types.ts
   validation.ts
   index.ts
@@ -28,11 +27,11 @@ Every form component must keep its types outside the component file:
 - Put schemas, validation functions, and translation-aware validation hooks in
   `validation.ts`.
 - Put non-trivial initial-value factories, value normalizers, serializers,
-  error projections, and reusable predicates in separate files under the
-  form's private `helpers/` directory.
-- Name form helpers for the owning form and operation, use the `.helper.ts`
-  suffix, and give each one a matching `.helper.test.ts` that imports its
-  implementation directly. Do not expose helpers through the form barrel.
+  error projections, and reusable predicates together in the form's private
+  root-level `<form-name>.helper.ts`.
+- Keep the functions local, expose only a frozen `<formName>Helpers` default
+  object, and give it one matching `<form-name>.helper.test.ts` that imports the
+  default object directly. Do not expose helpers through the form barrel.
 - Keep validation deterministic apart from translation lookup; do not fetch data
   or mutate state while validating.
 - Pass option data, loading state, initial values, and submit callbacks into the

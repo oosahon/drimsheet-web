@@ -1,4 +1,4 @@
-import type { FormikErrors, FormikTouched } from 'formik';
+import { getIn, type FormikErrors, type FormikTouched } from 'formik';
 
 interface Props<T> {
   errors: FormikErrors<T>;
@@ -6,10 +6,10 @@ interface Props<T> {
 }
 
 export function useFieldErrorMessage<T>({ errors, touched }: Props<T>) {
-  return (field: keyof T) => {
-    const message = touched[field]
-      ? (errors[field] as string | undefined | null)
-      : undefined;
-    return message ? [{ message }] : [];
+  return (field: string) => {
+    const isTouched = Boolean(getIn(touched, field));
+    const error = getIn(errors, field) as unknown;
+
+    return isTouched && typeof error === 'string' ? [{ message: error }] : [];
   };
 }
