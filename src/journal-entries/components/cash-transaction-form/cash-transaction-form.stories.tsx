@@ -1,4 +1,4 @@
-import { InflowForm } from '@/journal-entries/components/inflow-form';
+import { CashTransactionForm } from '@/journal-entries/components/cash-transaction-form';
 import type {
   IExchangeRate,
   IJournalCounterpartyReq,
@@ -6,7 +6,7 @@ import type {
 } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-const destinationAccounts = [
+const accounts = [
   {
     id: 'ngn-bank',
     code: '1000',
@@ -23,7 +23,7 @@ const destinationAccounts = [
   },
 ] as unknown as ILedgerAccountDto[];
 
-const sourceAccounts = [
+const categories = [
   {
     id: 'sales',
     code: '4000',
@@ -33,38 +33,50 @@ const sourceAccounts = [
   },
 ] as unknown as ILedgerAccountDto[];
 
-const payerOptions: IJournalCounterpartyReq[] = [
-  { id: 'payer-1', name: 'Acme Consulting', type: 'organization' },
-  { id: 'payer-2', name: 'Jordan Taylor', type: 'individual' },
+const counterpartyOptions: IJournalCounterpartyReq[] = [
+  { id: 'counterparty-1', name: 'Acme Consulting', type: 'organization' },
+  { id: 'counterparty-2', name: 'Jordan Taylor', type: 'individual' },
 ];
 
 const meta = {
-  title: 'Journal Entries/InflowForm',
-  component: InflowForm,
+  title: 'Journal Entries/CashTransactionForm',
+  component: CashTransactionForm,
   tags: ['autodocs'],
   args: {
-    destinationAccounts,
+    accounts,
+    categories,
+    counterpartyOptions,
     functionalCurrencyCode: 'NGN',
     onCurrencyContextChange: () => undefined,
     onSubmit: () => undefined,
-    payerOptions,
-    sourceAccounts,
   },
-} satisfies Meta<typeof InflowForm>;
+} satisfies Meta<typeof CashTransactionForm>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const ScreenshotLayout: Story = {};
 
+export const InflowCounterpartyText: Story = {
+  args: {
+    variant: 'inflow',
+  },
+};
+
+export const OutflowCounterpartyText: Story = {
+  args: {
+    variant: 'outflow',
+  },
+};
+
 export const ForeignCurrencyAccount: Story = {
   args: {
     initialValues: {
-      destinationAccountId: 'usd-bank',
-      sourceAccountId: 'sales',
+      accountId: 'usd-bank',
+      categoryId: 'sales',
       amount: { amount: 1250 },
       exchangeRate: '1500',
-      payer: payerOptions[0],
+      counterparty: counterpartyOptions[0],
       description: 'August consulting retainer',
     },
     officialExchangeRate: {
@@ -79,7 +91,7 @@ export const ForeignCurrencyAccount: Story = {
 export const Itemized: Story = {
   args: {
     initialValues: {
-      destinationAccountId: 'ngn-bank',
+      accountId: 'ngn-bank',
       amount: { amount: 125000 },
       isItemized: true,
       items: [
@@ -94,7 +106,7 @@ export const Itemized: Story = {
           description: '',
         },
       ],
-      payer: payerOptions[0],
+      counterparty: counterpartyOptions[0],
     },
   },
 };
@@ -102,10 +114,10 @@ export const Itemized: Story = {
 export const FunctionalCurrencyAccount: Story = {
   args: {
     initialValues: {
-      destinationAccountId: 'ngn-bank',
-      sourceAccountId: 'sales',
+      accountId: 'ngn-bank',
+      categoryId: 'sales',
       amount: { amount: 125000 },
-      payer: payerOptions[1],
+      counterparty: counterpartyOptions[1],
     },
   },
 };

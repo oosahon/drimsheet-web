@@ -757,6 +757,31 @@ export interface IJournalCounterpartyReq {
   type?: UCounterpartyType;
 }
 
+export interface IPaymentEntryLineReq {
+  accountId: string;
+  counterparty: IJournalCounterpartyReq;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+  description: string | null;
+  /** @format double */
+  sequenceOrder: number;
+}
+
+export interface IPaymentEntryReq {
+  /**
+   * Opaque handles returned when preparing file uploads. Each corresponding
+   * file must be uploaded before the payment is created.
+   */
+  attachmentReferences?: string[];
+  sourceLine: IPaymentEntryLineReq;
+  destinationLines: IPaymentEntryLineReq[];
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  memo: string | null;
+}
+
 export interface IReceiptEntryLineReq {
   accountId: string;
   counterparty: IJournalCounterpartyReq;
@@ -1392,6 +1417,23 @@ export class Api<
       }),
   };
   journalEntries = {
+    /**
+     * @description Create payment journal entry
+     *
+     * @tags Journal Entry
+     * @name CreatePayment
+     * @request POST:/journal-entries/payment
+     */
+    createPayment: (data: IPaymentEntryReq, params: RequestParams = {}) =>
+      this.request<IJournalEntryDto, IHttpErrorDto>({
+        path: `/journal-entries/payment`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
     /**
      * @description Create receipt journal entry
      *

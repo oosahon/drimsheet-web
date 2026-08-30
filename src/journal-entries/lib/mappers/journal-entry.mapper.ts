@@ -1,4 +1,4 @@
-import type { IInflowFormValues } from '@/journal-entries/components/inflow-form';
+import type { ICashTransactionFormValues } from '@/journal-entries/components/cash-transaction-form';
 import type {
   IExchangeRateDto,
   IJournalCounterpartyReq,
@@ -9,29 +9,29 @@ import { currencyMapper } from '@/shared/lib/mappers/currency.mapper';
 import { moneyMapper } from '@/shared/lib/mappers/money.mapper';
 
 function toJournalCounterpartyReq(
-  payer: IInflowFormValues['payer']
+  value: ICashTransactionFormValues['counterparty']
 ): IJournalCounterpartyReq {
   const counterparty: IJournalCounterpartyReq = {
-    name: payer.name,
+    name: value.name,
   };
 
-  if (payer.id !== undefined) counterparty.id = payer.id;
-  if (payer.type !== undefined) counterparty.type = payer.type;
+  if (value.id !== undefined) counterparty.id = value.id;
+  if (value.type !== undefined) counterparty.type = value.type;
 
   return counterparty;
 }
 
 function toReceiptLine(
   accountId: string,
-  amount: IInflowFormValues['amount'],
-  payer: IInflowFormValues['payer'],
+  amount: ICashTransactionFormValues['amount'],
+  counterparty: ICashTransactionFormValues['counterparty'],
   exchangeRate: IExchangeRateDto | null,
   description: string | null,
   sequenceOrder: number
 ): IReceiptEntryLineReq {
   return {
     accountId,
-    counterparty: toJournalCounterpartyReq(payer),
+    counterparty: toJournalCounterpartyReq(counterparty),
     amount: moneyMapper.toMoneyDto(
       amount.amount,
       amount.currencyCode,
@@ -44,7 +44,7 @@ function toReceiptLine(
 }
 
 function toReceiptEntryReq(
-  values: IInflowFormValues,
+  values: ICashTransactionFormValues,
   functionalCurrencyCode: string,
   occurredAt: string,
   attachmentReferences: string[] = []
@@ -67,7 +67,7 @@ function toReceiptEntryReq(
         toReceiptLine(
           item.accountId,
           item.amount,
-          values.payer,
+          values.counterparty,
           exchangeRate,
           item.description.trim() || null,
           index + 1
@@ -75,9 +75,9 @@ function toReceiptEntryReq(
       )
     : [
         toReceiptLine(
-          values.sourceAccountId,
+          values.categoryId,
           values.amount,
-          values.payer,
+          values.counterparty,
           exchangeRate,
           description,
           1
@@ -88,9 +88,9 @@ function toReceiptEntryReq(
     attachmentReferences: attachmentReferences.map((reference) => reference),
     sourceLines,
     destinationLine: toReceiptLine(
-      values.destinationAccountId,
+      values.accountId,
       values.amount,
-      values.payer,
+      values.counterparty,
       exchangeRate,
       description,
       sourceLines.length + 1

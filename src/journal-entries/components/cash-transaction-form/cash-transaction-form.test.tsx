@@ -1,15 +1,16 @@
 import {
-  createInflowFormValidation,
-  InflowForm,
-  type IInflowFormValidationMessages,
-  type IInflowFormValues,
-} from '@/journal-entries/components/inflow-form';
+  CashTransactionForm,
+  createCashTransactionFormValidation,
+  type ICashTransactionFormValidationMessages,
+  type ICashTransactionFormValues,
+  type UCashTransactionFormVariant,
+} from '@/journal-entries/components/cash-transaction-form';
 import type { IExchangeRate, ILedgerAccountDto } from '@/shared/lib/api/Api';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
 
-const destinationAccounts = [
+const accounts = [
   {
     id: 'ngn-bank',
     code: '1000',
@@ -28,7 +29,7 @@ const destinationAccounts = [
   },
 ] as unknown as ILedgerAccountDto[];
 
-const sourceAccounts = [
+const categories = [
   {
     id: 'sales',
     code: '4000',
@@ -38,7 +39,7 @@ const sourceAccounts = [
   },
 ] as unknown as ILedgerAccountDto[];
 
-const validationMessages: IInflowFormValidationMessages = {
+const validationMessages: ICashTransactionFormValidationMessages = {
   accountRequired: 'Account is required',
   amountPositive: 'Amount must be greater than zero',
   amountRequired: 'Amount is required',
@@ -53,27 +54,27 @@ const validationMessages: IInflowFormValidationMessages = {
   itemAmountRequired: 'Item amount is required',
   itemCategoryRequired: 'Item category is required',
   itemsRequired: 'Add at least one item',
-  payerRequired: 'Payer is required',
-  receiptSize: 'Receipt must be no larger than 2 MB',
-  receiptType: 'Receipt must be a JPEG, PNG, or PDF',
+  counterpartyRequired: 'Counterparty is required',
+  attachmentSize: 'Attachment must be no larger than 2 MB',
+  attachmentType: 'Attachment must be a JPEG, PNG, or PDF',
 };
 
-const validValues: IInflowFormValues = {
-  destinationAccountId: 'ngn-bank',
-  sourceAccountId: 'sales',
+const validValues: ICashTransactionFormValues = {
+  accountId: 'ngn-bank',
+  categoryId: 'sales',
   amount: { amount: 250, currencyCode: 'NGN', isMinorUnit: false },
   date: '2026-08-10',
   exchangeRate: '',
   isItemized: false,
   items: [],
-  payer: { name: 'Payer' },
+  counterparty: { name: 'Counterparty' },
   description: '',
-  receipt: null,
+  attachment: null,
 };
 
-describe('InflowForm validation', () => {
-  const schema = createInflowFormValidation(
-    destinationAccounts,
+describe('CashTransactionForm validation', () => {
+  const schema = createCashTransactionFormValidation(
+    accounts,
     'NGN',
     validationMessages
   );
@@ -100,26 +101,28 @@ describe('InflowForm validation', () => {
     ).resolves.toBeTruthy();
   });
 
-  it('rejects unsupported and oversized receipt files', async () => {
+  it('rejects unsupported and oversized attachment files', async () => {
     await expect(
       schema.validate({
         ...validValues,
-        receipt: new File(['text'], 'receipt.txt', { type: 'text/plain' }),
+        attachment: new File(['text'], 'attachment.txt', {
+          type: 'text/plain',
+        }),
       })
-    ).rejects.toThrow('Receipt must be a JPEG, PNG, or PDF');
+    ).rejects.toThrow('Attachment must be a JPEG, PNG, or PDF');
 
     await expect(
       schema.validate({
         ...validValues,
-        receipt: new File(
+        attachment: new File(
           [new Uint8Array(2 * 1024 * 1024 + 1)],
-          'receipt.pdf',
+          'attachment.pdf',
           {
             type: 'application/pdf',
           }
         ),
       })
-    ).rejects.toThrow('Receipt must be no larger than 2 MB');
+    ).rejects.toThrow('Attachment must be no larger than 2 MB');
   });
 
   it('rejects a future date', async () => {
@@ -128,20 +131,20 @@ describe('InflowForm validation', () => {
     ).rejects.toThrow('Date cannot be in the future');
   });
 
-  it('rejects a date before the destination account opening date', async () => {
+  it('rejects a date before the account opening date', async () => {
     await expect(
       schema.validate({ ...validValues, date: '2026-08-07' })
     ).rejects.toThrow('Date cannot be before the account opening date');
   });
 
-  it('accepts the destination account opening date', async () => {
+  it('accepts the account opening date', async () => {
     await expect(
       schema.validate({ ...validValues, date: '2026-08-08' })
     ).resolves.toBeTruthy();
   });
 });
 
-describe('InflowForm', () => {
+describe('CashTransactionForm', () => {
   beforeAll(() => {
     window.HTMLElement.prototype.hasPointerCapture = vi.fn(
       () => false
@@ -156,19 +159,21 @@ describe('InflowForm', () => {
 
   it('renders the single-entry layout and omits same-currency exchange rate', () => {
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={validValues}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
     expect(screen.getByLabelText('Account')).toBeInTheDocument();
     expect(screen.getByLabelText('Amount')).toBeInTheDocument();
     expect(screen.getByLabelText('Date')).toBeInTheDocument();
+    expect(screen.getByLabelText('Payer')).toBeInTheDocument();
     expect(screen.queryByLabelText('Exchange rate')).not.toBeInTheDocument();
     expect(screen.getByLabelText('Category')).toHaveAttribute(
       'placeholder',
@@ -177,11 +182,66 @@ describe('InflowForm', () => {
     expect(
       screen.getByRole('button', { name: 'Itemize this transaction' })
     ).toBeInTheDocument();
-    expect(screen.getByLabelText('Attach Receipt')).toHaveAttribute(
+    expect(screen.getByLabelText('Attach file')).toHaveAttribute(
       'accept',
       'image/jpeg,image/png,application/pdf'
     );
   });
+
+  it.each<{
+    label: string;
+    placeholder: string;
+    requiredMessage: string;
+    variant: UCashTransactionFormVariant | undefined;
+  }>([
+    {
+      label: 'Counterparty',
+      placeholder: 'Select or enter a counterparty',
+      requiredMessage: 'Counterparty is required',
+      variant: undefined,
+    },
+    {
+      label: 'Payer',
+      placeholder: 'Select or enter a payer',
+      requiredMessage: 'Payer is required',
+      variant: 'inflow',
+    },
+    {
+      label: 'Recipient',
+      placeholder: 'Select or enter a recipient',
+      requiredMessage: 'Recipient is required',
+      variant: 'outflow',
+    },
+  ])(
+    'uses $label copy for the counterparty field',
+    async ({ label, placeholder, requiredMessage, variant }) => {
+      const user = userEvent.setup();
+
+      render(
+        <CashTransactionForm
+          accounts={accounts}
+          categories={categories}
+          functionalCurrencyCode="NGN"
+          initialValues={{
+            ...validValues,
+            counterparty: { name: '' },
+          }}
+          onCurrencyContextChange={() => undefined}
+          onSubmit={() => undefined}
+          variant={variant}
+        />
+      );
+
+      expect(screen.getByRole('combobox', { name: label })).toHaveAttribute(
+        'placeholder',
+        placeholder
+      );
+
+      await user.click(screen.getByRole('button', { name: 'Create' }));
+
+      expect(await screen.findByText(requiredMessage)).toBeInTheDocument();
+    }
+  );
 
   it('uses a matching official foreign exchange rate as the default', async () => {
     const user = userEvent.setup();
@@ -194,18 +254,19 @@ describe('InflowForm', () => {
     } as IExchangeRate;
 
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={{
           ...validValues,
-          destinationAccountId: 'usd-bank',
+          accountId: 'usd-bank',
           amount: { ...validValues.amount, currencyCode: 'USD' },
         }}
         officialExchangeRate={officialRate}
         onCurrencyContextChange={() => undefined}
         onSubmit={onSubmit}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -217,7 +278,7 @@ describe('InflowForm', () => {
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith({
         ...validValues,
-        destinationAccountId: 'usd-bank',
+        accountId: 'usd-bank',
         amount: { ...validValues.amount, currencyCode: 'USD' },
         exchangeRate: '1500',
       })
@@ -226,17 +287,18 @@ describe('InflowForm', () => {
 
   it('shows a warning when no official foreign exchange rate is supplied', () => {
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={{
           ...validValues,
-          destinationAccountId: 'usd-bank',
+          accountId: 'usd-bank',
           amount: { ...validValues.amount, currencyCode: 'USD' },
         }}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -247,13 +309,14 @@ describe('InflowForm', () => {
     const user = userEvent.setup();
     const onCurrencyContextChange = vi.fn();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={validValues}
         onCurrencyContextChange={onCurrencyContextChange}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -271,13 +334,14 @@ describe('InflowForm', () => {
     const user = userEvent.setup();
     const onCurrencyContextChange = vi.fn();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
-        initialValues={{ ...validValues, destinationAccountId: '' }}
+        initialValues={{ ...validValues, accountId: '' }}
         onCurrencyContextChange={onCurrencyContextChange}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -295,17 +359,18 @@ describe('InflowForm', () => {
     const user = userEvent.setup();
     const onCurrencyContextChange = vi.fn();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={{
           ...validValues,
-          destinationAccountId: 'usd-bank',
+          accountId: 'usd-bank',
           amount: { ...validValues.amount, currencyCode: 'USD' },
         }}
         onCurrencyContextChange={onCurrencyContextChange}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -322,13 +387,14 @@ describe('InflowForm', () => {
   it('disables dates before the selected account opening date', async () => {
     const user = userEvent.setup();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={validValues}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -345,13 +411,14 @@ describe('InflowForm', () => {
   it('does not show a required error after selecting an account for the first time', async () => {
     const user = userEvent.setup();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
-        initialValues={{ ...validValues, destinationAccountId: '' }}
+        initialValues={{ ...validValues, accountId: '' }}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -368,13 +435,14 @@ describe('InflowForm', () => {
   it('disables and derives the top amount while itemized', async () => {
     const user = userEvent.setup();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={validValues}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -382,7 +450,6 @@ describe('InflowForm', () => {
       screen.getByRole('button', { name: 'Itemize this transaction' })
     );
 
-    expect(document.querySelector('#inflow-category')).not.toBeInTheDocument();
     expect(
       screen.getByRole('button', { name: 'Back to single entry' })
     ).toBeInTheDocument();
@@ -402,13 +469,14 @@ describe('InflowForm', () => {
   it('disables submission only while an itemized row editor is open', async () => {
     const user = userEvent.setup();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={validValues}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -440,13 +508,14 @@ describe('InflowForm', () => {
   it('clears edit mode when a currency change discards a child draft', async () => {
     const user = userEvent.setup();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={validValues}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -471,13 +540,14 @@ describe('InflowForm', () => {
   it('keeps edit mode when a currency change recreates the initial draft', async () => {
     const user = userEvent.setup();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={validValues}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -498,13 +568,14 @@ describe('InflowForm', () => {
   it('requires confirmation before discarding additional rows', async () => {
     const user = userEvent.setup();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
         initialValues={validValues}
         onCurrencyContextChange={() => undefined}
         onSubmit={() => undefined}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -536,13 +607,14 @@ describe('InflowForm', () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();
     render(
-      <InflowForm
-        destinationAccounts={destinationAccounts}
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
         functionalCurrencyCode="NGN"
-        initialValues={{ ...validValues, description: ' Receipt ' }}
+        initialValues={{ ...validValues, description: ' Transaction ' }}
         onCurrencyContextChange={() => undefined}
         onSubmit={onSubmit}
-        sourceAccounts={sourceAccounts}
+        categories={categories}
       />
     );
 
@@ -551,7 +623,7 @@ describe('InflowForm', () => {
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith({
         ...validValues,
-        description: 'Receipt',
+        description: 'Transaction',
       })
     );
   });

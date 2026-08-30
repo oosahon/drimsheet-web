@@ -55,9 +55,9 @@ export function ItemizedFields({
 
   const draftErrors = draftItem
     ? itemizedFieldsHelpers.getErrors([draftItem], {
-        amountPositive: t('inflow_item_amount_positive_text'),
-        amountRequired: t('inflow_item_amount_required_text'),
-        categoryRequired: t('inflow_item_category_required_text'),
+        amountPositive: t('itemized_amount_positive_text'),
+        amountRequired: t('itemized_amount_required_text'),
+        categoryRequired: t('itemized_category_required_text'),
       })[draftItem.id]
     : undefined;
 
@@ -163,7 +163,7 @@ export function ItemizedFields({
     onChange(nextItems);
   };
 
-  const items_required_text = t('inflow_items_required_text');
+  const items_required_text = t('itemized_items_required_text');
   const add_item_text = t('itemized_add_item_text');
   const save_item_text = t('itemized_save_item_text');
   const itemsError =

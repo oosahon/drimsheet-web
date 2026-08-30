@@ -1,21 +1,21 @@
-import type { IInflowFormValues } from '@/journal-entries/components/inflow-form';
+import type { ICashTransactionFormValues } from '@/journal-entries/components/cash-transaction-form';
 import { journalEntryMapper } from '@/journal-entries/lib/mappers/journal-entry.mapper';
 import { EExchangeRateType } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
 const occurredAt = '2026-08-12T10:30:00.000Z';
 
-const values: IInflowFormValues = {
-  destinationAccountId: 'ngn-bank',
-  sourceAccountId: 'sales-revenue',
+const values: ICashTransactionFormValues = {
+  accountId: 'ngn-bank',
+  categoryId: 'sales-revenue',
   amount: { amount: 250000, currencyCode: 'NGN', isMinorUnit: false },
   date: '2026-08-10',
   exchangeRate: '',
   isItemized: false,
   items: [],
-  payer: { name: 'New payer' },
+  counterparty: { name: 'New counterparty' },
   description: '  August receipt  ',
-  receipt: null,
+  attachment: null,
 };
 
 describe('journalEntryMapper', () => {
@@ -29,7 +29,7 @@ describe('journalEntryMapper', () => {
       sourceLines: [
         {
           accountId: 'sales-revenue',
-          counterparty: { name: 'New payer' },
+          counterparty: { name: 'New counterparty' },
           amount: {
             amount: 250000,
             currencyCode: 'NGN',
@@ -42,7 +42,7 @@ describe('journalEntryMapper', () => {
       ],
       destinationLine: {
         accountId: 'ngn-bank',
-        counterparty: { name: 'New payer' },
+        counterparty: { name: 'New counterparty' },
         amount: {
           amount: 250000,
           currencyCode: 'NGN',
@@ -62,7 +62,7 @@ describe('journalEntryMapper', () => {
     const result = journalEntryMapper.toReceiptEntryReq(
       {
         ...values,
-        sourceAccountId: 'inactive-source',
+        categoryId: 'inactive-source',
         isItemized: true,
         items: [
           {
@@ -107,7 +107,7 @@ describe('journalEntryMapper', () => {
     ]);
     expect(result.destinationLine).toEqual({
       accountId: 'ngn-bank',
-      counterparty: { name: 'New payer' },
+      counterparty: { name: 'New counterparty' },
       amount: {
         amount: 250000,
         currencyCode: 'NGN',
@@ -123,11 +123,11 @@ describe('journalEntryMapper', () => {
     const result = journalEntryMapper.toReceiptEntryReq(
       {
         ...values,
-        destinationAccountId: 'usd-bank',
+        accountId: 'usd-bank',
         amount: { amount: 1250, currencyCode: 'USD', isMinorUnit: false },
         exchangeRate: '1500',
-        payer: {
-          id: 'payer-1',
+        counterparty: {
+          id: 'counterparty-1',
           name: 'Acme',
           type: 'organization',
         },

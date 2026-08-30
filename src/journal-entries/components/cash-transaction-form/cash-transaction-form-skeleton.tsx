@@ -1,14 +1,18 @@
 import { Skeleton } from '@/shared/components/skeleton';
 import { useTranslation } from 'react-i18next';
 
-export function InflowFormSkeleton() {
+export function CashTransactionFormSkeleton() {
   const { t } = useTranslation('journal-entries');
 
-  const inflow_form_loading_status = t('inflow_form_loading_status');
+  const cash_transaction_form_loading_status = t(
+    'cash_transaction_form_loading_status'
+  );
 
   return (
     <div className="w-full max-w-xl" aria-busy="true">
-      <output className="sr-only">{inflow_form_loading_status}</output>
+      <output className="sr-only">
+        {cash_transaction_form_loading_status}
+      </output>
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
           <Skeleton className="h-4 w-20" />

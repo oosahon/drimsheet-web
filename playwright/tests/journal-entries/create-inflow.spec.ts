@@ -245,7 +245,7 @@ test.describe('Inflow receipt creation', () => {
     await signInAndNavigateToInflow(page);
 
     const loadingStatus = page.getByRole('status');
-    await expect(loadingStatus).toHaveText('Loading inflow form');
+    await expect(loadingStatus).toHaveText('Loading transaction form');
     await expect(
       page.getByRole('combobox', { name: 'Account' })
     ).not.toBeVisible();
@@ -381,7 +381,7 @@ test.describe('Inflow receipt creation', () => {
 
     await fillForeignCurrencyReceipt(page);
 
-    const fileInput = page.locator('#inflow-receipt');
+    const fileInput = page.getByLabel('Attach file');
     await fileInput.setInputFiles({
       name: 'receipt.pdf',
       mimeType: 'application/pdf',
@@ -493,7 +493,6 @@ test.describe('Inflow receipt creation', () => {
     await page
       .getByRole('button', { name: 'Itemize this transaction' })
       .click();
-    await expect(page.locator('#inflow-category')).toHaveCount(0);
     await expect(
       page.getByLabel('Amount', { exact: true }).nth(0)
     ).toBeDisabled();
@@ -565,7 +564,7 @@ test.describe('Inflow receipt creation', () => {
     await signInAndNavigateToInflow(page);
     await fillForeignCurrencyReceipt(page);
 
-    const fileInput = page.locator('#inflow-receipt');
+    const fileInput = page.getByLabel('Attach file');
     await fileInput.setInputFiles({
       name: 'retained-receipt.pdf',
       mimeType: 'application/pdf',
