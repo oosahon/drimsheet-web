@@ -1,4 +1,4 @@
-import { InflowFormContainer } from '@/journal-entries/components/inflow-form';
+import { OutflowFormContainer } from '@/journal-entries/components/outflow-form';
 import { AppBody, AppHeader } from '@/shared/components/app';
 import { DocumentUpload } from '@/shared/components/document-upload';
 import { EFileType } from '@/shared/components/document-upload/types';
@@ -15,7 +15,7 @@ const ALLOWED_DOC_UPLOAD = [
   EFileType.Xlsx,
 ];
 
-export function InflowPage() {
+export function OutflowPage() {
   const { t } = useTranslation('journal-entries');
 
   const [files, setFiles] = useState<File[]>([]);
@@ -29,7 +29,7 @@ export function InflowPage() {
       <AppHeader />
       <AppBody>
         <div className="grid gap-20 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,28rem)]">
-          <InflowFormContainer />
+          <OutflowFormContainer />
           <DocumentUpload
             title={upload_title}
             description={upload_description}

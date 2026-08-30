@@ -30,14 +30,19 @@ import { useFormik } from 'formik';
 import { ArrowLeft, ListCollapse } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import inflowFormHelpers from './inflow-form.helper';
-import type { IInflowFormValues, InflowFormProps } from './types';
-import { useInflowFormValidation } from './validation';
+import cashTransactionFormHelpers from './cash-transaction-form.helper';
+import type {
+  CashTransactionFormProps,
+  ICashTransactionFormValues,
+} from './types';
+import { useCashTransactionFormValidation } from './validation';
 
-const RECEIPT_ACCEPT = ['image/jpeg', 'image/png', 'application/pdf'];
+const ATTACHMENT_ACCEPT = ['image/jpeg', 'image/png', 'application/pdf'];
 
-export function InflowForm({
-  destinationAccounts,
+export function CashTransactionForm({
+  accounts,
+  categories,
+  counterpartyOptions = [],
   disabled = false,
   functionalCurrencyCode,
   initialValues,
@@ -45,9 +50,8 @@ export function InflowForm({
   officialExchangeRate,
   onCurrencyContextChange,
   onSubmit,
-  payerOptions = [],
-  sourceAccounts,
-}: Readonly<InflowFormProps>) {
+  variant,
+}: Readonly<CashTransactionFormProps>) {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
 
   const [singleEntryConfirmationOpen, setSingleEntryConfirmationOpen] =
@@ -56,40 +60,41 @@ export function InflowForm({
   const [initialItemizedEditItemId, setInitialItemizedEditItemId] =
     useState<string>();
 
-  const validationSchema = useInflowFormValidation(
-    destinationAccounts,
+  const validationSchema = useCashTransactionFormValidation(
+    accounts,
     functionalCurrencyCode,
+    variant,
     officialExchangeRate
   );
 
   const resolvedInitialValues = useMemo(
     () =>
-      inflowFormHelpers.createInitialValues(
+      cashTransactionFormHelpers.createInitialValues(
         initialValues,
-        destinationAccounts,
+        accounts,
         functionalCurrencyCode
       ),
-    [destinationAccounts, functionalCurrencyCode, initialValues]
+    [accounts, functionalCurrencyCode, initialValues]
   );
 
-  const handleSubmit = (values: IInflowFormValues) => {
-    const destinationCurrencyCode =
-      inflowFormHelpers.getDestinationCurrencyCode(
-        destinationAccounts,
-        values.destinationAccountId
+  const handleSubmit = (values: ICashTransactionFormValues) => {
+    const accountCurrencyCode =
+      cashTransactionFormHelpers.getAccountCurrencyCode(
+        accounts,
+        values.accountId
       );
-    const officialRateMatches = inflowFormHelpers.matchesOfficialRate(
+    const officialRateMatches = cashTransactionFormHelpers.matchesOfficialRate(
       officialExchangeRate,
-      destinationCurrencyCode ?? '',
+      accountCurrencyCode ?? '',
       functionalCurrencyCode,
       values.date
     );
 
     onSubmit(
-      inflowFormHelpers.normalizeValues(
+      cashTransactionFormHelpers.normalizeValues(
         values,
-        inflowFormHelpers.isExchangeRateRequired(
-          destinationCurrencyCode,
+        cashTransactionFormHelpers.isExchangeRateRequired(
+          accountCurrencyCode,
           functionalCurrencyCode
         ),
         officialRateMatches ? officialExchangeRate?.rate : undefined
@@ -97,7 +102,7 @@ export function InflowForm({
     );
   };
 
-  const formik = useFormik<IInflowFormValues>({
+  const formik = useFormik<ICashTransactionFormValues>({
     enableReinitialize: true,
     initialValues: resolvedInitialValues,
     validationSchema,
@@ -109,39 +114,41 @@ export function InflowForm({
     touched: formik.touched,
   });
 
-  const selectedAccount = destinationAccounts.find(
-    (account) => account.id === formik.values.destinationAccountId
+  const selectedAccount = accounts.find(
+    (account) => account.id === formik.values.accountId
   );
-  const destinationCurrencyCode =
+  const accountCurrencyCode =
     selectedAccount?.balance.currencyCode ?? functionalCurrencyCode;
-  const destinationAccountOpeningDate = selectedAccount?.openingBalanceDate;
+  const accountOpeningDate = selectedAccount?.openingBalanceDate;
 
-  const itemizedTotal = inflowFormHelpers.getItemTotal(formik.values.items);
+  const itemizedTotal = cashTransactionFormHelpers.getItemTotal(
+    formik.values.items
+  );
 
   /**
    * ================= Handlers ================
    */
-  const handleAccountChange = (destinationAccountId: string) => {
-    const currencyCode = inflowFormHelpers.getDestinationCurrencyCode(
-      destinationAccounts,
-      destinationAccountId
+  const handleAccountChange = (accountId: string) => {
+    const currencyCode = cashTransactionFormHelpers.getAccountCurrencyCode(
+      accounts,
+      accountId
     );
 
-    const itemizedFieldsWillRemount = currencyCode !== destinationCurrencyCode;
+    const itemizedFieldsWillRemount = currencyCode !== accountCurrencyCode;
 
     if (itemizedFieldsWillRemount) {
       setIsItemizedRowEditing(!!initialItemizedEditItemId);
     }
 
     void formik.setValues(
-      inflowFormHelpers.updateAccount(
+      cashTransactionFormHelpers.updateAccount(
         formik.values,
-        destinationAccountId,
+        accountId,
         currencyCode,
         functionalCurrencyCode
       )
     );
-    void formik.setFieldTouched('destinationAccountId', true, false);
+    void formik.setFieldTouched('accountId', true, false);
 
     onCurrencyContextChange({
       currencyCode,
@@ -152,36 +159,47 @@ export function InflowForm({
   const handleDateChange = (date: string) => {
     void formik.setFieldValue('date', date);
     onCurrencyContextChange({
-      currencyCode: destinationCurrencyCode,
+      currencyCode: accountCurrencyCode,
       date,
     });
   };
 
   const handleDateDisabled = (date: Date) => {
     if (!dateUtils.isNotInTheFuture(date)) return true;
-    if (!destinationAccountOpeningDate) return false;
+    if (!accountOpeningDate) return false;
 
-    return !dateUtils.isOnOrAfter(date, destinationAccountOpeningDate);
+    return !dateUtils.isOnOrAfter(date, accountOpeningDate);
   };
 
-  const handlePayerChange = (
-    payer: UFreeSoloComboboxValue<IJournalCounterpartyReq>
+  const handleCounterpartyChange = (
+    counterparty: UFreeSoloComboboxValue<IJournalCounterpartyReq>
   ) => {
-    let nextPayer: IJournalCounterpartyReq;
+    let nextCounterparty: IJournalCounterpartyReq;
 
-    if (typeof payer === 'string') nextPayer = { name: payer };
-    else if (payer === null) nextPayer = { name: '' };
-    else nextPayer = payer;
+    if (typeof counterparty === 'string') {
+      nextCounterparty = { name: counterparty };
+    } else if (counterparty === null) nextCounterparty = { name: '' };
+    else nextCounterparty = counterparty;
 
-    void formik.setFieldValue('payer', nextPayer);
+    void formik.setFieldValue('counterparty', nextCounterparty);
+  };
+
+  const handleCategoryChange = (categoryId: string) => {
+    void formik.setFieldValue('categoryId', categoryId);
+    void formik.setFieldTouched('categoryId', true, false);
+  };
+
+  const handleAttachmentChange = (attachment: File | null) => {
+    void formik.setFieldValue('attachment', attachment);
+    void formik.setFieldTouched('attachment', true, false);
   };
 
   const handleItemize = () => {
-    const item = inflowFormHelpers.createItem(
+    const item = cashTransactionFormHelpers.createItem(
       generateUUID(),
       formik.values.amount.currencyCode,
       formik.values.amount.amount,
-      formik.values.sourceAccountId
+      formik.values.categoryId
     );
 
     setInitialItemizedEditItemId(item.id);
@@ -192,7 +210,7 @@ export function InflowForm({
     void formik.setFieldValue('isItemized', true);
   };
 
-  const handleItemsChange = (items: IInflowFormValues['items']) => {
+  const handleItemsChange = (items: ICashTransactionFormValues['items']) => {
     setInitialItemizedEditItemId(undefined);
     void formik.setFieldValue('items', items);
   };
@@ -205,7 +223,7 @@ export function InflowForm({
   const collapseToSingleEntry = () => {
     const firstItem = formik.values.items[0];
     if (firstItem) {
-      void formik.setFieldValue('sourceAccountId', firstItem.accountId);
+      void formik.setFieldValue('categoryId', firstItem.accountId);
     }
     void formik.setFieldValue('amount', {
       amount: itemizedTotal,
@@ -237,59 +255,68 @@ export function InflowForm({
       }
     : formik.values.amount;
 
-  const officialRateMatches = inflowFormHelpers.matchesOfficialRate(
+  const officialRateMatches = cashTransactionFormHelpers.matchesOfficialRate(
     officialExchangeRate,
-    destinationCurrencyCode,
+    accountCurrencyCode,
     functionalCurrencyCode,
     formik.values.date
   );
 
-  const exchangeRateRequired = inflowFormHelpers.isExchangeRateRequired(
-    destinationCurrencyCode,
-    functionalCurrencyCode
-  );
+  const exchangeRateRequired =
+    cashTransactionFormHelpers.isExchangeRateRequired(
+      accountCurrencyCode,
+      functionalCurrencyCode
+    );
   const interactionDisabled = disabled || loading;
 
   /**
    * Errors
    */
-  const accountError = getErrorMessage('destinationAccountId');
+  const accountError = getErrorMessage('accountId');
   const amountError = formik.values.isItemized
     ? []
     : getErrorMessage('amount.amount');
   const dateError = getErrorMessage('date');
-  const categoryError = getErrorMessage('sourceAccountId');
+  const categoryError = getErrorMessage('categoryId');
   const exchangeRateError = getErrorMessage('exchangeRate');
-  const payerError = getErrorMessage('payer.name');
-  const receiptError = getErrorMessage('receipt');
+  const counterpartyError = getErrorMessage('counterparty.name');
+  const attachmentError = getErrorMessage('attachment');
 
   /**
    * ================= Translations ================
    */
-  const account_label = t('inflow_account_label');
+  const account_label = t('cash_transaction_account_label');
   const amount_label = t('amount_label');
-  const date_label = t('inflow_date_label');
-  const date_placeholder = t('inflow_date_placeholder');
+  const date_label = t('cash_transaction_date_label');
+  const date_placeholder = t('cash_transaction_date_placeholder');
   const category_label = t('category_label');
   const category_placeholder = t('category_placeholder');
-  const create_text = t('inflow_create_text');
+  const create_text = t('cash_transaction_create_text');
   const description_label = t('description_label');
   const description_placeholder = t('description_placeholder');
   const exchange_rate_label = t('exchange_rate_label');
-  const itemize_transaction_text = t('inflow_itemize_transaction_text');
-  const back_to_single_text = t('inflow_back_to_single_entry_text');
-  const payer_empty_text = t('inflow_payer_empty_text');
-  const payer_label = t('inflow_payer_label');
-  const payer_placeholder = t('inflow_payer_placeholder');
-  const receipt_label = t('inflow_receipt_label');
-  const receipt_action_text = t('inflow_receipt_action_text');
-  const receipt_replace_text = t('inflow_receipt_replace_text');
-  const receipt_remove_text = t('inflow_receipt_remove_text');
-  const receipt_guidance_text = t('inflow_receipt_guidance_text');
-  const return_title = t('inflow_return_to_single_title');
-  const return_description = t('inflow_return_to_single_description');
-  const return_cancel_text = t('inflow_return_to_single_cancel_text');
-  const return_confirm_text = t('inflow_return_to_single_confirm_text');
+  const itemize_transaction_text = t(
+    'cash_transaction_itemize_transaction_text'
+  );
+  const back_to_single_text = t('cash_transaction_back_to_single_entry_text');
+  const counterparty_text_keys =
+    cashTransactionFormHelpers.getCounterpartyTextKeys(variant);
+  const counterparty_empty_text = t(counterparty_text_keys.empty);
+  const counterparty_label = t(counterparty_text_keys.label);
+  const counterparty_placeholder = t(counterparty_text_keys.placeholder);
+  const attachment_label = t('cash_transaction_attachment_label');
+  const attachment_action_text = t('cash_transaction_attachment_action_text');
+  const attachment_replace_text = t('cash_transaction_attachment_replace_text');
+  const attachment_remove_text = t('cash_transaction_attachment_remove_text');
+  const attachment_guidance_text = t(
+    'cash_transaction_attachment_guidance_text'
+  );
+  const return_title = t('cash_transaction_return_to_single_title');
+  const return_description = t('cash_transaction_return_to_single_description');
+  const return_cancel_text = t('cash_transaction_return_to_single_cancel_text');
+  const return_confirm_text = t(
+    'cash_transaction_return_to_single_confirm_text'
+  );
 
   return (
     <>
@@ -300,20 +327,20 @@ export function InflowForm({
       >
         <FieldGroup className="gap-5">
           <AccountCombobox
-            id="inflow-destination-account"
-            accounts={destinationAccounts}
+            id="cash-transaction-account"
+            accounts={accounts}
             disabled={interactionDisabled}
             error={accountError}
             label={account_label}
             onChange={handleAccountChange}
-            value={formik.values.destinationAccountId}
+            value={formik.values.accountId}
           />
 
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <Field data-invalid={Boolean(amountError.length)}>
-              <Label htmlFor="inflow-amount">{amount_label}</Label>
+              <Label htmlFor="cash-transaction-amount">{amount_label}</Label>
               <MoneyWithCurrencyInput
-                id="inflow-amount"
+                id="cash-transaction-amount"
                 aria-invalid={Boolean(amountError.length)}
                 currencyDisabled
                 showFlag
@@ -330,9 +357,9 @@ export function InflowForm({
             </Field>
 
             <Field data-invalid={Boolean(dateError.length)}>
-              <Label htmlFor="inflow-date">{date_label}</Label>
+              <Label htmlFor="cash-transaction-date">{date_label}</Label>
               <DateInput
-                id="inflow-date"
+                id="cash-transaction-date"
                 aria-invalid={Boolean(dateError.length)}
                 disabled={interactionDisabled}
                 disabledDates={handleDateDisabled}
@@ -347,14 +374,14 @@ export function InflowForm({
 
           {exchangeRateRequired && (
             <Field data-invalid={Boolean(exchangeRateError.length)}>
-              <Label htmlFor="inflow-exchange-rate">
+              <Label htmlFor="cash-transaction-exchange-rate">
                 {exchange_rate_label}
               </Label>
               <CurrencyExchangeRateInput
-                id="inflow-exchange-rate"
+                id="cash-transaction-exchange-rate"
                 aria-invalid={Boolean(exchangeRateError.length)}
                 aria-label={exchange_rate_label}
-                baseCurrency={destinationCurrencyCode}
+                baseCurrency={accountCurrencyCode}
                 disabled={interactionDisabled}
                 displayOfficialRate
                 layout="compact"
@@ -386,9 +413,9 @@ export function InflowForm({
                 {back_to_single_text}
               </Button>
               <ItemizedFields
-                key={destinationCurrencyCode}
-                accounts={sourceAccounts}
-                currencyCode={destinationCurrencyCode}
+                key={accountCurrencyCode}
+                accounts={categories}
+                currencyCode={accountCurrencyCode}
                 defaultValue={formik.values.items}
                 disabled={interactionDisabled}
                 initialEditItemId={initialItemizedEditItemId}
@@ -399,17 +426,14 @@ export function InflowForm({
           ) : (
             <div className="space-y-3">
               <AccountCombobox
-                id="inflow-category"
-                accounts={sourceAccounts}
+                id="cash-transaction-category"
+                accounts={categories}
                 disabled={interactionDisabled}
                 error={categoryError}
                 label={category_label}
-                onChange={(sourceAccountId) => {
-                  void formik.setFieldValue('sourceAccountId', sourceAccountId);
-                  void formik.setFieldTouched('sourceAccountId', true, false);
-                }}
+                onChange={handleCategoryChange}
                 placeholder={category_placeholder}
-                value={formik.values.sourceAccountId}
+                value={formik.values.categoryId}
               />
               <Button
                 className="h-auto justify-start px-0"
@@ -425,28 +449,32 @@ export function InflowForm({
           )}
 
           <FreeSoloCombobox<IJournalCounterpartyReq>
-            id="inflow-payer"
+            id="cash-transaction-counterparty"
             disabled={interactionDisabled}
-            emptyMessage={payer_empty_text}
-            error={payerError}
-            getOptionLabel={(payer) => payer.name}
-            isOptionEqualToValue={(payer, value) =>
-              payer.id !== undefined && payer.id === value.id
+            emptyMessage={counterparty_empty_text}
+            error={counterpartyError}
+            getOptionLabel={(counterparty) => counterparty.name}
+            isOptionEqualToValue={(counterparty, value) =>
+              counterparty.id !== undefined && counterparty.id === value.id
             }
-            label={payer_label}
-            name="payer.name"
-            onBlur={() => void formik.setFieldTouched('payer.name', true)}
-            onValueChange={handlePayerChange}
-            options={payerOptions}
-            placeholder={payer_placeholder}
+            label={counterparty_label}
+            name="counterparty.name"
+            onBlur={() =>
+              void formik.setFieldTouched('counterparty.name', true)
+            }
+            onValueChange={handleCounterpartyChange}
+            options={counterpartyOptions}
+            placeholder={counterparty_placeholder}
             required
-            value={formik.values.payer}
+            value={formik.values.counterparty}
           />
 
           <Field>
-            <Label htmlFor="inflow-description">{description_label}</Label>
+            <Label htmlFor="cash-transaction-description">
+              {description_label}
+            </Label>
             <Input
-              id="inflow-description"
+              id="cash-transaction-description"
               disabled={interactionDisabled}
               name="description"
               onBlur={formik.handleBlur}
@@ -457,20 +485,17 @@ export function InflowForm({
           </Field>
 
           <FileUpload
-            accept={RECEIPT_ACCEPT}
-            actionText={receipt_action_text}
-            description={receipt_guidance_text}
+            accept={ATTACHMENT_ACCEPT}
+            actionText={attachment_action_text}
+            description={attachment_guidance_text}
             disabled={interactionDisabled}
-            errors={receiptError}
-            id="inflow-receipt"
-            label={receipt_label}
-            onValueChange={(receipt) => {
-              void formik.setFieldValue('receipt', receipt);
-              void formik.setFieldTouched('receipt', true, false);
-            }}
-            removeText={receipt_remove_text}
-            replaceText={receipt_replace_text}
-            value={formik.values.receipt}
+            errors={attachmentError}
+            id="cash-transaction-attachment"
+            label={attachment_label}
+            onValueChange={handleAttachmentChange}
+            removeText={attachment_remove_text}
+            replaceText={attachment_replace_text}
+            value={formik.values.attachment}
           />
 
           <div className="flex justify-end pt-2">

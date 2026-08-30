@@ -1,19 +1,19 @@
 import type { IExchangeRate, ILedgerAccountDto } from '@/shared/lib/api/Api';
 import { dateUtils } from '@/shared/lib/utils/date';
 import { describe, expect, it } from 'vitest';
-import inflowFormHelpers from './inflow-form.helper';
-import type { IInflowFormValues } from './types';
+import cashTransactionFormHelpers from './cash-transaction-form.helper';
+import type { ICashTransactionFormValues } from './types';
 
-const destinationAccounts = [
+const accounts = [
   {
     id: 'usd-bank',
     balance: { amount: 0, currencyCode: 'USD', isMinorUnit: false },
   },
 ] as unknown as ILedgerAccountDto[];
 
-const values: IInflowFormValues = {
-  destinationAccountId: 'usd-bank',
-  sourceAccountId: 'sales',
+const values: ICashTransactionFormValues = {
+  accountId: 'usd-bank',
+  categoryId: 'sales',
   amount: { amount: 999, currencyCode: 'USD', isMinorUnit: false },
   date: '2026-08-10',
   exchangeRate: ' 1500 ',
@@ -26,23 +26,23 @@ const values: IInflowFormValues = {
       description: ' Item description ',
     },
   ],
-  payer: { id: 'payer-1', name: ' Acme ', type: 'organization' },
+  counterparty: { id: 'counterparty-1', name: ' Acme ', type: 'organization' },
   description: ' Consulting ',
-  receipt: null,
+  attachment: null,
 };
 
-describe('inflowFormHelpers', () => {
+describe('cashTransactionFormHelpers', () => {
   describe('createInitialValues', () => {
     it('creates empty values with the functional currency defaults', () => {
       expect(
-        inflowFormHelpers.createInitialValues(
+        cashTransactionFormHelpers.createInitialValues(
           undefined,
-          destinationAccounts,
+          accounts,
           'NGN'
         )
       ).toEqual({
-        destinationAccountId: '',
-        sourceAccountId: '',
+        accountId: '',
+        categoryId: '',
         amount: {
           amount: Number.NaN,
           currencyCode: 'NGN',
@@ -52,37 +52,41 @@ describe('inflowFormHelpers', () => {
         exchangeRate: '',
         isItemized: false,
         items: [],
-        payer: {
+        counterparty: {
           id: undefined,
           name: '',
           type: undefined,
         },
         description: '',
-        receipt: null,
+        attachment: null,
       });
     });
 
     it('prefers the selected account currency over supplied amount currency', () => {
       expect(
-        inflowFormHelpers.createInitialValues(
+        cashTransactionFormHelpers.createInitialValues(
           {
-            destinationAccountId: 'usd-bank',
-            sourceAccountId: 'sales',
+            accountId: 'usd-bank',
+            categoryId: 'sales',
             amount: {
               amount: 125,
               currencyCode: 'EUR',
               isMinorUnit: true,
             },
             exchangeRate: '1500',
-            payer: { id: 'payer-1', name: 'Acme', type: 'organization' },
+            counterparty: {
+              id: 'counterparty-1',
+              name: 'Acme',
+              type: 'organization',
+            },
             description: 'Consulting',
           },
-          destinationAccounts,
+          accounts,
           'NGN'
         )
       ).toEqual({
-        destinationAccountId: 'usd-bank',
-        sourceAccountId: 'sales',
+        accountId: 'usd-bank',
+        categoryId: 'sales',
         amount: {
           amount: 125,
           currencyCode: 'USD',
@@ -92,16 +96,20 @@ describe('inflowFormHelpers', () => {
         exchangeRate: '1500',
         isItemized: false,
         items: [],
-        payer: { id: 'payer-1', name: 'Acme', type: 'organization' },
+        counterparty: {
+          id: 'counterparty-1',
+          name: 'Acme',
+          type: 'organization',
+        },
         description: 'Consulting',
-        receipt: null,
+        attachment: null,
       });
     });
 
     it('uses a supplied amount currency when no selected account resolves', () => {
-      const initialValues = inflowFormHelpers.createInitialValues(
+      const initialValues = cashTransactionFormHelpers.createInitialValues(
         { amount: { currencyCode: 'EUR' } },
-        destinationAccounts,
+        accounts,
         'NGN'
       );
 
@@ -112,10 +120,15 @@ describe('inflowFormHelpers', () => {
   describe('updateAccount', () => {
     it('updates account-owned currencies and retains a required exchange rate', () => {
       expect(
-        inflowFormHelpers.updateAccount(values, 'eur-bank', 'EUR', 'NGN')
+        cashTransactionFormHelpers.updateAccount(
+          values,
+          'eur-bank',
+          'EUR',
+          'NGN'
+        )
       ).toEqual({
-        destinationAccountId: 'eur-bank',
-        sourceAccountId: 'sales',
+        accountId: 'eur-bank',
+        categoryId: 'sales',
         amount: { amount: 999, currencyCode: 'EUR', isMinorUnit: false },
         date: '2026-08-10',
         exchangeRate: ' 1500 ',
@@ -128,18 +141,27 @@ describe('inflowFormHelpers', () => {
             description: ' Item description ',
           },
         ],
-        payer: { id: 'payer-1', name: ' Acme ', type: 'organization' },
+        counterparty: {
+          id: 'counterparty-1',
+          name: ' Acme ',
+          type: 'organization',
+        },
         description: ' Consulting ',
-        receipt: null,
+        attachment: null,
       });
     });
 
     it('clears the exchange rate for a functional-currency account', () => {
       expect(
-        inflowFormHelpers.updateAccount(values, 'ngn-bank', 'NGN', 'NGN')
+        cashTransactionFormHelpers.updateAccount(
+          values,
+          'ngn-bank',
+          'NGN',
+          'NGN'
+        )
       ).toEqual({
-        destinationAccountId: 'ngn-bank',
-        sourceAccountId: 'sales',
+        accountId: 'ngn-bank',
+        categoryId: 'sales',
         amount: { amount: 999, currencyCode: 'NGN', isMinorUnit: false },
         date: '2026-08-10',
         exchangeRate: '',
@@ -152,16 +174,20 @@ describe('inflowFormHelpers', () => {
             description: ' Item description ',
           },
         ],
-        payer: { id: 'payer-1', name: ' Acme ', type: 'organization' },
+        counterparty: {
+          id: 'counterparty-1',
+          name: ' Acme ',
+          type: 'organization',
+        },
         description: ' Consulting ',
-        receipt: null,
+        attachment: null,
       });
     });
   });
 
   describe('createItem', () => {
     it('creates a stable blank item in the supplied currency', () => {
-      expect(inflowFormHelpers.createItem('item-1', 'NGN')).toEqual({
+      expect(cashTransactionFormHelpers.createItem('item-1', 'NGN')).toEqual({
         id: 'item-1',
         amount: {
           amount: Number.NaN,
@@ -175,7 +201,7 @@ describe('inflowFormHelpers', () => {
 
     it('seeds the amount and category when entering itemized mode', () => {
       expect(
-        inflowFormHelpers.createItem('item-1', 'USD', 125, 'revenue-1')
+        cashTransactionFormHelpers.createItem('item-1', 'USD', 125, 'revenue-1')
       ).toEqual({
         id: 'item-1',
         amount: { amount: 125, currencyCode: 'USD', isMinorUnit: false },
@@ -188,7 +214,7 @@ describe('inflowFormHelpers', () => {
   describe('getItemTotal', () => {
     it('sums valid item amounts without floating-point artifacts', () => {
       expect(
-        inflowFormHelpers.getItemTotal([
+        cashTransactionFormHelpers.getItemTotal([
           {
             id: 'item-1',
             amount: { amount: 0.1, currencyCode: 'NGN', isMinorUnit: false },
@@ -207,7 +233,7 @@ describe('inflowFormHelpers', () => {
 
     it('treats incomplete item amounts as zero', () => {
       expect(
-        inflowFormHelpers.getItemTotal([
+        cashTransactionFormHelpers.getItemTotal([
           {
             id: 'item-1',
             amount: {
@@ -224,14 +250,16 @@ describe('inflowFormHelpers', () => {
   });
 
   describe('isExchangeRateRequired', () => {
-    it('requires an exchange rate for different source and functional currencies', () => {
-      expect(inflowFormHelpers.isExchangeRateRequired('USD', 'NGN')).toBe(true);
+    it('requires an exchange rate for different account and functional currencies', () => {
+      expect(
+        cashTransactionFormHelpers.isExchangeRateRequired('USD', 'NGN')
+      ).toBe(true);
     });
 
     it('does not require an exchange rate for matching currencies', () => {
-      expect(inflowFormHelpers.isExchangeRateRequired('NGN', 'NGN')).toBe(
-        false
-      );
+      expect(
+        cashTransactionFormHelpers.isExchangeRateRequired('NGN', 'NGN')
+      ).toBe(false);
     });
 
     it.each([
@@ -240,10 +268,10 @@ describe('inflowFormHelpers', () => {
       ['', 'NGN'],
     ])(
       'does not require an exchange rate when a currency is missing',
-      (sourceCurrencyCode, functionalCurrencyCode) => {
+      (accountCurrencyCode, functionalCurrencyCode) => {
         expect(
-          inflowFormHelpers.isExchangeRateRequired(
-            sourceCurrencyCode,
+          cashTransactionFormHelpers.isExchangeRateRequired(
+            accountCurrencyCode,
             functionalCurrencyCode
           )
         ).toBe(false);
@@ -260,7 +288,7 @@ describe('inflowFormHelpers', () => {
 
     it('matches the currency pair and date', () => {
       expect(
-        inflowFormHelpers.matchesOfficialRate(
+        cashTransactionFormHelpers.matchesOfficialRate(
           officialRate,
           'USD',
           'NGN',
@@ -271,7 +299,7 @@ describe('inflowFormHelpers', () => {
 
     it('rejects an absent or stale official rate', () => {
       expect(
-        inflowFormHelpers.matchesOfficialRate(
+        cashTransactionFormHelpers.matchesOfficialRate(
           undefined,
           'USD',
           'NGN',
@@ -279,7 +307,7 @@ describe('inflowFormHelpers', () => {
         )
       ).toBe(false);
       expect(
-        inflowFormHelpers.matchesOfficialRate(
+        cashTransactionFormHelpers.matchesOfficialRate(
           officialRate,
           'USD',
           'NGN',
@@ -289,11 +317,44 @@ describe('inflowFormHelpers', () => {
     });
   });
 
+  describe('getCounterpartyTextKeys', () => {
+    it('uses counterparty copy when the transaction variant is undefined', () => {
+      expect(cashTransactionFormHelpers.getCounterpartyTextKeys()).toEqual({
+        empty: 'cash_transaction_counterparty_empty_text',
+        label: 'cash_transaction_counterparty_label',
+        placeholder: 'cash_transaction_counterparty_placeholder',
+        required: 'cash_transaction_counterparty_required_text',
+      });
+    });
+
+    it('uses payer copy for inflow transactions', () => {
+      expect(
+        cashTransactionFormHelpers.getCounterpartyTextKeys('inflow')
+      ).toEqual({
+        empty: 'cash_transaction_payer_empty_text',
+        label: 'cash_transaction_payer_label',
+        placeholder: 'cash_transaction_payer_placeholder',
+        required: 'cash_transaction_payer_required_text',
+      });
+    });
+
+    it('uses recipient copy for outflow transactions', () => {
+      expect(
+        cashTransactionFormHelpers.getCounterpartyTextKeys('outflow')
+      ).toEqual({
+        empty: 'cash_transaction_recipient_empty_text',
+        label: 'cash_transaction_recipient_label',
+        placeholder: 'cash_transaction_recipient_placeholder',
+        required: 'cash_transaction_recipient_required_text',
+      });
+    });
+  });
+
   describe('normalizeValues', () => {
     it('derives the transaction amount from items and normalizes text', () => {
-      expect(inflowFormHelpers.normalizeValues(values, true)).toEqual({
-        destinationAccountId: 'usd-bank',
-        sourceAccountId: 'sales',
+      expect(cashTransactionFormHelpers.normalizeValues(values, true)).toEqual({
+        accountId: 'usd-bank',
+        categoryId: 'sales',
         amount: { amount: 125, currencyCode: 'USD', isMinorUnit: false },
         date: '2026-08-10',
         exchangeRate: '1500',
@@ -306,25 +367,29 @@ describe('inflowFormHelpers', () => {
             description: 'Item description',
           },
         ],
-        payer: { id: 'payer-1', name: 'Acme', type: 'organization' },
+        counterparty: {
+          id: 'counterparty-1',
+          name: 'Acme',
+          type: 'organization',
+        },
         description: 'Consulting',
-        receipt: null,
+        attachment: null,
       });
     });
 
-    it('omits absent payer identity fields and clears an unneeded exchange rate', () => {
+    it('omits absent counterparty identity fields and clears an unneeded exchange rate', () => {
       expect(
-        inflowFormHelpers.normalizeValues(
+        cashTransactionFormHelpers.normalizeValues(
           {
             ...values,
             exchangeRate: '1500',
-            payer: { name: ' New payer ' },
+            counterparty: { name: ' New counterparty ' },
           },
           false
         )
       ).toEqual({
-        destinationAccountId: 'usd-bank',
-        sourceAccountId: 'sales',
+        accountId: 'usd-bank',
+        categoryId: 'sales',
         amount: { amount: 125, currencyCode: 'USD', isMinorUnit: false },
         date: '2026-08-10',
         exchangeRate: '',
@@ -337,15 +402,15 @@ describe('inflowFormHelpers', () => {
             description: 'Item description',
           },
         ],
-        payer: { name: 'New payer' },
+        counterparty: { name: 'New counterparty' },
         description: 'Consulting',
-        receipt: null,
+        attachment: null,
       });
     });
 
     it('uses the official rate when a required manual rate is absent', () => {
       expect(
-        inflowFormHelpers.normalizeValues(
+        cashTransactionFormHelpers.normalizeValues(
           { ...values, exchangeRate: '' },
           true,
           1500

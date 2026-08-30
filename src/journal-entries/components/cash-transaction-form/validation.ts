@@ -3,18 +3,21 @@ import { dateUtils } from '@/shared/lib/utils/date';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
-import inflowFormHelpers from './inflow-form.helper';
-import type { IInflowFormValues } from './types';
+import cashTransactionFormHelpers from './cash-transaction-form.helper';
+import type {
+  ICashTransactionFormValues,
+  UCashTransactionFormVariant,
+} from './types';
 
-const MAX_RECEIPT_SIZE_BYTES = 2 * 1024 * 1024;
-const ACCEPTED_RECEIPT_TYPES = new Set([
+const MAX_ATTACHMENT_SIZE_BYTES = 2 * 1024 * 1024;
+const ACCEPTED_ATTACHMENT_TYPES = new Set([
   'image/jpeg',
   'image/png',
   'application/pdf',
 ]);
-const ACCEPTED_RECEIPT_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.pdf'];
+const ACCEPTED_ATTACHMENT_EXTENSIONS = ['.jpeg', '.jpg', '.png', '.pdf'];
 
-export interface IInflowFormValidationMessages {
+export interface ICashTransactionFormValidationMessages {
   accountRequired: string;
   amountPositive: string;
   amountRequired: string;
@@ -29,58 +32,58 @@ export interface IInflowFormValidationMessages {
   itemAmountRequired: string;
   itemCategoryRequired: string;
   itemsRequired: string;
-  payerRequired: string;
-  receiptSize: string;
-  receiptType: string;
+  counterpartyRequired: string;
+  attachmentSize: string;
+  attachmentType: string;
 }
 
 function requiresExchangeRate(
-  destinationAccountId: string,
-  destinationAccounts: ILedgerAccountDto[],
+  accountId: string,
+  accounts: ILedgerAccountDto[],
   functionalCurrencyCode: string
 ) {
-  const destinationCurrencyCode = destinationAccounts.find(
-    (account) => account.id === destinationAccountId
+  const accountCurrencyCode = accounts.find(
+    (account) => account.id === accountId
   )?.balance.currencyCode;
 
-  return inflowFormHelpers.isExchangeRateRequired(
-    destinationCurrencyCode,
+  return cashTransactionFormHelpers.isExchangeRateRequired(
+    accountCurrencyCode,
     functionalCurrencyCode
   );
 }
 
-function isAcceptedReceipt(file: File) {
+function isAcceptedAttachment(file: File) {
   const lowerName = file.name.toLowerCase();
 
   return (
-    ACCEPTED_RECEIPT_TYPES.has(file.type) &&
-    ACCEPTED_RECEIPT_EXTENSIONS.some((extension) =>
+    ACCEPTED_ATTACHMENT_TYPES.has(file.type) &&
+    ACCEPTED_ATTACHMENT_EXTENSIONS.some((extension) =>
       lowerName.endsWith(extension)
     )
   );
 }
 
-export function createInflowFormValidation(
-  destinationAccounts: ILedgerAccountDto[],
+export function createCashTransactionFormValidation(
+  accounts: ILedgerAccountDto[],
   functionalCurrencyCode: string,
-  messages: IInflowFormValidationMessages,
+  messages: ICashTransactionFormValidationMessages,
   officialExchangeRate?: IExchangeRate
 ) {
   const exchangeRateValidation = yup
     .string()
     .test('required-exchange-rate', messages.exchangeRateRequired, function () {
-      const values = this.parent as IInflowFormValues;
+      const values = this.parent as ICashTransactionFormValues;
       const required = requiresExchangeRate(
-        values.destinationAccountId,
-        destinationAccounts,
+        values.accountId,
+        accounts,
         functionalCurrencyCode
       );
-      const destinationCurrencyCode = destinationAccounts.find(
-        (account) => account.id === values.destinationAccountId
+      const accountCurrencyCode = accounts.find(
+        (account) => account.id === values.accountId
       )?.balance.currencyCode;
-      const hasOfficialRate = inflowFormHelpers.matchesOfficialRate(
+      const hasOfficialRate = cashTransactionFormHelpers.matchesOfficialRate(
         officialExchangeRate,
-        destinationCurrencyCode ?? '',
+        accountCurrencyCode ?? '',
         functionalCurrencyCode,
         values.date
       );
@@ -90,10 +93,10 @@ export function createInflowFormValidation(
       );
     })
     .test('numeric-exchange-rate', messages.exchangeRateNumber, function () {
-      const values = this.parent as IInflowFormValues;
+      const values = this.parent as ICashTransactionFormValues;
       const required = requiresExchangeRate(
-        values.destinationAccountId,
-        destinationAccounts,
+        values.accountId,
+        accounts,
         functionalCurrencyCode
       );
       const exchangeRate = values.exchangeRate?.trim();
@@ -103,10 +106,10 @@ export function createInflowFormValidation(
       return Number.isFinite(Number(exchangeRate));
     })
     .test('positive-exchange-rate', messages.exchangeRatePositive, function () {
-      const values = this.parent as IInflowFormValues;
+      const values = this.parent as ICashTransactionFormValues;
       const required = requiresExchangeRate(
-        values.destinationAccountId,
-        destinationAccounts,
+        values.accountId,
+        accounts,
         functionalCurrencyCode
       );
       const exchangeRate = values.exchangeRate?.trim();
@@ -133,8 +136,8 @@ export function createInflowFormValidation(
   });
 
   return yup.object({
-    destinationAccountId: yup.string().required(messages.accountRequired),
-    sourceAccountId: yup.string().when('isItemized', {
+    accountId: yup.string().required(messages.accountRequired),
+    categoryId: yup.string().when('isItemized', {
       is: false,
       then: (schema) => schema.required(messages.categoryRequired),
       otherwise: (schema) => schema.optional(),
@@ -170,9 +173,9 @@ export function createInflowFormValidation(
         function (value) {
           if (!value) return true;
 
-          const values = this.parent as IInflowFormValues;
-          const openingBalanceDate = destinationAccounts.find(
-            (account) => account.id === values.destinationAccountId
+          const values = this.parent as ICashTransactionFormValues;
+          const openingBalanceDate = accounts.find(
+            (account) => account.id === values.accountId
           )?.openingBalanceDate;
 
           return openingBalanceDate
@@ -197,59 +200,72 @@ export function createInflowFormValidation(
         then: (schema) => schema.min(1, messages.itemsRequired),
         otherwise: (schema) => schema.optional(),
       }),
-    payer: yup.object({
+    counterparty: yup.object({
       id: yup.string().optional(),
-      name: yup.string().trim().required(messages.payerRequired),
+      name: yup.string().trim().required(messages.counterpartyRequired),
       type: yup.string().optional(),
     }),
     description: yup.string().optional(),
-    receipt: yup
+    attachment: yup
       .mixed<File>()
       .nullable()
-      .test('receipt-type', messages.receiptType, (file) =>
-        file ? isAcceptedReceipt(file) : true
+      .test('attachment-type', messages.attachmentType, (file) =>
+        file ? isAcceptedAttachment(file) : true
       )
-      .test('receipt-size', messages.receiptSize, (file) =>
-        file ? file.size <= MAX_RECEIPT_SIZE_BYTES : true
+      .test('attachment-size', messages.attachmentSize, (file) =>
+        file ? file.size <= MAX_ATTACHMENT_SIZE_BYTES : true
       ),
   });
 }
 
-export function useInflowFormValidation(
-  destinationAccounts: ILedgerAccountDto[],
+export function useCashTransactionFormValidation(
+  accounts: ILedgerAccountDto[],
   functionalCurrencyCode: string,
+  variant?: UCashTransactionFormVariant,
   officialExchangeRate?: IExchangeRate
 ) {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
+  const counterpartyTextKeys =
+    cashTransactionFormHelpers.getCounterpartyTextKeys(variant);
 
   return useMemo(
     () =>
-      createInflowFormValidation(
-        destinationAccounts,
+      createCashTransactionFormValidation(
+        accounts,
         functionalCurrencyCode,
         {
-          accountRequired: t('inflow_account_required_text'),
-          amountPositive: t('inflow_amount_positive_text'),
-          amountRequired: t('inflow_amount_required_text'),
-          categoryRequired: t('inflow_category_required_text'),
+          accountRequired: t('cash_transaction_account_required_text'),
+          amountPositive: t('cash_transaction_amount_positive_text'),
+          amountRequired: t('cash_transaction_amount_required_text'),
+          categoryRequired: t('cash_transaction_category_required_text'),
           dateBeforeAccountOpening: t(
-            'inflow_date_before_account_opening_text'
+            'cash_transaction_date_before_account_opening_text'
           ),
-          dateFuture: t('inflow_date_future_text'),
-          dateRequired: t('inflow_date_required_text'),
-          exchangeRateNumber: t('inflow_exchange_rate_number_text'),
-          exchangeRatePositive: t('inflow_exchange_rate_positive_text'),
-          exchangeRateRequired: t('inflow_exchange_rate_required_text'),
-          itemAmountPositive: t('inflow_item_amount_positive_text'),
-          itemAmountRequired: t('inflow_item_amount_required_text'),
-          itemCategoryRequired: t('inflow_item_category_required_text'),
-          itemsRequired: t('inflow_items_required_text'),
-          payerRequired: t('inflow_payer_required_text'),
-          receiptSize: t('inflow_receipt_size_text'),
-          receiptType: t('inflow_receipt_type_text'),
+          dateFuture: t('cash_transaction_date_future_text'),
+          dateRequired: t('cash_transaction_date_required_text'),
+          exchangeRateNumber: t('cash_transaction_exchange_rate_number_text'),
+          exchangeRatePositive: t(
+            'cash_transaction_exchange_rate_positive_text'
+          ),
+          exchangeRateRequired: t(
+            'cash_transaction_exchange_rate_required_text'
+          ),
+          itemAmountPositive: t('itemized_amount_positive_text'),
+          itemAmountRequired: t('itemized_amount_required_text'),
+          itemCategoryRequired: t('itemized_category_required_text'),
+          itemsRequired: t('itemized_items_required_text'),
+          counterpartyRequired: t(counterpartyTextKeys.required),
+          attachmentSize: t('cash_transaction_attachment_size_text'),
+          attachmentType: t('cash_transaction_attachment_type_text'),
         },
         officialExchangeRate
       ),
-    [destinationAccounts, functionalCurrencyCode, officialExchangeRate, t]
+    [
+      accounts,
+      counterpartyTextKeys.required,
+      functionalCurrencyCode,
+      officialExchangeRate,
+      t,
+    ]
   );
 }

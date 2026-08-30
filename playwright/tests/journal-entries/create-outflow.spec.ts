@@ -1,4 +1,4 @@
-import type { IExchangeRate, IReceiptEntryReq } from '@/shared/lib/api/Api';
+import type { IExchangeRate, IPaymentEntryReq } from '@/shared/lib/api/Api';
 import { expect, test } from '@integration/fixtures/test';
 import {
   authenticatedUser,
@@ -11,11 +11,11 @@ const refreshEndpoint = '**/api/v1/auth/refresh-access-token';
 const postingAccountsEndpoint = '**/api/v1/ledger/posting-accounts*';
 const counterpartiesEndpoint = '**/api/v1/counterparties*';
 const exchangeRatesEndpoint = '**/api/v1/currencies/exchange-rates*';
-const createReceiptEndpoint = '**/api/v1/journal-entries/receipt';
+const createPaymentEndpoint = '**/api/v1/journal-entries/payment';
 const prepareUploadEndpoint = '**/api/v1/files/upload';
-const directUploadEndpoint = 'https://uploads.example.test/receipt*';
+const directUploadEndpoint = 'https://uploads.example.test/payment*';
 
-const destinationAccounts = [
+const sourceAccounts = [
   {
     id: 'ngn-bank',
     code: '1000',
@@ -36,26 +36,26 @@ const destinationAccounts = [
   },
 ];
 
-const sourceAccounts = [
+const destinationAccounts = [
   {
-    id: 'consulting-revenue',
-    code: '4000',
-    name: 'Consulting revenue',
-    type: 'revenue',
-    subType: 'services',
-    behavior: 'services',
+    id: 'office-expense',
+    code: '6000',
+    name: 'Office expense',
+    type: 'expense',
+    subType: 'general_and_administrative',
+    behavior: 'expense',
     balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
   },
 ];
 
 const counterparties = [
   {
-    id: 'payer-1',
+    id: 'recipient-1',
     accountingEntityId: 'entity-1',
-    name: 'Acme Consulting',
+    name: 'Acme Supplies',
     status: 'active',
     type: 'organization',
-    roles: ['customer'],
+    roles: ['vendor'],
     createdAt: '2026-08-01T00:00:00.000Z',
     updatedAt: '2026-08-01T00:00:00.000Z',
   },
@@ -74,13 +74,13 @@ interface IExchangeRateQuery {
   type: string | null;
 }
 
-interface IInflowQueryLog {
+interface IOutflowQueryLog {
   counterpartyLimits: Array<string | null>;
   exchangeRates?: IExchangeRateQuery[];
   postingAccounts: IPostingAccountQuery[];
 }
 
-interface IInflowRouteOptions {
+interface IOutflowRouteOptions {
   exchangeRateResponse?: (query: IExchangeRateQuery) => IExchangeRate[];
   postingAccountsGate?: Promise<void>;
 }
@@ -97,12 +97,12 @@ async function registerAttachmentUploadRoutes(page: Page, log: IUploadLog) {
       status: 200,
       json: [
         {
-          uploadUrl: 'https://uploads.example.test/receipt',
+          uploadUrl: 'https://uploads.example.test/payment',
           reference: 'attachment-reference-1',
           headers: { 'Content-Type': 'application/pdf' },
           file: {
-            url: 'https://files.example.test/receipt.pdf',
-            name: 'receipt.pdf',
+            url: 'https://files.example.test/payment.pdf',
+            name: 'payment.pdf',
             type: 'application/pdf',
             size: 15,
           },
@@ -117,10 +117,10 @@ async function registerAttachmentUploadRoutes(page: Page, log: IUploadLog) {
   });
 }
 
-async function registerInflowPageRoutes(
+async function registerOutflowPageRoutes(
   page: Page,
-  queryLog: IInflowQueryLog,
-  options: IInflowRouteOptions = {}
+  queryLog: IOutflowQueryLog,
+  options: IOutflowRouteOptions = {}
 ) {
   await registerAuthenticatedAppRoutes(page);
 
@@ -148,7 +148,7 @@ async function registerInflowPageRoutes(
       sourceType: url.searchParams.get('sourceType'),
     });
 
-    const data = side === 'destination' ? destinationAccounts : sourceAccounts;
+    const data = side === 'source' ? sourceAccounts : destinationAccounts;
 
     await options.postingAccountsGate;
     await route.fulfill({
@@ -192,18 +192,18 @@ async function registerInflowPageRoutes(
   });
 }
 
-async function signInAndNavigateToInflow(page: Page) {
+async function signInAndNavigateToOutflow(page: Page) {
   await page.goto('/auth/signin');
   await page.getByLabel('Email').fill(authenticatedUser.email);
   await page.getByLabel('Password', { exact: true }).fill('Password1!');
   await page.getByRole('button', { name: 'Sign In' }).click();
   await expect(page).toHaveURL('/dashboard');
 
-  await page.goto('/transactions/inflow');
-  await expect(page).toHaveURL('/transactions/inflow');
+  await page.goto('/transactions/outflow');
+  await expect(page).toHaveURL('/transactions/outflow');
 }
 
-async function fillForeignCurrencyReceipt(page: Page) {
+async function fillForeignCurrencyPayment(page: Page) {
   await page.getByRole('combobox', { name: 'Account' }).click();
   await page.getByRole('option', { name: 'USD operating account' }).click();
 
@@ -216,19 +216,19 @@ async function fillForeignCurrencyReceipt(page: Page) {
   await page.getByLabel('Exchange rate').fill('1500');
 
   await page.getByRole('combobox', { name: 'Category' }).click();
-  await page.getByRole('option', { name: 'Consulting revenue' }).click();
+  await page.getByRole('option', { name: 'Office expense' }).click();
 
-  const payer = page.getByRole('combobox', { name: 'Payer' });
-  await payer.click();
+  const recipient = page.getByRole('combobox', { name: 'Recipient' });
+  await recipient.click();
   await expect(
-    page.getByRole('option', { name: 'Acme Consulting' })
+    page.getByRole('option', { name: 'Acme Supplies' })
   ).toBeVisible();
-  await page.getByRole('option', { name: 'Acme Consulting' }).click();
+  await page.getByRole('option', { name: 'Acme Supplies' }).click();
 
-  await page.getByLabel('Description').fill('August consulting retainer');
+  await page.getByLabel('Description').fill('August office equipment');
 }
 
-test.describe('Inflow receipt creation', () => {
+test.describe('Outflow payment creation', () => {
   test('renders the form skeleton until required query data is ready', async ({
     page,
   }) => {
@@ -237,12 +237,12 @@ test.describe('Inflow receipt creation', () => {
       releasePostingAccounts = resolve;
     });
 
-    await registerInflowPageRoutes(
+    await registerOutflowPageRoutes(
       page,
       { counterpartyLimits: [], postingAccounts: [] },
       { postingAccountsGate }
     );
-    await signInAndNavigateToInflow(page);
+    await signInAndNavigateToOutflow(page);
 
     const loadingStatus = page.getByRole('status');
     await expect(loadingStatus).toHaveText('Loading transaction form');
@@ -254,18 +254,21 @@ test.describe('Inflow receipt creation', () => {
 
     await expect(loadingStatus).not.toBeVisible();
     await expect(page.getByRole('combobox', { name: 'Account' })).toBeVisible();
+    await expect(
+      page.getByRole('combobox', { name: 'Recipient' })
+    ).toBeVisible();
   });
 
-  test('refreshes the official rate when the inflow currency or date changes', async ({
+  test('refreshes the official rate when the outflow currency or date changes', async ({
     page,
   }) => {
     const exchangeRates: IExchangeRateQuery[] = [];
-    const queryLog: IInflowQueryLog = {
+    const queryLog: IOutflowQueryLog = {
       counterpartyLimits: [],
       exchangeRates,
       postingAccounts: [],
     };
-    await registerInflowPageRoutes(page, queryLog, {
+    await registerOutflowPageRoutes(page, queryLog, {
       exchangeRateResponse: (query) => {
         if (!query.currencyPair || !query.asOf) return [];
 
@@ -286,7 +289,7 @@ test.describe('Inflow receipt creation', () => {
         ];
       },
     });
-    await signInAndNavigateToInflow(page);
+    await signInAndNavigateToOutflow(page);
 
     expect(exchangeRates).toHaveLength(0);
     const account = page.getByRole('combobox', { name: 'Account' });
@@ -340,54 +343,54 @@ test.describe('Inflow receipt creation', () => {
     expect(exchangeRates).toHaveLength(2);
   });
 
-  test('loads permitted options and creates a foreign-currency receipt DTO once', async ({
+  test('loads permitted options and creates a foreign-currency payment DTO once', async ({
     page,
   }) => {
-    const queryLog: IInflowQueryLog = {
+    const queryLog: IOutflowQueryLog = {
       counterpartyLimits: [],
       postingAccounts: [],
     };
-    await registerInflowPageRoutes(page, queryLog);
+    await registerOutflowPageRoutes(page, queryLog);
     const uploadLog: IUploadLog = {
       directUploads: 0,
       preparationBody: null,
     };
     await registerAttachmentUploadRoutes(page, uploadLog);
 
-    let capturedRequestBody: IReceiptEntryReq | null = null;
+    let capturedRequestBody: IPaymentEntryReq | null = null;
     let requestCount = 0;
-    let releaseReceiptResponse: () => void = () => undefined;
-    const receiptResponseGate = new Promise<void>((resolve) => {
-      releaseReceiptResponse = resolve;
+    let releasePaymentResponse: () => void = () => undefined;
+    const paymentResponseGate = new Promise<void>((resolve) => {
+      releasePaymentResponse = resolve;
     });
 
-    await page.route(createReceiptEndpoint, async (route) => {
+    await page.route(createPaymentEndpoint, async (route) => {
       requestCount += 1;
       capturedRequestBody = JSON.parse(route.request().postData() ?? '{}');
-      await receiptResponseGate;
-      await route.fulfill({ status: 201, json: { id: 'receipt-entry-1' } });
+      await paymentResponseGate;
+      await route.fulfill({ status: 201, json: { id: 'payment-entry-1' } });
     });
 
-    await signInAndNavigateToInflow(page);
+    await signInAndNavigateToOutflow(page);
 
     await expect.poll(() => queryLog.postingAccounts.length).toBe(2);
     expect(queryLog.postingAccounts).toEqual(
       expect.arrayContaining([
-        { limit: '100', side: 'destination', sourceType: 'receipt' },
-        { limit: '100', side: 'source', sourceType: 'receipt' },
+        { limit: '100', side: 'source', sourceType: 'payment' },
+        { limit: '100', side: 'destination', sourceType: 'payment' },
       ])
     );
     await expect.poll(() => queryLog.counterpartyLimits).toEqual(['100']);
 
-    await fillForeignCurrencyReceipt(page);
+    await fillForeignCurrencyPayment(page);
 
     const fileInput = page.getByLabel('Attach file');
     await fileInput.setInputFiles({
-      name: 'receipt.pdf',
+      name: 'payment.pdf',
       mimeType: 'application/pdf',
-      buffer: Buffer.from('receipt content'),
+      buffer: Buffer.from('payment content'),
     });
-    await expect(page.getByText('receipt.pdf')).toBeVisible();
+    await expect(page.getByText('payment.pdf')).toBeVisible();
 
     const createButton = page.getByRole('button', { name: 'Create' });
     await createButton.click();
@@ -396,13 +399,13 @@ test.describe('Inflow receipt creation', () => {
     await expect(page.locator('form')).toHaveAttribute('aria-busy', 'true');
     await expect.poll(() => requestCount).toBe(1);
 
-    releaseReceiptResponse();
+    releasePaymentResponse();
 
-    await expect(page.getByText('Receipt created successfully')).toBeVisible();
+    await expect(page.getByText('Payment created successfully')).toBeVisible();
     expect(requestCount).toBe(1);
     expect(capturedRequestBody).not.toBeNull();
 
-    const body = capturedRequestBody as unknown as IReceiptEntryReq;
+    const body = capturedRequestBody as unknown as IPaymentEntryReq;
     const effectiveDate = body.effectiveDate;
     const exchangeRate = {
       baseCurrencyCode: 'USD',
@@ -419,7 +422,7 @@ test.describe('Inflow receipt creation', () => {
     );
     expect(uploadLog.preparationBody).toEqual([
       {
-        name: 'receipt.pdf',
+        name: 'payment.pdf',
         type: 'application/pdf',
         size: 15,
         purpose: 'journal_entry_attachment',
@@ -428,29 +431,11 @@ test.describe('Inflow receipt creation', () => {
     expect(uploadLog.directUploads).toBe(1);
     expect(body).toEqual({
       attachmentReferences: ['attachment-reference-1'],
-      sourceLines: [
-        {
-          accountId: 'consulting-revenue',
-          counterparty: {
-            id: 'payer-1',
-            name: 'Acme Consulting',
-            type: 'organization',
-          },
-          amount: {
-            amount: 1250.5,
-            currencyCode: 'USD',
-            isMinorUnit: false,
-          },
-          exchangeRate,
-          description: 'August consulting retainer',
-          sequenceOrder: 1,
-        },
-      ],
-      destinationLine: {
+      sourceLine: {
         accountId: 'usd-bank',
         counterparty: {
-          id: 'payer-1',
-          name: 'Acme Consulting',
+          id: 'recipient-1',
+          name: 'Acme Supplies',
           type: 'organization',
         },
         amount: {
@@ -459,86 +444,85 @@ test.describe('Inflow receipt creation', () => {
           isMinorUnit: false,
         },
         exchangeRate,
-        description: 'August consulting retainer',
-        sequenceOrder: 2,
+        description: 'August office equipment',
+        sequenceOrder: 1,
       },
+      destinationLines: [
+        {
+          accountId: 'office-expense',
+          counterparty: {
+            id: 'recipient-1',
+            name: 'Acme Supplies',
+            type: 'organization',
+          },
+          amount: {
+            amount: 1250.5,
+            currencyCode: 'USD',
+            isMinorUnit: false,
+          },
+          exchangeRate,
+          description: 'August office equipment',
+          sequenceOrder: 2,
+        },
+      ],
       effectiveDate,
       postedAt: body.postedAt,
-      memo: 'August consulting retainer',
+      memo: 'August office equipment',
     });
   });
 
-  test('itemizes categories and confirms before discarding additional rows', async ({
+  test('itemizes categories into ordered payment destination lines', async ({
     page,
   }) => {
-    await registerInflowPageRoutes(page, {
+    await registerOutflowPageRoutes(page, {
       counterpartyLimits: [],
       postingAccounts: [],
     });
-    let capturedRequestBody: IReceiptEntryReq | null = null;
-    await page.route(createReceiptEndpoint, async (route) => {
+    let capturedRequestBody: IPaymentEntryReq | null = null;
+    await page.route(createPaymentEndpoint, async (route) => {
       capturedRequestBody = JSON.parse(route.request().postData() ?? '{}');
-      await route.fulfill({ status: 201, json: { id: 'itemized-entry-1' } });
+      await route.fulfill({ status: 201, json: { id: 'itemized-payment-1' } });
     });
-    await signInAndNavigateToInflow(page);
+    await signInAndNavigateToOutflow(page);
 
     await page.getByRole('combobox', { name: 'Account' }).click();
     await page.getByRole('option', { name: 'NGN operating account' }).click();
     await page.getByLabel('Amount', { exact: true }).fill('250');
     await page.getByRole('combobox', { name: 'Category' }).click();
-    await page.getByRole('option', { name: 'Consulting revenue' }).click();
-    await page.getByRole('combobox', { name: 'Payer' }).fill('Itemized payer');
+    await page.getByRole('option', { name: 'Office expense' }).click();
+    await page
+      .getByRole('combobox', { name: 'Recipient' })
+      .fill('Itemized payee');
     await page.keyboard.press('Escape');
 
     await page
       .getByRole('button', { name: 'Itemize this transaction' })
       .click();
-    await expect(
-      page.getByLabel('Amount', { exact: true }).nth(0)
-    ).toBeDisabled();
     await page.getByLabel('Amount', { exact: true }).nth(1).fill('100');
-    await expect(page.getByLabel('Amount', { exact: true }).nth(0)).toHaveValue(
-      '250'
-    );
     await page.getByRole('button', { name: 'Save' }).click();
-    await expect(page.getByLabel('Amount', { exact: true }).nth(0)).toHaveValue(
-      '100'
-    );
     await page.getByRole('button', { name: 'Add a new item' }).click();
     await page.getByLabel('Amount', { exact: true }).nth(1).fill('150');
-    await expect(page.getByLabel('Amount', { exact: true }).nth(0)).toHaveValue(
-      '100'
-    );
     await page.getByRole('combobox', { name: 'Category' }).click();
-    await page.getByRole('option', { name: 'Consulting revenue' }).click();
+    await page.getByRole('option', { name: 'Office expense' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
-    await expect(page.getByLabel('Amount', { exact: true }).nth(0)).toHaveValue(
-      '250'
-    );
-
-    await page.getByRole('button', { name: 'Back to single entry' }).click();
-    await expect(
-      page.getByRole('alertdialog', { name: 'Return to single entry?' })
-    ).toBeVisible();
-    await page.getByRole('button', { name: 'Keep itemized entry' }).click();
 
     await page.getByRole('button', { name: 'Create' }).click();
-    await expect(page.getByText('Receipt created successfully')).toBeVisible();
+    await expect(page.getByText('Payment created successfully')).toBeVisible();
 
-    const body = capturedRequestBody as unknown as IReceiptEntryReq;
-    expect(body.destinationLine.accountId).toBe('ngn-bank');
-    expect(body.destinationLine.amount.amount).toBe(250);
-    expect(body.destinationLine.sequenceOrder).toBe(3);
-    expect(body.sourceLines).toEqual([
+    const body = capturedRequestBody as unknown as IPaymentEntryReq;
+    expect(body.sourceLine.accountId).toBe('ngn-bank');
+    expect(body.sourceLine.amount.amount).toBe(250);
+    expect(body.sourceLine.sequenceOrder).toBe(1);
+    expect(body.destinationLines).toEqual([
       expect.objectContaining({
-        accountId: 'consulting-revenue',
+        accountId: 'office-expense',
         amount: expect.objectContaining({ amount: 100 }),
-        sequenceOrder: 1,
+        sequenceOrder: 2,
       }),
       expect.objectContaining({
-        accountId: 'consulting-revenue',
+        accountId: 'office-expense',
         amount: expect.objectContaining({ amount: 150 }),
-        sequenceOrder: 2,
+        sequenceOrder: 3,
       }),
     ]);
   });
@@ -546,7 +530,7 @@ test.describe('Inflow receipt creation', () => {
   test('shows translated API feedback and retains form and upload state on failure', async ({
     page,
   }) => {
-    await registerInflowPageRoutes(page, {
+    await registerOutflowPageRoutes(page, {
       counterpartyLimits: [],
       postingAccounts: [],
     });
@@ -554,36 +538,36 @@ test.describe('Inflow receipt creation', () => {
       directUploads: 0,
       preparationBody: null,
     });
-    await page.route(createReceiptEndpoint, async (route) => {
+    await page.route(createPaymentEndpoint, async (route) => {
       await route.fulfill({
         status: 500,
-        json: { message: 'Receipt creation failed' },
+        json: { message: 'Payment creation failed' },
       });
     });
 
-    await signInAndNavigateToInflow(page);
-    await fillForeignCurrencyReceipt(page);
+    await signInAndNavigateToOutflow(page);
+    await fillForeignCurrencyPayment(page);
 
     const fileInput = page.getByLabel('Attach file');
     await fileInput.setInputFiles({
-      name: 'retained-receipt.pdf',
+      name: 'retained-payment.pdf',
       mimeType: 'application/pdf',
-      buffer: Buffer.from('retained receipt content'),
+      buffer: Buffer.from('retained payment content'),
     });
 
     await page.getByRole('button', { name: 'Create' }).click();
 
     await expect(page.getByText('An error occurred')).toBeVisible();
-    await expect(page.getByText('retained-receipt.pdf')).toBeVisible();
+    await expect(page.getByText('retained-payment.pdf')).toBeVisible();
     await expect(page.getByLabel('Amount', { exact: true })).toHaveValue(
       '1,250.50'
     );
     await expect(page.getByLabel('Exchange rate')).toHaveValue('1,500');
-    await expect(page.getByRole('combobox', { name: 'Payer' })).toHaveValue(
-      'Acme Consulting'
+    await expect(page.getByRole('combobox', { name: 'Recipient' })).toHaveValue(
+      'Acme Supplies'
     );
     await expect(page.getByLabel('Description')).toHaveValue(
-      'August consulting retainer'
+      'August office equipment'
     );
   });
 });

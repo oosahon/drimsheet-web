@@ -5,24 +5,49 @@ import type {
   ILedgerAccountDto,
 } from '@/shared/lib/api/Api';
 import { dateUtils } from '@/shared/lib/utils/date';
-import type { IInflowFormInitialValues, IInflowFormValues } from './types';
+import type {
+  ICashTransactionFormInitialValues,
+  ICashTransactionFormValues,
+  UCashTransactionFormVariant,
+} from './types';
+
+const COUNTERPARTY_TEXT_KEYS = Object.freeze({
+  default: {
+    empty: 'cash_transaction_counterparty_empty_text',
+    label: 'cash_transaction_counterparty_label',
+    placeholder: 'cash_transaction_counterparty_placeholder',
+    required: 'cash_transaction_counterparty_required_text',
+  },
+  inflow: {
+    empty: 'cash_transaction_payer_empty_text',
+    label: 'cash_transaction_payer_label',
+    placeholder: 'cash_transaction_payer_placeholder',
+    required: 'cash_transaction_payer_required_text',
+  },
+  outflow: {
+    empty: 'cash_transaction_recipient_empty_text',
+    label: 'cash_transaction_recipient_label',
+    placeholder: 'cash_transaction_recipient_placeholder',
+    required: 'cash_transaction_recipient_required_text',
+  },
+} as const);
 
 /**
- * Creates complete Formik values from optional inflow defaults, preferring the
- * selected destination account's currency when one can be resolved.
+ * Creates complete Formik values from optional cash-transaction defaults,
+ * preferring the selected account's currency when one can be resolved.
  */
 function createInitialValues(
-  initialValues: IInflowFormInitialValues | undefined,
-  destinationAccounts: ILedgerAccountDto[],
+  initialValues: ICashTransactionFormInitialValues | undefined,
+  accounts: ILedgerAccountDto[],
   functionalCurrencyCode: string
-): IInflowFormValues {
-  const selectedAccountCurrency = destinationAccounts.find(
-    (account) => account.id === initialValues?.destinationAccountId
+): ICashTransactionFormValues {
+  const selectedAccountCurrency = accounts.find(
+    (account) => account.id === initialValues?.accountId
   )?.balance.currencyCode;
 
   return {
-    destinationAccountId: initialValues?.destinationAccountId ?? '',
-    sourceAccountId: initialValues?.sourceAccountId ?? '',
+    accountId: initialValues?.accountId ?? '',
+    categoryId: initialValues?.categoryId ?? '',
     amount: {
       amount: initialValues?.amount?.amount ?? Number.NaN,
       currencyCode:
@@ -44,29 +69,29 @@ function createInitialValues(
       accountId: item.accountId,
       description: item.description,
     })),
-    payer: {
-      id: initialValues?.payer?.id,
-      name: initialValues?.payer?.name ?? '',
-      type: initialValues?.payer?.type,
+    counterparty: {
+      id: initialValues?.counterparty?.id,
+      name: initialValues?.counterparty?.name ?? '',
+      type: initialValues?.counterparty?.type,
     },
     description: initialValues?.description ?? '',
-    receipt: initialValues?.receipt ?? null,
+    attachment: initialValues?.attachment ?? null,
   };
 }
 
 /**
- * Applies a destination-account change to the form values, propagating its
+ * Applies an account change to the form values, propagating its
  * currency to the transaction and itemized rows and clearing an unneeded rate.
  */
 function updateAccount(
-  values: IInflowFormValues,
-  destinationAccountId: string,
+  values: ICashTransactionFormValues,
+  accountId: string,
   currencyCode: string,
   functionalCurrencyCode: string
-): IInflowFormValues {
+): ICashTransactionFormValues {
   return {
-    destinationAccountId,
-    sourceAccountId: values.sourceAccountId,
+    accountId,
+    categoryId: values.categoryId,
     amount: {
       amount: values.amount.amount,
       currencyCode,
@@ -87,9 +112,9 @@ function updateAccount(
       accountId: item.accountId,
       description: item.description,
     })),
-    payer: values.payer,
+    counterparty: values.counterparty,
     description: values.description,
-    receipt: values.receipt,
+    attachment: values.attachment,
   };
 }
 
@@ -134,13 +159,13 @@ function getItemTotal(items: IItemizedFieldValue[]) {
  * currency, returning false when either currency is unavailable.
  */
 function isExchangeRateRequired(
-  sourceCurrencyCode: string | null | undefined,
+  accountCurrencyCode: string | null | undefined,
   functionalCurrencyCode: string | null | undefined
 ) {
   return Boolean(
-    sourceCurrencyCode &&
+    accountCurrencyCode &&
     functionalCurrencyCode &&
-    sourceCurrencyCode !== functionalCurrencyCode
+    accountCurrencyCode !== functionalCurrencyCode
   );
 }
 
@@ -166,16 +191,20 @@ function matchesOfficialRate(
  * totals, and resolving the applicable manual or official exchange rate.
  */
 function normalizeValues(
-  values: IInflowFormValues,
+  values: ICashTransactionFormValues,
   exchangeRateRequired: boolean,
   officialRate?: number
-): IInflowFormValues {
-  const payer: IJournalCounterpartyReq = {
-    name: values.payer.name.trim(),
+): ICashTransactionFormValues {
+  const counterparty: IJournalCounterpartyReq = {
+    name: values.counterparty.name.trim(),
   };
 
-  if (values.payer.id !== undefined) payer.id = values.payer.id;
-  if (values.payer.type !== undefined) payer.type = values.payer.type;
+  if (values.counterparty.id !== undefined) {
+    counterparty.id = values.counterparty.id;
+  }
+  if (values.counterparty.type !== undefined) {
+    counterparty.type = values.counterparty.type;
+  }
 
   const amount = values.isItemized
     ? getItemTotal(values.items)
@@ -190,8 +219,8 @@ function normalizeValues(
   }
 
   return {
-    destinationAccountId: values.destinationAccountId,
-    sourceAccountId: values.sourceAccountId,
+    accountId: values.accountId,
+    categoryId: values.categoryId,
     amount: {
       amount,
       currencyCode: values.amount.currencyCode,
@@ -210,35 +239,45 @@ function normalizeValues(
       accountId: item.accountId,
       description: item.description.trim(),
     })),
-    payer,
+    counterparty,
     description: values.description.trim(),
-    receipt: values.receipt,
+    attachment: values.attachment,
   };
 }
 
 /**
- * Resolves the selected destination account's balance currency, returning an
- * empty string when the account is not found.
+ * Resolves the selected account's balance currency, returning an empty string
+ * when the account is not found.
  */
-function getDestinationCurrencyCode(
-  destinationAccounts: ILedgerAccountDto[],
-  destinationAccountId: string
+function getAccountCurrencyCode(
+  accounts: ILedgerAccountDto[],
+  accountId: string
 ) {
   return (
-    destinationAccounts.find((account) => account.id === destinationAccountId)
-      ?.balance.currencyCode ?? ''
+    accounts.find((account) => account.id === accountId)?.balance
+      .currencyCode ?? ''
   );
 }
 
-const inflowFormHelpers = Object.freeze({
+/**
+ * Resolves the complete counterparty copy contract for the transaction flow.
+ */
+function getCounterpartyTextKeys(variant?: UCashTransactionFormVariant) {
+  if (!variant) return COUNTERPARTY_TEXT_KEYS.default;
+
+  return COUNTERPARTY_TEXT_KEYS[variant];
+}
+
+const cashTransactionFormHelpers = Object.freeze({
   createInitialValues,
   createItem,
+  getCounterpartyTextKeys,
   getItemTotal,
   isExchangeRateRequired,
   matchesOfficialRate,
   normalizeValues,
   updateAccount,
-  getDestinationCurrencyCode,
+  getAccountCurrencyCode,
 });
 
-export default inflowFormHelpers;
+export default cashTransactionFormHelpers;
