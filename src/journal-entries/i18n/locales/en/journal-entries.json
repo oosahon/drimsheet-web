@@ -69,6 +69,7 @@
   "cash_transaction_attachment_type_text": "Attachment must be a JPEG, PNG, or PDF",
   "cash_transaction_attachment_size_text": "Attachment must be no larger than 2 MB",
   "inflow_receipt_created_success_text": "Receipt created successfully",
+  "outflow_payment_created_success_text": "Payment created successfully",
   "cash_transaction_form_loading_status": "Loading transaction form",
   "upload_title": "Create from a receipt or bank statement",
   "upload_description": "Choose a file to keep with this transaction in your browser.",

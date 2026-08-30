@@ -7,7 +7,7 @@ import {
   type ICashTransactionCurrencyContext,
   type ICashTransactionFormValues,
 } from '@/journal-entries/components/cash-transaction-form';
-import { useCreateReceipt } from '@/journal-entries/hooks/use-create-receipt';
+import { useCreatePayment } from '@/journal-entries/hooks/use-create-payment';
 import { journalEntryMapper } from '@/journal-entries/lib/mappers/journal-entry.mapper';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useExchangeRates } from '@/shared/hooks/use-exchange-rates';
@@ -22,27 +22,27 @@ const requiredQueryOptions: IReactQueryOptions = {
   throwOnError: true,
 };
 
-export function InflowFormContainer() {
+export function OutflowFormContainer() {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
 
   const [currencyContext, setCurrencyContext] =
     useState<ICashTransactionCurrencyContext>();
-  const [isSubmittingReceipt, setIsSubmittingReceipt] = useState(false);
+  const [isSubmittingPayment, setIsSubmittingPayment] = useState(false);
 
   const handleApiError = useApiErrorHandler();
 
   const { data: permittedAccounts, isPending: isPermittedAccountsPending } =
     usePermittedPostingAccounts({
-      sourceType: EJournalEntrySourceType.Receipt,
-      side: 'destination',
+      sourceType: EJournalEntrySourceType.Payment,
+      side: 'source',
       limit: 100,
       ...requiredQueryOptions,
     });
 
   const { data: permittedCategories, isPending: isPermittedCategoriesPending } =
     usePermittedPostingAccounts({
-      sourceType: EJournalEntrySourceType.Receipt,
-      side: 'source',
+      sourceType: EJournalEntrySourceType.Payment,
+      side: 'destination',
       limit: 100,
       ...requiredQueryOptions,
     });
@@ -59,8 +59,8 @@ export function InflowFormContainer() {
     functionalCurrencyCode
   );
   const { data: officialExchangeRates } = useExchangeRates(exchangeRateQuery);
-  const { mutateAsync: createReceipt, isPending: isCreatingReceipt } =
-    useCreateReceipt();
+  const { mutateAsync: createPayment, isPending: isCreatingPayment } =
+    useCreatePayment();
 
   const isFormDataPending =
     isPermittedAccountsPending ||
@@ -69,28 +69,28 @@ export function InflowFormContainer() {
     isAccountingEntityPending;
 
   const handleSubmit = async (values: ICashTransactionFormValues) => {
-    if (isSubmittingReceipt) return;
+    if (isSubmittingPayment) return;
 
-    setIsSubmittingReceipt(true);
+    setIsSubmittingPayment(true);
 
     try {
       const attachmentReferences = values.attachment
         ? [await fileUploadService.uploadFile(values.attachment)]
         : [];
 
-      const payload = journalEntryMapper.toReceiptEntryReq(
+      const payload = journalEntryMapper.toPaymentEntryReq(
         values,
         functionalCurrencyCode,
         new Date().toISOString(),
         attachmentReferences
       );
 
-      await createReceipt(payload);
-      toast.success(t('inflow_receipt_created_success_text'));
+      await createPayment(payload);
+      toast.success(t('outflow_payment_created_success_text'));
     } catch (error) {
       handleApiError(error, { showToast: true });
     } finally {
-      setIsSubmittingReceipt(false);
+      setIsSubmittingPayment(false);
     }
   };
 
@@ -103,11 +103,11 @@ export function InflowFormContainer() {
       counterpartyOptions={counterpartiesData?.data ?? []}
       disabled={!functionalCurrencyCode}
       functionalCurrencyCode={functionalCurrencyCode}
-      loading={isSubmittingReceipt || isCreatingReceipt}
+      loading={isSubmittingPayment || isCreatingPayment}
       officialExchangeRate={officialExchangeRates?.[0]}
       onCurrencyContextChange={setCurrencyContext}
       onSubmit={handleSubmit}
-      variant="inflow"
+      variant="outflow"
     />
   );
 }
