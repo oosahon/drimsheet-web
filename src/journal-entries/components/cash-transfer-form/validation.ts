@@ -3,7 +3,7 @@ import { dateUtils } from '@/shared/lib/utils/date';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
-import cashTransferFormHelpers from './cash-transfer-form.helper';
+import cashTransferFormHelpers from './helper';
 import type { ICashTransferFormValues } from './types';
 
 const MAX_ATTACHMENT_SIZE_BYTES = 2 * 1024 * 1024;

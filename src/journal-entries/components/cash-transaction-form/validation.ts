@@ -3,7 +3,7 @@ import { dateUtils } from '@/shared/lib/utils/date';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
-import cashTransactionFormHelpers from './cash-transaction-form.helper';
+import cashTransactionFormHelpers from './helper';
 import type {
   ICashTransactionFormValues,
   UCashTransactionFormVariant,

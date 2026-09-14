@@ -1,86 +1,124 @@
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
-function findMissingStories(dir) {
-  const missing = [];
-
-  function scan(currentDir) {
-    if (!fs.existsSync(currentDir)) return;
-
-    const entries = fs.readdirSync(currentDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      if (entry.isDirectory()) {
-        scan(path.join(currentDir, entry.name));
-      } else if (
-        entry.isFile() &&
-        entry.name.endsWith('.tsx') &&
-        entry.name !== 'index.tsx' &&
-        !entry.name.endsWith('.stories.tsx') &&
-        !entry.name.endsWith('.test.tsx') &&
-        !entry.name.endsWith('.container.tsx')
-      ) {
-        const filePath = path.join(currentDir, entry.name);
-        const parts = filePath.split(path.sep);
-
-        const isInUI = parts.includes('components');
-        const isPartsComponent =
-          /[\\/][^\\/]*components[\\/][^\\/]+[\\/]parts([\\/]|$)/.test(
-            filePath
-          );
-
-        if (isInUI && !isPartsComponent) {
-          const dirname = path.dirname(filePath);
-          const basename = path.basename(entry.name, '.tsx');
-
-          const storyPath = path.join(dirname, `${basename}.stories.tsx`);
-          const legacyStoryPath = path.join(
-            dirname,
-            '__stories__',
-            `${basename}.stories.tsx`
-          );
-          const iconSetStoryPath = path.join(dirname, 'icons.stories.tsx');
-
-          if (
-            !(
-              path.basename(dirname) === 'icons' &&
-              fs.existsSync(iconSetStoryPath)
-            ) &&
-            !fs.existsSync(storyPath) &&
-            !fs.existsSync(legacyStoryPath)
-          ) {
-            missing.push(filePath);
-          }
-        }
-      }
-    }
+function walk(dir, visitor) {
+  if (!fs.existsSync(dir)) {
+    return;
   }
 
-  scan(dir);
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fullPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      walk(fullPath, visitor);
+      continue;
+    }
+
+    visitor(fullPath, entry);
+  }
+}
+
+function getComponentOwner(filePath) {
+  const segments = filePath.split(path.sep);
+  const componentsIndex = segments.lastIndexOf('components');
+
+  if (componentsIndex === -1 || componentsIndex + 1 >= segments.length) {
+    return undefined;
+  }
+
+  return segments.slice(0, componentsIndex + 2).join(path.sep);
+}
+
+function isUiSource(filePath) {
+  const basename = path.basename(filePath);
+  const segments = filePath.split(path.sep);
+
+  return (
+    basename.endsWith('.tsx') &&
+    basename !== 'index.tsx' &&
+    !basename.endsWith('.stories.tsx') &&
+    !basename.endsWith('.test.tsx') &&
+    !basename.endsWith('.container.tsx') &&
+    !segments.includes('__tests__') &&
+    !segments.includes('__stories__')
+  );
+}
+
+function getCanonicalStoryPath(filePath, componentOwner) {
+  const sourceRelative = path.relative(componentOwner, filePath);
+  const relativeDirectory = path.dirname(sourceRelative);
+  const basename = path.basename(filePath, '.tsx');
+  const storyDirectory =
+    relativeDirectory === '.'
+      ? path.join(componentOwner, '__stories__')
+      : path.join(componentOwner, '__stories__', relativeDirectory);
+
+  return path.join(storyDirectory, `${basename}.stories.tsx`);
+}
+
+export function findMissingStories(dir) {
+  const missing = [];
+
+  walk(dir, (filePath, entry) => {
+    if (!entry.isFile() || !isUiSource(filePath)) {
+      return;
+    }
+
+    const componentOwner = getComponentOwner(filePath);
+    if (!componentOwner) {
+      return;
+    }
+
+    const aggregateIconsStory = path.join(
+      componentOwner,
+      '__stories__',
+      'icons.stories.tsx'
+    );
+    if (
+      path.basename(componentOwner) === 'icons' &&
+      fs.existsSync(aggregateIconsStory)
+    ) {
+      return;
+    }
+
+    const storyPath = getCanonicalStoryPath(filePath, componentOwner);
+    if (!fs.existsSync(storyPath)) {
+      missing.push(filePath);
+    }
+  });
+
   return missing;
 }
 
-const srcPath = path.join(process.cwd(), 'src');
-const missing = findMissingStories(srcPath);
+function run() {
+  const srcPath = path.join(process.cwd(), 'src');
+  const missing = findMissingStories(srcPath);
 
-if (missing.length > 0) {
-  console.error(
-    '\x1b[31m%s\x1b[0m',
-    'Error: Missing Storybook documentation for the following components:'
-  );
-  missing.forEach((file) => {
-    const relPath = path.relative(process.cwd(), file);
-    console.error(`  - ${relPath}`);
-  });
-  console.error(
-    '\x1b[33m%s\x1b[0m',
-    'Please create the corresponding co-located stories before pushing.'
-  );
-  process.exit(1);
-} else {
+  if (missing.length > 0) {
+    console.error(
+      '\x1b[31m%s\x1b[0m',
+      'Error: Missing Storybook documentation for the following components:'
+    );
+    missing.forEach((file) => {
+      const relPath = path.relative(process.cwd(), file);
+      console.error(`  - ${relPath}`);
+    });
+    console.error(
+      '\x1b[33m%s\x1b[0m',
+      "Please create each story in its component owner's __stories__ directory before pushing."
+    );
+    process.exitCode = 1;
+    return;
+  }
+
   console.log(
     '\x1b[32m%s\x1b[0m',
     '✅ All UI components have corresponding Storybook documentation.'
   );
-  process.exit(0);
+}
+
+const invokedPath = process.argv[1] ? path.resolve(process.argv[1]) : '';
+if (invokedPath === fileURLToPath(import.meta.url)) {
+  run();
 }

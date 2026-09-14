@@ -6,13 +6,13 @@ Choose the runner and isolation boundary from the behavior under test.
 
 ## Test Matrix
 
-| Layer                    | Runner                   | Boundary                                          | Location                      |
-| ------------------------ | ------------------------ | ------------------------------------------------- | ----------------------------- |
-| Component                | Vitest + Testing Library | Real owned component tree                         | Colocated `*.test.tsx`        |
-| Component container      | Vitest + Testing Library | Real presentation with external boundaries mocked | Colocated `*.test.tsx`        |
-| Hook, mapper, validation | Vitest                   | Deterministic module contract                     | Colocated `*.test.ts(x)`      |
-| Browser integration      | Playwright               | Running frontend with controlled first-party APIs | `playwright/tests/<feature>/` |
-| System end-to-end        | External E2E suite       | Deployed frontend and real test-system boundaries | Separate repository           |
+| Layer                    | Runner                   | Boundary                                          | Location                       |
+| ------------------------ | ------------------------ | ------------------------------------------------- | ------------------------------ |
+| Component                | Vitest + Testing Library | Real owned component tree                         | Owner `__tests__/*.test.tsx`   |
+| Component container      | Vitest + Testing Library | Real presentation with external boundaries mocked | Owner `__tests__/*.test.tsx`   |
+| Hook, mapper, validation | Vitest                   | Deterministic module contract                     | Owner `__tests__/*.test.ts(x)` |
+| Browser integration      | Playwright               | Running frontend with controlled first-party APIs | `playwright/tests/<feature>/`  |
+| System end-to-end        | External E2E suite       | Deployed frontend and real test-system boundaries | Separate repository            |
 
 ## Select the Layer
 
@@ -37,7 +37,7 @@ Choose the runner and isolation boundary from the behavior under test.
 Run a focused component test:
 
 ```bash
-npm test -- --run src/<feature>/components/<name>/<name>.test.tsx
+npm test -- --run src/<feature>/components/<name>/__tests__/<name>.test.tsx
 ```
 
 ## Container Tests

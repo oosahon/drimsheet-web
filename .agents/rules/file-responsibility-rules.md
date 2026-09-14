@@ -28,10 +28,12 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 - Do not add a `parts/index.ts` barrel or expose parts through the owner's public
   API.
 - Promote a part when it gains a consumer outside its owner.
+- Keep part tests and stories out of `parts/`; mirror them under the component
+  owner's `__tests__/parts/` and `__stories__/parts/` directories.
 
-## Component `*.helper.ts`
+## Component `helper.ts`
 
-- Use one root-level `<component-name>.helper.ts` for deterministic non-UI logic
+- Use one root-level `helper.ts` for deterministic non-UI logic
   owned exclusively by that component.
 - Extract initial-value factories, value normalizers, serializers, error
   projections, and reusable predicates from the primary UI `.tsx` file.
@@ -40,8 +42,8 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 - Use concise operation names on the helper object, such as
   `inflowFormHelpers.createInitialValues`, because the owning component is
   already explicit in the object name and file path.
-- Add one matching `<component-name>.helper.test.ts` that imports the default
-  object and tests each method's deterministic contract directly.
+- Add one matching `__tests__/helper.test.ts` that imports the default object
+  and tests each method's deterministic contract directly.
 - Do not create a component `helpers/` directory, operation-named helper
   modules, named helper exports, a helper barrel, or a public `index.ts`
   re-export.
@@ -56,14 +58,29 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 - Containers may connect hooks, services, dialogs, loaders, and page-level state to a pure component.
 - Containers should keep business logic thin and delegate reusable logic to hooks or `lib/`.
 
+## Component `skeleton.tsx`
+
+- Use `skeleton.tsx` for a single loading skeleton owned by one component
+  directory; the owner is already clear from the path.
+- Keep the exported React symbol descriptive, such as
+  `CashTransferFormSkeleton`, so imports remain self-explanatory.
+- Name dedicated support artifacts `__tests__/skeleton.test.tsx` and
+  `__stories__/skeleton.stories.tsx`.
+- When one owner genuinely needs multiple loading skeletons, distinguish them
+  by UI role, such as `table-skeleton.tsx`, instead of repeating the owner name.
+
 ## `*.stories.tsx` Files
 
+- Put stories under the owning component's `__stories__/` directory. Mirror a
+  private part's path under `__stories__/parts/`.
 - Stories must document the component in realistic states.
 - Stories should focus on visual variants and interaction states.
 - Stories should not hide required props behind complex setup unless that setup is part of the story’s purpose.
 
 ## `*.test.tsx` Files
 
+- Put tests under `__tests__/` in the narrowest production owner. Mirror a
+  private part's path under a component owner's `__tests__/parts/`.
 - Test pure components, containers, hooks, and validation logic when behavior matters.
 - Keep tests focused on one behavior or one user outcome per test.
 - Tests should verify the contract of the file, not implementation details.
@@ -99,7 +116,7 @@ Make each file easy to understand, safe to change, and obvious for an AI agent t
 - Put small, deterministic, general-purpose functions in `lib/utils/`.
 - Do not place implementation files directly in `lib/`.
 - Avoid a generic feature or shared `helpers/` directory; classify reusable
-  logic precisely. The root-level component helper module is the scoped
+  logic precisely. The root-level component `helper.ts` module is the scoped
   exception described above.
 - `lib/` should contain reusable logic that is not tied to a single UI component.
 - Keep `lib/` free of page-specific orchestration.

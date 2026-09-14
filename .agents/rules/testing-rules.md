@@ -71,4 +71,5 @@ Follow `.agents/workflow/testing.md` for test locations, Playwright separation,
 and focused verification commands.
 
 Vitest must not discover or execute `playwright/**/*.spec.ts`, and Playwright
-must not discover colocated `src/**/*.test.ts` or `src/**/*.test.tsx` files.
+must not discover `src/**/__tests__/**/*.test.ts` or
+`src/**/__tests__/**/*.test.tsx` files.

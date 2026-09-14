@@ -30,7 +30,7 @@ import { useFormik } from 'formik';
 import { ArrowLeft, ListCollapse } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import cashTransactionFormHelpers from './cash-transaction-form.helper';
+import cashTransactionFormHelpers from './helper';
 import type {
   CashTransactionFormProps,
   ICashTransactionFormValues,

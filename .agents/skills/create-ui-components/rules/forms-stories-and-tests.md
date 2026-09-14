@@ -8,13 +8,19 @@ Every form component must keep its types outside the component file:
 <form-name>/
   <form-name>.tsx
   <form-name>.container.tsx
-  <form-name>.stories.tsx
-  <form-name>.test.tsx
-  <form-name>.helper.ts
-  <form-name>.helper.test.ts
+  skeleton.tsx
+  helper.ts
   parts/
     <part-name>.tsx
-    <part-name>.stories.tsx
+  __tests__/
+    <form-name>.test.tsx
+    skeleton.test.tsx
+    helper.test.ts
+  __stories__/
+    <form-name>.stories.tsx
+    skeleton.stories.tsx
+    parts/
+      <part-name>.stories.tsx
   types.ts
   validation.ts
   index.ts
@@ -28,9 +34,9 @@ Every form component must keep its types outside the component file:
   `validation.ts`.
 - Put non-trivial initial-value factories, value normalizers, serializers,
   error projections, and reusable predicates together in the form's private
-  root-level `<form-name>.helper.ts`.
+  root-level `helper.ts`.
 - Keep the functions local, expose only a frozen `<formName>Helpers` default
-  object, and give it one matching `<form-name>.helper.test.ts` that imports the
+  object, and give it one matching `__tests__/helper.test.ts` that imports the
   default object directly. Do not expose helpers through the form barrel.
 - Keep validation deterministic apart from translation lookup; do not fetch data
   or mutate state while validating.
@@ -40,10 +46,15 @@ Every form component must keep its types outside the component file:
   container.
 - Let the form emit validated values through `onSubmit`; do not make the form own
   the application workflow.
+- When a form owns one loading placeholder, put it in `skeleton.tsx`, retain a
+  descriptive `<FormName>Skeleton` export, and use `skeleton.test.tsx` and
+  `skeleton.stories.tsx` for dedicated support artifacts.
 
 ## Stories
 
-- Add one colocated story file for every UI `.tsx`; containers are exempt.
+- Add one story under the owning component's `__stories__/` directory for every
+  UI `.tsx`; containers are exempt. Mirror private part stories under
+  `__stories__/parts/`.
 - Use `satisfies Meta<typeof Component>` and `StoryObj<typeof meta>`.
 - Add `tags: ['autodocs']` unless the nearby Storybook convention requires
   otherwise.

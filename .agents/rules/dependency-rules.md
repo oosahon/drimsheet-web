@@ -20,12 +20,18 @@ Make imports predictable so the agent can change one part of the app without cau
 - Feature code may depend on shared code, but not the other way around.
 - A component's `parts/` files share the dependency permissions of their owner
   and may be imported only from within that owning component directory.
-- A component's root-level `<component-name>.helper.ts` shares the dependency
+- A component's root-level `helper.ts` shares the dependency
   permissions of its owner and may be imported only from within that owning
   component directory.
-- Import the component helper through its explicit sibling `.helper` path. Do
+- Import the component helper through its explicit sibling `./helper` path. Do
   not create a `helpers/` directory, add another helper module, or re-export the
   helper from the owner's public `index.ts`.
+- A component's `__tests__/` and `__stories__/` files inherit the dependency
+  permissions of that component owner. Other `__tests__/` files inherit the
+  permissions of their nearest production responsibility directory.
+- Support directories are organizational boundaries, not public APIs. Import
+  public components through their directory alias and private helpers or parts
+  through explicit implementation paths without adding exports for them.
 - UI components must not reach into infrastructure concerns directly.
 - Pages and dialogs may orchestrate side effects, but they should not own reusable business logic.
 - Route files must remain thin and only wire URLs to pages.
@@ -62,6 +68,7 @@ Make imports predictable so the agent can change one part of the app without cau
 - Use barrels only for public entry points.
 - Do not create a barrel for a private `parts/` directory or re-export a private
   part from its owner.
+- Do not create barrels for `__tests__/` or `__stories__/`.
 - Do not re-export a private component helper module from its owner.
 - Do not create circular dependencies through barrels.
 - Keep import paths explicit when a barrel would hide important dependency direction.

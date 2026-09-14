@@ -87,33 +87,50 @@ directory.
 ```text
 components/<name>/
   <ui>.tsx
-  <ui>.stories.tsx
-  <ui>.test.tsx
   <ui>.container.tsx
-  <name>.helper.ts
-  <name>.helper.test.ts
+  skeleton.tsx
+  helper.ts
   parts/
     <part>.tsx
-    <part>.stories.tsx
-    <part>.test.tsx
+  __tests__/
+    <ui>.test.tsx
+    skeleton.test.tsx
+    helper.test.ts
+    parts/
+      <part>.test.tsx
+  __stories__/
+    <ui>.stories.tsx
+    skeleton.stories.tsx
+    parts/
+      <part>.stories.tsx
   types.ts
   validation.ts
   index.ts
 ```
 
 - Use `<ui>.tsx` for the pure component.
-- Use `<ui>.stories.tsx` for Storybook documentation.
-- Use `<ui>.test.tsx` for Jest or Vitest UI tests.
+- Put `<ui>.stories.tsx` in the owner's `__stories__/` directory for Storybook
+  documentation.
+- Put `<ui>.test.tsx` in the owner's `__tests__/` directory for Jest or Vitest
+  UI tests.
 - Use `<ui>.container.tsx` only when the component requires side effects or orchestration.
+- Use `skeleton.tsx` for one owner-local loading skeleton. Keep its exported
+  React symbol descriptive, such as `<ComponentName>Skeleton`, and use
+  role-based filenames such as `table-skeleton.tsx` only when the owner has
+  multiple distinct skeletons.
+- Name dedicated skeleton support files `__tests__/skeleton.test.tsx` and
+  `__stories__/skeleton.stories.tsx`.
 - Use `parts/` only for substantial UI subcomponents consumed exclusively by
   the owning component directory.
-- Use one optional root-level `<name>.helper.ts` for all deterministic non-UI
+- Mirror private part support files under `__tests__/parts/` and
+  `__stories__/parts/`; keep production part files in `parts/` only.
+- Use one optional root-level `helper.ts` for all deterministic non-UI
   helpers consumed exclusively by the owning component directory.
 - Keep helper functions local, collect them in one frozen
   `<componentName>Helpers` object, and make that object the module's only
   default export. Use concise operation names for its members.
-- Add one matching `<name>.helper.test.ts` that imports the default object and
-  tests each method's deterministic contract.
+- Add one matching `__tests__/helper.test.ts` that imports the default object
+  and tests each method's deterministic contract.
 - Do not create a component `helpers/` directory or operation-named helper
   modules.
 - Use `types.ts` for component-specific types.
@@ -123,6 +140,39 @@ components/<name>/
   `index.ts`.
 - Do not re-export component helpers from the owner's `index.ts`.
 - Promote a part to its own component directory when another owner needs it.
+- Do not add barrels to `__tests__/`, `__stories__/`, or `parts/`.
+- Create a support directory only when it contains an artifact.
+
+## Source Support Layout
+
+Tests outside component owners belong in a `__tests__/` directory under the
+narrowest production responsibility that owns them:
+
+```text
+hooks/
+  <hook>.ts
+  __tests__/
+    <hook>.test.ts
+layouts/
+  <layout>.tsx
+  __tests__/
+    <layout>.test.tsx
+lib/
+  mappers/
+    <mapper>.ts
+    __tests__/
+      <mapper>.test.ts
+  services/
+    <service>.ts
+    __tests__/
+      <service>.test.ts
+```
+
+- Apply the same convention to other responsibility directories such as
+  `lib/api/`, `lib/configs/`, and `lib/utils/`.
+- A named container directory owns its own `__tests__/` directory.
+- Do not put production implementation files or barrels in support directories.
+- Do not move Playwright specs into `src/`; they retain their dedicated layout.
 
 ## Shared Folder Layout
 
@@ -163,20 +213,27 @@ Shared components also live in dedicated directories.
 ```text
 components/<name>/
   <ui>.tsx
-  <ui>.stories.tsx
-  <ui>.test.tsx
-  <name>.helper.ts
-  <name>.helper.test.ts
+  skeleton.tsx
+  helper.ts
   parts/
     <part>.tsx
-    <part>.stories.tsx
-    <part>.test.tsx
+  __tests__/
+    <ui>.test.tsx
+    skeleton.test.tsx
+    helper.test.ts
+    parts/
+      <part>.test.tsx
+  __stories__/
+    <ui>.stories.tsx
+    skeleton.stories.tsx
+    parts/
+      <part>.stories.tsx
   types.ts
   index.ts
 ```
 
 - `icons/` is a shared exception for icon components.
-- `icons.stories.tsx` documents the full icon set.
+- `__stories__/icons.stories.tsx` documents the full icon set.
 - Shared component parts remain private to their owning shared component and
   must not import feature code.
 
