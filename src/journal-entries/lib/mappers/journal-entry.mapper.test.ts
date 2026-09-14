@@ -1,4 +1,5 @@
 import type { ICashTransactionFormValues } from '@/journal-entries/components/cash-transaction-form';
+import type { ICashTransferFormValues } from '@/journal-entries/components/cash-transfer-form';
 import { journalEntryMapper } from '@/journal-entries/lib/mappers/journal-entry.mapper';
 import { EExchangeRateType } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
@@ -28,6 +29,23 @@ const paymentValues: ICashTransactionFormValues = {
   items: [],
   counterparty: { name: 'New recipient' },
   description: '  August payment  ',
+  attachment: null,
+};
+
+const transferValues: ICashTransferFormValues = {
+  sourceAccountId: 'ngn-bank',
+  destinationAccountId: 'petty-cash',
+  amountSent: { amount: 250000, currencyCode: 'NGN', isMinorUnit: false },
+  amountReceived: {
+    amount: 250000,
+    currencyCode: 'NGN',
+    isMinorUnit: false,
+  },
+  date: '2026-08-10',
+  exchangeRate: '',
+  isItemized: false,
+  items: [],
+  description: '  Petty cash funding  ',
   attachment: null,
 };
 
@@ -63,6 +81,29 @@ describe('journalEntryMapper', () => {
       ).toBeUndefined();
     }
   );
+
+  it('maps the source-to-destination transfer pair to an official rate query', () => {
+    expect(
+      journalEntryMapper.toTransferExchangeRateQuery({
+        sourceCurrencyCode: 'USD',
+        destinationCurrencyCode: 'NGN',
+        date: '2026-08-10',
+      })
+    ).toEqual({
+      currencyPair: 'USD/NGN',
+      type: EExchangeRateType.Official,
+      asOf: '2026-08-10',
+      limit: 1,
+    });
+
+    expect(
+      journalEntryMapper.toTransferExchangeRateQuery({
+        sourceCurrencyCode: 'NGN',
+        destinationCurrencyCode: 'NGN',
+        date: '2026-08-10',
+      })
+    ).toBeUndefined();
+  });
 
   it('maps a single functional-currency payment and attachment references', () => {
     expect(
@@ -340,5 +381,147 @@ describe('journalEntryMapper', () => {
     expect(result.destinationLine.exchangeRate).toEqual(
       result.sourceLines[0]?.exchangeRate
     );
+  });
+
+  it('maps a functional-currency transfer and attachment references', () => {
+    expect(
+      journalEntryMapper.toTransferEntryReq(transferValues, 'NGN', occurredAt, [
+        'attachment-1',
+      ])
+    ).toEqual({
+      attachmentReferences: ['attachment-1'],
+      sourceLine: {
+        accountId: 'ngn-bank',
+        amount: {
+          amount: 250000,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        exchangeRate: null,
+        description: 'Petty cash funding',
+        sequenceOrder: 1,
+      },
+      destinationLine: {
+        accountId: 'petty-cash',
+        amount: {
+          amount: 250000,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        exchangeRate: null,
+        description: 'Petty cash funding',
+        sequenceOrder: 2,
+      },
+      chargeLines: [],
+      effectiveDate: '2026-08-10',
+      postedAt: occurredAt,
+      memo: 'Petty cash funding',
+    });
+  });
+
+  it('maps charge lines separately without changing amount sent', () => {
+    const result = journalEntryMapper.toTransferEntryReq(
+      {
+        ...transferValues,
+        amountSent: {
+          amount: 252500,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        isItemized: true,
+        items: [
+          {
+            id: 'fee-1',
+            amount: { amount: 2500, currencyCode: 'NGN', isMinorUnit: false },
+            accountId: 'bank-fees',
+            description: ' Bank fee ',
+          },
+        ],
+      },
+      'NGN',
+      occurredAt
+    );
+
+    expect(result.sourceLine.amount.amount).toBe(252500);
+    expect(result.destinationLine).toEqual(
+      expect.objectContaining({
+        accountId: 'petty-cash',
+        amount: expect.objectContaining({ amount: 250000 }),
+        sequenceOrder: 2,
+      })
+    );
+    expect(result.chargeLines).toEqual([
+      expect.objectContaining({
+        accountId: 'bank-fees',
+        counterparty: null,
+        amount: expect.objectContaining({ amount: 2500 }),
+        description: 'Bank fee',
+        sequenceOrder: 3,
+      }),
+    ]);
+  });
+
+  it('maps a manual transfer rate only onto a foreign source line', () => {
+    const result = journalEntryMapper.toTransferEntryReq(
+      {
+        ...transferValues,
+        amountSent: {
+          amount: 100,
+          currencyCode: 'USD',
+          isMinorUnit: false,
+        },
+        amountReceived: {
+          amount: 150000,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        exchangeRate: '1500',
+      },
+      'NGN',
+      occurredAt
+    );
+
+    const expectedExchangeRate = {
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1500,
+      type: EExchangeRateType.Market,
+      asOf: '2026-08-10',
+      source: 'manual',
+    };
+
+    expect(result.sourceLine.exchangeRate).toEqual(expectedExchangeRate);
+    expect(result.destinationLine.exchangeRate).toBeNull();
+  });
+
+  it('maps the reciprocal rate only onto a foreign destination line', () => {
+    const result = journalEntryMapper.toTransferEntryReq(
+      {
+        ...transferValues,
+        amountSent: {
+          amount: 160000,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        amountReceived: {
+          amount: 100,
+          currencyCode: 'USD',
+          isMinorUnit: false,
+        },
+        exchangeRate: '0.000625',
+      },
+      'NGN',
+      occurredAt
+    );
+
+    expect(result.sourceLine.exchangeRate).toBeNull();
+    expect(result.destinationLine.exchangeRate).toEqual({
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1600,
+      type: EExchangeRateType.Market,
+      asOf: '2026-08-10',
+      source: 'manual',
+    });
   });
 });

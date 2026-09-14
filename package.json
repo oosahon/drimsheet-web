@@ -21,7 +21,7 @@
     "test:integration:report": "playwright show-report",
     "test:integration:ui": "playwright test --ui",
     "typecheck:integration": "tsc -p tsconfig.playwright.json",
-    "api:gen": "node scripts/api-gen.js && node scripts/convert-enums.js",
+    "api:gen": "node scripts/api-gen.js && node scripts/convert-enums.js && npm run sync:errors",
     "sync:errors": "node scripts/sync-error-keys.js",
     "format:all": "prettier --write .",
     "format:changed": "lint-staged",
