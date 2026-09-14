@@ -84,7 +84,7 @@ function getModuleExportCounts(filePath) {
   return { defaultExportCount, namedExportCount };
 }
 
-function indexReferencesHelper(indexPath, componentName) {
+function indexReferencesPrivateModule(indexPath) {
   if (!fs.existsSync(indexPath)) {
     return false;
   }
@@ -96,8 +96,6 @@ function indexReferencesHelper(indexPath, componentName) {
     true,
     ts.ScriptKind.TS
   );
-  const helperSpecifier = `./${componentName}.helper`;
-
   return sourceFile.statements.some((statement) => {
     if (
       !ts.isImportDeclaration(statement) &&
@@ -108,20 +106,19 @@ function indexReferencesHelper(indexPath, componentName) {
 
     return (
       ts.isStringLiteral(statement.moduleSpecifier) &&
-      statement.moduleSpecifier.text === helperSpecifier
+      (statement.moduleSpecifier.text === './helper' ||
+        statement.moduleSpecifier.text.startsWith('./parts/'))
     );
   });
 }
 
-function validateComponentHelpers(componentPath, componentName, relative) {
+function validateComponentHelpers(componentPath, relative) {
   const errors = [];
-  const expectedHelperPath = path.join(
-    componentPath,
-    `${componentName}.helper.ts`
-  );
+  const expectedHelperPath = path.join(componentPath, 'helper.ts');
   const expectedTestPath = path.join(
     componentPath,
-    `${componentName}.helper.test.ts`
+    '__tests__',
+    'helper.test.ts'
   );
   const legacyHelpersPath = path.join(componentPath, 'helpers');
   const helperFiles = [];
@@ -135,7 +132,9 @@ function validateComponentHelpers(componentPath, componentName, relative) {
   walk(componentPath, (fullPath, entry) => {
     if (
       entry.isFile() &&
-      /\.helper(?:\.test)?\.ts$/.test(path.basename(fullPath))
+      (path.basename(fullPath) === 'helper.ts' ||
+        path.basename(fullPath) === 'helper.test.ts' ||
+        /\.helper(?:\.test)?\.ts$/.test(path.basename(fullPath)))
     ) {
       helperFiles.push(fullPath);
     }
@@ -176,10 +175,134 @@ function validateComponentHelpers(componentPath, componentName, relative) {
   }
 
   const indexPath = path.join(componentPath, 'index.ts');
-  if (indexReferencesHelper(indexPath, componentName)) {
+  if (indexReferencesPrivateModule(indexPath)) {
     errors.push(
-      `Keep the component helper private; remove its index reference: ${relative(indexPath)}`
+      `Keep component helpers and parts private; remove the index reference: ${relative(indexPath)}`
     );
+  }
+
+  return errors;
+}
+
+function validateComponentSkeletonNames(componentPath, relative) {
+  const componentName = path.basename(componentPath);
+  const candidates = [
+    {
+      expected: path.join(componentPath, 'skeleton.tsx'),
+      legacy: [
+        path.join(componentPath, `${componentName}-skeleton.tsx`),
+        path.join(componentPath, `${componentName}.skeleton.tsx`),
+      ],
+    },
+    {
+      expected: path.join(componentPath, '__tests__', 'skeleton.test.tsx'),
+      legacy: [
+        path.join(
+          componentPath,
+          '__tests__',
+          `${componentName}-skeleton.test.tsx`
+        ),
+        path.join(
+          componentPath,
+          '__tests__',
+          `${componentName}.skeleton.test.tsx`
+        ),
+      ],
+    },
+    {
+      expected: path.join(componentPath, '__stories__', 'skeleton.stories.tsx'),
+      legacy: [
+        path.join(
+          componentPath,
+          '__stories__',
+          `${componentName}-skeleton.stories.tsx`
+        ),
+        path.join(
+          componentPath,
+          '__stories__',
+          `${componentName}.skeleton.stories.tsx`
+        ),
+      ],
+    },
+  ];
+  const errors = [];
+
+  for (const candidate of candidates) {
+    for (const legacyPath of candidate.legacy) {
+      if (fs.existsSync(legacyPath)) {
+        errors.push(
+          `Use owner-local skeleton filename ${relative(candidate.expected)}: ${relative(legacyPath)}`
+        );
+      }
+    }
+  }
+
+  return errors;
+}
+
+function validateSupportArtifactPlacement(srcRoot, fullPath, entry, relative) {
+  if (!entry.isFile()) {
+    return [];
+  }
+
+  const errors = [];
+  const basename = path.basename(fullPath);
+  const sourceRelative = path.relative(srcRoot, fullPath);
+  const segments = sourceRelative.split(path.sep);
+  const isTest = /\.test\.(?:ts|tsx)$/.test(basename);
+  const isStory = basename.endsWith('.stories.tsx');
+  const testsIndex = segments.indexOf('__tests__');
+  const storiesIndex = segments.indexOf('__stories__');
+
+  if (isTest && testsIndex === -1) {
+    errors.push(
+      `Move test into its owner's __tests__ directory: ${relative(fullPath)}`
+    );
+  }
+
+  if (isStory && storiesIndex === -1) {
+    errors.push(
+      `Move story into its component owner's __stories__ directory: ${relative(fullPath)}`
+    );
+  }
+
+  if (basename === 'index.ts' && (testsIndex !== -1 || storiesIndex !== -1)) {
+    errors.push(`Remove support-directory barrel: ${relative(fullPath)}`);
+  }
+
+  if (testsIndex !== -1 && /\.(?:ts|tsx)$/.test(basename) && !isTest) {
+    errors.push(
+      `Keep production modules out of __tests__: ${relative(fullPath)}`
+    );
+  }
+
+  if (storiesIndex !== -1 && /\.(?:ts|tsx)$/.test(basename) && !isStory) {
+    errors.push(
+      `Keep production modules out of __stories__: ${relative(fullPath)}`
+    );
+  }
+
+  const componentsIndex = segments.indexOf('components');
+  if (isStory && componentsIndex === -1) {
+    errors.push(
+      `Place Storybook files under a component owner's __stories__ directory: ${relative(fullPath)}`
+    );
+  }
+
+  if (componentsIndex !== -1 && segments.length > componentsIndex + 2) {
+    const ownerArtifactPath = segments.slice(componentsIndex + 2);
+
+    if (isTest && ownerArtifactPath[0] !== '__tests__') {
+      errors.push(
+        `Place component test directly under the owner's __tests__ tree: ${relative(fullPath)}`
+      );
+    }
+
+    if (isStory && ownerArtifactPath[0] !== '__stories__') {
+      errors.push(
+        `Place component story directly under the owner's __stories__ tree: ${relative(fullPath)}`
+      );
+    }
   }
 
   return errors;
@@ -239,7 +362,13 @@ export function checkStructure(root = process.cwd()) {
       errors.push(`Add component public entry point: ${relative(indexPath)}`);
     }
 
-    errors.push(...validateComponentHelpers(fullPath, name, relative));
+    errors.push(...validateComponentHelpers(fullPath, relative));
+    errors.push(...validateComponentSkeletonNames(fullPath, relative));
+
+    const partsIndexPath = path.join(fullPath, 'parts', 'index.ts');
+    if (fs.existsSync(partsIndexPath)) {
+      errors.push(`Remove private parts barrel: ${relative(partsIndexPath)}`);
+    }
   });
 
   const featureRoots = fs.existsSync(srcRoot)
@@ -256,6 +385,19 @@ export function checkStructure(root = process.cwd()) {
     : [];
 
   walk(srcRoot, (fullPath, entry) => {
+    errors.push(
+      ...validateSupportArtifactPlacement(srcRoot, fullPath, entry, relative)
+    );
+
+    if (
+      entry.isDirectory() &&
+      (path.basename(fullPath) === '__tests__' ||
+        path.basename(fullPath) === '__stories__') &&
+      fs.readdirSync(fullPath).length === 0
+    ) {
+      errors.push(`Remove empty support directory: ${relative(fullPath)}`);
+    }
+
     if (entry.isFile() && path.basename(path.dirname(fullPath)) === 'lib') {
       errors.push(
         `Move file into a responsibility directory under lib: ${relative(fullPath)}`

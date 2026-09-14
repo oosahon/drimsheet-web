@@ -10,7 +10,7 @@ import { generateUUID } from '@/shared/lib/utils/uuid';
 import { Plus, Save as SaveIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import itemizedFieldsHelpers from './itemized-fields.helper';
+import itemizedFieldsHelpers from './helper';
 
 export function ItemizedFields({
   accounts,

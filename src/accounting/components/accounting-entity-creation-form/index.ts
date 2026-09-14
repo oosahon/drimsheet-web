@@ -1,5 +1,5 @@
 export { AccountingEntityCreationForm } from './accounting-entity-creation-form';
-export { AccountingEntityCreationFormSkeleton } from './accounting-entity-creation-form-skeleton';
+export { AccountingEntityCreationFormSkeleton } from './skeleton';
 export type {
   AccountingEntityCreationFormProps,
   IAccountingEntityFormValues,

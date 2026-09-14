@@ -5,7 +5,7 @@
 - Put feature-owned UI in `src/<feature>/components/<component-name>/`.
 - Put reusable, feature-agnostic UI in
   `src/shared/components/<component-name>/`.
-- Use kebab-case for the component directory and colocated file names.
+- Use kebab-case for the component directory and owner-scoped file names.
 - Keep component-only helpers, hooks, contexts, types, variants, validation,
   stories, and tests in the component directory.
 - Put extracted UI subcomponents that are private to one component in that
@@ -22,14 +22,21 @@ Create only applicable files, using this shape:
 components/<component-name>/
   <component-name>.tsx
   <component-name>.container.tsx
-  <component-name>.stories.tsx
-  <component-name>.test.tsx
-  <component-name>.helper.ts
-  <component-name>.helper.test.ts
+  skeleton.tsx
+  helper.ts
   parts/
     <part-name>.tsx
-    <part-name>.stories.tsx
-    <part-name>.test.tsx
+  __tests__/
+    <component-name>.test.tsx
+    skeleton.test.tsx
+    helper.test.ts
+    parts/
+      <part-name>.test.tsx
+  __stories__/
+    <component-name>.stories.tsx
+    skeleton.stories.tsx
+    parts/
+      <part-name>.stories.tsx
   types.ts
   validation.ts
   index.ts
@@ -38,20 +45,26 @@ components/<component-name>/
 Requirements:
 
 - `<component-name>.tsx`: required for rendered UI.
-- `<component-name>.stories.tsx`: required for every UI `.tsx` file.
+- `__stories__/<component-name>.stories.tsx`: required for every root-level UI
+  `.tsx` file.
 - `index.ts`: required and is the directory's only public entry point.
-- `<component-name>.test.tsx`: required when behavior, interaction, validation,
-  accessibility, or meaningful conditional rendering needs a contract.
+- `__tests__/<component-name>.test.tsx`: required when behavior, interaction,
+  validation, accessibility, or meaningful conditional rendering needs a
+  contract.
 - `types.ts`: required for forms; otherwise use it when types are shared by more
   than one file in the component directory.
 - `validation.ts`: required when the component owns validation.
 - `<component-name>.container.tsx`: required when the UI needs side effects or
   orchestration.
+- `skeleton.tsx`: optional for a single owner-local loading skeleton. Keep the
+  exported symbol descriptive, use matching `skeleton.test.tsx` and
+  `skeleton.stories.tsx` support names, and use role-based filenames only when
+  the owner has multiple distinct skeletons.
 - `parts/`: optional and reserved for extracted UI subcomponents used only by
   the owning component.
-- `<component-name>.helper.ts`: required when the component owns deterministic
-  non-UI helpers; group all such functions in one frozen default helper object
-  and add one matching `<component-name>.helper.test.ts`.
+- `helper.ts`: required when the component owns deterministic non-UI helpers;
+  group all such functions in one frozen default helper object and add one
+  matching `__tests__/helper.test.ts`.
 
 ## Private parts
 
@@ -87,6 +100,8 @@ Private parts follow these ownership rules:
   gains a consumer outside the owner.
 - Apply the same purity, story, test, and accessibility rules to parts as to
   other UI component files.
+- Put part tests and stories in the mirrored `__tests__/parts/` and
+  `__stories__/parts/` paths rather than in `parts/`.
 
 ## Imports and exports
 
@@ -94,18 +109,18 @@ Private parts follow these ownership rules:
   `@/shared/components/button`.
 - Use direct sibling imports from the component implementation and container.
   They must not import their own directory's `index.ts`.
-- Use explicit relative imports for private parts and their owner-local support
-  files.
-- Import the private helper object through its explicit sibling path. Do not
+- Use explicit relative imports for private parts from production files. From
+  support directories, use the explicit aliased implementation path.
+- Import the private helper object through its explicit `./helper` path. Do not
   create a `helpers/` directory, add operation-named helper modules, import the
   helper outside its owner, or re-export it from the owner's public `index.ts`.
 - Keep helper functions local, expose only a frozen
   `<componentName>Helpers` default object, and use concise operation names on
   that object, such as `inflowFormHelpers.createInitialValues`.
 - Import through the public alias in stories and consumer-facing tests so they
-  also verify the barrel contract. Use a direct sibling import only when a test
-  intentionally targets a non-public module such as validation or a private
-  part.
+  also verify the barrel contract. Use an explicit aliased implementation path
+  only when a support artifact intentionally targets a non-public module such
+  as validation, `helper.ts`, or a private part.
 - Prefer `import type` and `export type` for type-only contracts.
 - Export only public components, containers, types, variants, and validation
   intended for consumers.

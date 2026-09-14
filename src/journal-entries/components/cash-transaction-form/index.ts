@@ -1,5 +1,5 @@
 export { CashTransactionForm } from './cash-transaction-form';
-export { CashTransactionFormSkeleton } from './cash-transaction-form-skeleton';
+export { CashTransactionFormSkeleton } from './skeleton';
 export type {
   CashTransactionFormProps,
   ICashTransactionCurrencyContext,

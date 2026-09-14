@@ -25,7 +25,7 @@ import { useFormik } from 'formik';
 import { ArrowLeft, ListPlus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import cashTransferFormHelpers from './cash-transfer-form.helper';
+import cashTransferFormHelpers from './helper';
 import type { CashTransferFormProps, ICashTransferFormValues } from './types';
 import { useCashTransferFormValidation } from './validation';
 

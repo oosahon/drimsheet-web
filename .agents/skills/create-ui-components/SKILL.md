@@ -50,7 +50,8 @@ are useful examples, but some predate the current rules.
 7. Inspect the primary UI file for deterministic value helpers, substantial
    callback bodies, and nested ternaries. Apply the linked helper and handler
    rules before adding new logic.
-8. Create the smallest applicable colocated file set and expose only its public
+8. Create the smallest applicable owner-scoped file set, organize tests and
+   stories in the component's support directories, and expose only its public
    contract from `index.ts`.
 9. Add realistic stories and focused behavior tests. Use real owned components
    and hooks in component tests. For containers, mock external systems only when
@@ -82,7 +83,9 @@ or risk warrants them. Report any check that could not be run.
 - The UI file remains presentation-only.
 - Side effects and orchestration live in a container, hook, page, dialog, or
   `lib`, according to ownership.
-- Every UI `.tsx` file has a colocated story.
+- Every UI `.tsx` file has a story in the owner's `__stories__/` directory.
+- A single owner-local loading skeleton uses `skeleton.tsx` with a descriptive
+  exported symbol and matching `skeleton.*` support filenames.
 - Behavior and user outcomes have focused tests.
 - Component tests do not mock owned components or hooks.
 - Container tests render the real presentational component and mock only
@@ -93,9 +96,8 @@ or risk warrants them. Report any check that could not be run.
 - Substantial private UI sections live in `parts/`, remain owner-private, and
   are not re-exported.
 - Deterministic component helpers live together in one root-level
-  `<component-name>.helper.ts`, expose only a frozen
-  `<componentName>Helpers` default object, have one matching helper test module,
-  and are not re-exported.
+  `helper.ts`, expose only a frozen `<componentName>Helpers` default object,
+  have one matching `__tests__/helper.test.ts`, and are not re-exported.
 - Callbacks with branching, lookup, transformation, or multiple statements use
   named handlers; short single-expression adapters may remain inline.
 - Component code contains no nested ternaries.

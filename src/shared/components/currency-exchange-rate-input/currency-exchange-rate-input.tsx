@@ -8,7 +8,7 @@ import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { cn } from '@/shared/lib/utils/cn';
 import { ArrowRightLeft, CircleCheck, TriangleAlert } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import helpers from './currency-exchange-rate-input.helper';
+import helpers from './helper';
 
 export interface CurrencyExchangeRateInputProps extends Omit<
   MoneyInputProps,
