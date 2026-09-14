@@ -807,6 +807,41 @@ export interface IReceiptEntryReq {
   memo: string | null;
 }
 
+export interface ITransferEntryLineReq {
+  accountId: string;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+  description: string | null;
+  /** @format double */
+  sequenceOrder: number;
+}
+
+export interface IJournalLineReq {
+  accountId: string;
+  counterparty: IJournalCounterpartyReq | null;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+  description: string | null;
+  /** @format double */
+  sequenceOrder: number;
+}
+
+export interface ITransferEntryReq {
+  /**
+   * Opaque handles returned when preparing file uploads. Each corresponding
+   * file must be uploaded before the transfer is created.
+   */
+  attachmentReferences?: string[];
+  sourceLine: ITransferEntryLineReq;
+  destinationLine: ITransferEntryLineReq;
+  chargeLines: IJournalLineReq[];
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  memo: string | null;
+}
+
 /** Make all properties in T readonly */
 export type ReadonlyRecordStringString = Record<string, string>;
 
@@ -1450,6 +1485,23 @@ export class Api<
         format: 'json',
         ...params,
       }),
+
+    /**
+     * @description Create transfer journal entry
+     *
+     * @tags Journal Entry
+     * @name CreateTransfer
+     * @request POST:/journal-entries/transfer
+     */
+    createTransfer: (data: ITransferEntryReq, params: RequestParams = {}) =>
+      this.request<IJournalEntryDto, IHttpErrorDto>({
+        path: `/journal-entries/transfer`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
   };
   files = {
     /**
@@ -1764,7 +1816,12 @@ export class Api<
      * @request POST:/auth/refresh-access-token
      */
     refreshAccessToken: (params: RequestParams = {}) =>
-      this.request<IAccessToken, IHttpErrorDto>({
+      this.request<
+        {
+          accessToken: string;
+        },
+        IHttpErrorDto
+      >({
         path: `/auth/refresh-access-token`,
         method: 'POST',
         format: 'json',

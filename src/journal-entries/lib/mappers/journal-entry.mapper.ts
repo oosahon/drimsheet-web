@@ -2,15 +2,22 @@ import type {
   ICashTransactionCurrencyContext,
   ICashTransactionFormValues,
 } from '@/journal-entries/components/cash-transaction-form';
+import type {
+  ICashTransferCurrencyContext,
+  ICashTransferFormValues,
+} from '@/journal-entries/components/cash-transfer-form';
 import {
   EExchangeRateType,
   type IExchangeRateDto,
   type IExchangeRateQueryParam,
   type IJournalCounterpartyReq,
+  type IJournalLineReq,
   type IPaymentEntryLineReq,
   type IPaymentEntryReq,
   type IReceiptEntryLineReq,
   type IReceiptEntryReq,
+  type ITransferEntryLineReq,
+  type ITransferEntryReq,
 } from '@/shared/lib/api/Api';
 import { currencyMapper } from '@/shared/lib/mappers/currency.mapper';
 import { moneyMapper } from '@/shared/lib/mappers/money.mapper';
@@ -39,6 +46,27 @@ function toExchangeRateQuery(
 
   return {
     currencyPair: `${currencyContext.currencyCode}/${functionalCurrencyCode}`,
+    type: EExchangeRateType.Official,
+    asOf: currencyContext.date,
+    limit: 1,
+  };
+}
+
+function toTransferExchangeRateQuery(
+  currencyContext: ICashTransferCurrencyContext | undefined
+): IExchangeRateQueryParam | undefined {
+  if (
+    !currencyContext?.sourceCurrencyCode ||
+    !currencyContext.destinationCurrencyCode ||
+    !currencyContext.date ||
+    currencyContext.sourceCurrencyCode ===
+      currencyContext.destinationCurrencyCode
+  ) {
+    return undefined;
+  }
+
+  return {
+    currencyPair: `${currencyContext.sourceCurrencyCode}/${currencyContext.destinationCurrencyCode}`,
     type: EExchangeRateType.Official,
     asOf: currencyContext.date,
     limit: 1,
@@ -196,8 +224,114 @@ function toReceiptEntryReq(
   };
 }
 
+function toTransferEntryLineReq(
+  accountId: string,
+  amount: ICashTransferFormValues['amountSent'],
+  exchangeRate: IExchangeRateDto | null,
+  description: string | null,
+  sequenceOrder: number
+): ITransferEntryLineReq {
+  return {
+    accountId,
+    amount: moneyMapper.toMoneyDto(
+      amount.amount,
+      amount.currencyCode,
+      amount.isMinorUnit
+    ),
+    exchangeRate,
+    description,
+    sequenceOrder,
+  };
+}
+
+function toTransferChargeLineReq(
+  item: ICashTransferFormValues['items'][number],
+  exchangeRate: IExchangeRateDto | null,
+  sequenceOrder: number
+): IJournalLineReq {
+  return {
+    accountId: item.accountId,
+    counterparty: null,
+    amount: moneyMapper.toMoneyDto(
+      item.amount.amount,
+      item.amount.currencyCode,
+      item.amount.isMinorUnit
+    ),
+    exchangeRate,
+    description: item.description.trim() || null,
+    sequenceOrder,
+  };
+}
+
+function toTransferEntryReq(
+  values: ICashTransferFormValues,
+  functionalCurrencyCode: string,
+  occurredAt: string,
+  attachmentReferences: string[] = []
+): ITransferEntryReq {
+  const sourceCurrencyCode = values.amountSent.currencyCode;
+  const destinationCurrencyCode = values.amountReceived.currencyCode;
+  const description = values.description.trim() || null;
+  let sourceExchangeRate: IExchangeRateDto | null = null;
+  let destinationExchangeRate: IExchangeRateDto | null = null;
+
+  if (
+    sourceCurrencyCode !== destinationCurrencyCode &&
+    destinationCurrencyCode === functionalCurrencyCode
+  ) {
+    sourceExchangeRate = currencyMapper.toUserEnteredExchangeRate({
+      baseCurrencyCode: sourceCurrencyCode,
+      targetCurrencyCode: functionalCurrencyCode,
+      rate: Number(values.exchangeRate),
+      asOf: values.date,
+    });
+  }
+
+  if (
+    sourceCurrencyCode !== destinationCurrencyCode &&
+    sourceCurrencyCode === functionalCurrencyCode
+  ) {
+    destinationExchangeRate = currencyMapper.toUserEnteredExchangeRate({
+      baseCurrencyCode: destinationCurrencyCode,
+      targetCurrencyCode: functionalCurrencyCode,
+      rate: 1 / Number(values.exchangeRate),
+      asOf: values.date,
+    });
+  }
+
+  const chargeLines = values.isItemized
+    ? values.items.map((item, index) =>
+        toTransferChargeLineReq(item, destinationExchangeRate, index + 3)
+      )
+    : [];
+
+  return {
+    attachmentReferences: attachmentReferences.map((reference) => reference),
+    sourceLine: toTransferEntryLineReq(
+      values.sourceAccountId,
+      values.amountSent,
+      sourceExchangeRate,
+      description,
+      1
+    ),
+    destinationLine: toTransferEntryLineReq(
+      values.destinationAccountId,
+      values.amountReceived,
+      destinationExchangeRate,
+      description,
+      2
+    ),
+    chargeLines,
+    effectiveDate: values.date,
+    postedAt: occurredAt,
+    memo: description,
+  };
+}
+
 export const journalEntryMapper = Object.freeze({
   toExchangeRateQuery,
   toPaymentEntryReq,
   toReceiptEntryReq,
+  toTransferExchangeRateQuery,
+  toTransferEntryReq,
 });
