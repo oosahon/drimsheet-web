@@ -323,5 +323,7 @@
   "journal_entry_error_created_by_invalid": "Invalid entity creator.",
   "journal_entry_error_voiding_entry_id_invalid": "Invalid entry.",
   "user_error_first_name_invalid": "Invalid first name.",
-  "user_error_last_name_invalid": "Invalid last name."
+  "user_error_last_name_invalid": "Invalid last name.",
+  "journal_entry_error_source_account_balance_insufficient_invalid": "Insufficient balance.",
+  "journal_entry_error_source_account_balance_missing_unexpected": "An error occurred."
 }
