@@ -39,14 +39,19 @@ export function BankAccountForm({
   bankLocations,
   banks,
   isBanksLoading = false,
+  officialExchangeRate,
   onBankLocationChange,
+  onExchangeRateContextChange,
   initialValues,
   loading = false,
   disabled = false,
   onSubmit,
 }: Readonly<BankAccountFormProps>) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
-  const validationSchema = useBankAccountFormValidation(accountingCurrencyCode);
+  const validationSchema = useBankAccountFormValidation(
+    accountingCurrencyCode,
+    officialExchangeRate
+  );
 
   const formik = useFormik<IBankAccountFormValues>({
     enableReinitialize: true,
@@ -56,12 +61,16 @@ export function BankAccountForm({
       const hasOpeningBalance = !values.createWithoutOpeningBalance;
       const needsExchangeRate =
         hasOpeningBalance && values.currencyCode !== accountingCurrencyCode;
+      const resolvedExchangeRate =
+        values.exchangeRate !== ''
+          ? values.exchangeRate
+          : (officialExchangeRate?.rate ?? '');
 
       return onSubmit({
         ...values,
         openingBalance: hasOpeningBalance ? values.openingBalance : '',
         openingDate: hasOpeningBalance ? values.openingDate : '',
-        exchangeRate: needsExchangeRate ? values.exchangeRate : '',
+        exchangeRate: needsExchangeRate ? resolvedExchangeRate : '',
       });
     },
   });
@@ -73,6 +82,11 @@ export function BankAccountForm({
 
   const handleCurrencyChange = (value: string) => {
     void formik.setFieldValue('currencyCode', value);
+    onExchangeRateContextChange({
+      currencyCode: value,
+      date: formik.values.openingDate,
+      createWithoutOpeningBalance: formik.values.createWithoutOpeningBalance,
+    });
   };
 
   const handleLocationChange = (location: string) => {
@@ -86,10 +100,20 @@ export function BankAccountForm({
 
   const handleCreateWithoutOpeningBalanceChange = (checked: boolean) => {
     void formik.setFieldValue('createWithoutOpeningBalance', checked);
+    onExchangeRateContextChange({
+      currencyCode: formik.values.currencyCode,
+      date: formik.values.openingDate,
+      createWithoutOpeningBalance: checked,
+    });
   };
 
   const handleOpeningDateChange = (value: string) => {
     void formik.setFieldValue('openingDate', value);
+    onExchangeRateContextChange({
+      currencyCode: formik.values.currencyCode,
+      date: value,
+      createWithoutOpeningBalance: formik.values.createWithoutOpeningBalance,
+    });
   };
 
   const account_name_label = t('account_display_name');
@@ -196,6 +220,7 @@ export function BankAccountForm({
             disabled={disabled || loading}
             exchangeRate={formik.values.exchangeRate}
             exchangeRateError={getErrorMessage('exchangeRate')}
+            officialExchangeRate={officialExchangeRate}
             onCreateWithoutOpeningBalanceChange={
               handleCreateWithoutOpeningBalanceChange
             }

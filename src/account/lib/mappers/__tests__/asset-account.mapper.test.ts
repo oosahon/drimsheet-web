@@ -29,6 +29,76 @@ const bankFormValues: IBankAccountFormValues = {
 };
 
 describe('assetAccountMapper', () => {
+  describe('toOpeningBalanceExchangeRateQuery', () => {
+    it('maps complete foreign-currency context to an official-rate query', () => {
+      expect(
+        assetAccountMapper.toOpeningBalanceExchangeRateQuery(
+          {
+            currencyCode: 'USD',
+            date: '2026-07-01',
+            createWithoutOpeningBalance: false,
+          },
+          'NGN'
+        )
+      ).toEqual({
+        currencyPair: 'USD/NGN',
+        type: EExchangeRateType.Official,
+        asOf: '2026-07-01',
+        limit: 1,
+      });
+    });
+
+    it.each([
+      [
+        {
+          currencyCode: '',
+          date: '2026-07-01',
+          createWithoutOpeningBalance: false,
+        },
+        'NGN',
+      ],
+      [
+        {
+          currencyCode: 'USD',
+          date: '',
+          createWithoutOpeningBalance: false,
+        },
+        'NGN',
+      ],
+      [
+        {
+          currencyCode: 'NGN',
+          date: '2026-07-01',
+          createWithoutOpeningBalance: false,
+        },
+        'NGN',
+      ],
+      [
+        {
+          currencyCode: 'USD',
+          date: '2026-07-01',
+          createWithoutOpeningBalance: true,
+        },
+        'NGN',
+      ],
+      [
+        {
+          currencyCode: 'USD',
+          date: '2026-07-01',
+          createWithoutOpeningBalance: false,
+        },
+        '',
+      ],
+    ])('omits queries for ineligible context', (context, currencyCode) => {
+      expect(
+        assetAccountMapper.toOpeningBalanceExchangeRateQuery(
+          context,
+          currencyCode
+        )
+      ).toBeUndefined();
+    });
+  });
+
   describe('toPettyCashAccountCreationDto', () => {
     it('maps an account without an opening balance', () => {
       expect(

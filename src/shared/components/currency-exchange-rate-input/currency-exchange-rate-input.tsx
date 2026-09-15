@@ -1,4 +1,4 @@
-import { Alert } from '@/shared/components/alert';
+import { FieldDescription } from '@/shared/components/field';
 import { InputGroup, InputGroupAddon } from '@/shared/components/input-group';
 import {
   MoneyInput,
@@ -6,7 +6,7 @@ import {
 } from '@/shared/components/money-input';
 import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { cn } from '@/shared/lib/utils/cn';
-import { ArrowRightLeft, CircleCheck, TriangleAlert } from 'lucide-react';
+import { ArrowRightLeft } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import helpers from './helper';
 
@@ -52,10 +52,7 @@ export function CurrencyExchangeRateInput({
 
   return (
     <div
-      className={cn(
-        displayOfficialRate &&
-          'flex w-full flex-col items-start gap-2 md:flex-row md:items-center'
-      )}
+      className={cn(displayOfficialRate && 'flex w-full flex-col gap-1')}
       data-slot="currency-exchange-rate-input"
       data-layout={layout}
     >
@@ -64,7 +61,7 @@ export function CurrencyExchangeRateInput({
           'flex items-center gap-4',
           isCompact &&
             'grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1.25fr)] gap-2',
-          displayOfficialRate && 'w-full md:flex-[3_1_0%]'
+          displayOfficialRate && 'w-full'
         )}
       >
         <InputGroup className={cn('w-28', isCompact && 'w-full')} data-disabled>
@@ -103,26 +100,16 @@ export function CurrencyExchangeRateInput({
       </div>
 
       {displayOfficialRate && officialRate && (
-        <Alert
-          className="w-full p-2 text-xs md:flex-[2_1_0%]"
-          variant="success"
-        >
-          <CircleCheck />
-          <span>
-            {official_rate_available_text}{' '}
-            <span className="font-semibold">{officialRate.rate}</span>
-          </span>
-        </Alert>
+        <FieldDescription className="text-xs text-success">
+          {official_rate_available_text}{' '}
+          <span className="font-semibold">{officialRate.rate}</span>
+        </FieldDescription>
       )}
 
       {displayOfficialRate && !officialRate && (
-        <Alert
-          className="w-full p-2 text-xs md:flex-[2_1_0%]"
-          variant="warning"
-        >
-          <TriangleAlert />
+        <FieldDescription className="text-xs text-warning">
           {official_rate_unavailable_text}
-        </Alert>
+        </FieldDescription>
       )}
     </div>
   );

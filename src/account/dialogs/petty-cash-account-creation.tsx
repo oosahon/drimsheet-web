@@ -1,5 +1,5 @@
 import {
-  PettyCashAccountForm,
+  PettyCashAccountFormContainer,
   type IPettyCashAccountFormValues,
 } from '@/account/components/petty-cash-account-form';
 import { useCreatePettyCashAccount } from '@/account/hooks/use-create-petty-cash-account';
@@ -75,7 +75,7 @@ export function PettyCashAccountCreationDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <PettyCashAccountForm
+        <PettyCashAccountFormContainer
           accountingCurrencyCode={accountingCurrencyCode}
           currencies={currencies}
           disabled={formDisabled}

@@ -1,3 +1,5 @@
+import type { IExchangeRate } from '@/shared/lib/api/Api';
+
 interface FieldError {
   message?: string;
 }
@@ -9,6 +11,7 @@ export interface OpeningBalanceFieldsProps {
   openingBalance: number | '';
   openingDate: string;
   exchangeRate: number | '';
+  officialExchangeRate?: IExchangeRate;
   disabled?: boolean;
   openingBalanceError?: Array<FieldError | undefined>;
   openingDateError?: Array<FieldError | undefined>;

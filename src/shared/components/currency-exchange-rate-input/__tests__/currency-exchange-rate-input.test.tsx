@@ -93,7 +93,7 @@ describe('CurrencyExchangeRateInput', () => {
     ).toHaveAttribute('data-layout', 'compact');
   });
 
-  it('shows a warning when official-rate display is enabled without a rate', () => {
+  it('shows warning-colored helper text when no official rate is available', () => {
     render(
       <CurrencyExchangeRateInput
         baseCurrency="USD"
@@ -102,10 +102,11 @@ describe('CurrencyExchangeRateInput', () => {
       />
     );
 
-    const alert = screen.getByRole('alert');
+    const helperText = screen.getByText('No system official rate');
 
-    expect(alert).toHaveTextContent('No system official rate');
-    expect(alert).toHaveClass('text-warning');
+    expect(helperText).toHaveAttribute('data-slot', 'field-description');
+    expect(helperText).toHaveClass('text-warning');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('shows the official rate without a trailing period', () => {
@@ -118,12 +119,14 @@ describe('CurrencyExchangeRateInput', () => {
       />
     );
 
-    const alert = screen.getByRole('alert');
+    const helperText = screen.getByText(/Official rate:/);
 
-    expect(alert).toHaveTextContent('Official rate: 1500');
+    expect(helperText).toHaveTextContent('Official rate: 1500');
+    expect(helperText).toHaveAttribute('data-slot', 'field-description');
     expect(screen.getByLabelText('NGN exchange rate')).toHaveValue('1,500');
     expect(screen.getByText('1500')).toHaveClass('font-semibold');
-    expect(alert).toHaveClass('text-success');
+    expect(helperText).toHaveClass('text-success');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('keeps the official-rate helper hidden unless display is enabled', () => {
@@ -135,7 +138,7 @@ describe('CurrencyExchangeRateInput', () => {
       />
     );
 
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Official rate:/)).not.toBeInTheDocument();
   });
 });
 

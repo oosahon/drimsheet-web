@@ -1,4 +1,9 @@
-import type { IBankDirectoryDto, ICurrencyDto } from '@/shared/lib/api/Api';
+import type { IOpeningBalanceExchangeRateContext } from '@/account/lib/types/opening-balance-exchange-rate.types';
+import type {
+  IBankDirectoryDto,
+  ICurrencyDto,
+  IExchangeRate,
+} from '@/shared/lib/api/Api';
 
 export interface IBankAccountFormValues {
   name: string;
@@ -20,7 +25,11 @@ export interface BankAccountFormProps {
   bankLocations: Array<{ code: string; name: string }>;
   banks: IBankDirectoryDto[];
   isBanksLoading?: boolean;
+  officialExchangeRate?: IExchangeRate;
   onBankLocationChange: (location: string) => void;
+  onExchangeRateContextChange: (
+    context: IOpeningBalanceExchangeRateContext
+  ) => void;
   initialValues?: Partial<IBankAccountFormValues>;
   loading?: boolean;
   disabled?: boolean;

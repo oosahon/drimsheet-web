@@ -1,3 +1,4 @@
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
@@ -30,7 +31,8 @@ const optionalNumber = (typeErrorMessage: string) =>
 
 export function createBankAccountFormValidation(
   accountingCurrencyCode: string,
-  messages: BankAccountValidationMessages
+  messages: BankAccountValidationMessages,
+  officialExchangeRate?: IExchangeRate
 ) {
   return yup.object({
     name: yup
@@ -64,10 +66,16 @@ export function createBankAccountFormValidation(
           !createWithoutOpeningBalance &&
           Boolean(currencyCode) &&
           currencyCode !== accountingCurrencyCode,
-        then: (schema) =>
-          schema
-            .required(messages.exchangeRateRequired)
-            .moreThan(0, messages.exchangeRatePositive),
+        then: (schema) => {
+          const positiveSchema = schema.moreThan(
+            0,
+            messages.exchangeRatePositive
+          );
+
+          return officialExchangeRate
+            ? positiveSchema.notRequired()
+            : positiveSchema.required(messages.exchangeRateRequired);
+        },
         otherwise: (schema) => schema.notRequired(),
       }
     ),
@@ -75,7 +83,10 @@ export function createBankAccountFormValidation(
   });
 }
 
-export function useBankAccountFormValidation(accountingCurrencyCode: string) {
+export function useBankAccountFormValidation(
+  accountingCurrencyCode: string,
+  officialExchangeRate?: IExchangeRate
+) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
 
   const account_name_required_text = t('account_name_required_text');
@@ -97,22 +108,26 @@ export function useBankAccountFormValidation(accountingCurrencyCode: string) {
 
   return useMemo(
     () =>
-      createBankAccountFormValidation(accountingCurrencyCode, {
-        accountNameRequired: account_name_required_text,
-        accountNameMinLength: account_name_min_length_text,
-        accountNameMaxLength: account_name_max_length_text,
-        currencyRequired: currency_required_text,
-        bankLocationRequired: bank_location_required_text,
-        bankNameRequired: bank_name_required_text,
-        bankAccountNumberRequired: bank_account_number_required_text,
-        bankAccountNameRequired: bank_account_name_required_text,
-        openingBalanceRequired: opening_balance_required_text,
-        openingBalanceNumber: opening_balance_number_text,
-        openingDateRequired: opening_date_required_text,
-        exchangeRateRequired: exchange_rate_required_text,
-        exchangeRateNumber: exchange_rate_number_text,
-        exchangeRatePositive: exchange_rate_positive_text,
-      }),
+      createBankAccountFormValidation(
+        accountingCurrencyCode,
+        {
+          accountNameRequired: account_name_required_text,
+          accountNameMinLength: account_name_min_length_text,
+          accountNameMaxLength: account_name_max_length_text,
+          currencyRequired: currency_required_text,
+          bankLocationRequired: bank_location_required_text,
+          bankNameRequired: bank_name_required_text,
+          bankAccountNumberRequired: bank_account_number_required_text,
+          bankAccountNameRequired: bank_account_name_required_text,
+          openingBalanceRequired: opening_balance_required_text,
+          openingBalanceNumber: opening_balance_number_text,
+          openingDateRequired: opening_date_required_text,
+          exchangeRateRequired: exchange_rate_required_text,
+          exchangeRateNumber: exchange_rate_number_text,
+          exchangeRatePositive: exchange_rate_positive_text,
+        },
+        officialExchangeRate
+      ),
     [
       accountingCurrencyCode,
       account_name_required_text,
@@ -126,6 +141,7 @@ export function useBankAccountFormValidation(accountingCurrencyCode: string) {
       opening_balance_required_text,
       opening_balance_number_text,
       opening_date_required_text,
+      officialExchangeRate,
       exchange_rate_required_text,
       exchange_rate_number_text,
       exchange_rate_positive_text,

@@ -1,33 +1,20 @@
-import { useGetBankByCountry } from '@/account/hooks/use-get-bank-by-country';
 import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
 import type { IOpeningBalanceExchangeRateContext } from '@/account/lib/types/opening-balance-exchange-rate.types';
 import { useExchangeRates } from '@/shared/hooks/use-exchange-rates';
 import { useState } from 'react';
-import { BankAccountForm } from './bank-account-form';
-import type { BankAccountFormProps } from './types';
+import { PettyCashAccountForm } from './petty-cash-account-form';
+import type { PettyCashAccountFormProps } from './types';
 
-export type BankAccountFormContainerProps = Pick<
-  BankAccountFormProps,
-  | 'accountingCurrencyCode'
-  | 'currencies'
-  | 'bankLocations'
-  | 'initialValues'
-  | 'loading'
-  | 'disabled'
-  | 'onSubmit'
-> & {
-  initialBankLocation?: string;
-};
+export type PettyCashAccountFormContainerProps = Omit<
+  PettyCashAccountFormProps,
+  'officialExchangeRate' | 'onExchangeRateContextChange'
+>;
 
-export function BankAccountFormContainer({
+export function PettyCashAccountFormContainer({
   accountingCurrencyCode,
-  initialBankLocation = '',
   initialValues,
   ...props
-}: Readonly<BankAccountFormContainerProps>) {
-  const [selectedLocation, setSelectedLocation] = useState<string>(
-    initialValues?.bankLocation ?? initialBankLocation
-  );
+}: Readonly<PettyCashAccountFormContainerProps>) {
   const [exchangeRateContext, setExchangeRateContext] =
     useState<IOpeningBalanceExchangeRateContext>({
       currencyCode: initialValues?.currencyCode ?? '',
@@ -36,8 +23,6 @@ export function BankAccountFormContainer({
         initialValues?.createWithoutOpeningBalance ?? false,
     });
 
-  const { data: banks = [], isPending: isBanksLoading } =
-    useGetBankByCountry(selectedLocation);
   const exchangeRateQuery =
     assetAccountMapper.toOpeningBalanceExchangeRateQuery(
       exchangeRateContext,
@@ -45,19 +30,12 @@ export function BankAccountFormContainer({
     );
   const { data: officialExchangeRates } = useExchangeRates(exchangeRateQuery);
 
-  const handleLocationChange = (location: string) => {
-    setSelectedLocation(location);
-  };
-
   return (
-    <BankAccountForm
+    <PettyCashAccountForm
       {...props}
       accountingCurrencyCode={accountingCurrencyCode}
-      banks={banks}
-      isBanksLoading={isBanksLoading}
       initialValues={initialValues}
       officialExchangeRate={officialExchangeRates?.[0]}
-      onBankLocationChange={handleLocationChange}
       onExchangeRateContextChange={setExchangeRateContext}
     />
   );

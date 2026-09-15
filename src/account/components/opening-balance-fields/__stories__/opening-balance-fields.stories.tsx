@@ -1,4 +1,5 @@
 import { OpeningBalanceFields } from '@/account/components/opening-balance-fields';
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
 const meta = {
@@ -44,6 +45,20 @@ export const ForeignCurrency: Story = {
     openingBalance: 1,
     openingDate: '2026-07-01',
     exchangeRate: 1500,
+  },
+};
+
+export const ForeignCurrencyWithOfficialRate: Story = {
+  args: {
+    currencyCode: 'USD',
+    openingBalance: 1,
+    openingDate: '2026-07-01',
+    officialExchangeRate: {
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1500,
+      asOf: '2026-07-01T00:00:00.000Z',
+    } as IExchangeRate,
   },
 };
 

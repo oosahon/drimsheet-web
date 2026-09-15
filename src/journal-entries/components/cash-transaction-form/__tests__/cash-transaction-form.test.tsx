@@ -271,7 +271,10 @@ describe('CashTransactionForm', () => {
     );
 
     expect(screen.getByLabelText('Exchange rate')).toHaveValue('1,500');
-    expect(screen.getByRole('alert')).toHaveTextContent('Official rate: 1500');
+    expect(screen.getByText(/Official rate:/)).toHaveTextContent(
+      'Official rate: 1500'
+    );
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Create' }));
 

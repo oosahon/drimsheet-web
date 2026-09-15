@@ -32,9 +32,11 @@ const meta = {
   args: {
     accountingCurrencyCode: 'NGN',
     currencies,
+    onExchangeRateContextChange: () => {},
     onSubmit: () => {},
   },
   argTypes: {
+    onExchangeRateContextChange: { action: 'exchange context changed' },
     onSubmit: { action: 'submitted' },
   },
 } satisfies Meta<typeof PettyCashAccountForm>;

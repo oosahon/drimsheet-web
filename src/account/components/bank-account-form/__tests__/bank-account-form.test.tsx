@@ -6,7 +6,11 @@ import type {
   BankAccountFormProps,
   IBankAccountFormValues,
 } from '@/account/components/bank-account-form/types';
-import type { IBankDirectoryDto, ICurrencyDto } from '@/shared/lib/api/Api';
+import type {
+  IBankDirectoryDto,
+  ICurrencyDto,
+  IExchangeRate,
+} from '@/shared/lib/api/Api';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -27,6 +31,13 @@ const banks: IBankDirectoryDto[] = [
   { countryCode: 'NG', bankCode: 'ACCESS', bankName: 'Access Bank' },
 ];
 
+const officialExchangeRate = {
+  baseCurrencyCode: 'USD',
+  targetCurrencyCode: 'NGN',
+  rate: 1500,
+  asOf: '2026-07-01T00:00:00.000Z',
+} as IExchangeRate;
+
 const validInitialValues: Partial<IBankAccountFormValues> = {
   name: 'Operating Account',
   currencyCode: 'NGN',
@@ -41,6 +52,8 @@ const validInitialValues: Partial<IBankAccountFormValues> = {
 function renderForm(props?: Partial<BankAccountFormProps>) {
   const onSubmit = props?.onSubmit ?? vi.fn();
   const onBankLocationChange = props?.onBankLocationChange ?? vi.fn();
+  const onExchangeRateContextChange =
+    props?.onExchangeRateContextChange ?? vi.fn();
 
   render(
     <BankAccountForm
@@ -49,12 +62,13 @@ function renderForm(props?: Partial<BankAccountFormProps>) {
       banks={banks}
       currencies={currencies}
       onBankLocationChange={onBankLocationChange}
+      onExchangeRateContextChange={onExchangeRateContextChange}
       onSubmit={onSubmit}
       {...props}
     />
   );
 
-  return { onSubmit, onBankLocationChange };
+  return { onSubmit, onBankLocationChange, onExchangeRateContextChange };
 }
 
 describe('BankAccountForm', () => {
@@ -73,7 +87,7 @@ describe('BankAccountForm', () => {
   it('renders all form controls with accessible labels and info alert', () => {
     renderForm();
 
-    expect(screen.getByLabelText('Account name')).toBeInTheDocument();
+    expect(screen.getByLabelText('Account Display Name')).toBeInTheDocument();
     expect(screen.getByLabelText('Currency')).toBeInTheDocument();
     expect(
       screen.getByRole('combobox', { name: 'Bank location' })
@@ -189,6 +203,74 @@ describe('BankAccountForm', () => {
     );
   });
 
+  it('uses an official exchange rate when no manual rate is entered', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderForm({
+      initialValues: {
+        ...validInitialValues,
+        currencyCode: 'USD',
+      },
+      officialExchangeRate,
+    });
+
+    expect(screen.getByText(/Official rate:/)).toHaveTextContent(
+      'Official rate: 1500'
+    );
+    await user.click(screen.getByRole('button', { name: 'Create account' }));
+
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ exchangeRate: 1500 })
+      )
+    );
+  });
+
+  it('keeps a manual exchange rate when an official rate is available', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderForm({
+      initialValues: {
+        ...validInitialValues,
+        currencyCode: 'USD',
+        exchangeRate: 1600,
+      },
+      officialExchangeRate,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Create account' }));
+
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({ exchangeRate: 1600 })
+      )
+    );
+  });
+
+  it('reports the complete context when opening-balance eligibility changes', async () => {
+    const user = userEvent.setup();
+    const { onExchangeRateContextChange } = renderForm({
+      initialValues: validInitialValues,
+    });
+
+    await user.click(screen.getByLabelText('Currency'));
+    await user.click(screen.getByRole('option', { name: /US Dollar/i }));
+
+    expect(onExchangeRateContextChange).toHaveBeenLastCalledWith({
+      currencyCode: 'USD',
+      date: '2026-07-01',
+      createWithoutOpeningBalance: false,
+    });
+
+    await user.click(
+      screen.getByLabelText('Create without an opening balance')
+    );
+
+    expect(onExchangeRateContextChange).toHaveBeenLastCalledWith({
+      currencyCode: 'USD',
+      date: '2026-07-01',
+      createWithoutOpeningBalance: true,
+    });
+  });
+
   it('submits sub account checkbox state', async () => {
     const user = userEvent.setup();
     const { onSubmit } = renderForm({
@@ -246,7 +328,7 @@ describe('BankAccountFormContainer', () => {
       </QueryClientProvider>
     );
 
-    const nameInput = screen.getByLabelText('Account name');
+    const nameInput = screen.getByLabelText('Account Display Name');
     await user.type(nameInput, 'Treasury Account');
 
     const locationInput = screen.getByPlaceholderText('Select a country');

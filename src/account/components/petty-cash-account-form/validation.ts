@@ -1,3 +1,4 @@
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
@@ -27,7 +28,8 @@ const optionalNumber = (typeErrorMessage: string) =>
 
 export function createPettyCashAccountFormValidation(
   accountingCurrencyCode: string,
-  messages: PettyCashAccountValidationMessages
+  messages: PettyCashAccountValidationMessages,
+  officialExchangeRate?: IExchangeRate
 ) {
   return yup.object({
     name: yup
@@ -60,10 +62,16 @@ export function createPettyCashAccountFormValidation(
           !createWithoutOpeningBalance &&
           Boolean(currencyCode) &&
           currencyCode !== accountingCurrencyCode,
-        then: (schema) =>
-          schema
-            .required(messages.exchangeRateRequired)
-            .moreThan(0, messages.exchangeRatePositive),
+        then: (schema) => {
+          const positiveSchema = schema.moreThan(
+            0,
+            messages.exchangeRatePositive
+          );
+
+          return officialExchangeRate
+            ? positiveSchema.notRequired()
+            : positiveSchema.required(messages.exchangeRateRequired);
+        },
         otherwise: (schema) => schema.notRequired(),
       }
     ),
@@ -72,7 +80,8 @@ export function createPettyCashAccountFormValidation(
 }
 
 export function usePettyCashAccountFormValidation(
-  accountingCurrencyCode: string
+  accountingCurrencyCode: string,
+  officialExchangeRate?: IExchangeRate
 ) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
 
@@ -90,19 +99,23 @@ export function usePettyCashAccountFormValidation(
 
   return useMemo(
     () =>
-      createPettyCashAccountFormValidation(accountingCurrencyCode, {
-        accountNameRequired: account_name_required_text,
-        accountNameMinLength: account_name_min_length_text,
-        accountNameMaxLength: account_name_max_length_text,
-        currencyRequired: currency_required_text,
-        openingBalanceRequired: opening_balance_required_text,
-        openingBalanceNumber: opening_balance_number_text,
-        openingBalanceNegative: opening_balance_negative_text,
-        openingDateRequired: opening_date_required_text,
-        exchangeRateRequired: exchange_rate_required_text,
-        exchangeRateNumber: exchange_rate_number_text,
-        exchangeRatePositive: exchange_rate_positive_text,
-      }),
+      createPettyCashAccountFormValidation(
+        accountingCurrencyCode,
+        {
+          accountNameRequired: account_name_required_text,
+          accountNameMinLength: account_name_min_length_text,
+          accountNameMaxLength: account_name_max_length_text,
+          currencyRequired: currency_required_text,
+          openingBalanceRequired: opening_balance_required_text,
+          openingBalanceNumber: opening_balance_number_text,
+          openingBalanceNegative: opening_balance_negative_text,
+          openingDateRequired: opening_date_required_text,
+          exchangeRateRequired: exchange_rate_required_text,
+          exchangeRateNumber: exchange_rate_number_text,
+          exchangeRatePositive: exchange_rate_positive_text,
+        },
+        officialExchangeRate
+      ),
     [
       accountingCurrencyCode,
       account_name_required_text,
@@ -113,6 +126,7 @@ export function usePettyCashAccountFormValidation(
       opening_balance_number_text,
       opening_balance_negative_text,
       opening_date_required_text,
+      officialExchangeRate,
       exchange_rate_required_text,
       exchange_rate_number_text,
       exchange_rate_positive_text,

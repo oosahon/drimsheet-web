@@ -32,14 +32,17 @@ const defaultInitialValues: IPettyCashAccountFormValues = {
 export function PettyCashAccountForm({
   accountingCurrencyCode,
   currencies,
+  officialExchangeRate,
   initialValues,
   loading = false,
   disabled = false,
+  onExchangeRateContextChange,
   onSubmit,
 }: Readonly<PettyCashAccountFormProps>) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
   const validationSchema = usePettyCashAccountFormValidation(
-    accountingCurrencyCode
+    accountingCurrencyCode,
+    officialExchangeRate
   );
 
   const formik = useFormik<IPettyCashAccountFormValues>({
@@ -50,12 +53,16 @@ export function PettyCashAccountForm({
       const hasOpeningBalance = !values.createWithoutOpeningBalance;
       const needsExchangeRate =
         hasOpeningBalance && values.currencyCode !== accountingCurrencyCode;
+      const resolvedExchangeRate =
+        values.exchangeRate !== ''
+          ? values.exchangeRate
+          : (officialExchangeRate?.rate ?? '');
 
       return onSubmit({
         ...values,
         openingBalance: hasOpeningBalance ? values.openingBalance : '',
         openingDate: hasOpeningBalance ? values.openingDate : '',
-        exchangeRate: needsExchangeRate ? values.exchangeRate : '',
+        exchangeRate: needsExchangeRate ? resolvedExchangeRate : '',
       });
     },
   });
@@ -67,17 +74,32 @@ export function PettyCashAccountForm({
 
   const handleCurrencyChange = (value: string) => {
     void formik.setFieldValue('currencyCode', value);
+    onExchangeRateContextChange({
+      currencyCode: value,
+      date: formik.values.openingDate,
+      createWithoutOpeningBalance: formik.values.createWithoutOpeningBalance,
+    });
   };
 
   const handleCreateWithoutOpeningBalanceChange = (checked: boolean) => {
     void formik.setFieldValue('createWithoutOpeningBalance', checked);
+    onExchangeRateContextChange({
+      currencyCode: formik.values.currencyCode,
+      date: formik.values.openingDate,
+      createWithoutOpeningBalance: checked,
+    });
   };
 
   const handleOpeningDateChange = (value: string) => {
     void formik.setFieldValue('openingDate', value);
+    onExchangeRateContextChange({
+      currencyCode: formik.values.currencyCode,
+      date: value,
+      createWithoutOpeningBalance: formik.values.createWithoutOpeningBalance,
+    });
   };
 
-  const account_name_label = t('account_name');
+  const account_name_label = t('account_display_name');
   const currency_label = t('currency_label');
   const create_as_sub_account_label = t('create_as_sub_account_label');
   const create_account_text = t('create_account_text');
@@ -123,6 +145,7 @@ export function PettyCashAccountForm({
             disabled={disabled || loading}
             exchangeRate={formik.values.exchangeRate}
             exchangeRateError={getErrorMessage('exchangeRate')}
+            officialExchangeRate={officialExchangeRate}
             onCreateWithoutOpeningBalanceChange={
               handleCreateWithoutOpeningBalanceChange
             }

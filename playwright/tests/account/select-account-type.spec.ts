@@ -10,7 +10,8 @@ const loginEndpoint = '**/api/v1/auth/login-with-email';
 const refreshEndpoint = '**/api/v1/auth/refresh-access-token';
 const ledgerAccountsEndpoint = '**/api/v1/ledger*';
 const createPettyCashEndpoint = '**/api/v1/ledger/asset/petty-cash';
-const currenciesEndpoint = '**/api/v1/currencies*';
+const currenciesEndpoint = '**/api/v1/currencies';
+const exchangeRatesEndpoint = '**/api/v1/currencies/exchange-rates*';
 
 async function registerAccountPageRoutes(page: Page) {
   await registerAuthenticatedAppRoutes(page);
@@ -34,6 +35,29 @@ async function registerAccountPageRoutes(page: Page) {
       json: [
         { code: 'NGN', name: 'Nigerian Naira', symbol: '₦', minorUnit: 2 },
         { code: 'USD', name: 'US Dollar', symbol: '$', minorUnit: 2 },
+      ],
+    });
+  });
+
+  await page.route(exchangeRatesEndpoint, async (route) => {
+    const url = new URL(route.request().url());
+    const currencyPair = url.searchParams.get('currencyPair') ?? '';
+    const [baseCurrencyCode = '', targetCurrencyCode = ''] =
+      currencyPair.split('/');
+    const asOf = url.searchParams.get('asOf') ?? '';
+
+    await route.fulfill({
+      json: [
+        {
+          currencyPair,
+          baseCurrencyCode,
+          targetCurrencyCode,
+          rate: 1500,
+          type: 'official',
+          asOf: `${asOf}T00:00:00.000Z`,
+          source: 'central-bank',
+          createdAt: `${asOf}T01:00:00.000Z`,
+        },
       ],
     });
   });
@@ -117,7 +141,7 @@ test.describe('Account Type Selection Flow', () => {
 
     // Fill form fields
     await pettyCashDialog
-      .getByRole('textbox', { name: 'Account name' })
+      .getByRole('textbox', { name: 'Account Display Name' })
       .fill('Main Office Cash');
     await pettyCashDialog
       .getByRole('textbox', { name: 'Opening balance' })
@@ -155,6 +179,93 @@ test.describe('Account Type Selection Flow', () => {
         },
         date: expect.stringMatching(/^\d{4}-\d{2}-15$/),
         exchangeRate: null,
+      },
+    });
+  });
+
+  test('uses an official rate when creating a foreign-currency petty cash account', async ({
+    page,
+  }) => {
+    await signInAndNavigateToAccounts(page);
+
+    await page.getByRole('button', { name: 'Add account' }).click();
+    const selectionDialog = page.getByRole('dialog').filter({
+      has: page.getByRole('heading', { name: /select account type/i }),
+    });
+    await selectionDialog.getByRole('radio', { name: /petty cash/i }).click();
+    await selectionDialog.getByRole('button', { name: /continue/i }).click();
+
+    const pettyCashDialog = page.getByRole('dialog').filter({
+      has: page.getByRole('heading', { name: /create petty cash account/i }),
+    });
+    await expect(pettyCashDialog).toBeVisible();
+
+    let capturedRequestBody: IPettyCashAccountCreationReq | null = null;
+    await page.route(createPettyCashEndpoint, async (route) => {
+      capturedRequestBody = JSON.parse(route.request().postData() ?? '{}');
+      await route.fulfill({
+        status: 201,
+        json: { id: 'foreign-petty-cash-account' },
+      });
+    });
+
+    await pettyCashDialog
+      .getByRole('textbox', { name: 'Account Display Name' })
+      .fill('Travel Cash');
+    await pettyCashDialog.getByRole('combobox', { name: 'Currency' }).click();
+    await page.getByRole('option', { name: /US Dollar/i }).click();
+    await pettyCashDialog
+      .getByRole('textbox', { name: 'Opening balance' })
+      .fill('100');
+
+    const exchangeRateRequestPromise = page.waitForRequest((request) =>
+      request.url().includes('/api/v1/currencies/exchange-rates')
+    );
+    await pettyCashDialog
+      .getByRole('button', { name: /opening date/i })
+      .click();
+    await page.getByRole('gridcell', { name: '15' }).first().click();
+
+    const exchangeRateRequest = await exchangeRateRequestPromise;
+    const exchangeRateUrl = new URL(exchangeRateRequest.url());
+    expect(exchangeRateUrl.searchParams.get('currencyPair')).toBe('USD/NGN');
+    expect(exchangeRateUrl.searchParams.get('type')).toBe('official');
+    expect(exchangeRateUrl.searchParams.get('limit')).toBe('1');
+    expect(exchangeRateUrl.searchParams.get('asOf')).toMatch(
+      /^\d{4}-\d{2}-15$/
+    );
+
+    await expect(
+      pettyCashDialog.getByText('Official rate: 1500')
+    ).toBeVisible();
+    await expect(
+      pettyCashDialog.getByRole('textbox', { name: 'Exchange rate' })
+    ).toHaveValue('1,500');
+
+    await pettyCashDialog
+      .getByRole('button', { name: /create account/i })
+      .click();
+
+    await expect(
+      page.getByText('Petty cash account created successfully')
+    ).toBeVisible();
+    expect(capturedRequestBody).toMatchObject({
+      name: 'Travel Cash',
+      currencyCode: 'USD',
+      openingBalance: {
+        amount: {
+          amount: 100,
+          currencyCode: 'USD',
+          isMinorUnit: false,
+        },
+        date: expect.stringMatching(/^\d{4}-\d{2}-15$/),
+        exchangeRate: {
+          baseCurrencyCode: 'USD',
+          targetCurrencyCode: 'NGN',
+          rate: 1500,
+          type: 'market',
+          source: 'manual',
+        },
       },
     });
   });
@@ -218,7 +329,7 @@ test.describe('Account Type Selection Flow', () => {
     });
 
     await pettyCashDialog
-      .getByRole('textbox', { name: 'Account name' })
+      .getByRole('textbox', { name: 'Account Display Name' })
       .fill('Petty Cash Fund');
     await pettyCashDialog
       .getByRole('textbox', { name: 'Opening balance' })
@@ -260,7 +371,7 @@ test.describe('Account Type Selection Flow', () => {
     });
 
     await pettyCashDialog
-      .getByRole('textbox', { name: 'Account name' })
+      .getByRole('textbox', { name: 'Account Display Name' })
       .fill('Failed Attempt Cash');
     await pettyCashDialog
       .getByRole('textbox', { name: 'Opening balance' })
@@ -276,7 +387,7 @@ test.describe('Account Type Selection Flow', () => {
 
     await expect(pettyCashDialog).toBeVisible();
     await expect(
-      pettyCashDialog.getByRole('textbox', { name: 'Account name' })
+      pettyCashDialog.getByRole('textbox', { name: 'Account Display Name' })
     ).toHaveValue('Failed Attempt Cash');
     await expect(
       pettyCashDialog.getByRole('textbox', { name: 'Opening balance' })

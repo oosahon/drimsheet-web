@@ -28,6 +28,7 @@ const meta = {
     banks: mockBanks,
     isBanksLoading: false,
     onBankLocationChange: () => {},
+    onExchangeRateContextChange: () => {},
     onSubmit: () => {},
   },
 } satisfies Meta<typeof BankAccountForm>;
