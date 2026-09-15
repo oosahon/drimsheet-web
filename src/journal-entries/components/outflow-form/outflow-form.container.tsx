@@ -35,6 +35,7 @@ export function OutflowFormContainer() {
     usePermittedPostingAccounts({
       sourceType: EJournalEntrySourceType.Payment,
       side: 'source',
+      filterSuspense: true,
       limit: 100,
       ...requiredQueryOptions,
     });
@@ -43,6 +44,7 @@ export function OutflowFormContainer() {
     usePermittedPostingAccounts({
       sourceType: EJournalEntrySourceType.Payment,
       side: 'destination',
+      filterSuspense: true,
       limit: 100,
       ...requiredQueryOptions,
     });

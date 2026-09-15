@@ -92,7 +92,7 @@ export function BankAccountForm({
     void formik.setFieldValue('openingDate', value);
   };
 
-  const account_name_label = t('account_name');
+  const account_name_label = t('account_display_name');
   const currency_label = t('currency_label');
   const bank_account_number_label = t('bank_account_number_label');
   const bank_account_name_label = t('bank_account_name_label');
@@ -120,7 +120,6 @@ export function BankAccountForm({
             />
 
             <Field data-invalid={Boolean(getErrorMessage('name').length)}>
-              {/* TODO: rename to Display name */}
               <Label htmlFor="name">{account_name_label}</Label>
               <Input
                 aria-invalid={Boolean(getErrorMessage('name').length)}

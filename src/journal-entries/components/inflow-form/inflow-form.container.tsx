@@ -36,6 +36,7 @@ export function InflowFormContainer() {
       sourceType: EJournalEntrySourceType.Receipt,
       side: 'destination',
       limit: 100,
+      filterSuspense: true,
       ...requiredQueryOptions,
     });
 
@@ -44,6 +45,7 @@ export function InflowFormContainer() {
       sourceType: EJournalEntrySourceType.Receipt,
       side: 'source',
       limit: 100,
+      filterSuspense: true,
       ...requiredQueryOptions,
     });
 

@@ -513,9 +513,6 @@ export interface IUserProfileDto {
   updatedAt: string;
 }
 
-/** Construct a type with a set of properties K of type T */
-export type RecordStringString = Record<string, string>;
-
 export interface IMoneyDto {
   /** @format double */
   amount: number;
@@ -538,8 +535,6 @@ export interface ILedgerAccountDto {
   status: ULedgerAccountStatus;
   contraAccountRule: UContraAccountRule;
   adjunctAccountRule: UAdjunctAccountRule;
-  /** Construct a type with a set of properties K of type T */
-  meta?: RecordStringString;
   /** @format date-time */
   openingBalanceDate: string | null;
   createdBy: TEntityId;
@@ -595,6 +590,7 @@ export interface IGetLedgerAccountsQuery {
 export interface IGetPermittedPostingAccountsQuery {
   sourceType: UJournalEntrySourceType;
   side: 'source' | 'destination';
+  filterSuspense?: boolean;
   currencyCode?: string;
   /** @format double */
   page?: number;
@@ -1372,6 +1368,7 @@ export class Api<
       query: {
         sourceType: UJournalEntrySourceType;
         side: 'source' | 'destination';
+        filterSuspense?: boolean;
         currencyCode?: string;
         /** @format double */
         page?: number;
