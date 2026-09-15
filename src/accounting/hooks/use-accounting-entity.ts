@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export function useAccountingEntity(options: IReactQueryOptions = {}) {
   return useQuery({
-    queryKey: ['accountingService.getAccountingEntity'],
+    queryKey: ['accountingService', 'getAccountingEntity'],
     queryFn: () => accountingService.getAccountingEntity(),
     enabled: !options.disabled,
     throwOnError: options.throwOnError ?? true,

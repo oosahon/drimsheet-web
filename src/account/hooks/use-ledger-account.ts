@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export function useLedgerAccount(id?: string) {
   return useQuery({
-    queryKey: ['ledgerAccountService.getLedgerAccount', id],
+    queryKey: ['ledgerAccountService', 'getLedgerAccount', id],
     queryFn: () => (id ? ledgerAccountService.getLedgerAccount(id) : undefined),
     enabled: !!id,
   });

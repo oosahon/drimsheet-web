@@ -10,7 +10,8 @@ interface IParams {
 export function useAccountTransactions({ accountId, pagination }: IParams) {
   return useQuery({
     queryKey: [
-      'bookkeepingService.getAccountTransactions',
+      'bookkeepingService',
+      'getAccountTransactions',
       accountId,
       pagination,
     ],
