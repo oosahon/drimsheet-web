@@ -426,49 +426,47 @@ export function CashTransferForm({
             </Button>
           )}
 
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-            {exchangeRateRequired ? (
-              <Field data-invalid={Boolean(exchangeRateError.length)}>
-                <Label htmlFor="cash-transfer-exchange-rate">
-                  {exchange_rate_label}
-                </Label>
-                <CurrencyExchangeRateInput
-                  id="cash-transfer-exchange-rate"
-                  aria-invalid={Boolean(exchangeRateError.length)}
-                  aria-label={exchange_rate_label}
-                  baseCurrency={sourceCurrencyCode}
-                  disabled={interactionDisabled}
-                  layout="compact"
-                  name="exchangeRate"
-                  officialRate={
-                    officialRateMatches ? officialExchangeRate : undefined
-                  }
-                  onBlur={formik.handleBlur}
-                  onChange={handleExchangeRateChange}
-                  targetCurrency={destinationCurrencyCode}
-                  value={formik.values.exchangeRate}
-                />
-                <FieldError errors={exchangeRateError} />
-              </Field>
-            ) : (
-              <div aria-hidden="true" className="hidden sm:block" />
-            )}
-
-            <Field data-invalid={Boolean(dateError.length)}>
-              <Label htmlFor="cash-transfer-date">{date_label}</Label>
-              <DateInput
-                id="cash-transfer-date"
-                aria-invalid={Boolean(dateError.length)}
+          {exchangeRateRequired ? (
+            <Field data-invalid={Boolean(exchangeRateError.length)}>
+              <Label htmlFor="cash-transfer-exchange-rate">
+                {exchange_rate_label}
+              </Label>
+              <CurrencyExchangeRateInput
+                id="cash-transfer-exchange-rate"
+                aria-invalid={Boolean(exchangeRateError.length)}
+                aria-label={exchange_rate_label}
+                baseCurrency={sourceCurrencyCode}
                 disabled={interactionDisabled}
-                disabledDates={handleDateDisabled}
-                onBlur={() => void formik.setFieldTouched('date', true)}
-                onValueChange={handleDateChange}
-                placeholder={date_placeholder}
-                value={formik.values.date}
+                layout="compact"
+                name="exchangeRate"
+                officialRate={
+                  officialRateMatches ? officialExchangeRate : undefined
+                }
+                onBlur={formik.handleBlur}
+                onChange={handleExchangeRateChange}
+                targetCurrency={destinationCurrencyCode}
+                value={formik.values.exchangeRate}
               />
-              <FieldError errors={dateError} />
+              <FieldError errors={exchangeRateError} />
             </Field>
-          </div>
+          ) : (
+            <div aria-hidden="true" className="hidden sm:block" />
+          )}
+
+          <Field data-invalid={Boolean(dateError.length)}>
+            <Label htmlFor="cash-transfer-date">{date_label}</Label>
+            <DateInput
+              id="cash-transfer-date"
+              aria-invalid={Boolean(dateError.length)}
+              disabled={interactionDisabled}
+              disabledDates={handleDateDisabled}
+              onBlur={() => void formik.setFieldTouched('date', true)}
+              onValueChange={handleDateChange}
+              placeholder={date_placeholder}
+              value={formik.values.date}
+            />
+            <FieldError errors={dateError} />
+          </Field>
 
           <Field>
             <Label htmlFor="cash-transfer-description">

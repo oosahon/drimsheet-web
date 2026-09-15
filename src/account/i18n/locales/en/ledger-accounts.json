@@ -14,7 +14,7 @@
   "accounts_count": "{{count}} accounts",
   "create_petty_cash_account": "Create petty cash account",
   "account_name": "Account name",
-  "account_display_name": "Account Display Name",
+  "account_display_name": "Account display name",
   "search_placeholder": "Search by name...",
   "add_account": "Add account",
   "select_account_placeholder": "Select an account",
