@@ -1,3 +1,4 @@
+import type { ILedgerAccountDto } from '@/shared/lib/api/Api';
 import type { IItemizedFieldErrors, IItemizedFieldValue } from './types';
 
 interface IItemizedFieldsErrorMessages {
@@ -43,8 +44,26 @@ function getErrors(
   }, {});
 }
 
+function getAvailableAccounts(
+  accounts: ILedgerAccountDto[],
+  items: IItemizedFieldValue[],
+  draftItem: IItemizedFieldValue
+) {
+  const selectedAccountIds = new Set(
+    items
+      .filter((item) => item.id !== draftItem.id)
+      .map((item) => item.accountId)
+  );
+
+  return accounts.filter(
+    (account) =>
+      account.id === draftItem.accountId || !selectedAccountIds.has(account.id)
+  );
+}
+
 const itemizedFieldsHelpers = Object.freeze({
   createItem,
+  getAvailableAccounts,
   getErrors,
 });
 

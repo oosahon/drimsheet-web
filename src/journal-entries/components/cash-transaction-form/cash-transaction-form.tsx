@@ -416,6 +416,7 @@ export function CashTransactionForm({
                 currencyCode={accountCurrencyCode}
                 defaultValue={formik.values.items}
                 disabled={interactionDisabled}
+                excludeSelectedAccounts
                 initialEditItemId={initialItemizedEditItemId}
                 onChange={handleItemsChange}
                 onEditModeChange={handleItemizedEditModeChange}

@@ -18,6 +18,7 @@ export interface ItemizedFieldsProps {
   currencyCode: string;
   defaultValue?: IItemizedFieldValue[];
   disabled?: boolean;
+  excludeSelectedAccounts?: boolean;
   initialEditItemId?: string;
   onChange: (items: IItemizedFieldValue[]) => void;
   onEditModeChange?: (isEditing: boolean) => void;

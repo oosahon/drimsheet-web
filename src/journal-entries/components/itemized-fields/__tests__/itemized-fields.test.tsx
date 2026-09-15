@@ -16,6 +16,13 @@ const accounts = [
     type: 'revenue',
     balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
   },
+  {
+    id: 'services',
+    code: '4100',
+    name: 'Professional services',
+    type: 'revenue',
+    balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
+  },
 ] as unknown as ILedgerAccountDto[];
 
 const item: IItemizedFieldValue = {
@@ -28,19 +35,21 @@ const item: IItemizedFieldValue = {
 const secondItem: IItemizedFieldValue = {
   id: 'second',
   amount: { amount: 750, currencyCode: 'NGN', isMinorUnit: false },
-  accountId: 'sales',
+  accountId: 'services',
   description: 'Second line',
 };
 
 function renderItemizedFields({
   defaultValue = [item],
   disabled = false,
+  excludeSelectedAccounts = false,
   initialEditItemId,
   onChange = vi.fn(),
   onEditModeChange,
 }: {
   defaultValue?: IItemizedFieldValue[];
   disabled?: boolean;
+  excludeSelectedAccounts?: boolean;
   initialEditItemId?: string;
   onChange?: (items: IItemizedFieldValue[]) => void;
   onEditModeChange?: (isEditing: boolean) => void;
@@ -52,6 +61,7 @@ function renderItemizedFields({
         currencyCode="NGN"
         defaultValue={defaultValue}
         disabled={disabled}
+        excludeSelectedAccounts={excludeSelectedAccounts}
         initialEditItemId={initialEditItemId}
         onChange={onChange}
         onEditModeChange={onEditModeChange}
@@ -213,6 +223,39 @@ describe('ItemizedFields', () => {
       accountId: 'sales',
       description: '',
     });
+  });
+
+  it('excludes categories selected by committed items from a new row', async () => {
+    const user = userEvent.setup();
+    renderItemizedFields({ excludeSelectedAccounts: true });
+
+    await user.click(screen.getByRole('button', { name: 'Add a new item' }));
+    await user.click(screen.getByRole('combobox', { name: 'Category' }));
+
+    expect(
+      screen.queryByRole('option', { name: 'Sales revenue' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('option', { name: 'Professional services' })
+    ).toBeInTheDocument();
+  });
+
+  it("retains the edited row's category and excludes other row selections", async () => {
+    const user = userEvent.setup();
+    renderItemizedFields({
+      defaultValue: [item, secondItem],
+      excludeSelectedAccounts: true,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Edit item 1' }));
+    await user.click(screen.getByRole('combobox', { name: 'Category' }));
+
+    expect(
+      screen.getByRole('option', { name: 'Sales revenue' })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('option', { name: 'Professional services' })
+    ).not.toBeInTheDocument();
   });
 
   it('prevents another committed row from entering edit mode', async () => {
