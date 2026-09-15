@@ -29,7 +29,7 @@ const defaultInitialValues: IBankAccountFormValues = {
   createWithoutOpeningBalance: false,
   openingBalance: '',
   openingDate: '',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
 
@@ -52,27 +52,13 @@ export function BankAccountForm({
     accountingCurrencyCode,
     officialExchangeRate
   );
+  const handleSubmit = (values: IBankAccountFormValues) => onSubmit(values);
 
   const formik = useFormik<IBankAccountFormValues>({
     enableReinitialize: true,
     initialValues: { ...defaultInitialValues, ...initialValues },
     validationSchema,
-    onSubmit: (values) => {
-      const hasOpeningBalance = !values.createWithoutOpeningBalance;
-      const needsExchangeRate =
-        hasOpeningBalance && values.currencyCode !== accountingCurrencyCode;
-      const resolvedExchangeRate =
-        values.exchangeRate !== ''
-          ? values.exchangeRate
-          : (officialExchangeRate?.rate ?? '');
-
-      return onSubmit({
-        ...values,
-        openingBalance: hasOpeningBalance ? values.openingBalance : '',
-        openingDate: hasOpeningBalance ? values.openingDate : '',
-        exchangeRate: needsExchangeRate ? resolvedExchangeRate : '',
-      });
-    },
+    onSubmit: handleSubmit,
   });
 
   const getErrorMessage = useFieldErrorMessage({
@@ -82,6 +68,7 @@ export function BankAccountForm({
 
   const handleCurrencyChange = (value: string) => {
     void formik.setFieldValue('currencyCode', value);
+    void formik.setFieldValue('exchangeRate', null);
     onExchangeRateContextChange({
       currencyCode: value,
       date: formik.values.openingDate,
@@ -100,6 +87,9 @@ export function BankAccountForm({
 
   const handleCreateWithoutOpeningBalanceChange = (checked: boolean) => {
     void formik.setFieldValue('createWithoutOpeningBalance', checked);
+    if (checked) {
+      formik.setFieldValue('exchangeRate', null);
+    }
     onExchangeRateContextChange({
       currencyCode: formik.values.currencyCode,
       date: formik.values.openingDate,
@@ -224,7 +214,9 @@ export function BankAccountForm({
             onCreateWithoutOpeningBalanceChange={
               handleCreateWithoutOpeningBalanceChange
             }
-            onExchangeRateChange={formik.handleChange}
+            onExchangeRateChange={(v) =>
+              formik.setFieldValue('exchangeRate', v)
+            }
             onOpeningBalanceChange={formik.handleChange}
             onOpeningDateChange={handleOpeningDateChange}
             openingBalance={formik.values.openingBalance}

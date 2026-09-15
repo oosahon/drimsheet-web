@@ -19,7 +19,7 @@ describe('OpeningBalanceFields', () => {
     createWithoutOpeningBalance: false,
     openingBalance: '',
     openingDate: '',
-    exchangeRate: '',
+    exchangeRate: null,
     onCreateWithoutOpeningBalanceChange: vi.fn(),
     onOpeningBalanceChange: vi.fn(),
     onOpeningDateChange: vi.fn(),
@@ -106,6 +106,27 @@ describe('OpeningBalanceFields', () => {
       'Official rate: 1500'
     );
     expect(screen.getByLabelText('Exchange rate')).toHaveValue('1,500');
+  });
+
+  it('forwards an inverted foreign-currency rate', async () => {
+    const user = userEvent.setup();
+    const onExchangeRateChange = vi.fn();
+
+    render(
+      <OpeningBalanceFields
+        {...defaultProps}
+        currencyCode="USD"
+        exchangeRate={{ value: 1000, inverted: false }}
+        onExchangeRateChange={onExchangeRateChange}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+
+    expect(onExchangeRateChange).toHaveBeenCalledWith({
+      value: 0.001,
+      inverted: true,
+    });
   });
 
   it('shows unavailable helper text after an opening date is selected', () => {

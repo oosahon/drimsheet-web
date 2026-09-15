@@ -1,7 +1,4 @@
 import { useGetBankByCountry } from '@/account/hooks/use-get-bank-by-country';
-import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
-import type { IOpeningBalanceExchangeRateContext } from '@/account/lib/types/opening-balance-exchange-rate.types';
-import { useExchangeRates } from '@/shared/hooks/use-exchange-rates';
 import { useState } from 'react';
 import { BankAccountForm } from './bank-account-form';
 import type { BankAccountFormProps } from './types';
@@ -14,6 +11,8 @@ export type BankAccountFormContainerProps = Pick<
   | 'initialValues'
   | 'loading'
   | 'disabled'
+  | 'officialExchangeRate'
+  | 'onExchangeRateContextChange'
   | 'onSubmit'
 > & {
   initialBankLocation?: string;
@@ -28,22 +27,9 @@ export function BankAccountFormContainer({
   const [selectedLocation, setSelectedLocation] = useState<string>(
     initialValues?.bankLocation ?? initialBankLocation
   );
-  const [exchangeRateContext, setExchangeRateContext] =
-    useState<IOpeningBalanceExchangeRateContext>({
-      currencyCode: initialValues?.currencyCode ?? '',
-      date: initialValues?.openingDate ?? '',
-      createWithoutOpeningBalance:
-        initialValues?.createWithoutOpeningBalance ?? false,
-    });
 
   const { data: banks = [], isPending: isBanksLoading } =
     useGetBankByCountry(selectedLocation);
-  const exchangeRateQuery =
-    assetAccountMapper.toOpeningBalanceExchangeRateQuery(
-      exchangeRateContext,
-      accountingCurrencyCode
-    );
-  const { data: officialExchangeRates } = useExchangeRates(exchangeRateQuery);
 
   const handleLocationChange = (location: string) => {
     setSelectedLocation(location);
@@ -56,9 +42,7 @@ export function BankAccountFormContainer({
       banks={banks}
       isBanksLoading={isBanksLoading}
       initialValues={initialValues}
-      officialExchangeRate={officialExchangeRates?.[0]}
       onBankLocationChange={handleLocationChange}
-      onExchangeRateContextChange={setExchangeRateContext}
     />
   );
 }

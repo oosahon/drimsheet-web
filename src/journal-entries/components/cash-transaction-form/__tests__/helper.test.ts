@@ -16,7 +16,7 @@ const values: ICashTransactionFormValues = {
   categoryId: 'sales',
   amount: { amount: 999, currencyCode: 'USD', isMinorUnit: false },
   date: '2026-08-10',
-  exchangeRate: ' 1500 ',
+  exchangeRate: { value: 1500, inverted: false },
   isItemized: true,
   items: [
     {
@@ -49,7 +49,7 @@ describe('cashTransactionFormHelpers', () => {
           isMinorUnit: false,
         },
         date: dateUtils.formatDateForApi(new Date()),
-        exchangeRate: '',
+        exchangeRate: null,
         isItemized: false,
         items: [],
         counterparty: {
@@ -73,14 +73,14 @@ describe('cashTransactionFormHelpers', () => {
               currencyCode: 'EUR',
               isMinorUnit: true,
             },
-            exchangeRate: '1500',
+            exchangeRate: { value: 1500, inverted: false },
             counterparty: {
               id: 'counterparty-1',
               name: 'Acme',
               type: 'organization',
             },
             description: 'Consulting',
-          },
+          } as ICashTransactionFormValues,
           accounts,
           'NGN'
         )
@@ -93,7 +93,7 @@ describe('cashTransactionFormHelpers', () => {
           isMinorUnit: true,
         },
         date: dateUtils.formatDateForApi(new Date()),
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
         isItemized: false,
         items: [],
         counterparty: {
@@ -108,7 +108,9 @@ describe('cashTransactionFormHelpers', () => {
 
     it('uses a supplied amount currency when no selected account resolves', () => {
       const initialValues = cashTransactionFormHelpers.createInitialValues(
-        { amount: { currencyCode: 'EUR' } },
+        {
+          amount: { currencyCode: 'EUR' },
+        } as ICashTransactionFormValues,
         accounts,
         'NGN'
       );
@@ -118,7 +120,7 @@ describe('cashTransactionFormHelpers', () => {
   });
 
   describe('updateAccount', () => {
-    it('updates account-owned currencies and retains a required exchange rate', () => {
+    it('updates account-owned currencies and clears a stale exchange rate', () => {
       expect(
         cashTransactionFormHelpers.updateAccount(
           values,
@@ -131,7 +133,7 @@ describe('cashTransactionFormHelpers', () => {
         categoryId: 'sales',
         amount: { amount: 999, currencyCode: 'EUR', isMinorUnit: false },
         date: '2026-08-10',
-        exchangeRate: ' 1500 ',
+        exchangeRate: null,
         isItemized: true,
         items: [
           {
@@ -164,7 +166,7 @@ describe('cashTransactionFormHelpers', () => {
         categoryId: 'sales',
         amount: { amount: 999, currencyCode: 'NGN', isMinorUnit: false },
         date: '2026-08-10',
-        exchangeRate: '',
+        exchangeRate: null,
         isItemized: true,
         items: [
           {
@@ -357,7 +359,7 @@ describe('cashTransactionFormHelpers', () => {
         categoryId: 'sales',
         amount: { amount: 125, currencyCode: 'USD', isMinorUnit: false },
         date: '2026-08-10',
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
         isItemized: true,
         items: [
           {
@@ -382,7 +384,7 @@ describe('cashTransactionFormHelpers', () => {
         cashTransactionFormHelpers.normalizeValues(
           {
             ...values,
-            exchangeRate: '1500',
+            exchangeRate: { value: 1500, inverted: false },
             counterparty: { name: ' New counterparty ' },
           },
           false
@@ -392,7 +394,7 @@ describe('cashTransactionFormHelpers', () => {
         categoryId: 'sales',
         amount: { amount: 125, currencyCode: 'USD', isMinorUnit: false },
         date: '2026-08-10',
-        exchangeRate: '',
+        exchangeRate: null,
         isItemized: true,
         items: [
           {
@@ -409,13 +411,34 @@ describe('cashTransactionFormHelpers', () => {
     });
 
     it('uses the official rate when a required manual rate is absent', () => {
-      expect(
-        cashTransactionFormHelpers.normalizeValues(
-          { ...values, exchangeRate: '' },
-          true,
-          1500
-        ).exchangeRate
-      ).toBe('1500');
+      const normalized = cashTransactionFormHelpers.normalizeValues(
+        {
+          ...values,
+          exchangeRate: null,
+        },
+        true,
+        1500
+      );
+
+      expect(normalized.exchangeRate).toEqual({
+        value: 1500,
+        inverted: false,
+      });
+    });
+
+    it('preserves a required manually entered inverted rate', () => {
+      const normalized = cashTransactionFormHelpers.normalizeValues(
+        {
+          ...values,
+          exchangeRate: { value: 0.001, inverted: true },
+        },
+        true
+      );
+
+      expect(normalized.exchangeRate).toEqual({
+        value: 0.001,
+        inverted: true,
+      });
     });
   });
 });

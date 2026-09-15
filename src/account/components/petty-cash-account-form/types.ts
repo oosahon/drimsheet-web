@@ -1,4 +1,5 @@
 import type { IOpeningBalanceExchangeRateContext } from '@/account/lib/types/opening-balance-exchange-rate.types';
+import type { ICurrencyExchangeRateInputValue } from '@/shared/components/currency-exchange-rate-input';
 import type { ICurrencyDto, IExchangeRate } from '@/shared/lib/api/Api';
 
 export interface IPettyCashAccountFormValues {
@@ -7,7 +8,7 @@ export interface IPettyCashAccountFormValues {
   createWithoutOpeningBalance: boolean;
   openingBalance: number | '';
   openingDate: string;
-  exchangeRate: number | '';
+  exchangeRate: ICurrencyExchangeRateInputValue | null;
   isSubAccount: boolean;
 }
 

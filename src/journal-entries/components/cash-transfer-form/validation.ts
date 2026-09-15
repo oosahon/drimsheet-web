@@ -62,40 +62,72 @@ export function createCashTransferFormValidation(
   officialExchangeRate?: IExchangeRate
 ) {
   const exchangeRateValidation = yup
-    .string()
-    .test('required-exchange-rate', messages.exchangeRateRequired, function () {
-      const values = this.parent as ICashTransferFormValues;
-      if (!isExchangeRateRequired(values)) return true;
+    .mixed<NonNullable<ICashTransferFormValues['exchangeRate']>>()
+    .nullable()
+    .test(
+      'required-exchange-rate',
+      messages.exchangeRateRequired,
+      function (exchangeRate) {
+        const values = this.parent as ICashTransferFormValues;
+        if (!isExchangeRateRequired(values)) return true;
 
-      return Boolean(
-        String(values.exchangeRate ?? '').trim() ||
-        cashTransferFormHelpers.getEffectiveExchangeRate(
-          values,
-          officialExchangeRate
-        )
-      );
-    })
-    .test('numeric-exchange-rate', messages.exchangeRateNumber, function () {
-      const values = this.parent as ICashTransferFormValues;
-      const exchangeRate = String(values.exchangeRate ?? '').trim();
+        const hasRate =
+          exchangeRate != null ||
+          cashTransferFormHelpers.getEffectiveExchangeRate(
+            values,
+            officialExchangeRate
+          ) !== undefined;
 
-      if (!isExchangeRateRequired(values) || !exchangeRate) return true;
-      return Number.isFinite(Number(exchangeRate));
-    })
-    .test('positive-exchange-rate', messages.exchangeRatePositive, function () {
-      const values = this.parent as ICashTransferFormValues;
-      const exchangeRate = String(values.exchangeRate ?? '').trim();
-
-      if (
-        !isExchangeRateRequired(values) ||
-        !exchangeRate ||
-        !Number.isFinite(Number(exchangeRate))
-      ) {
-        return true;
+        return (
+          hasRate ||
+          this.createError({ message: messages.exchangeRateRequired })
+        );
       }
+    )
+    .test(
+      'numeric-exchange-rate',
+      messages.exchangeRateNumber,
+      function (exchangeRate) {
+        const values = this.parent as ICashTransferFormValues;
+        const rate = exchangeRate?.value;
 
-      return Number(exchangeRate) > 0;
-    });
+        if (
+          !isExchangeRateRequired(values) ||
+          rate === null ||
+          rate === undefined ||
+          Number.isNaN(rate)
+        ) {
+          return true;
+        }
+
+        return (
+          Number.isFinite(rate) ||
+          this.createError({ message: messages.exchangeRateNumber })
+        );
+      }
+    )
+    .test(
+      'positive-exchange-rate',
+      messages.exchangeRatePositive,
+      function (exchangeRate) {
+        const values = this.parent as ICashTransferFormValues;
+        const rate = exchangeRate?.value;
+
+        if (
+          !isExchangeRateRequired(values) ||
+          rate === null ||
+          rate === undefined ||
+          !Number.isFinite(rate)
+        ) {
+          return true;
+        }
+
+        return (
+          rate > 0 ||
+          this.createError({ message: messages.exchangeRatePositive })
+        );
+      }
+    );
 
   const itemMoneyValidation = yup.object({
     amount: yup

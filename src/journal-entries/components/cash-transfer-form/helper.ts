@@ -4,6 +4,7 @@ import type {
   ILedgerAccountDto,
   IMoneyDto,
 } from '@/shared/lib/api/Api';
+import { currencyService } from '@/shared/lib/services/currency.service';
 import { dateUtils } from '@/shared/lib/utils/date';
 import type {
   ICashTransferFormInitialValues,
@@ -82,8 +83,16 @@ function getEffectiveExchangeRate(
   values: ICashTransferFormValues,
   officialExchangeRate?: IExchangeRate
 ) {
-  const manualRate = Number(String(values.exchangeRate ?? '').trim());
-  if (Number.isFinite(manualRate) && manualRate > 0) return manualRate;
+  const manualRate = values.exchangeRate?.value;
+  if (
+    manualRate !== undefined &&
+    Number.isFinite(manualRate) &&
+    manualRate > 0
+  ) {
+    return values.exchangeRate?.inverted
+      ? currencyService.invertRate(manualRate)
+      : manualRate;
+  }
 
   const officialRateMatches = matchesOfficialRate(
     officialExchangeRate,
@@ -123,10 +132,10 @@ function calculateExchangeRate(
     amountSent <= 0 ||
     destinationTotal <= 0
   ) {
-    return '';
+    return null;
   }
 
-  return String(round(destinationTotal / amountSent));
+  return round(destinationTotal / amountSent);
 }
 
 function createInitialValues(
@@ -150,7 +159,7 @@ function createInitialValues(
     initialValues?.amountReceived?.currencyCode ||
     sourceCurrencyCode;
   const amountSent = initialValues?.amountSent?.amount ?? Number.NaN;
-  const exchangeRate = initialValues?.exchangeRate ?? '';
+  const exchangeRate = initialValues?.exchangeRate ?? null;
   const items = (initialValues?.items ?? []).map((item) => ({
     id: item.id,
     amount: {
@@ -167,10 +176,17 @@ function createInitialValues(
     sourceCurrencyCode,
     destinationCurrencyCode
   );
-  const parsedRate = Number(exchangeRate);
+  const effectiveExchangeRate = exchangeRate?.inverted
+    ? currencyService.invertRate(exchangeRate.value)
+    : exchangeRate?.value;
   const derivedAmountReceived = calculateAmountReceived(
     amountSent,
-    Number.isFinite(parsedRate) && parsedRate > 0 ? parsedRate : undefined,
+    effectiveExchangeRate !== null &&
+      effectiveExchangeRate !== undefined &&
+      Number.isFinite(effectiveExchangeRate) &&
+      effectiveExchangeRate > 0
+      ? effectiveExchangeRate
+      : undefined,
     chargeTotal,
     exchangeRateRequired
   );
@@ -189,7 +205,7 @@ function createInitialValues(
       isMinorUnit: initialValues?.amountReceived?.isMinorUnit ?? false,
     },
     date: initialValues?.date ?? dateUtils.formatDateForApi(new Date()),
-    exchangeRate: exchangeRateRequired ? exchangeRate : '',
+    exchangeRate: exchangeRateRequired ? exchangeRate : null,
     isItemized,
     items,
     description: initialValues?.description ?? '',
@@ -212,7 +228,7 @@ function updateSourceAccount(
     amountSent: updateMoney(values.amountSent, {
       currencyCode: sourceCurrencyCode,
     }),
-    exchangeRate: '',
+    exchangeRate: null,
   };
 
   return {
@@ -253,7 +269,7 @@ function updateDestinationAccount(
     amountReceived: updateMoney(values.amountReceived, {
       currencyCode: destinationCurrencyCode,
     }),
-    exchangeRate: '',
+    exchangeRate: null,
     items,
   };
 
@@ -304,25 +320,40 @@ function updateAmountReceived(
       amountReceived.currencyCode
     )
   ) {
-    return { ...values, amountReceived };
+    return {
+      ...values,
+      amountReceived,
+      exchangeRate: null,
+    };
   }
+
+  const canonicalExchangeRate = calculateExchangeRate(
+    values.amountSent.amount,
+    amountReceived.amount,
+    getChargeTotal(values)
+  );
+  const inverted = values.exchangeRate?.inverted ?? false;
+  const displayedExchangeRate = inverted
+    ? currencyService.invertRate(canonicalExchangeRate)
+    : canonicalExchangeRate;
 
   return {
     ...values,
     amountReceived,
-    exchangeRate: calculateExchangeRate(
-      values.amountSent.amount,
-      amountReceived.amount,
-      getChargeTotal(values)
-    ),
+    exchangeRate:
+      displayedExchangeRate === null || displayedExchangeRate === undefined
+        ? null
+        : { value: displayedExchangeRate, inverted },
   };
 }
 
 function updateExchangeRate(
   values: ICashTransferFormValues,
-  exchangeRate: string
+  exchangeRate: ICashTransferFormValues['exchangeRate']
 ): ICashTransferFormValues {
-  const parsedRate = Number(exchangeRate);
+  const effectiveExchangeRate = exchangeRate?.inverted
+    ? currencyService.invertRate(exchangeRate.value)
+    : exchangeRate?.value;
 
   return {
     ...values,
@@ -330,7 +361,12 @@ function updateExchangeRate(
     amountReceived: updateMoney(values.amountReceived, {
       amount: calculateAmountReceived(
         values.amountSent.amount,
-        Number.isFinite(parsedRate) && parsedRate > 0 ? parsedRate : undefined,
+        effectiveExchangeRate !== null &&
+          effectiveExchangeRate !== undefined &&
+          Number.isFinite(effectiveExchangeRate) &&
+          effectiveExchangeRate > 0
+          ? effectiveExchangeRate
+          : undefined,
         getChargeTotal(values),
         true
       ),
@@ -414,6 +450,15 @@ function normalizeValues(
     values,
     officialExchangeRate
   );
+  const hasManualExchangeRate =
+    values.exchangeRate !== null && Number.isFinite(values.exchangeRate.value);
+  let exchangeRate: ICashTransferFormValues['exchangeRate'] = null;
+
+  if (hasManualExchangeRate) {
+    exchangeRate = values.exchangeRate;
+  } else if (effectiveExchangeRate !== undefined) {
+    exchangeRate = { value: effectiveExchangeRate, inverted: false };
+  }
 
   return {
     sourceAccountId: values.sourceAccountId,
@@ -429,10 +474,7 @@ function normalizeValues(
       isMinorUnit: values.amountReceived.isMinorUnit,
     },
     date: values.date,
-    exchangeRate:
-      exchangeRateRequired && effectiveExchangeRate !== undefined
-        ? String(effectiveExchangeRate)
-        : '',
+    exchangeRate: exchangeRateRequired ? exchangeRate : null,
     isItemized: values.isItemized,
     items: values.isItemized
       ? values.items.map((item) => ({

@@ -1,36 +1,25 @@
 import currencyExchangeRateInputHelpers from '@/shared/components/currency-exchange-rate-input/helper';
-import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
-const officialRate = { rate: 1500 } as IExchangeRate;
+const officialRate = 1500;
 
 describe('currencyExchangeRateInputHelpers', () => {
   describe('getValue', () => {
     it('preserves an explicit input value', () => {
       expect(
-        currencyExchangeRateInputHelpers.getValue('1600', 1550, officialRate)
-      ).toBe('1600');
+        currencyExchangeRateInputHelpers.getValue(1600, officialRate)
+      ).toBe(1600);
     });
 
-    it('uses the explicit default before the official rate', () => {
+    it('uses the official rate when the input value is empty', () => {
       expect(
-        currencyExchangeRateInputHelpers.getValue('', 1550, officialRate)
-      ).toBe(1550);
-    });
-
-    it('uses the official rate when no value or default is present', () => {
-      expect(
-        currencyExchangeRateInputHelpers.getValue('', undefined, officialRate)
+        currencyExchangeRateInputHelpers.getValue(undefined, officialRate)
       ).toBe(1500);
     });
 
     it('returns undefined when no value source is present', () => {
       expect(
-        currencyExchangeRateInputHelpers.getValue(
-          undefined,
-          undefined,
-          undefined
-        )
+        currencyExchangeRateInputHelpers.getValue(undefined, undefined)
       ).toBeUndefined();
     });
   });

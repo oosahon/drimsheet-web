@@ -25,7 +25,7 @@ const defaultInitialValues: IPettyCashAccountFormValues = {
   createWithoutOpeningBalance: false,
   openingBalance: '',
   openingDate: '',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
 
@@ -49,22 +49,7 @@ export function PettyCashAccountForm({
     enableReinitialize: true,
     initialValues: { ...defaultInitialValues, ...initialValues },
     validationSchema,
-    onSubmit: (values) => {
-      const hasOpeningBalance = !values.createWithoutOpeningBalance;
-      const needsExchangeRate =
-        hasOpeningBalance && values.currencyCode !== accountingCurrencyCode;
-      const resolvedExchangeRate =
-        values.exchangeRate !== ''
-          ? values.exchangeRate
-          : (officialExchangeRate?.rate ?? '');
-
-      return onSubmit({
-        ...values,
-        openingBalance: hasOpeningBalance ? values.openingBalance : '',
-        openingDate: hasOpeningBalance ? values.openingDate : '',
-        exchangeRate: needsExchangeRate ? resolvedExchangeRate : '',
-      });
-    },
+    onSubmit,
   });
 
   const getErrorMessage = useFieldErrorMessage({
@@ -74,6 +59,7 @@ export function PettyCashAccountForm({
 
   const handleCurrencyChange = (value: string) => {
     void formik.setFieldValue('currencyCode', value);
+    void formik.setFieldValue('exchangeRate', null);
     onExchangeRateContextChange({
       currencyCode: value,
       date: formik.values.openingDate,
@@ -83,6 +69,9 @@ export function PettyCashAccountForm({
 
   const handleCreateWithoutOpeningBalanceChange = (checked: boolean) => {
     void formik.setFieldValue('createWithoutOpeningBalance', checked);
+    if (checked) {
+      void formik.setFieldValue('exchangeRate', null);
+    }
     onExchangeRateContextChange({
       currencyCode: formik.values.currencyCode,
       date: formik.values.openingDate,
@@ -149,7 +138,9 @@ export function PettyCashAccountForm({
             onCreateWithoutOpeningBalanceChange={
               handleCreateWithoutOpeningBalanceChange
             }
-            onExchangeRateChange={formik.handleChange}
+            onExchangeRateChange={(v) =>
+              formik.setFieldValue('exchangeRate', v)
+            }
             onOpeningBalanceChange={formik.handleChange}
             onOpeningDateChange={handleOpeningDateChange}
             openingBalance={formik.values.openingBalance}

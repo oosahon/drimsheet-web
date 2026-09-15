@@ -1,4 +1,5 @@
 import type { IItemizedFieldValue } from '@/journal-entries/components/itemized-fields';
+import type { ICurrencyExchangeRateInputValue } from '@/shared/components/currency-exchange-rate-input';
 import type {
   IExchangeRate,
   IJournalCounterpartyReq,
@@ -11,25 +12,12 @@ export interface ICashTransactionFormValues {
   categoryId: string;
   amount: IMoneyDto;
   date: string;
-  exchangeRate: string;
+  exchangeRate: ICurrencyExchangeRateInputValue | null;
   isItemized: boolean;
   items: IItemizedFieldValue[];
   counterparty: IJournalCounterpartyReq;
   description: string;
   attachment: File | null;
-}
-
-export interface ICashTransactionFormInitialValues {
-  accountId?: string;
-  categoryId?: string;
-  amount?: Partial<IMoneyDto>;
-  date?: string;
-  exchangeRate?: string;
-  isItemized?: boolean;
-  items?: IItemizedFieldValue[];
-  counterparty?: Partial<IJournalCounterpartyReq>;
-  description?: string;
-  attachment?: File | null;
 }
 
 export interface ICashTransactionCurrencyContext {
@@ -45,7 +33,7 @@ export interface CashTransactionFormProps {
   counterpartyOptions?: IJournalCounterpartyReq[];
   disabled?: boolean;
   functionalCurrencyCode: string;
-  initialValues?: ICashTransactionFormInitialValues;
+  initialValues?: ICashTransactionFormValues;
   loading?: boolean;
   officialExchangeRate?: IExchangeRate;
   onCurrencyContextChange: (context: ICashTransactionCurrencyContext) => void;

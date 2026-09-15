@@ -175,7 +175,7 @@ describe('BankAccountForm', () => {
         createWithoutOpeningBalance: false,
         openingBalance: 5000,
         openingDate: '2026-07-01',
-        exchangeRate: '',
+        exchangeRate: null,
         isSubAccount: false,
       })
     );
@@ -187,7 +187,7 @@ describe('BankAccountForm', () => {
       initialValues: {
         ...validInitialValues,
         currencyCode: 'USD',
-        exchangeRate: 1500,
+        exchangeRate: { value: 1500, inverted: false },
       },
     });
 
@@ -197,7 +197,29 @@ describe('BankAccountForm', () => {
       expect(onSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
           currencyCode: 'USD',
-          exchangeRate: 1500,
+          exchangeRate: { value: 1500, inverted: false },
+        })
+      )
+    );
+  });
+
+  it('preserves an inverted foreign-currency rate through submission', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderForm({
+      initialValues: {
+        ...validInitialValues,
+        currencyCode: 'USD',
+        exchangeRate: { value: 1000, inverted: false },
+      },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+    await user.click(screen.getByRole('button', { name: 'Create account' }));
+
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          exchangeRate: { value: 0.001, inverted: true },
         })
       )
     );
@@ -220,7 +242,7 @@ describe('BankAccountForm', () => {
 
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({ exchangeRate: 1500 })
+        expect.objectContaining({ exchangeRate: null })
       )
     );
   });
@@ -231,7 +253,7 @@ describe('BankAccountForm', () => {
       initialValues: {
         ...validInitialValues,
         currencyCode: 'USD',
-        exchangeRate: 1600,
+        exchangeRate: { value: 1600, inverted: false },
       },
       officialExchangeRate,
     });
@@ -240,7 +262,9 @@ describe('BankAccountForm', () => {
 
     await waitFor(() =>
       expect(onSubmit).toHaveBeenCalledWith(
-        expect.objectContaining({ exchangeRate: 1600 })
+        expect.objectContaining({
+          exchangeRate: { value: 1600, inverted: false },
+        })
       )
     );
   });
@@ -289,7 +313,7 @@ describe('BankAccountForm', () => {
     );
   });
 
-  it('normalizes opening balance when createWithoutOpeningBalance is true', async () => {
+  it('submits form values unchanged when opening balance creation is disabled', async () => {
     const user = userEvent.setup();
     const { onSubmit } = renderForm({
       initialValues: {
@@ -304,9 +328,9 @@ describe('BankAccountForm', () => {
       expect(onSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
           createWithoutOpeningBalance: true,
-          openingBalance: '',
-          openingDate: '',
-          exchangeRate: '',
+          openingBalance: 5000,
+          openingDate: '2026-07-01',
+          exchangeRate: null,
         })
       )
     );
@@ -323,6 +347,7 @@ describe('BankAccountFormContainer', () => {
           accountingCurrencyCode="NGN"
           bankLocations={bankLocations}
           currencies={currencies}
+          onExchangeRateContextChange={vi.fn()}
           onSubmit={vi.fn()}
         />
       </QueryClientProvider>

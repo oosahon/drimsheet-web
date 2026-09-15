@@ -11,7 +11,10 @@ import {
   AlertDialogTitle,
 } from '@/shared/components/alert-dialog';
 import { Button } from '@/shared/components/button';
-import { CurrencyExchangeRateInput } from '@/shared/components/currency-exchange-rate-input';
+import {
+  CurrencyExchangeRateInput,
+  type ICurrencyExchangeRateInputValue,
+} from '@/shared/components/currency-exchange-rate-input';
 import { DateInput } from '@/shared/components/date-input';
 import { Field, FieldError, FieldGroup } from '@/shared/components/field';
 import { FileUpload } from '@/shared/components/file-upload';
@@ -192,7 +195,9 @@ export function CashTransferForm({
     );
   };
 
-  const handleExchangeRateChange = (exchangeRate: string) => {
+  const handleExchangeRateChange = (
+    exchangeRate: ICurrencyExchangeRateInputValue | null
+  ) => {
     void formik.setValues(
       cashTransferFormHelpers.updateExchangeRate(formik.values, exchangeRate)
     );
@@ -439,9 +444,7 @@ export function CashTransferForm({
                     officialRateMatches ? officialExchangeRate : undefined
                   }
                   onBlur={formik.handleBlur}
-                  onChange={(event) =>
-                    handleExchangeRateChange(event.target.value)
-                  }
+                  onChange={handleExchangeRateChange}
                   targetCurrency={destinationCurrencyCode}
                   value={formik.values.exchangeRate}
                 />

@@ -1,4 +1,7 @@
-import { CashTransactionForm } from '@/journal-entries/components/cash-transaction-form';
+import {
+  CashTransactionForm,
+  type ICashTransactionFormValues,
+} from '@/journal-entries/components/cash-transaction-form';
 import type {
   IExchangeRate,
   IJournalCounterpartyReq,
@@ -75,10 +78,10 @@ export const ForeignCurrencyAccount: Story = {
       accountId: 'usd-bank',
       categoryId: 'sales',
       amount: { amount: 1250 },
-      exchangeRate: '1500',
+      exchangeRate: { value: 1500, inverted: false },
       counterparty: counterpartyOptions[0],
       description: 'August consulting retainer',
-    },
+    } as ICashTransactionFormValues,
     officialExchangeRate: {
       baseCurrencyCode: 'USD',
       targetCurrencyCode: 'NGN',
@@ -107,7 +110,7 @@ export const Itemized: Story = {
         },
       ],
       counterparty: counterpartyOptions[0],
-    },
+    } as ICashTransactionFormValues,
   },
 };
 
@@ -118,7 +121,7 @@ export const FunctionalCurrencyAccount: Story = {
       categoryId: 'sales',
       amount: { amount: 125000 },
       counterparty: counterpartyOptions[1],
-    },
+    } as ICashTransactionFormValues,
   },
 };
 

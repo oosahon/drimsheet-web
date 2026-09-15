@@ -1,14 +1,7 @@
-import type { IExchangeRate } from '@/shared/lib/api/Api';
+function getValue(value: number | undefined, officialRate: number | undefined) {
+  if (value !== undefined) return value;
 
-function getValue(
-  value: string | number | undefined,
-  defaultValue: string | number | undefined,
-  officialRate: IExchangeRate | undefined
-) {
-  if (value !== undefined && value !== '') return value;
-  if (defaultValue !== undefined && defaultValue !== '') return defaultValue;
-
-  return officialRate?.rate;
+  return officialRate;
 }
 
 const currencyExchangeRateInputHelpers = Object.freeze({

@@ -37,6 +37,25 @@ const officialRate = {
 describe('currencyService', () => {
   beforeEach(() => vi.clearAllMocks());
 
+  it('inverts a positive finite rate', () => {
+    expect(currencyService.invertRate(1000)).toBe(0.001);
+    expect(currencyService.invertRate('0.001')).toBe(1000);
+  });
+
+  it('round-trips a representative reciprocal within numeric precision', () => {
+    const invertedRate = currencyService.invertRate(1500);
+
+    expect(invertedRate).toBeDefined();
+    expect(currencyService.invertRate(invertedRate!)).toBeCloseTo(1500);
+  });
+
+  it.each([undefined, '', 0, -1, Number.NaN, Number.POSITIVE_INFINITY])(
+    'does not invert an invalid rate: %s',
+    (rate) => {
+      expect(currencyService.invertRate(rate)).toBeUndefined();
+    }
+  );
+
   it('forwards an exchange-rate query and returns the response data', async () => {
     vi.mocked(drimsheetApi.currencies.getExchangeRates).mockResolvedValue({
       data: [officialRate],

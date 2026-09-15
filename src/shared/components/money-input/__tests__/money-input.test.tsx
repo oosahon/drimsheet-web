@@ -109,6 +109,69 @@ describe('MoneyInput', () => {
     expect(val).toBe('1,234.56');
   });
 
+  it('uses money decimals by default', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ControlledMoneyInput
+        aria-label="Amount"
+        currencyCode="USD"
+        locale="en-US"
+      />
+    );
+
+    const input = screen.getByLabelText('Amount');
+    await user.type(input, '1.234');
+
+    expect(input).toHaveValue('1.23');
+  });
+
+  it('uses the configured currency minor-unit precision in money mode', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ControlledMoneyInput
+        aria-label="Amount"
+        currencyCode="KWD"
+        locale="en-US"
+      />
+    );
+
+    const input = screen.getByLabelText('Amount');
+    await user.type(input, '1.2345');
+
+    expect(input).toHaveValue('1.234');
+  });
+
+  it('uses two decimals for currency-less money values', async () => {
+    const user = userEvent.setup();
+
+    render(<ControlledMoneyInput aria-label="Amount" locale="en-US" />);
+
+    const input = screen.getByLabelText('Amount');
+    await user.type(input, '1.234');
+
+    expect(input).toHaveValue('1.23');
+  });
+
+  it('preserves arbitrary fractional digits in number mode', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <ControlledMoneyInput
+        aria-label="Rate"
+        currencyCode="USD"
+        decimalType="number"
+        locale="en-US"
+      />
+    );
+
+    const input = screen.getByLabelText('Rate');
+    await user.type(input, '0.001234');
+
+    expect(input).toHaveValue('0.001234');
+  });
+
   it('triggers onChange with unformatted value', async () => {
     const user = userEvent.setup();
     const handleChange = vi.fn();

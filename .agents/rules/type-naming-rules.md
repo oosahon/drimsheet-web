@@ -17,6 +17,14 @@ Make a type's role visible at every declaration and import.
 Apply the convention to public and private types. Do not rename generated API
 types; use their generated names as the source contract.
 
+## Derived Contracts
+
+- Prefer `Pick` when a type supports a deliberate subset of another contract.
+- Use `Omit` only when the derived type intentionally supports every present
+  and future field except the named exclusions.
+- Do not use `Omit` as a shortcut when an explicit `Pick` would make the public
+  surface safer and easier to review.
+
 ## Examples
 
 ```ts

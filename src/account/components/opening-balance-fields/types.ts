@@ -1,3 +1,4 @@
+import type { ICurrencyExchangeRateInputValue } from '@/shared/components/currency-exchange-rate-input';
 import type { IExchangeRate } from '@/shared/lib/api/Api';
 
 interface FieldError {
@@ -10,7 +11,7 @@ export interface OpeningBalanceFieldsProps {
   createWithoutOpeningBalance: boolean;
   openingBalance: number | '';
   openingDate: string;
-  exchangeRate: number | '';
+  exchangeRate: ICurrencyExchangeRateInputValue | null;
   officialExchangeRate?: IExchangeRate;
   disabled?: boolean;
   openingBalanceError?: Array<FieldError | undefined>;
@@ -19,5 +20,5 @@ export interface OpeningBalanceFieldsProps {
   onCreateWithoutOpeningBalanceChange: (checked: boolean) => void;
   onOpeningBalanceChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onOpeningDateChange: (value: string) => void;
-  onExchangeRateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onExchangeRateChange: (value: ICurrencyExchangeRateInputValue | null) => void;
 }

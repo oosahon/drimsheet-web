@@ -53,7 +53,7 @@ export const ForeignCurrency: Story = {
       currencyCode: 'USD',
       openingBalance: 100,
       openingDate: '2026-07-01',
-      exchangeRate: 1500,
+      exchangeRate: { value: 1500, inverted: false },
     },
   },
 };

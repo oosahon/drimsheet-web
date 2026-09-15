@@ -13,6 +13,7 @@
   "total_vault_balance": "Total vault balance",
   "accounts_count": "{{count}} accounts",
   "create_petty_cash_account": "Create petty cash account",
+  "account_name": "Account name",
   "account_display_name": "Account Display Name",
   "search_placeholder": "Search by name...",
   "add_account": "Add account",

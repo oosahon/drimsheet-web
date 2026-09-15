@@ -25,7 +25,7 @@ const validValues = {
   createWithoutOpeningBalance: false,
   openingBalance: 100,
   openingDate: '2026-07-01',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
 
@@ -86,7 +86,7 @@ describe('petty cash account form validation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: '',
+        exchangeRate: null,
       })
     ).rejects.toThrow('Exchange rate is required');
   });
@@ -96,7 +96,7 @@ describe('petty cash account form validation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: 0,
+        exchangeRate: { value: 0, inverted: false },
       })
     ).rejects.toThrow('Exchange rate must be positive');
   });
@@ -112,7 +112,7 @@ describe('petty cash account form validation', () => {
       schemaWithOfficialRate.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: '',
+        exchangeRate: null,
       })
     ).resolves.toBeDefined();
   });

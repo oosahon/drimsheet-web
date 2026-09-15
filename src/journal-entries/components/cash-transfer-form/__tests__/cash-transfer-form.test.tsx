@@ -133,7 +133,7 @@ describe('CashTransferForm validation', () => {
           isMinorUnit: false,
         },
         date: '2026-08-30',
-        exchangeRate: '',
+        exchangeRate: null,
         isItemized: true,
         items: [
           {
@@ -161,7 +161,7 @@ describe('CashTransferForm validation', () => {
           isMinorUnit: false,
         },
         date: '2026-08-30',
-        exchangeRate: '',
+        exchangeRate: null,
         isItemized: false,
         items: [],
         description: '',
@@ -186,7 +186,7 @@ describe('CashTransferForm validation', () => {
           isMinorUnit: false,
         },
         date: '2026-08-30',
-        exchangeRate: '1000',
+        exchangeRate: { value: 1000, inverted: false },
         isItemized: true,
         items: [
           {
@@ -214,7 +214,7 @@ describe('CashTransferForm validation', () => {
           isMinorUnit: false,
         },
         date: '2026-08-01',
-        exchangeRate: '',
+        exchangeRate: null,
         isItemized: false,
         items: [],
         description: '',
@@ -272,7 +272,7 @@ describe('CashTransferForm', () => {
         destinationAccountId: 'destination-cash',
         amountSent: { amount: 100 },
         amountReceived: { amount: 150000 },
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
         date: '2026-08-30',
       },
     });
@@ -293,7 +293,7 @@ describe('CashTransferForm', () => {
         sourceAccountId: 'source-usd',
         destinationAccountId: 'destination-cash',
         amountSent: { amount: 100 },
-        exchangeRate: '1233',
+        exchangeRate: { value: 1233, inverted: false },
         date: '2026-08-30',
       },
     });
@@ -305,6 +305,35 @@ describe('CashTransferForm', () => {
         .closest('[data-slot="input-group"]')
     ).toHaveTextContent('NGN');
     expect(screen.getByLabelText('Amount received')).toHaveValue('123,300');
+  });
+
+  it('preserves an inverted transfer rate through submission', async () => {
+    const user = userEvent.setup();
+    const { onSubmit } = renderForm({
+      initialValues: {
+        sourceAccountId: 'source-usd',
+        destinationAccountId: 'destination-cash',
+        amountSent: { amount: 100 },
+        amountReceived: { amount: 100000 },
+        exchangeRate: { value: 1000, inverted: false },
+        date: '2026-08-30',
+      },
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+
+    expect(screen.getByLabelText('Exchange rate')).toHaveValue('0.001');
+    expect(screen.getByLabelText('Amount received')).toHaveValue('100,000');
+
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          exchangeRate: { value: 0.001, inverted: true },
+        })
+      )
+    );
   });
 
   it('uses the dedicated categories prop for charge rows', async () => {

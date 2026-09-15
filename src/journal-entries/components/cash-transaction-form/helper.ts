@@ -6,7 +6,6 @@ import type {
 } from '@/shared/lib/api/Api';
 import { dateUtils } from '@/shared/lib/utils/date';
 import type {
-  ICashTransactionFormInitialValues,
   ICashTransactionFormValues,
   UCashTransactionFormVariant,
 } from './types';
@@ -37,7 +36,7 @@ const COUNTERPARTY_TEXT_KEYS = Object.freeze({
  * preferring the selected account's currency when one can be resolved.
  */
 function createInitialValues(
-  initialValues: ICashTransactionFormInitialValues | undefined,
+  initialValues: ICashTransactionFormValues | undefined,
   accounts: ILedgerAccountDto[],
   functionalCurrencyCode: string
 ): ICashTransactionFormValues {
@@ -57,7 +56,7 @@ function createInitialValues(
       isMinorUnit: initialValues?.amount?.isMinorUnit ?? false,
     },
     date: initialValues?.date ?? dateUtils.formatDateForApi(new Date()),
-    exchangeRate: initialValues?.exchangeRate ?? '',
+    exchangeRate: initialValues?.exchangeRate ?? null,
     isItemized: initialValues?.isItemized ?? false,
     items: (initialValues?.items ?? []).map((item) => ({
       id: item.id,
@@ -89,6 +88,10 @@ function updateAccount(
   currencyCode: string,
   functionalCurrencyCode: string
 ): ICashTransactionFormValues {
+  const preserveExchangeRate =
+    currencyCode === values.amount.currencyCode &&
+    isExchangeRateRequired(currencyCode, functionalCurrencyCode);
+
   return {
     accountId,
     categoryId: values.categoryId,
@@ -98,9 +101,7 @@ function updateAccount(
       isMinorUnit: values.amount.isMinorUnit,
     },
     date: values.date,
-    exchangeRate: isExchangeRateRequired(currencyCode, functionalCurrencyCode)
-      ? values.exchangeRate
-      : '',
+    exchangeRate: preserveExchangeRate ? values.exchangeRate : null,
     isItemized: values.isItemized,
     items: values.items.map((item) => ({
       id: item.id,
@@ -209,12 +210,16 @@ function normalizeValues(
   const amount = values.isItemized
     ? getItemTotal(values.items)
     : values.amount.amount;
-  let exchangeRate = '';
+  let exchangeRate: ICashTransactionFormValues['exchangeRate'] = null;
 
   if (exchangeRateRequired) {
-    exchangeRate = values.exchangeRate.trim();
-    if (!exchangeRate && officialRate !== undefined) {
-      exchangeRate = String(officialRate);
+    if (
+      values.exchangeRate !== null &&
+      Number.isFinite(values.exchangeRate.value)
+    ) {
+      exchangeRate = values.exchangeRate;
+    } else if (officialRate !== undefined) {
+      exchangeRate = { value: officialRate, inverted: false };
     }
   }
 

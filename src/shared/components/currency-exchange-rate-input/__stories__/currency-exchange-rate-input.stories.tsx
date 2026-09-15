@@ -1,6 +1,7 @@
 import { CurrencyExchangeRateInput } from '@/shared/components/currency-exchange-rate-input';
 import type { IExchangeRate } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 
 const meta = {
   title: 'Shared UI/CurrencyExchangeRateInput',
@@ -9,7 +10,23 @@ const meta = {
   parameters: { layout: 'centered' },
   args: {
     baseCurrency: 'USD',
+    onChange: () => undefined,
     targetCurrency: 'NGN',
+    value: null,
+  },
+  render: (args) => {
+    const [value, setValue] = useState(args.value);
+
+    return (
+      <CurrencyExchangeRateInput
+        {...args}
+        onChange={(nextValue) => {
+          setValue(nextValue);
+          args.onChange(nextValue);
+        }}
+        value={value}
+      />
+    );
   },
 } satisfies Meta<typeof CurrencyExchangeRateInput>;
 
@@ -20,21 +37,27 @@ export const Default: Story = {};
 
 export const WithDefaultValue: Story = {
   args: {
-    defaultValue: 1500,
+    value: { value: 1500, inverted: false },
+  },
+};
+
+export const Inverted: Story = {
+  args: {
+    value: { value: 0.001, inverted: true },
   },
 };
 
 export const Invalid: Story = {
   args: {
     'aria-invalid': true,
-    defaultValue: '0',
+    value: { value: 0, inverted: false },
   },
 };
 
 export const Compact: Story = {
   args: {
-    defaultValue: 1500,
     layout: 'compact',
+    value: { value: 1500, inverted: false },
   },
   decorators: [
     (Story) => (

@@ -24,7 +24,7 @@ const optionalNumber = (typeErrorMessage: string) =>
   yup
     .number()
     .transform((value, originalValue) => {
-      if (originalValue === '') return undefined;
+      if (originalValue === null || originalValue === '') return undefined;
       return value;
     })
     .typeError(typeErrorMessage);
@@ -59,26 +59,31 @@ export function createBankAccountFormValidation(
       then: (schema) => schema.required(messages.openingDateRequired),
       otherwise: (schema) => schema.notRequired(),
     }),
-    exchangeRate: optionalNumber(messages.exchangeRateNumber).when(
-      ['createWithoutOpeningBalance', 'currencyCode'],
-      {
-        is: (createWithoutOpeningBalance: boolean, currencyCode: string) =>
-          !createWithoutOpeningBalance &&
-          Boolean(currencyCode) &&
-          currencyCode !== accountingCurrencyCode,
-        then: (schema) => {
-          const positiveSchema = schema.moreThan(
-            0,
-            messages.exchangeRatePositive
-          );
+    exchangeRate: yup
+      .mixed<{ value: number; inverted: boolean }>()
+      .nullable()
+      .test('required', messages.exchangeRateRequired, function (exchangeRate) {
+        const values = this.parent as {
+          createWithoutOpeningBalance: boolean;
+          currencyCode: string;
+        };
+        const required =
+          !values.createWithoutOpeningBalance &&
+          Boolean(values.currencyCode) &&
+          values.currencyCode !== accountingCurrencyCode;
 
-          return officialExchangeRate
-            ? positiveSchema.notRequired()
-            : positiveSchema.required(messages.exchangeRateRequired);
-        },
-        otherwise: (schema) => schema.notRequired(),
-      }
-    ),
+        return (
+          !required || Boolean(officialExchangeRate) || exchangeRate !== null
+        );
+      })
+      .test('number', messages.exchangeRateNumber, (exchangeRate) =>
+        exchangeRate == null ? true : Number.isFinite(exchangeRate.value)
+      )
+      .test('positive', messages.exchangeRatePositive, (exchangeRate) =>
+        exchangeRate == null || !Number.isFinite(exchangeRate.value)
+          ? true
+          : exchangeRate.value > 0
+      ),
     isSubAccount: yup.boolean().required(),
   });
 }

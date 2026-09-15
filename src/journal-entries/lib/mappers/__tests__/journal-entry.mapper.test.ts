@@ -11,7 +11,7 @@ const values: ICashTransactionFormValues = {
   categoryId: 'sales-revenue',
   amount: { amount: 250000, currencyCode: 'NGN', isMinorUnit: false },
   date: '2026-08-10',
-  exchangeRate: '',
+  exchangeRate: null,
   isItemized: false,
   items: [],
   counterparty: { name: 'New counterparty' },
@@ -24,7 +24,7 @@ const paymentValues: ICashTransactionFormValues = {
   categoryId: 'office-expense',
   amount: { amount: 250000, currencyCode: 'NGN', isMinorUnit: false },
   date: '2026-08-10',
-  exchangeRate: '',
+  exchangeRate: null,
   isItemized: false,
   items: [],
   counterparty: { name: 'New recipient' },
@@ -42,7 +42,7 @@ const transferValues: ICashTransferFormValues = {
     isMinorUnit: false,
   },
   date: '2026-08-10',
-  exchangeRate: '',
+  exchangeRate: null,
   isItemized: false,
   items: [],
   description: '  Petty cash funding  ',
@@ -223,7 +223,7 @@ describe('journalEntryMapper', () => {
         ...paymentValues,
         accountId: 'usd-bank',
         amount: { amount: 1250, currencyCode: 'USD', isMinorUnit: false },
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
         counterparty: {
           id: 'counterparty-1',
           name: 'Acme',
@@ -248,6 +248,25 @@ describe('journalEntryMapper', () => {
     expect(result.destinationLines[0]?.exchangeRate).toEqual(
       result.sourceLine.exchangeRate
     );
+  });
+
+  it('restores an inverted payment rate before mapping the request', () => {
+    const result = journalEntryMapper.toPaymentEntryReq(
+      {
+        ...paymentValues,
+        accountId: 'usd-bank',
+        amount: { amount: 1250, currencyCode: 'USD', isMinorUnit: false },
+        exchangeRate: { value: 0.001, inverted: true },
+      },
+      'NGN',
+      occurredAt
+    );
+
+    expect(result.sourceLine.exchangeRate).toMatchObject({
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1000,
+    });
   });
 
   it('maps a single functional-currency receipt and attachment references', () => {
@@ -356,7 +375,7 @@ describe('journalEntryMapper', () => {
         ...values,
         accountId: 'usd-bank',
         amount: { amount: 1250, currencyCode: 'USD', isMinorUnit: false },
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
         counterparty: {
           id: 'counterparty-1',
           name: 'Acme',
@@ -381,6 +400,25 @@ describe('journalEntryMapper', () => {
     expect(result.destinationLine.exchangeRate).toEqual(
       result.sourceLines[0]?.exchangeRate
     );
+  });
+
+  it('restores an inverted receipt rate before mapping the request', () => {
+    const result = journalEntryMapper.toReceiptEntryReq(
+      {
+        ...values,
+        accountId: 'usd-bank',
+        amount: { amount: 1250, currencyCode: 'USD', isMinorUnit: false },
+        exchangeRate: { value: 0.001, inverted: true },
+      },
+      'NGN',
+      occurredAt
+    );
+
+    expect(result.destinationLine.exchangeRate).toMatchObject({
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1000,
+    });
   });
 
   it('maps a functional-currency transfer and attachment references', () => {
@@ -475,7 +513,7 @@ describe('journalEntryMapper', () => {
           currencyCode: 'NGN',
           isMinorUnit: false,
         },
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
       },
       'NGN',
       occurredAt
@@ -494,6 +532,34 @@ describe('journalEntryMapper', () => {
     expect(result.destinationLine.exchangeRate).toBeNull();
   });
 
+  it('restores an inverted transfer rate onto a foreign source line', () => {
+    const result = journalEntryMapper.toTransferEntryReq(
+      {
+        ...transferValues,
+        amountSent: {
+          amount: 100,
+          currencyCode: 'USD',
+          isMinorUnit: false,
+        },
+        amountReceived: {
+          amount: 100000,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        exchangeRate: { value: 0.001, inverted: true },
+      },
+      'NGN',
+      occurredAt
+    );
+
+    expect(result.sourceLine.exchangeRate).toMatchObject({
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1000,
+    });
+    expect(result.destinationLine.exchangeRate).toBeNull();
+  });
+
   it('maps the reciprocal rate only onto a foreign destination line', () => {
     const result = journalEntryMapper.toTransferEntryReq(
       {
@@ -508,7 +574,7 @@ describe('journalEntryMapper', () => {
           currencyCode: 'USD',
           isMinorUnit: false,
         },
-        exchangeRate: '0.000625',
+        exchangeRate: { value: 0.000625, inverted: false },
       },
       'NGN',
       occurredAt
@@ -522,6 +588,34 @@ describe('journalEntryMapper', () => {
       type: EExchangeRateType.Market,
       asOf: '2026-08-10',
       source: 'manual',
+    });
+  });
+
+  it('maps an inverted transfer rate directly onto a foreign destination line', () => {
+    const result = journalEntryMapper.toTransferEntryReq(
+      {
+        ...transferValues,
+        amountSent: {
+          amount: 160000,
+          currencyCode: 'NGN',
+          isMinorUnit: false,
+        },
+        amountReceived: {
+          amount: 100,
+          currencyCode: 'USD',
+          isMinorUnit: false,
+        },
+        exchangeRate: { value: 1600, inverted: true },
+      },
+      'NGN',
+      occurredAt
+    );
+
+    expect(result.sourceLine.exchangeRate).toBeNull();
+    expect(result.destinationLine.exchangeRate).toMatchObject({
+      baseCurrencyCode: 'USD',
+      targetCurrencyCode: 'NGN',
+      rate: 1600,
     });
   });
 });

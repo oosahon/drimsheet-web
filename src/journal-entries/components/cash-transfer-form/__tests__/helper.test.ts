@@ -31,7 +31,7 @@ const values: ICashTransferFormValues = {
   amountSent: { amount: 105.25, currencyCode: 'NGN', isMinorUnit: false },
   amountReceived: { amount: 100, currencyCode: 'NGN', isMinorUnit: false },
   date: '2026-08-30',
-  exchangeRate: '',
+  exchangeRate: null,
   isItemized: true,
   items: [
     {
@@ -87,7 +87,7 @@ describe('cashTransferFormHelpers', () => {
         sourceAccountId: 'usd-bank',
         destinationAccountId: 'ngn-cash',
         amountSent: { amount: 100 },
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
         isItemized: true,
         items: [values.items[0]!],
       },
@@ -100,6 +100,26 @@ describe('cashTransferFormHelpers', () => {
     expect(initialValues.items[0]?.amount.currencyCode).toBe('NGN');
   });
 
+  it('derives forex received values from an inverted initial rate', () => {
+    const initialValues = cashTransferFormHelpers.createInitialValues(
+      {
+        sourceAccountId: 'usd-bank',
+        destinationAccountId: 'ngn-cash',
+        amountSent: { amount: 100 },
+        exchangeRate: { value: 0.001, inverted: true },
+      },
+      sourceAccounts,
+      destinationAccounts,
+      'NGN'
+    );
+
+    expect(initialValues.amountReceived.amount).toBe(100000);
+    expect(initialValues.exchangeRate).toEqual({
+      value: 0.001,
+      inverted: true,
+    });
+  });
+
   it('keeps amount sent authoritative while other values track it', () => {
     const forexValues: ICashTransferFormValues = {
       ...values,
@@ -110,7 +130,7 @@ describe('cashTransferFormHelpers', () => {
         currencyCode: 'NGN',
         isMinorUnit: false,
       },
-      exchangeRate: '1500',
+      exchangeRate: { value: 1500, inverted: false },
       isItemized: false,
       items: [],
     };
@@ -121,7 +141,7 @@ describe('cashTransferFormHelpers', () => {
     );
     const rateUpdated = cashTransferFormHelpers.updateExchangeRate(
       sentUpdated,
-      '1000'
+      { value: 1000, inverted: false }
     );
     const receivedUpdated = cashTransferFormHelpers.updateAmountReceived(
       rateUpdated,
@@ -130,8 +150,41 @@ describe('cashTransferFormHelpers', () => {
 
     expect(sentUpdated.amountReceived.amount).toBe(300000);
     expect(rateUpdated.amountReceived.amount).toBe(200000);
-    expect(receivedUpdated.exchangeRate).toBe('1250');
+    expect(receivedUpdated.exchangeRate).toEqual({
+      value: 1250,
+      inverted: false,
+    });
     expect(receivedUpdated.amountSent.amount).toBe(200);
+  });
+
+  it('recalculates transfer values while the displayed rate is inverted', () => {
+    const invertedValues: ICashTransferFormValues = {
+      ...values,
+      sourceAccountId: 'usd-bank',
+      amountSent: { amount: 100, currencyCode: 'USD', isMinorUnit: false },
+      amountReceived: {
+        amount: 100000,
+        currencyCode: 'NGN',
+        isMinorUnit: false,
+      },
+      exchangeRate: { value: 0.001, inverted: true },
+      isItemized: false,
+      items: [],
+    };
+    const rateUpdated = cashTransferFormHelpers.updateExchangeRate(
+      invertedValues,
+      { value: 0.002, inverted: true }
+    );
+    const receivedUpdated = cashTransferFormHelpers.updateAmountReceived(
+      invertedValues,
+      { amount: 200000, currencyCode: 'NGN', isMinorUnit: false }
+    );
+
+    expect(rateUpdated.amountReceived.amount).toBe(50000);
+    expect(receivedUpdated.exchangeRate).toEqual({
+      value: 0.0005,
+      inverted: true,
+    });
   });
 
   it('recalculates received value when committed charges change', () => {
@@ -150,7 +203,7 @@ describe('cashTransferFormHelpers', () => {
 
   it('resets stale rates and propagates account currencies', () => {
     const sourceUpdated = cashTransferFormHelpers.updateSourceAccount(
-      { ...values, exchangeRate: '1500' },
+      { ...values, exchangeRate: { value: 1500, inverted: false } },
       'usd-bank',
       'USD'
     );
@@ -160,7 +213,7 @@ describe('cashTransferFormHelpers', () => {
       'USD'
     );
 
-    expect(sourceUpdated.exchangeRate).toBe('');
+    expect(sourceUpdated.exchangeRate).toBeNull();
     expect(sourceUpdated.amountSent.currencyCode).toBe('USD');
     expect(destinationUpdated.amountReceived.currencyCode).toBe('USD');
     expect(destinationUpdated.items[0]?.amount.currencyCode).toBe('USD');
@@ -177,7 +230,7 @@ describe('cashTransferFormHelpers', () => {
         currencyCode: 'NGN',
         isMinorUnit: false,
       },
-      exchangeRate: '',
+      exchangeRate: null,
       isItemized: false,
       items: [],
     };
@@ -197,6 +250,12 @@ describe('cashTransferFormHelpers', () => {
       )
     ).toBe(1500);
     expect(
+      cashTransferFormHelpers.getEffectiveExchangeRate({
+        ...forexValues,
+        exchangeRate: { value: 0.001, inverted: true },
+      })
+    ).toBe(1000);
+    expect(
       cashTransferFormHelpers.getEffectiveExchangeRate(forexValues, {
         ...officialRate,
         asOf: '2026-08-29T00:00:00.000Z',
@@ -209,7 +268,7 @@ describe('cashTransferFormHelpers', () => {
       cashTransferFormHelpers.calculateAmountReceived(100, 1500, 5, true)
     ).toBe(149995);
     expect(cashTransferFormHelpers.calculateExchangeRate(100, 149995, 5)).toBe(
-      '1500'
+      1500
     );
     expect(cashTransferFormHelpers.round(0.1 + 0.2)).toBe(0.3);
     expect(cashTransferFormHelpers.isExchangeRateRequired('NGN', 'USD')).toBe(
@@ -230,7 +289,7 @@ describe('cashTransferFormHelpers', () => {
         currencyCode: 'NGN',
         isMinorUnit: false,
       },
-      exchangeRate: '',
+      exchangeRate: null,
     };
     const normalized = cashTransferFormHelpers.normalizeValues(
       forexValues,
@@ -241,9 +300,33 @@ describe('cashTransferFormHelpers', () => {
       isItemized: false,
     });
 
-    expect(normalized.exchangeRate).toBe('1500');
+    expect(normalized.exchangeRate).toEqual({
+      value: 1500,
+      inverted: false,
+    });
     expect(normalized.description).toBe('Transfer');
     expect(normalized.items[0]?.description).toBe('Fee');
     expect(singleEntry.items).toEqual([]);
+  });
+
+  it('preserves an entered inverted rate during normalization', () => {
+    const normalized = cashTransferFormHelpers.normalizeValues({
+      ...values,
+      sourceAccountId: 'usd-bank',
+      amountSent: { amount: 100, currencyCode: 'USD', isMinorUnit: false },
+      amountReceived: {
+        amount: 100000,
+        currencyCode: 'NGN',
+        isMinorUnit: false,
+      },
+      exchangeRate: { value: 0.001, inverted: true },
+      isItemized: false,
+      items: [],
+    });
+
+    expect(normalized.exchangeRate).toEqual({
+      value: 0.001,
+      inverted: true,
+    });
   });
 });

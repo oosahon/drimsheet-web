@@ -20,7 +20,7 @@ const meta = {
     createWithoutOpeningBalance: false,
     openingBalance: '',
     openingDate: '',
-    exchangeRate: '',
+    exchangeRate: null,
     onCreateWithoutOpeningBalanceChange: () => {},
     onOpeningBalanceChange: () => {},
     onOpeningDateChange: () => {},
@@ -44,7 +44,7 @@ export const ForeignCurrency: Story = {
     currencyCode: 'USD',
     openingBalance: 1,
     openingDate: '2026-07-01',
-    exchangeRate: 1500,
+    exchangeRate: { value: 1500, inverted: false },
   },
 };
 

@@ -29,7 +29,7 @@ const validValues = {
   createWithoutOpeningBalance: false,
   openingBalance: 1000,
   openingDate: '2026-07-01',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
 
@@ -74,7 +74,7 @@ describe('createBankAccountFormValidation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: '',
+        exchangeRate: null,
       })
     ).rejects.toThrow(messages.exchangeRateRequired);
 
@@ -82,7 +82,7 @@ describe('createBankAccountFormValidation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
       })
     ).resolves.toBeDefined();
   });
@@ -97,7 +97,7 @@ describe('createBankAccountFormValidation', () => {
         createWithoutOpeningBalance: true,
         openingBalance: '',
         openingDate: '',
-        exchangeRate: '',
+        exchangeRate: null,
       })
     ).resolves.toBeDefined();
   });
@@ -113,7 +113,7 @@ describe('createBankAccountFormValidation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: '',
+        exchangeRate: null,
       })
     ).resolves.toBeDefined();
   });
