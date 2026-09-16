@@ -1,6 +1,7 @@
 import { BankAccountFormContainer } from '@/account/components/bank-account-form';
 import * as useGetBankByCountryModule from '@/account/hooks/use-get-bank-by-country';
-import { render, screen } from '@testing-library/react';
+import type { IExchangeRate } from '@/shared/lib/api/Api';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -32,6 +33,7 @@ describe('BankAccountFormContainer', () => {
         currencies={[{ code: 'NGN', name: 'Naira', symbol: '₦', minorUnit: 2 }]}
         initialBankLocation="NG"
         initialValues={{ currencyCode: 'NGN', bankLocation: 'NG' }}
+        onExchangeRateContextChange={vi.fn()}
         onSubmit={vi.fn()}
       />
     );
@@ -63,11 +65,12 @@ describe('BankAccountFormContainer', () => {
         currencies={[{ code: 'NGN', name: 'Naira', symbol: '₦', minorUnit: 2 }]}
         initialBankLocation="NG"
         initialValues={{ currencyCode: 'NGN', bankLocation: 'NG' }}
+        onExchangeRateContextChange={vi.fn()}
         onSubmit={vi.fn()}
       />
     );
 
-    const nameInput = screen.getByLabelText('Account name');
+    const nameInput = screen.getByLabelText('Account display name');
     await user.type(nameInput, 'My Operating Account');
 
     const locationInput = screen.getByPlaceholderText('Select a country');
@@ -79,5 +82,83 @@ describe('BankAccountFormContainer', () => {
 
     expect(useGetBankByCountrySpy).toHaveBeenLastCalledWith('US');
     expect(nameInput).toHaveValue('My Operating Account');
+  });
+
+  it('supplies an official rate provided by its user', () => {
+    vi.mocked(useGetBankByCountryModule.useGetBankByCountry).mockReturnValue({
+      data: [],
+      isPending: false,
+    } as unknown as ReturnType<
+      typeof useGetBankByCountryModule.useGetBankByCountry
+    >);
+    const officialExchangeRate = { rate: 1500 } as IExchangeRate;
+
+    render(
+      <BankAccountFormContainer
+        accountingCurrencyCode="NGN"
+        bankLocations={[]}
+        currencies={[]}
+        initialValues={{
+          currencyCode: 'USD',
+          openingDate: '2026-07-01',
+        }}
+        officialExchangeRate={officialExchangeRate}
+        onExchangeRateContextChange={vi.fn()}
+        onSubmit={vi.fn()}
+      />
+    );
+
+    expect(screen.getByText(/Official rate:/)).toHaveTextContent(
+      'Official rate: 1500'
+    );
+  });
+
+  it('submits bank-account form values unchanged', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    vi.mocked(useGetBankByCountryModule.useGetBankByCountry).mockReturnValue({
+      data: [],
+      isPending: false,
+    } as unknown as ReturnType<
+      typeof useGetBankByCountryModule.useGetBankByCountry
+    >);
+
+    render(
+      <BankAccountFormContainer
+        accountingCurrencyCode="NGN"
+        bankLocations={[{ code: 'NG', name: 'Nigeria' }]}
+        currencies={[{ code: 'NGN', name: 'Naira', symbol: '₦', minorUnit: 2 }]}
+        initialValues={{
+          name: 'Operating Account',
+          currencyCode: 'NGN',
+          bankLocation: 'NG',
+          bankName: 'Guaranty Trust Bank',
+          accountNumber: '0123456789',
+          accountName: 'Acme Ltd',
+          createWithoutOpeningBalance: true,
+        }}
+        onExchangeRateContextChange={vi.fn()}
+        onSubmit={onSubmit}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Create account' }));
+
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith({
+        name: 'Operating Account',
+        currencyCode: 'NGN',
+        bankLocation: 'NG',
+        bankName: 'Guaranty Trust Bank',
+        accountNumber: '0123456789',
+        accountName: 'Acme Ltd',
+        createWithoutOpeningBalance: true,
+        openingBalance: '',
+        openingDate: '',
+        exchangeRate: null,
+        isSubAccount: false,
+      })
+    );
   });
 });

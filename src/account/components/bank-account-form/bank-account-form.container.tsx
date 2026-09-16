@@ -3,14 +3,23 @@ import { useState } from 'react';
 import { BankAccountForm } from './bank-account-form';
 import type { BankAccountFormProps } from './types';
 
-export type BankAccountFormContainerProps = Omit<
+export type BankAccountFormContainerProps = Pick<
   BankAccountFormProps,
-  'banks' | 'isBanksLoading' | 'onBankLocationChange'
+  | 'accountingCurrencyCode'
+  | 'currencies'
+  | 'bankLocations'
+  | 'initialValues'
+  | 'loading'
+  | 'disabled'
+  | 'officialExchangeRate'
+  | 'onExchangeRateContextChange'
+  | 'onSubmit'
 > & {
   initialBankLocation?: string;
 };
 
 export function BankAccountFormContainer({
+  accountingCurrencyCode,
   initialBankLocation = '',
   initialValues,
   ...props
@@ -29,6 +38,7 @@ export function BankAccountFormContainer({
   return (
     <BankAccountForm
       {...props}
+      accountingCurrencyCode={accountingCurrencyCode}
       banks={banks}
       isBanksLoading={isBanksLoading}
       initialValues={initialValues}

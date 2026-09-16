@@ -1,4 +1,5 @@
 import { createBankAccountFormValidation } from '@/account/components/bank-account-form/validation';
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
 const messages = {
@@ -28,9 +29,11 @@ const validValues = {
   createWithoutOpeningBalance: false,
   openingBalance: 1000,
   openingDate: '2026-07-01',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
+
+const officialExchangeRate = { rate: 1500 } as IExchangeRate;
 
 describe('createBankAccountFormValidation', () => {
   it('passes validation for valid same-currency values', async () => {
@@ -71,7 +74,7 @@ describe('createBankAccountFormValidation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: '',
+        exchangeRate: null,
       })
     ).rejects.toThrow(messages.exchangeRateRequired);
 
@@ -79,7 +82,7 @@ describe('createBankAccountFormValidation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
       })
     ).resolves.toBeDefined();
   });
@@ -94,7 +97,23 @@ describe('createBankAccountFormValidation', () => {
         createWithoutOpeningBalance: true,
         openingBalance: '',
         openingDate: '',
-        exchangeRate: '',
+        exchangeRate: null,
+      })
+    ).resolves.toBeDefined();
+  });
+
+  it('accepts a foreign currency without a manual rate when an official rate is available', async () => {
+    const schema = createBankAccountFormValidation(
+      'NGN',
+      messages,
+      officialExchangeRate
+    );
+
+    await expect(
+      schema.validate({
+        ...validValues,
+        currencyCode: 'USD',
+        exchangeRate: null,
       })
     ).resolves.toBeDefined();
   });

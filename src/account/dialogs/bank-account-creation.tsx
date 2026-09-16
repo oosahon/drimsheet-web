@@ -3,6 +3,8 @@ import {
   type IBankAccountFormValues,
 } from '@/account/components/bank-account-form';
 import { useCreateBankAccount } from '@/account/hooks/use-create-bank-account';
+import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
+import type { IOpeningBalanceExchangeRateContext } from '@/account/lib/types/opening-balance-exchange-rate.types';
 import { useAccountingEntity } from '@/accounting/hooks/use-accounting-entity';
 import {
   Dialog,
@@ -17,6 +19,7 @@ import { Separator } from '@/shared/components/separator';
 import countries from '@/shared/configs/countries.json' with { type: 'json' };
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useCurrencies } from '@/shared/hooks/use-currencies';
+import { useExchangeRates } from '@/shared/hooks/use-exchange-rates';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -26,6 +29,12 @@ export interface BankAccountCreationDialogProps {
   onClose: () => void;
 }
 
+const defaultExchangeRateContext: IOpeningBalanceExchangeRateContext = {
+  currencyCode: '',
+  date: '',
+  createWithoutOpeningBalance: false,
+};
+
 export function BankAccountCreationDialog({
   open,
   onClose,
@@ -34,6 +43,8 @@ export function BankAccountCreationDialog({
   const handleApiError = useApiErrorHandler();
 
   const [statementFiles, setStatementFiles] = useState<File[]>([]);
+  const [exchangeRateContext, setExchangeRateContext] =
+    useState<IOpeningBalanceExchangeRateContext>(defaultExchangeRateContext);
 
   const { data: currencies = [], isPending: isCurrenciesPending } =
     useCurrencies();
@@ -43,25 +54,42 @@ export function BankAccountCreationDialog({
   const accountingCurrencyCode = accountingEntity?.functionalCurrencyCode ?? '';
   const initialJurisdiction = accountingEntity?.jurisdictionCode ?? '';
 
+  const { data: officialExchangeRates } = useExchangeRates(
+    assetAccountMapper.toOpeningBalanceExchangeRateQuery(
+      exchangeRateContext,
+      accountingCurrencyCode
+    )
+  );
+  const officialExchangeRate = officialExchangeRates?.[0];
+
   const { mutateAsync: createBankAccount, isPending: isCreating } =
-    useCreateBankAccount(accountingCurrencyCode);
+    useCreateBankAccount();
 
   const formDisabled =
     isCurrenciesPending || isAccountingEntityPending || !accountingCurrencyCode;
 
+  const handleClose = () => {
+    setStatementFiles([]);
+    setExchangeRateContext(defaultExchangeRateContext);
+    onClose();
+  };
+
   const handleOpenChange = (isOpen: boolean) => {
     if (!isOpen) {
-      setStatementFiles([]);
-      onClose();
+      handleClose();
     }
   };
 
   const handleSubmit = async (values: IBankAccountFormValues) => {
     try {
-      await createBankAccount(values);
+      const request = assetAccountMapper.toBankAccountCreationDto(
+        values,
+        accountingCurrencyCode,
+        officialExchangeRate
+      );
+      await createBankAccount(request);
       toast.success(t('ledger-accounts:bank_account_created_success_text'));
-      setStatementFiles([]);
-      onClose();
+      handleClose();
     } catch (error) {
       handleApiError(error, { showToast: true });
     }
@@ -105,6 +133,8 @@ export function BankAccountCreationDialog({
                 bankLocation: initialJurisdiction,
               }}
               loading={isCreating}
+              officialExchangeRate={officialExchangeRate}
+              onExchangeRateContextChange={setExchangeRateContext}
               onSubmit={handleSubmit}
             />
           </div>

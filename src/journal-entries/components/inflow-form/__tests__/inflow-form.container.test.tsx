@@ -140,7 +140,9 @@ describe('InflowFormContainer', () => {
         })
       );
     });
-    expect(toast.success).toHaveBeenCalledWith('Receipt created successfully');
+    expect(toast.success).toHaveBeenCalledWith(
+      'Transaction was created successfully.'
+    );
     expect(handleApiError).not.toHaveBeenCalled();
   });
 });

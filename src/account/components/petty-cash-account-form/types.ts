@@ -1,4 +1,6 @@
-import type { ICurrencyDto } from '@/shared/lib/api/Api';
+import type { IOpeningBalanceExchangeRateContext } from '@/account/lib/types/opening-balance-exchange-rate.types';
+import type { ICurrencyExchangeRateInputValue } from '@/shared/components/currency-exchange-rate-input';
+import type { ICurrencyDto, IExchangeRate } from '@/shared/lib/api/Api';
 
 export interface IPettyCashAccountFormValues {
   name: string;
@@ -6,15 +8,19 @@ export interface IPettyCashAccountFormValues {
   createWithoutOpeningBalance: boolean;
   openingBalance: number | '';
   openingDate: string;
-  exchangeRate: number | '';
+  exchangeRate: ICurrencyExchangeRateInputValue | null;
   isSubAccount: boolean;
 }
 
 export interface PettyCashAccountFormProps {
   accountingCurrencyCode: string;
   currencies: ICurrencyDto[];
+  officialExchangeRate?: IExchangeRate;
   initialValues?: Partial<IPettyCashAccountFormValues>;
   loading?: boolean;
   disabled?: boolean;
+  onExchangeRateContextChange: (
+    context: IOpeningBalanceExchangeRateContext
+  ) => void;
   onSubmit: (values: IPettyCashAccountFormValues) => Promise<void> | void;
 }

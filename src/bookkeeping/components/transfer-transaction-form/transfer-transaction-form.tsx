@@ -263,12 +263,6 @@ export function TransferTransactionForm({
             </Field>
           </div>
 
-          {/* <div className="-mt-3">
-            <Button type="button" variant="outline" size="sm">
-              {add_bank_charges_text}
-            </Button>
-          </div> */}
-
           <div className="grid grid-cols-1 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
             <Field data-invalid={Boolean(getErrorMessage('date')?.length)}>
               <Label htmlFor="date">{date_label}</Label>

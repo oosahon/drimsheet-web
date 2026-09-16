@@ -17,6 +17,7 @@ export function ItemizedFields({
   currencyCode,
   defaultValue = [],
   disabled = false,
+  excludeSelectedAccounts = false,
   initialEditItemId,
   onChange,
   onEditModeChange,
@@ -70,6 +71,10 @@ export function ItemizedFields({
   const draftReplacesCommittedItem = Boolean(
     draftItem && items.some((item) => item.id === draftItem.id)
   );
+  const availableAccounts =
+    excludeSelectedAccounts && draftItem
+      ? itemizedFieldsHelpers.getAvailableAccounts(accounts, items, draftItem)
+      : accounts;
 
   const handleDraftItemOpen = (item: IItemizedFieldValue) => {
     setDraftItem(item);
@@ -176,7 +181,7 @@ export function ItemizedFields({
           return (
             <ItemizedFieldRow
               key={item.id}
-              accounts={accounts}
+              accounts={availableAccounts}
               disabled={disabled}
               errors={saveAttempted ? draftErrors : undefined}
               index={index}
@@ -207,7 +212,7 @@ export function ItemizedFields({
 
       {draftItem && !draftReplacesCommittedItem && (
         <ItemizedFieldRow
-          accounts={accounts}
+          accounts={availableAccounts}
           disabled={disabled}
           errors={saveAttempted ? draftErrors : undefined}
           index={items.length}

@@ -98,7 +98,7 @@ export const ForeignCurrency: Story = {
       destinationAccountId: 'destination-cash',
       amountSent: { amount: 100 },
       amountReceived: { amount: 150000 },
-      exchangeRate: '1500',
+      exchangeRate: { value: 1500, inverted: false },
     },
     officialExchangeRate: {
       currencyPair: 'USD/NGN',

@@ -1,9 +1,32 @@
+import type { ICurrencyExchangeRateInputValue } from '@/shared/components/currency-exchange-rate-input';
 import { CurrencyExchangeRateInput } from '@/shared/components/currency-exchange-rate-input';
 import { currencyExchangeRateInputValidation } from '@/shared/components/currency-exchange-rate-input/validation';
 import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+
+function ControlledCurrencyExchangeRateInput({
+  officialRate,
+}: Readonly<{
+  officialRate?: IExchangeRate;
+}>) {
+  const [value, setValue] = useState<ICurrencyExchangeRateInputValue | null>({
+    value: 1000,
+    inverted: false,
+  });
+
+  return (
+    <CurrencyExchangeRateInput
+      baseCurrency="USD"
+      officialRate={officialRate}
+      onChange={setValue}
+      targetCurrency="NGN"
+      value={value}
+    />
+  );
+}
 
 describe('CurrencyExchangeRateInput', () => {
   const officialRate = {
@@ -15,7 +38,12 @@ describe('CurrencyExchangeRateInput', () => {
 
   it('renders fixed base and target currencies without a selector', () => {
     render(
-      <CurrencyExchangeRateInput baseCurrency="USD" targetCurrency="NGN" />
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        onChange={vi.fn()}
+        targetCurrency="NGN"
+        value={null}
+      />
     );
 
     expect(screen.getByText('USD')).toBeInTheDocument();
@@ -25,7 +53,12 @@ describe('CurrencyExchangeRateInput', () => {
 
   it('keeps the base amount fixed at one and disabled', () => {
     render(
-      <CurrencyExchangeRateInput baseCurrency="USD" targetCurrency="NGN" />
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        onChange={vi.fn()}
+        targetCurrency="NGN"
+        value={null}
+      />
     );
 
     expect(screen.getByLabelText('USD base amount')).toHaveValue('1');
@@ -39,7 +72,8 @@ describe('CurrencyExchangeRateInput', () => {
       <CurrencyExchangeRateInput
         baseCurrency="USD"
         targetCurrency="NGN"
-        defaultValue={1500}
+        onChange={vi.fn()}
+        value={{ value: 1500, inverted: false }}
       />
     );
 
@@ -65,6 +99,7 @@ describe('CurrencyExchangeRateInput', () => {
         name="exchangeRate"
         onChange={onChange}
         targetCurrency="NGN"
+        value={null}
       />
     );
 
@@ -74,7 +109,10 @@ describe('CurrencyExchangeRateInput', () => {
 
     await user.type(targetInput, '2');
 
-    expect(onChange).toHaveBeenCalled();
+    expect(onChange).toHaveBeenLastCalledWith({
+      value: 2,
+      inverted: false,
+    });
   });
 
   it('supports an opt-in compact responsive layout', () => {
@@ -82,7 +120,9 @@ describe('CurrencyExchangeRateInput', () => {
       <CurrencyExchangeRateInput
         baseCurrency="USD"
         layout="compact"
+        onChange={vi.fn()}
         targetCurrency="NGN"
+        value={null}
       />
     );
 
@@ -93,19 +133,22 @@ describe('CurrencyExchangeRateInput', () => {
     ).toHaveAttribute('data-layout', 'compact');
   });
 
-  it('shows a warning when official-rate display is enabled without a rate', () => {
+  it('shows warning-colored helper text when no official rate is available', () => {
     render(
       <CurrencyExchangeRateInput
         baseCurrency="USD"
         displayOfficialRate
+        onChange={vi.fn()}
         targetCurrency="NGN"
+        value={null}
       />
     );
 
-    const alert = screen.getByRole('alert');
+    const helperText = screen.getByText('No system official rate');
 
-    expect(alert).toHaveTextContent('No system official rate');
-    expect(alert).toHaveClass('text-warning');
+    expect(helperText).toHaveAttribute('data-slot', 'field-description');
+    expect(helperText).toHaveClass('text-warning');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('shows the official rate without a trailing period', () => {
@@ -114,16 +157,20 @@ describe('CurrencyExchangeRateInput', () => {
         baseCurrency="USD"
         displayOfficialRate
         officialRate={officialRate}
+        onChange={vi.fn()}
         targetCurrency="NGN"
+        value={null}
       />
     );
 
-    const alert = screen.getByRole('alert');
+    const helperText = screen.getByText(/Official rate:/);
 
-    expect(alert).toHaveTextContent('Official rate: 1500');
+    expect(helperText).toHaveTextContent('Official rate: 1500');
+    expect(helperText).toHaveAttribute('data-slot', 'field-description');
     expect(screen.getByLabelText('NGN exchange rate')).toHaveValue('1,500');
     expect(screen.getByText('1500')).toHaveClass('font-semibold');
-    expect(alert).toHaveClass('text-success');
+    expect(helperText).toHaveClass('text-success');
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
   });
 
   it('keeps the official-rate helper hidden unless display is enabled', () => {
@@ -131,11 +178,128 @@ describe('CurrencyExchangeRateInput', () => {
       <CurrencyExchangeRateInput
         baseCurrency="USD"
         officialRate={officialRate}
+        onChange={vi.fn()}
         targetCurrency="NGN"
+        value={null}
       />
     );
 
-    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Official rate:/)).not.toBeInTheDocument();
+  });
+
+  it('keeps the arrow decorative and renders a separate invert action', () => {
+    const { container } = render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        onChange={vi.fn()}
+        targetCurrency="NGN"
+        value={null}
+      />
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Invert rates' })
+    ).toBeInTheDocument();
+    expect(container.querySelector('svg')).toHaveAttribute(
+      'aria-hidden',
+      'true'
+    );
+  });
+
+  it('inverts the displayed currencies and preserves number precision', async () => {
+    const user = userEvent.setup();
+    render(<ControlledCurrencyExchangeRateInput />);
+
+    expect(screen.getByLabelText('USD base amount')).toHaveValue('1');
+    expect(screen.getByLabelText('NGN exchange rate')).toHaveValue('1,000');
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+
+    expect(screen.getByLabelText('NGN base amount')).toHaveValue('1');
+    expect(screen.getByLabelText('USD exchange rate')).toHaveValue('0.001');
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+
+    expect(screen.getByLabelText('USD base amount')).toHaveValue('1');
+    expect(screen.getByLabelText('NGN exchange rate')).toHaveValue('1,000');
+  });
+
+  it('defaults a null value to the canonical direction', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+
+    render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        onChange={onChange}
+        targetCurrency="NGN"
+        value={null}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+
+    expect(onChange).toHaveBeenCalledWith(null);
+    expect(screen.getByLabelText('USD base amount')).toHaveValue('1');
+    expect(screen.getByLabelText('NGN exchange rate')).toHaveValue('');
+  });
+
+  it('inverts an official-rate fallback into an explicit value', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+
+    render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        officialRate={officialRate}
+        onChange={onChange}
+        targetCurrency="NGN"
+        value={null}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+
+    expect(onChange).toHaveBeenCalledWith({
+      value: 1 / 1500,
+      inverted: true,
+    });
+  });
+
+  it('renders official helper content in the selected direction', () => {
+    render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        displayOfficialRate
+        officialRate={officialRate}
+        onChange={vi.fn()}
+        targetCurrency="NGN"
+        value={{ value: 1 / 1500, inverted: true }}
+      />
+    );
+
+    expect(screen.getByLabelText('NGN base amount')).toBeInTheDocument();
+    expect(screen.getByLabelText('USD exchange rate')).toHaveValue(
+      '0.0006666666666666666'
+    );
+    expect(screen.getByText(/Official rate:/)).toHaveTextContent(
+      'Official rate: 0.0006666666666666666'
+    );
+  });
+
+  it('disables the invert action with the editable input', () => {
+    render(
+      <CurrencyExchangeRateInput
+        baseCurrency="USD"
+        disabled
+        onChange={vi.fn()}
+        targetCurrency="NGN"
+        value={null}
+      />
+    );
+
+    expect(screen.getByRole('button', { name: 'Invert rates' })).toBeDisabled();
+    expect(screen.getByLabelText('NGN exchange rate')).toBeDisabled();
   });
 });
 

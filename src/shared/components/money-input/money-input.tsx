@@ -1,15 +1,19 @@
+// TODO: move business logic to service/helpers
+
 import { Input } from '@/shared/components/input';
 import countries from '@/shared/configs/countries.json';
 import currencies from '@/shared/configs/currencies.json';
 import { forwardRef, useCallback, useMemo, useState } from 'react';
+
+export type UMoneyInputDecimalType = 'money' | 'number';
 
 export interface MoneyInputProps extends Omit<
   React.ComponentProps<'input'>,
   'value' | 'onChange'
 > {
   currencyCode?: string;
+  decimalType?: UMoneyInputDecimalType;
   locale?: string;
-  relaxed?: boolean;
   value?: string | number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
@@ -33,8 +37,8 @@ const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
     const {
       className,
       currencyCode,
+      decimalType = 'money',
       locale,
-      relaxed,
       value,
       onChange,
       onBlur,
@@ -50,7 +54,7 @@ const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
       return undefined;
     }, [locale, currencyCode]);
 
-    const isRelaxed = relaxed ?? !currencyCode;
+    const preservesFractionalDigits = decimalType === 'number';
 
     const maxDecimals = useMemo(() => {
       if (currencyCode) {
@@ -89,7 +93,7 @@ const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
         let decimalPart = '';
 
         if (parts.length > 1) {
-          if (isRelaxed) {
+          if (preservesFractionalDigits) {
             decimalPart = '.' + parts[1];
           } else if (maxDecimals > 0) {
             decimalPart = '.' + parts[1].slice(0, maxDecimals);
@@ -103,7 +107,7 @@ const MoneyInput = forwardRef<HTMLInputElement, MoneyInputProps>(
 
         return (isNegative ? '-' : '') + formattedInteger + decimalPart;
       },
-      [intFormatter, maxDecimals, isRelaxed]
+      [intFormatter, maxDecimals, preservesFractionalDigits]
     );
 
     const [prevValueProp, setPrevValueProp] = useState(value);

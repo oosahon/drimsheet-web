@@ -89,7 +89,7 @@ const createStoryQueryClient = () => {
     },
   });
 
-  queryClient.setQueryData(['currencyService.getAll'], mockCurrencies);
+  queryClient.setQueryData(['currencyService', 'getAll'], mockCurrencies);
 
   return queryClient;
 };

@@ -37,6 +37,13 @@ const categories = [
     type: 'revenue',
     balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
   },
+  {
+    id: 'services',
+    code: '4100',
+    name: 'Professional services',
+    type: 'revenue',
+    balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
+  },
 ] as unknown as ILedgerAccountDto[];
 
 const validationMessages: ICashTransactionFormValidationMessages = {
@@ -64,7 +71,7 @@ const validValues: ICashTransactionFormValues = {
   categoryId: 'sales',
   amount: { amount: 250, currencyCode: 'NGN', isMinorUnit: false },
   date: '2026-08-10',
-  exchangeRate: '',
+  exchangeRate: null,
   isItemized: false,
   items: [],
   counterparty: { name: 'Counterparty' },
@@ -271,7 +278,10 @@ describe('CashTransactionForm', () => {
     );
 
     expect(screen.getByLabelText('Exchange rate')).toHaveValue('1,500');
-    expect(screen.getByRole('alert')).toHaveTextContent('Official rate: 1500');
+    expect(screen.getByText(/Official rate:/)).toHaveTextContent(
+      'Official rate: 1500'
+    );
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: 'Create' }));
 
@@ -280,8 +290,41 @@ describe('CashTransactionForm', () => {
         ...validValues,
         accountId: 'usd-bank',
         amount: { ...validValues.amount, currencyCode: 'USD' },
-        exchangeRate: '1500',
+        exchangeRate: { value: 1500, inverted: false },
       })
+    );
+  });
+
+  it('preserves an inverted foreign exchange rate through submission', async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+
+    render(
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
+        functionalCurrencyCode="NGN"
+        initialValues={{
+          ...validValues,
+          accountId: 'usd-bank',
+          amount: { ...validValues.amount, currencyCode: 'USD' },
+          exchangeRate: { value: 1000, inverted: false },
+        }}
+        onCurrencyContextChange={() => undefined}
+        onSubmit={onSubmit}
+        categories={categories}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+    await user.click(screen.getByRole('button', { name: 'Create' }));
+
+    await waitFor(() =>
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          exchangeRate: { value: 0.001, inverted: true },
+        })
+      )
     );
   });
 
@@ -505,6 +548,35 @@ describe('CashTransactionForm', () => {
     expect(createButton).toBeEnabled();
   });
 
+  it('excludes categories already used by another itemized row', async () => {
+    const user = userEvent.setup();
+    render(
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
+        functionalCurrencyCode="NGN"
+        initialValues={validValues}
+        onCurrencyContextChange={() => undefined}
+        onSubmit={() => undefined}
+        categories={categories}
+      />
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: 'Itemize this transaction' })
+    );
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await user.click(screen.getByRole('button', { name: 'Add a new item' }));
+    await user.click(screen.getByRole('combobox', { name: 'Category' }));
+
+    expect(
+      screen.queryByRole('option', { name: 'Sales revenue' })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('option', { name: 'Professional services' })
+    ).toBeInTheDocument();
+  });
+
   it('clears edit mode when a currency change discards a child draft', async () => {
     const user = userEvent.setup();
     render(
@@ -586,7 +658,9 @@ describe('CashTransactionForm', () => {
     await user.click(screen.getByRole('button', { name: 'Add a new item' }));
     await user.type(screen.getAllByLabelText('Amount')[1], '100');
     await user.click(screen.getByRole('combobox', { name: 'Category' }));
-    await user.click(screen.getByRole('option', { name: 'Sales revenue' }));
+    await user.click(
+      screen.getByRole('option', { name: 'Professional services' })
+    );
     await user.click(screen.getByRole('button', { name: 'Save' }));
     await user.click(
       screen.getByRole('button', { name: 'Back to single entry' })

@@ -157,7 +157,9 @@ describe('OutflowFormContainer', () => {
         side: 'destination',
       })
     );
-    expect(toast.success).toHaveBeenCalledWith('Payment created successfully');
+    expect(toast.success).toHaveBeenCalledWith(
+      'Transaction was created successfully.'
+    );
     expect(handleApiError).not.toHaveBeenCalled();
   });
 });

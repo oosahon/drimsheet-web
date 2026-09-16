@@ -3,6 +3,15 @@ import { drimsheetApi } from '@/shared/lib/api';
 import type { IExchangeRateQueryParam } from '@/shared/lib/api/Api';
 
 export const currencyService = {
+  invertRate(rate: string | number | null | undefined): number | undefined {
+    if (rate === null || rate === undefined || rate === '') return undefined;
+
+    const parsedRate = Number(rate);
+    if (!Number.isFinite(parsedRate) || parsedRate <= 0) return undefined;
+
+    return 1 / parsedRate;
+  },
+
   async getAll() {
     const res = await drimsheetApi.currencies.getAllCurrencies();
     return res.data;

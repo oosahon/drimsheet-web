@@ -26,11 +26,14 @@ FormValues -> component orchestration -> feature mapper -> generated DTO -> API 
 ## Responsibilities
 
 - Mappers transform, normalize, and serialize values.
+- Use mappers only at boundaries between client-owned contracts and external
+  API contracts.
 - Mappers must not validate business or form rules.
 - Validation belongs in form validation, domain validation, or an API boundary.
 - A mapper may assume its input has already passed the owning validation layer.
-- Delegate reusable scalar/value transformations to shared mappers, such as
-  `moneyMapper` and `currencyMapper`.
+- Delegate reusable client-domain operations to shared services. A mapper may
+  call those services when the same operation is required while constructing an
+  external API contract.
 
 ## Explicit Mapping
 

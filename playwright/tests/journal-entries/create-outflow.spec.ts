@@ -46,6 +46,15 @@ const destinationAccounts = [
     behavior: 'expense',
     balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
   },
+  {
+    id: 'marketing-expense',
+    code: '6010',
+    name: 'Marketing expense',
+    type: 'expense',
+    subType: 'marketing_and_selling',
+    behavior: 'expense',
+    balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
+  },
 ];
 
 const counterparties = [
@@ -304,7 +313,7 @@ test.describe('Outflow payment creation', () => {
       limit: '1',
       type: 'official',
     });
-    await expect(page.getByRole('alert')).toHaveText('Official rate: 1401');
+    await expect(page.getByText('Official rate: 1401')).toBeVisible();
 
     const previousDate = new Date(`${firstQuery.asOf}T00:00:00.000Z`);
     previousDate.setUTCDate(previousDate.getUTCDate() - 1);
@@ -334,7 +343,7 @@ test.describe('Outflow payment creation', () => {
       limit: '1',
       type: 'official',
     });
-    await expect(page.getByRole('alert')).toHaveText('Official rate: 1402');
+    await expect(page.getByText('Official rate: 1402')).toBeVisible();
 
     await account.fill('NGN');
     await page.getByRole('option', { name: 'NGN operating account' }).click();
@@ -401,7 +410,9 @@ test.describe('Outflow payment creation', () => {
 
     releasePaymentResponse();
 
-    await expect(page.getByText('Payment created successfully')).toBeVisible();
+    await expect(
+      page.getByText('Transaction was created successfully.')
+    ).toBeVisible();
     expect(requestCount).toBe(1);
     expect(capturedRequestBody).not.toBeNull();
 
@@ -503,11 +514,13 @@ test.describe('Outflow payment creation', () => {
     await page.getByRole('button', { name: 'Add a new item' }).click();
     await page.getByLabel('Amount', { exact: true }).nth(1).fill('150');
     await page.getByRole('combobox', { name: 'Category' }).click();
-    await page.getByRole('option', { name: 'Office expense' }).click();
+    await page.getByRole('option', { name: 'Marketing expense' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
 
     await page.getByRole('button', { name: 'Create' }).click();
-    await expect(page.getByText('Payment created successfully')).toBeVisible();
+    await expect(
+      page.getByText('Transaction was created successfully.')
+    ).toBeVisible();
 
     const body = capturedRequestBody as unknown as IPaymentEntryReq;
     expect(body.sourceLine.accountId).toBe('ngn-bank');
@@ -520,7 +533,7 @@ test.describe('Outflow payment creation', () => {
         sequenceOrder: 2,
       }),
       expect.objectContaining({
-        accountId: 'office-expense',
+        accountId: 'marketing-expense',
         amount: expect.objectContaining({ amount: 150 }),
         sequenceOrder: 3,
       }),

@@ -1,3 +1,4 @@
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
@@ -23,14 +24,15 @@ const optionalNumber = (typeErrorMessage: string) =>
   yup
     .number()
     .transform((value, originalValue) => {
-      if (originalValue === '') return undefined;
+      if (originalValue === null || originalValue === '') return undefined;
       return value;
     })
     .typeError(typeErrorMessage);
 
 export function createBankAccountFormValidation(
   accountingCurrencyCode: string,
-  messages: BankAccountValidationMessages
+  messages: BankAccountValidationMessages,
+  officialExchangeRate?: IExchangeRate
 ) {
   return yup.object({
     name: yup
@@ -57,25 +59,39 @@ export function createBankAccountFormValidation(
       then: (schema) => schema.required(messages.openingDateRequired),
       otherwise: (schema) => schema.notRequired(),
     }),
-    exchangeRate: optionalNumber(messages.exchangeRateNumber).when(
-      ['createWithoutOpeningBalance', 'currencyCode'],
-      {
-        is: (createWithoutOpeningBalance: boolean, currencyCode: string) =>
-          !createWithoutOpeningBalance &&
-          Boolean(currencyCode) &&
-          currencyCode !== accountingCurrencyCode,
-        then: (schema) =>
-          schema
-            .required(messages.exchangeRateRequired)
-            .moreThan(0, messages.exchangeRatePositive),
-        otherwise: (schema) => schema.notRequired(),
-      }
-    ),
+    exchangeRate: yup
+      .mixed<{ value: number; inverted: boolean }>()
+      .nullable()
+      .test('required', messages.exchangeRateRequired, function (exchangeRate) {
+        const values = this.parent as {
+          createWithoutOpeningBalance: boolean;
+          currencyCode: string;
+        };
+        const required =
+          !values.createWithoutOpeningBalance &&
+          Boolean(values.currencyCode) &&
+          values.currencyCode !== accountingCurrencyCode;
+
+        return (
+          !required || Boolean(officialExchangeRate) || exchangeRate !== null
+        );
+      })
+      .test('number', messages.exchangeRateNumber, (exchangeRate) =>
+        exchangeRate == null ? true : Number.isFinite(exchangeRate.value)
+      )
+      .test('positive', messages.exchangeRatePositive, (exchangeRate) =>
+        exchangeRate == null || !Number.isFinite(exchangeRate.value)
+          ? true
+          : exchangeRate.value > 0
+      ),
     isSubAccount: yup.boolean().required(),
   });
 }
 
-export function useBankAccountFormValidation(accountingCurrencyCode: string) {
+export function useBankAccountFormValidation(
+  accountingCurrencyCode: string,
+  officialExchangeRate?: IExchangeRate
+) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
 
   const account_name_required_text = t('account_name_required_text');
@@ -97,22 +113,26 @@ export function useBankAccountFormValidation(accountingCurrencyCode: string) {
 
   return useMemo(
     () =>
-      createBankAccountFormValidation(accountingCurrencyCode, {
-        accountNameRequired: account_name_required_text,
-        accountNameMinLength: account_name_min_length_text,
-        accountNameMaxLength: account_name_max_length_text,
-        currencyRequired: currency_required_text,
-        bankLocationRequired: bank_location_required_text,
-        bankNameRequired: bank_name_required_text,
-        bankAccountNumberRequired: bank_account_number_required_text,
-        bankAccountNameRequired: bank_account_name_required_text,
-        openingBalanceRequired: opening_balance_required_text,
-        openingBalanceNumber: opening_balance_number_text,
-        openingDateRequired: opening_date_required_text,
-        exchangeRateRequired: exchange_rate_required_text,
-        exchangeRateNumber: exchange_rate_number_text,
-        exchangeRatePositive: exchange_rate_positive_text,
-      }),
+      createBankAccountFormValidation(
+        accountingCurrencyCode,
+        {
+          accountNameRequired: account_name_required_text,
+          accountNameMinLength: account_name_min_length_text,
+          accountNameMaxLength: account_name_max_length_text,
+          currencyRequired: currency_required_text,
+          bankLocationRequired: bank_location_required_text,
+          bankNameRequired: bank_name_required_text,
+          bankAccountNumberRequired: bank_account_number_required_text,
+          bankAccountNameRequired: bank_account_name_required_text,
+          openingBalanceRequired: opening_balance_required_text,
+          openingBalanceNumber: opening_balance_number_text,
+          openingDateRequired: opening_date_required_text,
+          exchangeRateRequired: exchange_rate_required_text,
+          exchangeRateNumber: exchange_rate_number_text,
+          exchangeRatePositive: exchange_rate_positive_text,
+        },
+        officialExchangeRate
+      ),
     [
       accountingCurrencyCode,
       account_name_required_text,
@@ -126,6 +146,7 @@ export function useBankAccountFormValidation(accountingCurrencyCode: string) {
       opening_balance_required_text,
       opening_balance_number_text,
       opening_date_required_text,
+      officialExchangeRate,
       exchange_rate_required_text,
       exchange_rate_number_text,
       exchange_rate_positive_text,

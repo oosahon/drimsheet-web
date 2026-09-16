@@ -390,9 +390,7 @@ export function CashTransactionForm({
                   officialRateMatches ? officialExchangeRate : undefined
                 }
                 onBlur={formik.handleBlur}
-                onChange={(event) =>
-                  void formik.setFieldValue('exchangeRate', event.target.value)
-                }
+                onChange={(v) => formik.setFieldValue('exchangeRate', v)}
                 targetCurrency={functionalCurrencyCode}
                 value={formik.values.exchangeRate}
               />
@@ -418,6 +416,7 @@ export function CashTransactionForm({
                 currencyCode={accountCurrencyCode}
                 defaultValue={formik.values.items}
                 disabled={interactionDisabled}
+                excludeSelectedAccounts
                 initialEditItemId={initialItemizedEditItemId}
                 onChange={handleItemsChange}
                 onEditModeChange={handleItemizedEditModeChange}

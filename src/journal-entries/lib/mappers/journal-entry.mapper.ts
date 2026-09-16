@@ -31,6 +31,21 @@ interface IJournalEntryLineMappingInput {
   sequenceOrder: number;
 }
 
+function toEnteredExchangeRatePair(
+  baseCurrencyCode: string,
+  targetCurrencyCode: string,
+  inverted: boolean
+) {
+  if (inverted) {
+    return {
+      baseCurrencyCode: targetCurrencyCode,
+      targetCurrencyCode: baseCurrencyCode,
+    };
+  }
+
+  return { baseCurrencyCode, targetCurrencyCode };
+}
+
 function toExchangeRateQuery(
   currencyContext: ICashTransactionCurrencyContext | undefined,
   functionalCurrencyCode: string
@@ -119,12 +134,19 @@ function toPaymentEntryReq(
   let exchangeRate: IExchangeRateDto | null = null;
 
   if (currencyCode !== functionalCurrencyCode) {
-    exchangeRate = currencyMapper.toUserEnteredExchangeRate({
-      baseCurrencyCode: currencyCode,
-      targetCurrencyCode: functionalCurrencyCode,
-      rate: Number(values.exchangeRate),
-      asOf: values.date,
-    });
+    exchangeRate = currencyMapper.toUserEnteredExchangeRate(
+      {
+        baseCurrencyCode: currencyCode,
+        targetCurrencyCode: functionalCurrencyCode,
+        rate: values.exchangeRate?.value ?? null,
+        asOf: values.date,
+      },
+      toEnteredExchangeRatePair(
+        currencyCode,
+        functionalCurrencyCode,
+        values.exchangeRate?.inverted ?? false
+      )
+    );
   }
 
   const destinationLines = values.isItemized
@@ -177,12 +199,19 @@ function toReceiptEntryReq(
   let exchangeRate: IExchangeRateDto | null = null;
 
   if (currencyCode !== functionalCurrencyCode) {
-    exchangeRate = currencyMapper.toUserEnteredExchangeRate({
-      baseCurrencyCode: currencyCode,
-      targetCurrencyCode: functionalCurrencyCode,
-      rate: Number(values.exchangeRate),
-      asOf: values.date,
-    });
+    exchangeRate = currencyMapper.toUserEnteredExchangeRate(
+      {
+        baseCurrencyCode: currencyCode,
+        targetCurrencyCode: functionalCurrencyCode,
+        rate: values.exchangeRate?.value ?? null,
+        asOf: values.date,
+      },
+      toEnteredExchangeRatePair(
+        currencyCode,
+        functionalCurrencyCode,
+        values.exchangeRate?.inverted ?? false
+      )
+    );
   }
 
   const sourceLines = values.isItemized
@@ -279,24 +308,38 @@ function toTransferEntryReq(
     sourceCurrencyCode !== destinationCurrencyCode &&
     destinationCurrencyCode === functionalCurrencyCode
   ) {
-    sourceExchangeRate = currencyMapper.toUserEnteredExchangeRate({
-      baseCurrencyCode: sourceCurrencyCode,
-      targetCurrencyCode: functionalCurrencyCode,
-      rate: Number(values.exchangeRate),
-      asOf: values.date,
-    });
+    sourceExchangeRate = currencyMapper.toUserEnteredExchangeRate(
+      {
+        baseCurrencyCode: sourceCurrencyCode,
+        targetCurrencyCode: functionalCurrencyCode,
+        rate: values.exchangeRate?.value ?? null,
+        asOf: values.date,
+      },
+      toEnteredExchangeRatePair(
+        sourceCurrencyCode,
+        destinationCurrencyCode,
+        values.exchangeRate?.inverted ?? false
+      )
+    );
   }
 
   if (
     sourceCurrencyCode !== destinationCurrencyCode &&
     sourceCurrencyCode === functionalCurrencyCode
   ) {
-    destinationExchangeRate = currencyMapper.toUserEnteredExchangeRate({
-      baseCurrencyCode: destinationCurrencyCode,
-      targetCurrencyCode: functionalCurrencyCode,
-      rate: 1 / Number(values.exchangeRate),
-      asOf: values.date,
-    });
+    destinationExchangeRate = currencyMapper.toUserEnteredExchangeRate(
+      {
+        baseCurrencyCode: destinationCurrencyCode,
+        targetCurrencyCode: functionalCurrencyCode,
+        rate: values.exchangeRate?.value ?? null,
+        asOf: values.date,
+      },
+      toEnteredExchangeRatePair(
+        sourceCurrencyCode,
+        destinationCurrencyCode,
+        values.exchangeRate?.inverted ?? false
+      )
+    );
   }
 
   const chargeLines = values.isItemized

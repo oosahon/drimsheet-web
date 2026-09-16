@@ -14,6 +14,7 @@ export function OpeningBalanceFields({
   openingBalance,
   openingDate,
   exchangeRate,
+  officialExchangeRate,
   disabled = false,
   openingBalanceError,
   openingDateError,
@@ -95,8 +96,10 @@ export function OpeningBalanceFields({
               aria-label={exchange_rate_label}
               baseCurrency={currencyCode}
               disabled={disabled}
+              displayOfficialRate={Boolean(openingDate)}
               id="exchangeRate"
               name="exchangeRate"
+              officialRate={officialExchangeRate}
               onChange={onExchangeRateChange}
               targetCurrency={accountingCurrencyCode}
               value={exchangeRate}

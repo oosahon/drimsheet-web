@@ -1,4 +1,5 @@
 import type { IItemizedFieldValue } from '@/journal-entries/components/itemized-fields';
+import type { ICurrencyExchangeRateInputValue } from '@/shared/components/currency-exchange-rate-input';
 import type {
   IExchangeRate,
   ILedgerAccountDto,
@@ -11,20 +12,21 @@ export interface ICashTransferFormValues {
   amountSent: IMoneyDto;
   amountReceived: IMoneyDto;
   date: string;
-  exchangeRate: string;
+  exchangeRate: ICurrencyExchangeRateInputValue | null;
   isItemized: boolean;
   items: IItemizedFieldValue[];
   description: string;
   attachment: File | null;
 }
 
+// TODO: remove this absurdity of separate initial value types from value types
 export interface ICashTransferFormInitialValues {
   sourceAccountId?: string;
   destinationAccountId?: string;
   amountSent?: Partial<IMoneyDto>;
   amountReceived?: Partial<IMoneyDto>;
   date?: string;
-  exchangeRate?: string;
+  exchangeRate?: ICurrencyExchangeRateInputValue | null;
   isItemized?: boolean;
   items?: IItemizedFieldValue[];
   description?: string;

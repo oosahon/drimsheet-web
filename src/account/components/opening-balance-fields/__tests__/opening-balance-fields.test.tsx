@@ -1,17 +1,25 @@
 import { OpeningBalanceFields } from '@/account/components/opening-balance-fields';
 import type { OpeningBalanceFieldsProps } from '@/account/components/opening-balance-fields/types';
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('OpeningBalanceFields', () => {
+  const officialExchangeRate = {
+    baseCurrencyCode: 'USD',
+    targetCurrencyCode: 'NGN',
+    rate: 1500,
+    asOf: '2026-07-01T00:00:00.000Z',
+  } as IExchangeRate;
+
   const defaultProps: OpeningBalanceFieldsProps = {
     accountingCurrencyCode: 'NGN',
     currencyCode: 'NGN',
     createWithoutOpeningBalance: false,
     openingBalance: '',
     openingDate: '',
-    exchangeRate: '',
+    exchangeRate: null,
     onCreateWithoutOpeningBalanceChange: vi.fn(),
     onOpeningBalanceChange: vi.fn(),
     onOpeningDateChange: vi.fn(),
@@ -74,6 +82,65 @@ describe('OpeningBalanceFields', () => {
     );
 
     expect(screen.queryByLabelText('Exchange rate')).not.toBeInTheDocument();
+  });
+
+  it('waits for an opening date before showing official-rate helper text', () => {
+    render(<OpeningBalanceFields {...defaultProps} currencyCode="USD" />);
+
+    expect(
+      screen.queryByText('No system official rate')
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows the available official rate as helper text', () => {
+    render(
+      <OpeningBalanceFields
+        {...defaultProps}
+        currencyCode="USD"
+        officialExchangeRate={officialExchangeRate}
+        openingDate="2026-07-01"
+      />
+    );
+
+    expect(screen.getByText(/Official rate:/)).toHaveTextContent(
+      'Official rate: 1500'
+    );
+    expect(screen.getByLabelText('Exchange rate')).toHaveValue('1,500');
+  });
+
+  it('forwards an inverted foreign-currency rate', async () => {
+    const user = userEvent.setup();
+    const onExchangeRateChange = vi.fn();
+
+    render(
+      <OpeningBalanceFields
+        {...defaultProps}
+        currencyCode="USD"
+        exchangeRate={{ value: 1000, inverted: false }}
+        onExchangeRateChange={onExchangeRateChange}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Invert rates' }));
+
+    expect(onExchangeRateChange).toHaveBeenCalledWith({
+      value: 0.001,
+      inverted: true,
+    });
+  });
+
+  it('shows unavailable helper text after an opening date is selected', () => {
+    render(
+      <OpeningBalanceFields
+        {...defaultProps}
+        currencyCode="USD"
+        openingDate="2026-07-01"
+      />
+    );
+
+    expect(screen.getByText('No system official rate')).toHaveClass(
+      'text-warning'
+    );
   });
 
   it('displays field errors when provided', () => {

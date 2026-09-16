@@ -25,39 +25,33 @@ const defaultInitialValues: IPettyCashAccountFormValues = {
   createWithoutOpeningBalance: false,
   openingBalance: '',
   openingDate: '',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
 
 export function PettyCashAccountForm({
   accountingCurrencyCode,
   currencies,
+  officialExchangeRate,
   initialValues,
   loading = false,
   disabled = false,
+  onExchangeRateContextChange,
   onSubmit,
 }: Readonly<PettyCashAccountFormProps>) {
   const { t } = useTranslation<'ledger-accounts'>('ledger-accounts');
   const validationSchema = usePettyCashAccountFormValidation(
-    accountingCurrencyCode
+    accountingCurrencyCode,
+    officialExchangeRate
   );
+  const handleSubmit = (values: IPettyCashAccountFormValues) =>
+    onSubmit(values);
 
   const formik = useFormik<IPettyCashAccountFormValues>({
     enableReinitialize: true,
     initialValues: { ...defaultInitialValues, ...initialValues },
     validationSchema,
-    onSubmit: (values) => {
-      const hasOpeningBalance = !values.createWithoutOpeningBalance;
-      const needsExchangeRate =
-        hasOpeningBalance && values.currencyCode !== accountingCurrencyCode;
-
-      return onSubmit({
-        ...values,
-        openingBalance: hasOpeningBalance ? values.openingBalance : '',
-        openingDate: hasOpeningBalance ? values.openingDate : '',
-        exchangeRate: needsExchangeRate ? values.exchangeRate : '',
-      });
-    },
+    onSubmit: handleSubmit,
   });
 
   const getErrorMessage = useFieldErrorMessage({
@@ -67,17 +61,36 @@ export function PettyCashAccountForm({
 
   const handleCurrencyChange = (value: string) => {
     void formik.setFieldValue('currencyCode', value);
+    void formik.setFieldValue('exchangeRate', null);
+    onExchangeRateContextChange({
+      currencyCode: value,
+      date: formik.values.openingDate,
+      createWithoutOpeningBalance: formik.values.createWithoutOpeningBalance,
+    });
   };
 
   const handleCreateWithoutOpeningBalanceChange = (checked: boolean) => {
     void formik.setFieldValue('createWithoutOpeningBalance', checked);
+    if (checked) {
+      void formik.setFieldValue('exchangeRate', null);
+    }
+    onExchangeRateContextChange({
+      currencyCode: formik.values.currencyCode,
+      date: formik.values.openingDate,
+      createWithoutOpeningBalance: checked,
+    });
   };
 
   const handleOpeningDateChange = (value: string) => {
     void formik.setFieldValue('openingDate', value);
+    onExchangeRateContextChange({
+      currencyCode: formik.values.currencyCode,
+      date: value,
+      createWithoutOpeningBalance: formik.values.createWithoutOpeningBalance,
+    });
   };
 
-  const account_name_label = t('account_name');
+  const account_name_label = t('account_display_name');
   const currency_label = t('currency_label');
   const create_as_sub_account_label = t('create_as_sub_account_label');
   const create_account_text = t('create_account_text');
@@ -123,10 +136,13 @@ export function PettyCashAccountForm({
             disabled={disabled || loading}
             exchangeRate={formik.values.exchangeRate}
             exchangeRateError={getErrorMessage('exchangeRate')}
+            officialExchangeRate={officialExchangeRate}
             onCreateWithoutOpeningBalanceChange={
               handleCreateWithoutOpeningBalanceChange
             }
-            onExchangeRateChange={formik.handleChange}
+            onExchangeRateChange={(v) =>
+              formik.setFieldValue('exchangeRate', v)
+            }
             onOpeningBalanceChange={formik.handleChange}
             onOpeningDateChange={handleOpeningDateChange}
             openingBalance={formik.values.openingBalance}

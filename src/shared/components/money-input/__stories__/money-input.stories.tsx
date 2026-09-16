@@ -38,8 +38,12 @@ export const WithLocale: Story = {
   },
 };
 
-export const Relaxed: Story = {
-  args: { relaxed: true, placeholder: 'Relaxed Input' },
+export const NumberDecimals: Story = {
+  args: {
+    currencyCode: 'USD',
+    decimalType: 'number',
+    placeholder: 'Numeric value',
+  },
 };
 
 export const WithInitialValue: Story = {

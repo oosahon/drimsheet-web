@@ -1,4 +1,5 @@
 import { createPettyCashAccountFormValidation } from '@/account/components/petty-cash-account-form/validation';
+import type { IExchangeRate } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
 const messages = {
@@ -16,6 +17,7 @@ const messages = {
 };
 
 const schema = createPettyCashAccountFormValidation('NGN', messages);
+const officialExchangeRate = { rate: 1500 } as IExchangeRate;
 
 const validValues = {
   name: 'Office cash',
@@ -23,7 +25,7 @@ const validValues = {
   createWithoutOpeningBalance: false,
   openingBalance: 100,
   openingDate: '2026-07-01',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
 
@@ -84,7 +86,7 @@ describe('petty cash account form validation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: '',
+        exchangeRate: null,
       })
     ).rejects.toThrow('Exchange rate is required');
   });
@@ -94,8 +96,24 @@ describe('petty cash account form validation', () => {
       schema.validate({
         ...validValues,
         currencyCode: 'USD',
-        exchangeRate: 0,
+        exchangeRate: { value: 0, inverted: false },
       })
     ).rejects.toThrow('Exchange rate must be positive');
+  });
+
+  it('accepts a foreign currency without a manual rate when an official rate is available', async () => {
+    const schemaWithOfficialRate = createPettyCashAccountFormValidation(
+      'NGN',
+      messages,
+      officialExchangeRate
+    );
+
+    await expect(
+      schemaWithOfficialRate.validate({
+        ...validValues,
+        currencyCode: 'USD',
+        exchangeRate: null,
+      })
+    ).resolves.toBeDefined();
   });
 });

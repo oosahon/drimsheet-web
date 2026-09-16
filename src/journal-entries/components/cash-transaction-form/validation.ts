@@ -70,60 +70,82 @@ export function createCashTransactionFormValidation(
   officialExchangeRate?: IExchangeRate
 ) {
   const exchangeRateValidation = yup
-    .string()
-    .test('required-exchange-rate', messages.exchangeRateRequired, function () {
-      const values = this.parent as ICashTransactionFormValues;
-      const required = requiresExchangeRate(
-        values.accountId,
-        accounts,
-        functionalCurrencyCode
-      );
-      const accountCurrencyCode = accounts.find(
-        (account) => account.id === values.accountId
-      )?.balance.currencyCode;
-      const hasOfficialRate = cashTransactionFormHelpers.matchesOfficialRate(
-        officialExchangeRate,
-        accountCurrencyCode ?? '',
-        functionalCurrencyCode,
-        values.date
-      );
+    .mixed<NonNullable<ICashTransactionFormValues['exchangeRate']>>()
+    .nullable()
+    .test(
+      'required-exchange-rate',
+      messages.exchangeRateRequired,
+      function (exchangeRate) {
+        const values = this.parent as ICashTransactionFormValues;
+        const required = requiresExchangeRate(
+          values.accountId,
+          accounts,
+          functionalCurrencyCode
+        );
+        const accountCurrencyCode = accounts.find(
+          (account) => account.id === values.accountId
+        )?.balance.currencyCode;
+        const hasOfficialRate = cashTransactionFormHelpers.matchesOfficialRate(
+          officialExchangeRate,
+          accountCurrencyCode ?? '',
+          functionalCurrencyCode,
+          values.date
+        );
 
-      return (
-        !required || hasOfficialRate || Boolean(values.exchangeRate?.trim())
-      );
-    })
-    .test('numeric-exchange-rate', messages.exchangeRateNumber, function () {
-      const values = this.parent as ICashTransactionFormValues;
-      const required = requiresExchangeRate(
-        values.accountId,
-        accounts,
-        functionalCurrencyCode
-      );
-      const exchangeRate = values.exchangeRate?.trim();
+        if (!required || hasOfficialRate || exchangeRate != null) {
+          return true;
+        }
 
-      if (!required || !exchangeRate) return true;
-
-      return Number.isFinite(Number(exchangeRate));
-    })
-    .test('positive-exchange-rate', messages.exchangeRatePositive, function () {
-      const values = this.parent as ICashTransactionFormValues;
-      const required = requiresExchangeRate(
-        values.accountId,
-        accounts,
-        functionalCurrencyCode
-      );
-      const exchangeRate = values.exchangeRate?.trim();
-
-      if (
-        !required ||
-        !exchangeRate ||
-        !Number.isFinite(Number(exchangeRate))
-      ) {
-        return true;
+        return false;
       }
+    )
+    .test(
+      'numeric-exchange-rate',
+      messages.exchangeRateNumber,
+      function (exchangeRate) {
+        const values = this.parent as ICashTransactionFormValues;
+        const required = requiresExchangeRate(
+          values.accountId,
+          accounts,
+          functionalCurrencyCode
+        );
+        const rate = exchangeRate?.value;
 
-      return Number(exchangeRate) > 0;
-    });
+        if (!required || rate === null || rate === undefined) return true;
+
+        return (
+          Number.isFinite(rate) ||
+          this.createError({ message: messages.exchangeRateNumber })
+        );
+      }
+    )
+    .test(
+      'positive-exchange-rate',
+      messages.exchangeRatePositive,
+      function (exchangeRate) {
+        const values = this.parent as ICashTransactionFormValues;
+        const required = requiresExchangeRate(
+          values.accountId,
+          accounts,
+          functionalCurrencyCode
+        );
+        const rate = exchangeRate?.value;
+
+        if (
+          !required ||
+          rate === null ||
+          rate === undefined ||
+          !Number.isFinite(rate)
+        ) {
+          return true;
+        }
+
+        return (
+          rate > 0 ||
+          this.createError({ message: messages.exchangeRatePositive })
+        );
+      }
+    );
 
   const moneyValidation = yup.object({
     amount: yup

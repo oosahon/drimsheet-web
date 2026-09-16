@@ -1,7 +1,7 @@
 import type { IBankAccountFormValues } from '@/account/components/bank-account-form';
 import type { IPettyCashAccountFormValues } from '@/account/components/petty-cash-account-form';
 import { assetAccountMapper } from '@/account/lib/mappers/asset-account.mapper';
-import { EExchangeRateType } from '@/shared/lib/api/Api';
+import { EExchangeRateType, type IExchangeRate } from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
 const values: IPettyCashAccountFormValues = {
@@ -10,7 +10,7 @@ const values: IPettyCashAccountFormValues = {
   createWithoutOpeningBalance: false,
   openingBalance: 100,
   openingDate: '2026-07-01',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
 
@@ -24,11 +24,81 @@ const bankFormValues: IBankAccountFormValues = {
   createWithoutOpeningBalance: false,
   openingBalance: 5000,
   openingDate: '2026-07-01',
-  exchangeRate: '',
+  exchangeRate: null,
   isSubAccount: false,
 };
 
 describe('assetAccountMapper', () => {
+  describe('toOpeningBalanceExchangeRateQuery', () => {
+    it('maps complete foreign-currency context to an official-rate query', () => {
+      expect(
+        assetAccountMapper.toOpeningBalanceExchangeRateQuery(
+          {
+            currencyCode: 'USD',
+            date: '2026-07-01',
+            createWithoutOpeningBalance: false,
+          },
+          'NGN'
+        )
+      ).toEqual({
+        currencyPair: 'USD/NGN',
+        type: EExchangeRateType.Official,
+        asOf: '2026-07-01',
+        limit: 1,
+      });
+    });
+
+    it.each([
+      [
+        {
+          currencyCode: '',
+          date: '2026-07-01',
+          createWithoutOpeningBalance: false,
+        },
+        'NGN',
+      ],
+      [
+        {
+          currencyCode: 'USD',
+          date: '',
+          createWithoutOpeningBalance: false,
+        },
+        'NGN',
+      ],
+      [
+        {
+          currencyCode: 'NGN',
+          date: '2026-07-01',
+          createWithoutOpeningBalance: false,
+        },
+        'NGN',
+      ],
+      [
+        {
+          currencyCode: 'USD',
+          date: '2026-07-01',
+          createWithoutOpeningBalance: true,
+        },
+        'NGN',
+      ],
+      [
+        {
+          currencyCode: 'USD',
+          date: '2026-07-01',
+          createWithoutOpeningBalance: false,
+        },
+        '',
+      ],
+    ])('omits queries for ineligible context', (context, currencyCode) => {
+      expect(
+        assetAccountMapper.toOpeningBalanceExchangeRateQuery(
+          context,
+          currencyCode
+        )
+      ).toBeUndefined();
+    });
+  });
+
   describe('toPettyCashAccountCreationDto', () => {
     it('maps an account without an opening balance', () => {
       expect(
@@ -75,7 +145,7 @@ describe('assetAccountMapper', () => {
             ...values,
             name: 'Travel cash',
             currencyCode: 'USD',
-            exchangeRate: 1500,
+            exchangeRate: { value: 1500, inverted: false },
           },
           'NGN'
         )
@@ -99,6 +169,37 @@ describe('assetAccountMapper', () => {
             source: 'manual',
           },
         },
+      });
+    });
+
+    it('uses an official rate when the petty-cash form rate is null', () => {
+      const result = assetAccountMapper.toPettyCashAccountCreationDto(
+        { ...values, currencyCode: 'USD' },
+        'NGN',
+        { rate: 1500 } as IExchangeRate
+      );
+
+      expect(result.openingBalance?.exchangeRate).toMatchObject({
+        baseCurrencyCode: 'USD',
+        targetCurrencyCode: 'NGN',
+        rate: 1500,
+      });
+    });
+
+    it('restores an inverted petty-cash rate to the canonical pair', () => {
+      const result = assetAccountMapper.toPettyCashAccountCreationDto(
+        {
+          ...values,
+          currencyCode: 'USD',
+          exchangeRate: { value: 0.001, inverted: true },
+        },
+        'NGN'
+      );
+
+      expect(result.openingBalance?.exchangeRate).toMatchObject({
+        baseCurrencyCode: 'USD',
+        targetCurrencyCode: 'NGN',
+        rate: 1000,
       });
     });
 
@@ -167,7 +268,7 @@ describe('assetAccountMapper', () => {
           {
             ...bankFormValues,
             currencyCode: 'USD',
-            exchangeRate: 1500,
+            exchangeRate: { value: 1500, inverted: false },
           },
           'NGN'
         )
@@ -195,6 +296,37 @@ describe('assetAccountMapper', () => {
             source: 'manual',
           },
         },
+      });
+    });
+
+    it('uses an official rate when the bank form rate is null', () => {
+      const result = assetAccountMapper.toBankAccountCreationDto(
+        { ...bankFormValues, currencyCode: 'USD' },
+        'NGN',
+        { rate: 1500 } as IExchangeRate
+      );
+
+      expect(result.openingBalance?.exchangeRate).toMatchObject({
+        baseCurrencyCode: 'USD',
+        targetCurrencyCode: 'NGN',
+        rate: 1500,
+      });
+    });
+
+    it('restores an inverted bank-account rate to the canonical pair', () => {
+      const result = assetAccountMapper.toBankAccountCreationDto(
+        {
+          ...bankFormValues,
+          currencyCode: 'USD',
+          exchangeRate: { value: 0.001, inverted: true },
+        },
+        'NGN'
+      );
+
+      expect(result.openingBalance?.exchangeRate).toMatchObject({
+        baseCurrencyCode: 'USD',
+        targetCurrencyCode: 'NGN',
+        rate: 1000,
       });
     });
   });

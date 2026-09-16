@@ -3,7 +3,6 @@ export { CashTransactionFormSkeleton } from './skeleton';
 export type {
   CashTransactionFormProps,
   ICashTransactionCurrencyContext,
-  ICashTransactionFormInitialValues,
   ICashTransactionFormValues,
   UCashTransactionFormVariant,
 } from './types';

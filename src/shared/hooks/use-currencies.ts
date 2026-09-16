@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export function useCurrencies() {
   return useQuery({
-    queryKey: ['currencyService.getAll'],
+    queryKey: ['currencyService', 'getAll'],
     queryFn: () => currencyService.getAll(),
   });
 }
