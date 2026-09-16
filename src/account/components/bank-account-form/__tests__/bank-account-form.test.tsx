@@ -87,7 +87,7 @@ describe('BankAccountForm', () => {
   it('renders all form controls with accessible labels and info alert', () => {
     renderForm();
 
-    expect(screen.getByLabelText('Account Display Name')).toBeInTheDocument();
+    expect(screen.getByLabelText('Account display name')).toBeInTheDocument();
     expect(screen.getByLabelText('Currency')).toBeInTheDocument();
     expect(
       screen.getByRole('combobox', { name: 'Bank location' })
@@ -353,7 +353,7 @@ describe('BankAccountFormContainer', () => {
       </QueryClientProvider>
     );
 
-    const nameInput = screen.getByLabelText('Account Display Name');
+    const nameInput = screen.getByLabelText('Account display name');
     await user.type(nameInput, 'Treasury Account');
 
     const locationInput = screen.getByPlaceholderText('Select a country');

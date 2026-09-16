@@ -46,6 +46,15 @@ const sourceAccounts = [
     behavior: 'services',
     balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
   },
+  {
+    id: 'professional-services',
+    code: '4010',
+    name: 'Professional services',
+    type: 'revenue',
+    subType: 'services',
+    behavior: 'services',
+    balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
+  },
 ];
 
 const counterparties = [
@@ -301,7 +310,7 @@ test.describe('Inflow receipt creation', () => {
       limit: '1',
       type: 'official',
     });
-    await expect(page.getByRole('alert')).toHaveText('Official rate: 1401');
+    await expect(page.getByText('Official rate: 1401')).toBeVisible();
 
     const previousDate = new Date(`${firstQuery.asOf}T00:00:00.000Z`);
     previousDate.setUTCDate(previousDate.getUTCDate() - 1);
@@ -331,7 +340,7 @@ test.describe('Inflow receipt creation', () => {
       limit: '1',
       type: 'official',
     });
-    await expect(page.getByRole('alert')).toHaveText('Official rate: 1402');
+    await expect(page.getByText('Official rate: 1402')).toBeVisible();
 
     await account.fill('NGN');
     await page.getByRole('option', { name: 'NGN operating account' }).click();
@@ -398,7 +407,9 @@ test.describe('Inflow receipt creation', () => {
 
     releaseReceiptResponse();
 
-    await expect(page.getByText('Receipt created successfully')).toBeVisible();
+    await expect(
+      page.getByText('Transaction was created successfully.')
+    ).toBeVisible();
     expect(requestCount).toBe(1);
     expect(capturedRequestBody).not.toBeNull();
 
@@ -510,7 +521,7 @@ test.describe('Inflow receipt creation', () => {
       '100'
     );
     await page.getByRole('combobox', { name: 'Category' }).click();
-    await page.getByRole('option', { name: 'Consulting revenue' }).click();
+    await page.getByRole('option', { name: 'Professional services' }).click();
     await page.getByRole('button', { name: 'Save' }).click();
     await expect(page.getByLabel('Amount', { exact: true }).nth(0)).toHaveValue(
       '250'
@@ -523,7 +534,9 @@ test.describe('Inflow receipt creation', () => {
     await page.getByRole('button', { name: 'Keep itemized entry' }).click();
 
     await page.getByRole('button', { name: 'Create' }).click();
-    await expect(page.getByText('Receipt created successfully')).toBeVisible();
+    await expect(
+      page.getByText('Transaction was created successfully.')
+    ).toBeVisible();
 
     const body = capturedRequestBody as unknown as IReceiptEntryReq;
     expect(body.destinationLine.accountId).toBe('ngn-bank');
@@ -536,7 +549,7 @@ test.describe('Inflow receipt creation', () => {
         sequenceOrder: 1,
       }),
       expect.objectContaining({
-        accountId: 'consulting-revenue',
+        accountId: 'professional-services',
         amount: expect.objectContaining({ amount: 150 }),
         sequenceOrder: 2,
       }),

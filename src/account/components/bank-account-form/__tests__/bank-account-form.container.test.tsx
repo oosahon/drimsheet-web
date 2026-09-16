@@ -70,7 +70,7 @@ describe('BankAccountFormContainer', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText('Account Display Name');
+    const nameInput = screen.getByLabelText('Account display name');
     await user.type(nameInput, 'My Operating Account');
 
     const locationInput = screen.getByPlaceholderText('Select a country');

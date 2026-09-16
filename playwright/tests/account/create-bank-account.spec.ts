@@ -154,7 +154,7 @@ test.describe('Bank Account Creation Flow', () => {
 
     // Fill form
     await bankDialog
-      .getByRole('textbox', { name: 'Account name', exact: true })
+      .getByRole('textbox', { name: 'Account display name', exact: true })
       .fill('Main Operating Account');
 
     // Select bank name (automatically populated for NG)
@@ -246,7 +246,7 @@ test.describe('Bank Account Creation Flow', () => {
 
     // Fill form
     await bankDialog
-      .getByRole('textbox', { name: 'Account name', exact: true })
+      .getByRole('textbox', { name: 'Account display name', exact: true })
       .fill('Retained Form Account');
     await bankDialog.getByRole('combobox', { name: 'Bank name' }).click();
     await page.getByRole('option', { name: 'Access Bank' }).click();
@@ -268,7 +268,10 @@ test.describe('Bank Account Creation Flow', () => {
     await expect(bankDialog).toBeVisible();
     await expect(bankDialog.getByText('retained-statement.pdf')).toBeVisible();
     await expect(
-      bankDialog.getByRole('textbox', { name: 'Account name', exact: true })
+      bankDialog.getByRole('textbox', {
+        name: 'Account display name',
+        exact: true,
+      })
     ).toHaveValue('Retained Form Account');
     await expect(
       bankDialog.getByRole('textbox', { name: 'Bank account number' })
@@ -293,7 +296,7 @@ test.describe('Bank Account Creation Flow', () => {
 
     // Fill form and attach file
     await bankDialog
-      .getByRole('textbox', { name: 'Account name', exact: true })
+      .getByRole('textbox', { name: 'Account display name', exact: true })
       .fill('Draft Account');
     const fileInput = bankDialog.locator('input[type="file"]');
     await fileInput.setInputFiles({
@@ -315,7 +318,10 @@ test.describe('Bank Account Creation Flow', () => {
     // Verify reopened form and statement upload are clean
     await expect(bankDialog).toBeVisible();
     await expect(
-      bankDialog.getByRole('textbox', { name: 'Account name', exact: true })
+      bankDialog.getByRole('textbox', {
+        name: 'Account display name',
+        exact: true,
+      })
     ).toHaveValue('');
     await expect(bankDialog.getByText('draft-statement.pdf')).not.toBeVisible();
   });

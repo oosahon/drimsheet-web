@@ -44,12 +44,14 @@ export function PettyCashAccountForm({
     accountingCurrencyCode,
     officialExchangeRate
   );
+  const handleSubmit = (values: IPettyCashAccountFormValues) =>
+    onSubmit(values);
 
   const formik = useFormik<IPettyCashAccountFormValues>({
     enableReinitialize: true,
     initialValues: { ...defaultInitialValues, ...initialValues },
     validationSchema,
-    onSubmit,
+    onSubmit: handleSubmit,
   });
 
   const getErrorMessage = useFieldErrorMessage({

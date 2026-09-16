@@ -68,7 +68,7 @@ describe('PettyCashAccountForm', () => {
   it('renders the form controls with accessible labels', () => {
     renderForm();
 
-    expect(screen.getByLabelText('Account Display Name')).toBeInTheDocument();
+    expect(screen.getByLabelText('Account display name')).toBeInTheDocument();
     expect(screen.getByLabelText('Currency')).toBeInTheDocument();
     expect(screen.getByLabelText('Opening balance')).toBeInTheDocument();
     expect(screen.getByLabelText('Opening date')).toBeInTheDocument();
