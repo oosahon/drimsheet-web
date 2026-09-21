@@ -43,7 +43,6 @@ export interface TransactionsTableProps {
   'data-testid'?: string;
   searchValue?: string;
   onSearchChange: (value: string) => void;
-  onTransactionOpen?: (entry: IJournalEntryListDto) => void;
 }
 
 export interface TransactionsTableContainerProps {

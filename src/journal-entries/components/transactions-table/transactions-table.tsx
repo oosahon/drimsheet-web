@@ -1,7 +1,8 @@
 import { ArrowLeftRight, ChevronRight } from 'lucide-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { TransactionDetails } from '@/journal-entries/components/transaction-details';
 import { BalanceEffectIcon } from '@/shared/components/balance-effect-icon';
 import { Button } from '@/shared/components/button';
 import { DataTable, type ITableColumn } from '@/shared/components/data-table';
@@ -13,6 +14,7 @@ import { TablePagination } from '@/shared/components/table-pagination';
 import {
   EJournalEntrySourceType,
   ELedgerAccountBalanceEffect,
+  type IJournalEntryListDto,
 } from '@/shared/lib/api/Api';
 import transactionsTableHelpers from './helper';
 import { TransactionSummary } from './parts/transaction-summary';
@@ -31,13 +33,21 @@ export function TransactionsTable({
   'data-testid': dataTestId = 'transactions-table',
   searchValue = '',
   onSearchChange,
-  onTransactionOpen,
 }: Readonly<TransactionsTableProps>) {
   const { t } = useTranslation(['journal-entries', 'shared']);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<IJournalEntryListDto | null>(null);
 
   const rows = useMemo(
     () => transactionsTableHelpers.createRows({ entries: data }),
     [data]
+  );
+  const selectedDetails = useMemo(
+    () =>
+      selectedTransaction
+        ? transactionsTableHelpers.createDetails(selectedTransaction)
+        : undefined,
+    [selectedTransaction]
   );
 
   const handleSortChange = useCallback(
@@ -48,6 +58,15 @@ export function TransactionsTable({
     },
     [onSortChange]
   );
+
+  const handleTransactionOpen = useCallback(
+    (entry: IJournalEntryListDto) => setSelectedTransaction(entry),
+    []
+  );
+
+  const handleDetailsOpenChange = useCallback((open: boolean) => {
+    if (!open) setSelectedTransaction(null);
+  }, []);
 
   const columns = useMemo<ITableColumn<ITransactionsTableRow>[]>(() => {
     const directionLabel = t('transactions_table_direction_label');
@@ -133,27 +152,25 @@ export function TransactionsTable({
       },
     ];
 
-    if (onTransactionOpen) {
-      tableColumns.push({
-        dataIndex: 'action',
-        title: '',
-        render: (_, row) => (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            aria-label={openTransactionLabel}
-            title={openTransactionLabel}
-            onClick={() => onTransactionOpen(row.entry)}
-          >
-            <ChevronRight />
-          </Button>
-        ),
-      });
-    }
+    tableColumns.push({
+      dataIndex: 'action',
+      title: '',
+      render: (_, row) => (
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={openTransactionLabel}
+          title={openTransactionLabel}
+          onClick={() => handleTransactionOpen(row.entry)}
+        >
+          <ChevronRight />
+        </Button>
+      ),
+    });
 
     return tableColumns;
-  }, [onTransactionOpen, t]);
+  }, [handleTransactionOpen, t]);
 
   const searchPlaceholder = t('transactions_table_search_placeholder');
 
@@ -191,6 +208,12 @@ export function TransactionsTable({
           className="mx-0 w-auto justify-end"
         />
       )}
+
+      <TransactionDetails
+        details={selectedDetails}
+        onOpenChange={handleDetailsOpenChange}
+        open={Boolean(selectedDetails)}
+      />
     </div>
   );
 }

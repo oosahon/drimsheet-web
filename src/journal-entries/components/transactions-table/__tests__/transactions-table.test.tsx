@@ -166,7 +166,6 @@ const transferEntry = createEntry({
 const defaultProps = {
   data: [paymentEntry, receiptEntry, transferEntry],
   onSearchChange: vi.fn(),
-  onTransactionOpen: vi.fn(),
 };
 
 describe('TransactionsTable', () => {
@@ -251,12 +250,11 @@ describe('TransactionsTable', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('emits search, effective-date sort, page, and open intents', async () => {
+  it('emits search, effective-date sort, and page intents', async () => {
     const user = userEvent.setup();
     const onSearchChange = vi.fn();
     const onSortChange = vi.fn();
     const onPageChange = vi.fn();
-    const onTransactionOpen = vi.fn();
 
     render(
       <TransactionsTable
@@ -264,7 +262,6 @@ describe('TransactionsTable', () => {
         onSearchChange={onSearchChange}
         onSortChange={onSortChange}
         onPageChange={onPageChange}
-        onTransactionOpen={onTransactionOpen}
         pagination={{ page: 1, limit: 10, total: 12, totalPages: 2 }}
       />
     );
@@ -275,14 +272,10 @@ describe('TransactionsTable', () => {
     );
     await user.click(screen.getByRole('columnheader', { name: 'Date' }));
     await user.click(screen.getByRole('link', { name: '2' }));
-    await user.click(
-      screen.getAllByRole('button', { name: 'Open transaction' })[0]
-    );
 
     expect(onSearchChange).toHaveBeenCalled();
     expect(onSortChange).toHaveBeenCalledWith('effectiveDate', 'asc');
     expect(onPageChange).toHaveBeenCalledWith(2);
-    expect(onTransactionOpen).toHaveBeenCalledWith(paymentEntry);
   });
 
   it('renders the shared empty state when there are no transactions', () => {
@@ -302,17 +295,62 @@ describe('TransactionsTable', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('omits the open action when no transaction handler is supplied', () => {
-    render(
-      <TransactionsTable
-        data={defaultProps.data}
-        onSearchChange={defaultProps.onSearchChange}
-      />
-    );
+  it('renders an open action for every supported transaction', () => {
+    render(<TransactionsTable {...defaultProps} />);
 
     expect(
-      screen.queryByRole('button', { name: 'Open transaction' })
-    ).not.toBeInTheDocument();
+      screen.getAllByRole('button', { name: 'Open transaction' })
+    ).toHaveLength(3);
+  });
+
+  it('opens the matching transaction details and closes the drawer', async () => {
+    const user = userEvent.setup();
+
+    render(<TransactionsTable {...defaultProps} />);
+
+    const openButtons = screen.getAllByRole('button', {
+      name: 'Open transaction',
+    });
+    await user.click(openButtons[0]);
+
+    const outflowDrawer = screen.getByRole('dialog', {
+      name: 'Transaction details',
+    });
+    expect(within(outflowDrawer).getByText('Outflow')).toBeInTheDocument();
+    expect(
+      within(outflowDrawer).getByText('Main checking')
+    ).toBeInTheDocument();
+    expect(within(outflowDrawer).getByText('Gift')).toBeInTheDocument();
+    expect(within(outflowDrawer).getByText('Donations')).toBeInTheDocument();
+
+    await user.click(
+      within(outflowDrawer).getByRole('button', {
+        name: 'Close transaction details',
+      })
+    );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    await user.click(openButtons[1]);
+    const inflowDrawer = screen.getByRole('dialog', {
+      name: 'Transaction details',
+    });
+    expect(within(inflowDrawer).getByText('Inflow')).toBeInTheDocument();
+    expect(
+      within(inflowDrawer).getByText('Professional services')
+    ).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+
+    await user.click(openButtons[2]);
+    const transferDrawer = screen.getByRole('dialog', {
+      name: 'Transaction details',
+    });
+    expect(within(transferDrawer).getByText('Transfer')).toBeInTheDocument();
+    expect(within(transferDrawer).getByText('USD account')).toBeInTheDocument();
+    expect(
+      within(transferDrawer).getByText('Main checking')
+    ).toBeInTheDocument();
   });
 
   it('renders an optional action button alongside the search field', () => {
