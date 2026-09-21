@@ -205,7 +205,6 @@ const meta = {
     searchValue: '',
     onSearchChange: () => undefined,
     onSortChange: () => undefined,
-    onTransactionOpen: () => undefined,
   },
 } satisfies Meta<typeof TransactionsTable>;
 

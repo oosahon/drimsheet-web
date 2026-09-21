@@ -14,6 +14,7 @@ const money = (amount: number, currencyCode = 'NGN') => ({
 const accountNamesById: Record<string, string> = {
   'cash-main': 'Main checking',
   'cash-usd': 'USD account',
+  'bank-fees': 'Bank fees',
   gift: 'Gift',
   services: 'Professional services',
 };
@@ -27,7 +28,16 @@ const line = (
   accountId: string,
   counterpartyId: string,
   sequenceOrder: number,
-  amount: ReturnType<typeof money>
+  amount: ReturnType<typeof money>,
+  {
+    description = null,
+    exchangeRate = null,
+    functionalAmount = amount,
+  }: {
+    description?: string | null;
+    exchangeRate?: Record<string, unknown> | null;
+    functionalAmount?: ReturnType<typeof money>;
+  } = {}
 ) => ({
   id,
   entryId,
@@ -38,10 +48,10 @@ const line = (
   },
   sequenceOrder,
   amount,
-  exchangeRate: null,
-  functionalAmount: amount,
+  exchangeRate,
+  functionalAmount,
   side: 'debit',
-  description: null,
+  description,
   version: 1,
   createdAt: timestamp,
   updatedAt: timestamp,
@@ -78,14 +88,30 @@ const journalEntries = [
     line('r-2', 'receipt-1', 'cash-main', 'acme', 2, money(85_000)),
   ]),
   entry('transfer-1', 'transfer', [
-    line('t-1', 'transfer-1', 'cash-usd', 'osahon', 1, money(1_000, 'USD')),
+    line('t-1', 'transfer-1', 'cash-usd', 'osahon', 1, money(1_000, 'USD'), {
+      exchangeRate: {
+        asOf: timestamp,
+        baseCurrencyCode: 'USD',
+        createdAt: timestamp,
+        currencyPair: 'USD/NGN',
+        rate: 1590,
+        source: 'User supplied',
+        targetCurrencyCode: 'NGN',
+        type: 'negotiated',
+      },
+      functionalAmount: money(1_590_000),
+    }),
     line('t-2', 'transfer-1', 'cash-main', 'osahon', 2, money(1_590_000)),
+    line('t-3', 'transfer-1', 'bank-fees', 'osahon', 3, money(10, 'USD'), {
+      description: 'International transfer charge',
+    }),
   ]),
 ];
 
 const accounts = [
   { id: 'cash-main', name: 'Main checking' },
   { id: 'cash-usd', name: 'USD account' },
+  { id: 'bank-fees', name: 'Bank fees' },
   { id: 'gift', name: 'Gift' },
   { id: 'services', name: 'Professional services' },
 ];
@@ -94,7 +120,11 @@ const counterparties = [
   { id: 'acme', name: 'Acme Consulting' },
 ];
 
-async function registerRoutes(page: Page, journalQueries: URLSearchParams[]) {
+async function registerRoutes(
+  page: Page,
+  journalQueries: URLSearchParams[],
+  journalEntryDetailRequests: string[]
+) {
   await registerAuthenticatedAppRoutes(page);
   await page.route('**/api/v1/auth/login-with-email', async (route) => {
     await route.fulfill({ json: { accessToken: 'integration-test-token' } });
@@ -111,11 +141,15 @@ async function registerRoutes(page: Page, journalQueries: URLSearchParams[]) {
       },
     });
   });
+  await page.route('**/api/v1/journal-entries/*', async (route) => {
+    journalEntryDetailRequests.push(route.request().url());
+    await route.fulfill({ status: 404, json: { message: 'Not expected' } });
+  });
   await page.route('**/api/v1/ledger/posting-accounts*', async (route) => {
     await route.fulfill({
       json: {
         data: accounts,
-        meta: { page: 1, limit: 100, total: 4, totalPages: 1 },
+        meta: { page: 1, limit: 100, total: accounts.length, totalPages: 1 },
       },
     });
   });
@@ -146,7 +180,8 @@ test('lists transactions at the index route and preserves creation routes', asyn
   page,
 }) => {
   const journalQueries: URLSearchParams[] = [];
-  await registerRoutes(page, journalQueries);
+  const journalEntryDetailRequests: string[] = [];
+  await registerRoutes(page, journalQueries, journalEntryDetailRequests);
   await signIn(page);
 
   await page.goto('/transactions');
@@ -157,7 +192,38 @@ test('lists transactions at the index route and preserves creation routes', asyn
   await expect(page.getByText('USD account → Main checking')).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Open transaction' })
-  ).toHaveCount(0);
+  ).toHaveCount(3);
+
+  await page.getByRole('button', { name: 'Open transaction' }).nth(0).click();
+  let drawer = page.getByRole('dialog', { name: 'Transaction details' });
+  await expect(drawer.getByText('Outflow')).toBeVisible();
+  await expect(drawer.getByText('Main checking')).toBeVisible();
+  await expect(drawer.getByText('Gift')).toBeVisible();
+  await drawer
+    .getByRole('button', { name: 'Close transaction details' })
+    .click();
+  await expect(drawer).not.toBeVisible();
+
+  await page.getByRole('button', { name: 'Open transaction' }).nth(1).click();
+  drawer = page.getByRole('dialog', { name: 'Transaction details' });
+  await expect(drawer.getByText('Inflow')).toBeVisible();
+  await expect(drawer.getByText('Professional services')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(drawer).not.toBeVisible();
+
+  await page.getByRole('button', { name: 'Open transaction' }).nth(2).click();
+  drawer = page.getByRole('dialog', { name: 'Transaction details' });
+  await expect(drawer.getByText('Transfer', { exact: true })).toBeVisible();
+  await expect(drawer.getByText('USD account')).toBeVisible();
+  await expect(drawer.getByText('Main checking')).toBeVisible();
+  await expect(drawer.getByText('1 USD = 1,590 NGN')).toBeVisible();
+  await expect(drawer.getByText('Bank fees')).toBeVisible();
+  await expect(drawer.getByText('International transfer charge')).toBeVisible();
+  await page
+    .locator('[data-slot="sheet-overlay"]')
+    .click({ position: { x: 10, y: 10 } });
+  await expect(drawer).not.toBeVisible();
+  expect(journalEntryDetailRequests).toEqual([]);
 
   await expect.poll(() => journalQueries.length).toBeGreaterThan(0);
   expect(journalQueries[0].get('page')).toBe('1');

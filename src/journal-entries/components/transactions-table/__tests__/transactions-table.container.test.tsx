@@ -88,7 +88,8 @@ describe('TransactionsTableContainer', () => {
     } as never);
   });
 
-  it('requests newest-first entries and renders resolved row labels without a dead action', () => {
+  it('requests newest-first entries and opens the resolved transaction details', async () => {
+    const user = userEvent.setup();
     renderContainer();
 
     expect(useJournalEntries).toHaveBeenCalledWith({
@@ -100,9 +101,12 @@ describe('TransactionsTableContainer', () => {
     expect(screen.getByText('Main checking')).toBeInTheDocument();
     expect(screen.getByText('Payment to Osahon Oboite')).toBeInTheDocument();
     expect(screen.getByText('Gift')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Open transaction' }));
+
     expect(
-      screen.queryByRole('button', { name: 'Open transaction' })
-    ).not.toBeInTheDocument();
+      screen.getByRole('dialog', { name: 'Transaction details' })
+    ).toBeInTheDocument();
+    expect(screen.getByText('Outflow')).toBeInTheDocument();
   });
 
   it('keeps search and reversible date sorting in URL-backed query state', async () => {

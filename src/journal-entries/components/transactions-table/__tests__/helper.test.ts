@@ -1,8 +1,11 @@
 import transactionsTableHelpers from '@/journal-entries/components/transactions-table/helper';
 import {
+  EExchangeRateType,
   EJournalEntrySourceType,
   EJournalEntryStatus,
   EJournalSide,
+  type IExchangeRate,
+  type IFileAttachment,
   type IJournalEntryListDto,
   type IJournalLineListDto,
   type IMoneyDto,
@@ -28,18 +31,37 @@ function createMoney(amount: number, currencyCode = 'NGN'): IMoneyDto {
   return { amount, currencyCode, isMinorUnit: false };
 }
 
+function createExchangeRate(): IExchangeRate {
+  return {
+    asOf: '2026-09-16T00:00:00Z',
+    baseCurrencyCode: 'USD',
+    createdAt: '2026-09-16T10:00:00Z',
+    currencyPair: 'USD/NGN',
+    rate: 1590,
+    source: 'User supplied',
+    targetCurrencyCode: 'NGN',
+    type: EExchangeRateType.Negotiated,
+  };
+}
+
 function createLine({
   id,
   accountId,
   counterpartyId,
   sequenceOrder,
   amount,
+  description = null,
+  exchangeRate = null,
+  functionalAmount = amount,
 }: {
   id: string;
   accountId: string;
   counterpartyId: string | null;
   sequenceOrder: number;
   amount: IMoneyDto;
+  description?: string | null;
+  exchangeRate?: IExchangeRate | null;
+  functionalAmount?: IMoneyDto;
 }): IJournalLineListDto {
   return {
     id,
@@ -53,10 +75,10 @@ function createLine({
       : null,
     sequenceOrder,
     amount,
-    exchangeRate: null,
-    functionalAmount: amount,
+    exchangeRate,
+    functionalAmount,
     side: EJournalSide.Debit,
-    description: null,
+    description,
     version: 1,
     createdAt: '2026-09-16T10:00:00Z',
     updatedAt: '2026-09-16T10:00:00Z',
@@ -65,13 +87,17 @@ function createLine({
 
 function createEntry(
   sourceType: UJournalEntrySourceType,
-  lines: IJournalLineListDto[]
+  lines: IJournalLineListDto[],
+  {
+    attachments = [],
+    memo = null,
+  }: { attachments?: IFileAttachment[]; memo?: string | null } = {}
 ): IJournalEntryListDto {
   return {
     id: `entry-${sourceType}`,
     accountingEntityId: 'entity-1',
     sourceType,
-    memo: null,
+    memo,
     status: EJournalEntryStatus.Posted,
     effectiveDate: '2026-09-16T00:00:00Z',
     postedAt: '2026-09-16T10:00:00Z',
@@ -81,7 +107,7 @@ function createEntry(
     createdBy: 'user-1',
     createdAt: '2026-09-16T10:00:00Z',
     updatedAt: '2026-09-16T10:00:00Z',
-    attachments: [],
+    attachments,
     lines,
   };
 }
@@ -216,5 +242,143 @@ describe('transactionsTableHelpers', () => {
     ]);
 
     expect(createRows([entry])).toEqual([]);
+    expect(transactionsTableHelpers.createDetails(entry)).toBeUndefined();
+  });
+
+  it('creates ordered outflow details from the payment lines', () => {
+    const exchangeRate = createExchangeRate();
+    const functionalAmount = createMoney(1_590_000);
+    const attachment = {
+      name: 'receipt.pdf',
+      size: 2048,
+      type: 'application/pdf',
+      url: 'https://example.com/receipt.pdf',
+    };
+    const entry = createEntry(
+      EJournalEntrySourceType.Payment,
+      [
+        createLine({
+          id: 'line-2',
+          accountId: 'gift',
+          counterpartyId: 'counterparty-2',
+          sequenceOrder: 2,
+          amount: createMoney(1_000, 'USD'),
+          description: 'Thank-you gift',
+        }),
+        createLine({
+          id: 'line-1',
+          accountId: 'cash-usd',
+          counterpartyId: 'counterparty-1',
+          sequenceOrder: 1,
+          amount: createMoney(1_000, 'USD'),
+          exchangeRate,
+          functionalAmount,
+        }),
+      ],
+      { attachments: [attachment], memo: 'Annual gift' }
+    );
+
+    expect(transactionsTableHelpers.createDetails(entry)).toEqual({
+      amount: createMoney(1_000, 'USD'),
+      attachments: [attachment],
+      cashAccountName: 'USD account',
+      categories: [
+        {
+          accountId: 'gift',
+          accountName: 'Gift',
+          amount: createMoney(1_000, 'USD'),
+          description: 'Thank-you gift',
+          id: 'line-2',
+        },
+      ],
+      counterparties: [
+        { id: 'counterparty-1', name: 'Osahon Oboite' },
+        { id: 'counterparty-2', name: 'Ada Okafor' },
+      ],
+      direction: EJournalEntrySourceType.Payment,
+      effectiveDate: '2026-09-16T00:00:00Z',
+      exchangeRate,
+      functionalAmount,
+      kind: 'cash',
+      memo: 'Annual gift',
+    });
+  });
+
+  it('creates transfer details with the source, destination, and every fee line', () => {
+    const exchangeRate = createExchangeRate();
+    const entry = createEntry(EJournalEntrySourceType.Transfer, [
+      createLine({
+        id: 'line-4',
+        accountId: 'donations',
+        counterpartyId: null,
+        sequenceOrder: 4,
+        amount: createMoney(500),
+      }),
+      createLine({
+        id: 'line-2',
+        accountId: 'cash-main',
+        counterpartyId: null,
+        sequenceOrder: 2,
+        amount: createMoney(1_590_000),
+      }),
+      createLine({
+        id: 'line-1',
+        accountId: 'cash-usd',
+        counterpartyId: null,
+        sequenceOrder: 1,
+        amount: createMoney(1_000, 'USD'),
+        exchangeRate,
+      }),
+      createLine({
+        id: 'line-3',
+        accountId: 'gift',
+        counterpartyId: null,
+        sequenceOrder: 3,
+        amount: createMoney(10_000),
+        description: 'Bank fee',
+      }),
+    ]);
+
+    expect(transactionsTableHelpers.createDetails(entry)).toEqual(
+      expect.objectContaining({
+        destinationAccountName: 'Main checking',
+        destinationAmount: createMoney(1_590_000),
+        exchangeRate,
+        fees: [
+          expect.objectContaining({
+            accountName: 'Gift',
+            description: 'Bank fee',
+          }),
+          expect.objectContaining({ accountName: 'Donations' }),
+        ],
+        kind: 'transfer',
+        sourceAccountName: 'USD account',
+        sourceAmount: createMoney(1_000, 'USD'),
+      })
+    );
+  });
+
+  it('does not create details when a supported transaction is incomplete', () => {
+    const payment = createEntry(EJournalEntrySourceType.Payment, [
+      createLine({
+        id: 'line-1',
+        accountId: 'cash-main',
+        counterpartyId: null,
+        sequenceOrder: 1,
+        amount: createMoney(10_000),
+      }),
+    ]);
+    const transfer = createEntry(EJournalEntrySourceType.Transfer, [
+      createLine({
+        id: 'line-1',
+        accountId: 'cash-main',
+        counterpartyId: null,
+        sequenceOrder: 1,
+        amount: createMoney(10_000),
+      }),
+    ]);
+
+    expect(transactionsTableHelpers.createDetails(payment)).toBeUndefined();
+    expect(transactionsTableHelpers.createDetails(transfer)).toBeUndefined();
   });
 });
