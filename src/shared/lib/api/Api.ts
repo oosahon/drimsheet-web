@@ -236,6 +236,13 @@ export const ECounterpartyType = {
 export type UCounterpartyType =
   (typeof ECounterpartyType)[keyof typeof ECounterpartyType];
 
+export const EJournalEntrySortBy = {
+  CreatedAt: 'createdAt',
+  EffectiveDate: 'effectiveDate',
+} as const;
+export type UJournalEntrySortBy =
+  (typeof EJournalEntrySortBy)[keyof typeof EJournalEntrySortBy];
+
 export const EJournalSide = {
   Debit: 'debit',
   Credit: 'credit',
@@ -701,6 +708,72 @@ export interface IFileAttachment {
   type: string;
   /** @format double */
   size: number;
+}
+
+export interface IJournalLineListDto {
+  id: string;
+  entryId: string;
+  account: {
+    name: string;
+    id: string;
+  };
+  counterparty: {
+    name: string;
+    id: string;
+  } | null;
+  /** @format double */
+  sequenceOrder: number;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRate | null;
+  functionalAmount: IMoneyDto;
+  side: UJournalSide;
+  description: string | null;
+  /** @format double */
+  version: number;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+}
+
+export interface IJournalEntryListDto {
+  sourceType: UJournalEntrySourceType;
+  memo: string | null;
+  status: UJournalEntryStatus;
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  /** @format date-time */
+  voidedAt: string | null;
+  voidingEntryId: string | null;
+  /** @format double */
+  version: number;
+  createdBy: string;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
+  id: string;
+  accountingEntityId: string;
+  attachments: IFileAttachment[];
+  lines: IJournalLineListDto[];
+}
+
+export interface IPaginatedResponseIJournalEntryListDto {
+  data: IJournalEntryListDto[];
+  meta: IPaginationResponseMeta;
+}
+
+export interface IGetJournalEntriesQuery {
+  /** @format double */
+  limit?: number;
+  orderBy?: UJournalEntrySortBy;
+  sortDirection?: UPaginationSortDirection;
+  search?: string;
+  /** @format double */
+  page?: number;
+  accountId?: string;
 }
 
 export interface IJournalLineDto {
@@ -1449,6 +1522,34 @@ export class Api<
       }),
   };
   journalEntries = {
+    /**
+     * @description Get paginated journal entries with optional account participation filter
+     *
+     * @tags Journal Entry
+     * @name GetJournalEntries
+     * @request GET:/journal-entries
+     */
+    getJournalEntries: (
+      query?: {
+        /** @format double */
+        limit?: number;
+        orderBy?: UJournalEntrySortBy;
+        sortDirection?: UPaginationSortDirection;
+        search?: string;
+        /** @format double */
+        page?: number;
+        accountId?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<IPaginatedResponseIJournalEntryListDto, IHttpErrorDto>({
+        path: `/journal-entries`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
     /**
      * @description Create payment journal entry
      *

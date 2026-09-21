@@ -16,6 +16,7 @@ import { fileUploadService } from '@/shared/lib/services/file-upload.service';
 import type { IReactQueryOptions } from '@/shared/types/query-options.types';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const requiredQueryOptions: IReactQueryOptions = {
@@ -24,6 +25,7 @@ const requiredQueryOptions: IReactQueryOptions = {
 
 export function OutflowFormContainer() {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
+  const navigate = useNavigate();
 
   const [currencyContext, setCurrencyContext] =
     useState<ICashTransactionCurrencyContext>();
@@ -89,6 +91,7 @@ export function OutflowFormContainer() {
 
       await createPayment(payload);
       toast.success(t('outflow_payment_created_success_text'));
+      navigate('/transactions');
     } catch (error) {
       handleApiError(error, { showToast: true });
     } finally {

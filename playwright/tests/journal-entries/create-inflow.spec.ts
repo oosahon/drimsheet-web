@@ -12,6 +12,7 @@ const postingAccountsEndpoint = '**/api/v1/ledger/posting-accounts*';
 const counterpartiesEndpoint = '**/api/v1/counterparties*';
 const exchangeRatesEndpoint = '**/api/v1/currencies/exchange-rates*';
 const createReceiptEndpoint = '**/api/v1/journal-entries/receipt';
+const journalEntriesEndpoint = '**/api/v1/journal-entries?*';
 const prepareUploadEndpoint = '**/api/v1/files/upload';
 const directUploadEndpoint = 'https://uploads.example.test/receipt*';
 
@@ -144,6 +145,15 @@ async function registerInflowPageRoutes(
     await route.fulfill({
       status: 200,
       json: { accessToken: 'integration-test-token' },
+    });
+  });
+
+  await page.route(journalEntriesEndpoint, async (route) => {
+    await route.fulfill({
+      json: {
+        data: [],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      },
     });
   });
 
@@ -410,6 +420,7 @@ test.describe('Inflow receipt creation', () => {
     await expect(
       page.getByText('Transaction was created successfully.')
     ).toBeVisible();
+    await expect(page).toHaveURL('/transactions');
     expect(requestCount).toBe(1);
     expect(capturedRequestBody).not.toBeNull();
 
