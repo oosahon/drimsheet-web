@@ -10,6 +10,7 @@ const loginEndpoint = '**/api/v1/auth/login-with-email';
 const refreshEndpoint = '**/api/v1/auth/refresh-access-token';
 const postingAccountsEndpoint = '**/api/v1/ledger/posting-accounts*';
 const createTransferEndpoint = '**/api/v1/journal-entries/transfer';
+const journalEntriesEndpoint = '**/api/v1/journal-entries?*';
 const prepareUploadEndpoint = '**/api/v1/files/upload';
 const directUploadEndpoint = 'https://uploads.example.test/transfer*';
 
@@ -74,6 +75,15 @@ async function registerTransferPageRoutes(
     await route.fulfill({
       status: 200,
       json: { accessToken: 'integration-test-token' },
+    });
+  });
+
+  await page.route(journalEntriesEndpoint, async (route) => {
+    await route.fulfill({
+      json: {
+        data: [],
+        meta: { page: 1, limit: 10, total: 0, totalPages: 0 },
+      },
     });
   });
 
@@ -183,6 +193,7 @@ test.describe('Cash transfer creation', () => {
     await page.getByRole('button', { name: 'Create' }).click();
 
     await expect(page.getByText('Transfer created successfully')).toBeVisible();
+    await expect(page).toHaveURL('/transactions');
     expect(uploadLog.directUploads).toBe(1);
     expect(uploadLog.preparationBody).toEqual([
       {

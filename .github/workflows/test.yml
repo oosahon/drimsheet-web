@@ -42,12 +42,11 @@ jobs:
           src/shared/lib/
           --maxWorkers=2
 
-      - name: Run Account And Bookkeeping Tests
+      - name: Run Account And Accounting Tests
         run: >-
           npm test -- --run
           src/account/
           src/accounting/
-          src/bookkeeping/
           --maxWorkers=2
 
       - name: Run Application Auth And User Tests

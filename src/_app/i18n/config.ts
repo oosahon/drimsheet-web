@@ -5,7 +5,6 @@ import { initReactI18next } from 'react-i18next';
 import ledgerAccountsEn from '@/account/i18n/locales/en/ledger-accounts.json';
 import accountingEn from '@/accounting/i18n/locales/en/accounting.json';
 import authEn from '@/auth/i18n/locales/en/auth.json';
-import bookkeepingEn from '@/bookkeeping/i18n/locales/en/bookkeeping.json';
 import counterpartyEn from '@/counterparty/i18n/locales/en/counterparty.json';
 import journalEntriesEn from '@/journal-entries/i18n/locales/en/journal-entries.json';
 import apiErrorsEn from '@/shared/i18n/locales/en/api-errors.json';
@@ -16,7 +15,6 @@ const resources = {
   en: {
     auth: authEn,
     shared: sharedEn,
-    bookkeeping: bookkeepingEn,
     counterparty: counterpartyEn,
     'journal-entries': journalEntriesEn,
     'ledger-accounts': ledgerAccountsEn,

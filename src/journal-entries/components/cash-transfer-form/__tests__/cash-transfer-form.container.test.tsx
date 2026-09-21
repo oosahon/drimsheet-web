@@ -11,6 +11,8 @@ import userEvent from '@testing-library/user-event';
 import { toast } from 'sonner';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }));
+
 vi.mock('@/account/hooks/use-permitted-posting-accounts');
 vi.mock('@/accounting/hooks/use-accounting-entity');
 vi.mock('@/journal-entries/hooks/use-create-transfer');
@@ -20,6 +22,7 @@ vi.mock('@/shared/lib/services/file-upload.service', () => ({
   fileUploadService: { uploadFile: vi.fn() },
 }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn() } }));
+vi.mock('react-router-dom', () => ({ useNavigate: () => navigate }));
 
 const sourceAccounts = [
   {
@@ -149,6 +152,9 @@ describe('CashTransferFormContainer', () => {
       expect.objectContaining({ sourceType: 'transfer', side: 'destination' })
     );
     expect(toast.success).toHaveBeenCalledWith('Transfer created successfully');
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalledWith('/transactions');
+    });
     expect(handleApiError).not.toHaveBeenCalled();
   });
 });

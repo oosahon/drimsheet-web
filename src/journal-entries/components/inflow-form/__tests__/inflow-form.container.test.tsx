@@ -12,6 +12,8 @@ import userEvent from '@testing-library/user-event';
 import { toast } from 'sonner';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
+const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }));
+
 vi.mock('@/account/hooks/use-permitted-posting-accounts');
 vi.mock('@/accounting/hooks/use-accounting-entity');
 vi.mock('@/counterparty/hooks/use-counterparties');
@@ -28,6 +30,7 @@ vi.mock('sonner', () => ({
     success: vi.fn(),
   },
 }));
+vi.mock('react-router-dom', () => ({ useNavigate: () => navigate }));
 
 const accounts = [
   {
@@ -143,6 +146,9 @@ describe('InflowFormContainer', () => {
     expect(toast.success).toHaveBeenCalledWith(
       'Transaction was created successfully.'
     );
+    await waitFor(() => {
+      expect(navigate).toHaveBeenCalledWith('/transactions');
+    });
     expect(handleApiError).not.toHaveBeenCalled();
   });
 });
