@@ -1,7 +1,7 @@
 import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import { act, renderHook } from '@testing-library/react';
 import React from 'react';
-import { MemoryRouter, useLocation } from 'react-router-dom';
+import { MemoryRouter, useLocation, useNavigate } from 'react-router-dom';
 import { describe, expect, it } from 'vitest';
 
 describe('useTableQueryParams', () => {
@@ -202,5 +202,43 @@ describe('useTableQueryParams', () => {
     const searchParams2 = new URLSearchParams(result.current.loc.search);
     expect(searchParams2.has('status')).toBe(false);
     expect(searchParams2.get('page')).toBe('1');
+  });
+
+  it('preserves search when sorting before the URL update renders', () => {
+    const { result } = renderHook(
+      () => ({ tableQuery: useTableQueryParams(), location: useLocation() }),
+      { wrapper: wrapperDefault }
+    );
+
+    act(() => {
+      result.current.tableQuery.handleSearchChange('gift');
+      result.current.tableQuery.handleSortChange('effectiveDate', 'asc');
+    });
+
+    const params = new URLSearchParams(result.current.location.search);
+    expect(params.get('q')).toBe('gift');
+    expect(params.get('sort')).toBe('effectiveDate');
+    expect(params.get('order')).toBe('asc');
+    expect(params.get('page')).toBe('1');
+  });
+
+  it('uses the new URL after navigation instead of restoring pending search parameters', () => {
+    const { result } = renderHook(
+      () => ({
+        tableQuery: useTableQueryParams(),
+        location: useLocation(),
+        navigate: useNavigate(),
+      }),
+      { wrapper: wrapperDefault }
+    );
+
+    act(() => result.current.tableQuery.handleSearchChange('gift'));
+    act(() => result.current.navigate('/accounts?q=rent&status=active'));
+    act(() => result.current.tableQuery.handleSortChange('name', 'asc'));
+
+    const params = new URLSearchParams(result.current.location.search);
+    expect(params.get('q')).toBe('rent');
+    expect(params.get('status')).toBe('active');
+    expect(params.get('sort')).toBe('name');
   });
 });

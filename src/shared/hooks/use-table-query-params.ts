@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
 export interface UseTableQueryParamsOptions<
@@ -14,6 +14,25 @@ export function useTableQueryParams<
   TFilterKeys extends string = string,
 >(options: UseTableQueryParamsOptions<TFilterKeys> = {}) {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const pendingSearchParams = useRef({
+    source: searchParams,
+    value: searchParams,
+  });
+
+  const updateSearchParams = useCallback(
+    (update: (params: URLSearchParams) => void) => {
+      const pending = pendingSearchParams.current;
+      // Compose rapid edits until the router supplies a new URL snapshot.
+      const next = new URLSearchParams(
+        pending.source === searchParams ? pending.value : searchParams
+      );
+      update(next);
+      pendingSearchParams.current = { source: searchParams, value: next };
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
 
   const searchQuery = searchParams.get('q') || '';
   const page = Number(searchParams.get('page')) || 1;
@@ -40,84 +59,64 @@ export function useTableQueryParams<
 
   const handleSearchChange = useCallback(
     (value: string) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          if (value) {
-            next.set('q', value);
-          } else {
-            next.delete('q');
-          }
-          next.set('page', '1');
-          return next;
-        },
-        { replace: true }
-      );
+      updateSearchParams((next) => {
+        if (value) {
+          next.set('q', value);
+        } else {
+          next.delete('q');
+        }
+        next.set('page', '1');
+      });
     },
-    [setSearchParams]
+    [updateSearchParams]
   );
 
   const handlePageChange = useCallback(
     (newPage: number) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          if (newPage > 1) {
-            next.set('page', String(newPage));
-          } else {
-            next.delete('page');
-          }
-          return next;
-        },
-        { replace: true }
-      );
+      updateSearchParams((next) => {
+        if (newPage > 1) {
+          next.set('page', String(newPage));
+        } else {
+          next.delete('page');
+        }
+      });
     },
-    [setSearchParams]
+    [updateSearchParams]
   );
 
   const handleSortChange = useCallback(
     (key: string, direction: 'asc' | 'desc' | null) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          if (key && direction) {
-            next.set('sort', key);
-            next.set('order', direction);
-          } else {
-            next.delete('sort');
-            next.delete('order');
-          }
-          next.set('page', '1');
-          return next;
-        },
-        { replace: true }
-      );
+      updateSearchParams((next) => {
+        if (key && direction) {
+          next.set('sort', key);
+          next.set('order', direction);
+        } else {
+          next.delete('sort');
+          next.delete('order');
+        }
+        next.set('page', '1');
+      });
     },
-    [setSearchParams]
+    [updateSearchParams]
   );
 
   const handleFilterChange = useCallback(
     (newFilters: Record<string, (string | number)[]>) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev);
-          if (options.filterKeys) {
-            for (const key of options.filterKeys) {
-              const val = newFilters[key];
-              if (val && val.length > 0) {
-                next.set(key, val.join(','));
-              } else {
-                next.delete(key);
-              }
+      updateSearchParams((next) => {
+        if (options.filterKeys) {
+          for (const key of options.filterKeys) {
+            const val = newFilters[key];
+            if (val && val.length > 0) {
+              next.set(key, val.join(','));
+            } else {
+              next.delete(key);
             }
           }
-          next.set('page', '1');
-          return next;
-        },
-        { replace: true }
-      );
+        }
+        next.set('page', '1');
+      });
     },
-    [options.filterKeys, setSearchParams]
+    [options.filterKeys, updateSearchParams]
   );
 
   return {
