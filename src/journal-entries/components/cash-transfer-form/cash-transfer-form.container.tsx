@@ -40,7 +40,9 @@ export function CashTransferFormContainer({
 
   const [currencyContext, setCurrencyContext] =
     useState<ICashTransferCurrencyContext>();
-  const [isSubmittingTransfer, setIsSubmittingTransfer] = useState(false);
+  const [submissionIntent, setSubmissionIntent] = useState<
+    'submit' | 'draft'
+  >();
 
   const handleApiError = useApiErrorHandler();
 
@@ -67,8 +69,7 @@ export function CashTransferFormContainer({
   const exchangeRateQuery =
     journalEntryMapper.toTransferExchangeRateQuery(currencyContext);
   const { data: officialExchangeRates } = useExchangeRates(exchangeRateQuery);
-  const { mutateAsync: createTransfer, isPending: isCreatingTransfer } =
-    useCreateTransfer();
+  const { mutateAsync: createTransfer } = useCreateTransfer();
   const { mutateAsync: rectifyJournalEntry, isPending: isRectifying } =
     useRectifyJournalEntry();
   const initialValues = useMemo(
@@ -89,9 +90,12 @@ export function CashTransferFormContainer({
     (account) => account.subType !== ELedgerAccountSubType.CashAndCashEquivalent
   );
 
-  const handleSubmit = async (values: ICashTransferFormValues) => {
-    if (isSubmittingTransfer) return;
-    setIsSubmittingTransfer(true);
+  const handlePersistValues = async (
+    values: ICashTransferFormValues,
+    intent: 'submit' | 'draft'
+  ) => {
+    if (submissionIntent) return;
+    setSubmissionIntent(intent);
 
     try {
       if (journalEntry) {
@@ -112,23 +116,34 @@ export function CashTransferFormContainer({
         const attachmentReferences = values.attachment
           ? [await fileUploadService.uploadFile(values.attachment)]
           : [];
+        const postedAt = intent === 'draft' ? null : new Date().toISOString();
         const payload = journalEntryMapper.toTransferEntryReq(
           values,
           functionalCurrencyCode,
-          new Date().toISOString(),
+          postedAt,
           attachmentReferences
         );
 
         await createTransfer(payload);
-        toast.success(t('transfer_created_success_text'));
+        const successMessage =
+          intent === 'draft'
+            ? t('journal_entry_draft_saved_success_text')
+            : t('transfer_created_success_text');
+        toast.success(successMessage);
       }
       navigate('/transactions');
     } catch (error) {
       handleApiError(error, { showToast: true });
     } finally {
-      setIsSubmittingTransfer(false);
+      setSubmissionIntent(undefined);
     }
   };
+
+  const handleSubmit = (values: ICashTransferFormValues) =>
+    handlePersistValues(values, 'submit');
+
+  const handleSaveDraft = (values: ICashTransferFormValues) =>
+    handlePersistValues(values, 'draft');
 
   if (isFormDataPending) return <CashTransferFormSkeleton />;
 
@@ -140,10 +155,12 @@ export function CashTransferFormContainer({
       disabled={!functionalCurrencyCode}
       functionalCurrencyCode={functionalCurrencyCode}
       initialValues={initialValues}
-      loading={isSubmittingTransfer || isCreatingTransfer || isRectifying}
+      loading={submissionIntent === 'submit' || isRectifying}
       officialExchangeRate={officialExchangeRates?.[0]}
       onCurrencyContextChange={setCurrencyContext}
+      onSaveDraft={journalEntry ? undefined : handleSaveDraft}
       onSubmit={handleSubmit}
+      savingDraft={submissionIntent === 'draft'}
       submitLabel={journalEntry ? t('journal_entry_update_text') : undefined}
     />
   );

@@ -44,7 +44,9 @@ export function CashTransferForm({
   loading = false,
   officialExchangeRate,
   onCurrencyContextChange,
+  onSaveDraft,
   onSubmit,
+  savingDraft = false,
   submitLabel,
 }: Readonly<CashTransferFormProps>) {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
@@ -226,6 +228,21 @@ export function CashTransferForm({
     void formik.setFieldTouched('attachment', true, false);
   };
 
+  const handleSaveDraft = async () => {
+    const errors = await formik.validateForm();
+    if (Object.keys(errors).length > 0) {
+      await formik.submitForm();
+      return;
+    }
+
+    onSaveDraft?.(
+      cashTransferFormHelpers.normalizeValues(
+        formik.values,
+        officialExchangeRate
+      )
+    );
+  };
+
   const handleItemize = () => {
     const item = cashTransferFormHelpers.createItem(
       generateUUID(),
@@ -288,7 +305,7 @@ export function CashTransferForm({
     else setSingleEntryConfirmationOpen(true);
   };
 
-  const interactionDisabled = disabled || loading;
+  const interactionDisabled = disabled || loading || savingDraft;
   const sourceAccountError = getErrorMessage('sourceAccountId');
   const destinationAccountError = getErrorMessage('destinationAccountId');
   const amountSentError = getErrorMessage('amountSent.amount');
@@ -316,6 +333,7 @@ export function CashTransferForm({
     'cash_transaction_attachment_guidance_text'
   );
   const create_text = submitLabel ?? t('cash_transaction_create_text');
+  const save_draft_text = t('cash_transaction_save_draft_text');
   const return_title = t('cash_transfer_return_to_single_title');
   const return_description = t('cash_transfer_return_to_single_description');
   const return_cancel_text = t('cash_transfer_return_to_single_cancel_text');
@@ -324,7 +342,7 @@ export function CashTransferForm({
   return (
     <>
       <form
-        aria-busy={loading}
+        aria-busy={loading || savingDraft}
         className="w-full max-w-xl"
         onSubmit={formik.handleSubmit}
       >
@@ -498,9 +516,20 @@ export function CashTransferForm({
             value={formik.values.attachment}
           />
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-end gap-2 pt-2">
+            {onSaveDraft && (
+              <Button
+                disabled={disabled || loading || isItemizedRowEditing}
+                loading={savingDraft}
+                onClick={() => void handleSaveDraft()}
+                type="button"
+                variant="outline"
+              >
+                {save_draft_text}
+              </Button>
+            )}
             <Button
-              disabled={disabled || isItemizedRowEditing}
+              disabled={disabled || savingDraft || isItemizedRowEditing}
               loading={loading}
               type="submit"
             >

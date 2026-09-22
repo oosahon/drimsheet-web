@@ -2,6 +2,7 @@ import { ArrowLeftRight, ChevronRight } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import { TransactionDetailsDrawer } from '@/journal-entries/components/transaction-details-drawer';
 import { BalanceEffectIcon } from '@/shared/components/balance-effect-icon';
 import { Button } from '@/shared/components/button';
 import { DataTable, type ITableColumn } from '@/shared/components/data-table';
@@ -16,7 +17,6 @@ import {
   type IJournalEntryListDto,
 } from '@/shared/lib/api/Api';
 import transactionsTableHelpers from './helper';
-import { TransactionDetailsDrawer } from './parts/transaction-details-drawer';
 import { TransactionSummary } from './parts/transaction-summary';
 import { TransactionsTableSkeleton } from './skeleton';
 import type { ITransactionsTableRow, TransactionsTableProps } from './types';
@@ -27,6 +27,7 @@ export function TransactionsTable({
   loading = false,
   archiving = false,
   onArchiveTransaction,
+  onDeleteTransaction,
   pagination,
   onEditTransaction,
   onPageChange,
@@ -80,6 +81,12 @@ export function TransactionsTable({
   const handleSelectedTransactionArchive = async () => {
     if (!selectedTransaction || !onArchiveTransaction || archiving) return;
     await onArchiveTransaction(selectedTransaction);
+    setSelectedTransaction(null);
+  };
+
+  const handleSelectedTransactionDelete = async () => {
+    if (!selectedTransaction || !onDeleteTransaction) return;
+    await onDeleteTransaction(selectedTransaction);
     setSelectedTransaction(null);
   };
 
@@ -228,6 +235,9 @@ export function TransactionsTable({
         archiving={archiving}
         onArchive={
           onArchiveTransaction ? handleSelectedTransactionArchive : undefined
+        }
+        onDelete={
+          onDeleteTransaction ? handleSelectedTransactionDelete : undefined
         }
         details={selectedDetails}
         editDisabled={!onEditTransaction}

@@ -241,6 +241,31 @@ describe('OutflowFormContainer', () => {
     expect(handleApiError).not.toHaveBeenCalled();
   });
 
+  it('creates a draft payment without a posting timestamp', async () => {
+    const user = userEvent.setup();
+    render(<OutflowFormContainer />);
+
+    await user.click(screen.getByRole('combobox', { name: 'Account' }));
+    await user.click(screen.getByRole('option', { name: 'Operating account' }));
+    await user.type(screen.getByLabelText('Amount'), '250');
+    await user.click(screen.getByRole('combobox', { name: 'Category' }));
+    await user.click(screen.getByRole('option', { name: 'Office expense' }));
+    await user.type(
+      screen.getByRole('combobox', { name: 'Recipient' }),
+      'Acme'
+    );
+    await user.keyboard('{Escape}');
+    await user.click(screen.getByRole('button', { name: 'Save draft' }));
+
+    await waitFor(() => {
+      expect(createPayment).toHaveBeenCalledWith(
+        expect.objectContaining({ postedAt: null })
+      );
+    });
+    expect(toast.success).toHaveBeenCalledWith('Draft saved successfully');
+    expect(navigate).toHaveBeenCalledWith('/transactions');
+  });
+
   it('prefills and rectifies an existing payment', async () => {
     const user = userEvent.setup();
     render(<OutflowFormContainer journalEntry={journalEntry} />);

@@ -11,9 +11,9 @@ import {
   AlertDialogTrigger,
 } from '@/shared/components/alert-dialog';
 import type { ButtonProps } from '@/shared/components/button';
-import type { MouseEvent, ReactNode } from 'react';
+import type { MouseEvent, PropsWithChildren, ReactNode } from 'react';
 
-export interface ConfirmationDialogProps {
+export interface ConfirmationDialogProps extends PropsWithChildren {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** The caller closes the dialog after confirmation succeeds. */
@@ -23,13 +23,13 @@ export interface ConfirmationDialogProps {
   /** Called on user dismissal, including cancellation and Escape. */
   onClose?: () => void;
   title: string;
-  description: string;
+  trigger: ReactNode;
   cancelText: string;
   confirmationText: string;
   variant?: ButtonProps['variant'];
   loading?: boolean;
-  children?: ReactNode;
   media?: ReactNode;
+  footer?: ReactNode;
 }
 
 export function ConfirmationDialog({
@@ -38,18 +38,21 @@ export function ConfirmationDialog({
   onConfirm,
   onCancel,
   onClose,
+  trigger,
   title,
-  description,
   cancelText,
   confirmationText,
   variant = 'default',
   loading = false,
   children,
   media,
+  footer,
 }: Readonly<ConfirmationDialogProps>) {
   const handleOpenChange = (nextOpen: boolean) => {
     if (loading) return;
+
     onOpenChange(nextOpen);
+
     if (!nextOpen) onClose?.();
   };
 
@@ -60,25 +63,33 @@ export function ConfirmationDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
-      {children && <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>}
+      {trigger && <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger>}
       <AlertDialogContent>
         <AlertDialogHeader>
           {media && <AlertDialogMedia>{media}</AlertDialogMedia>}
           <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogDescription>{children}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={loading} size="sm" onClick={onCancel}>
-            {cancelText}
-          </AlertDialogCancel>
-          <AlertDialogAction
-            variant={variant}
-            size="sm"
-            onClick={handleConfirm}
-            loading={loading}
-          >
-            {confirmationText}
-          </AlertDialogAction>
+          {footer ?? (
+            <>
+              <AlertDialogCancel
+                disabled={loading}
+                size="sm"
+                onClick={onCancel}
+              >
+                {cancelText}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                variant={variant}
+                size="sm"
+                onClick={handleConfirm}
+                loading={loading}
+              >
+                {confirmationText}
+              </AlertDialogAction>
+            </>
+          )}
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -1,3 +1,7 @@
+import {
+  AlertDialogAction,
+  AlertDialogCancel,
+} from '@/shared/components/alert-dialog';
 import { Button } from '@/shared/components/button';
 import { ConfirmationDialog } from '@/shared/components/confirmation-dialog';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -11,14 +15,14 @@ const meta = {
   args: {
     open: false,
     title: 'Archive this item?',
-    description: 'You can restore this item from the archive later.',
+    trigger: <Button>Open confirmation</Button>,
     cancelText: 'Cancel',
     confirmationText: 'Archive',
     onConfirm: fn(),
     onCancel: fn(),
     onClose: fn(),
     onOpenChange: fn(),
-    children: <Button>Open confirmation</Button>,
+    children: 'You can restore this item from the archive later.',
   },
   render: function Render(args) {
     const [, updateArgs] = useArgs();
@@ -47,11 +51,27 @@ export const Default: Story = {};
 export const Destructive: Story = {
   args: {
     title: 'Delete this item?',
-    description: 'This action cannot be undone.',
+    children: 'This action cannot be undone.',
     confirmationText: 'Delete',
     variant: 'destructive',
   },
 };
 export const Loading: Story = {
   args: { open: true, loading: true, confirmationText: 'Archiving...' },
+};
+export const CustomFooter: Story = {
+  args: {
+    open: true,
+    footer: (
+      <>
+        <AlertDialogCancel size="sm">Cancel</AlertDialogCancel>
+        <AlertDialogAction size="sm" variant="outline">
+          Archive instead
+        </AlertDialogAction>
+        <AlertDialogAction size="sm" variant="destructive">
+          Delete
+        </AlertDialogAction>
+      </>
+    ),
+  },
 };

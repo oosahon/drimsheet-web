@@ -155,4 +155,26 @@ describe('InflowFormContainer', () => {
     });
     expect(handleApiError).not.toHaveBeenCalled();
   });
+
+  it('creates a draft receipt without a posting timestamp', async () => {
+    const user = userEvent.setup();
+    render(<InflowFormContainer />);
+
+    await user.click(screen.getByRole('combobox', { name: 'Account' }));
+    await user.click(screen.getByRole('option', { name: 'Operating account' }));
+    await user.type(screen.getByLabelText('Amount'), '250');
+    await user.click(screen.getByRole('combobox', { name: 'Category' }));
+    await user.click(screen.getByRole('option', { name: 'Sales revenue' }));
+    await user.type(screen.getByRole('combobox', { name: 'Payer' }), 'Acme');
+    await user.keyboard('{Escape}');
+    await user.click(screen.getByRole('button', { name: 'Save draft' }));
+
+    await waitFor(() => {
+      expect(createReceipt).toHaveBeenCalledWith(
+        expect.objectContaining({ postedAt: null })
+      );
+    });
+    expect(toast.success).toHaveBeenCalledWith('Draft saved successfully');
+    expect(navigate).toHaveBeenCalledWith('/transactions');
+  });
 });

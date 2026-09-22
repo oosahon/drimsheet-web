@@ -1,4 +1,4 @@
-import { TransactionDetailsDrawer } from '@/journal-entries/components/transactions-table/parts/transaction-details-drawer';
+import { TransactionDetailsDrawer } from '@/journal-entries/components/transaction-details-drawer';
 import type { ICashTransactionDetails } from '@/journal-entries/lib/types/transaction-details';
 import { EJournalEntrySourceType } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -46,12 +46,13 @@ function OpenDrawer(args: ComponentProps<typeof TransactionDetailsDrawer>) {
 }
 
 const meta = {
-  title: 'Journal Entries/TransactionsTable/TransactionDetailsDrawer',
+  title: 'Journal Entries/TransactionDetailsDrawer',
   component: TransactionDetailsDrawer,
   tags: ['autodocs'],
   args: {
     details,
     onArchive: async () => {},
+    onDelete: async () => {},
     onEdit: () => undefined,
     onOpenChange: () => undefined,
     open: true,

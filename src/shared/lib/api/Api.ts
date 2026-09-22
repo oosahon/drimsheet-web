@@ -924,6 +924,11 @@ export interface IJournalEntryArchiveReq {
   expectedVersion: number;
 }
 
+export interface IJournalEntryDeletionReq {
+  /** @format double */
+  expectedVersion: number;
+}
+
 export interface IJournalEntryRectificationDto {
   mode: UJournalEntryRectificationMode;
   originalJournalEntryId: string;
@@ -1652,6 +1657,34 @@ export class Api<
       }),
 
     /**
+     * @description Get paginated archived journal entries with optional account participation filter
+     *
+     * @tags Journal Entry
+     * @name GetArchivedJournalEntries
+     * @request GET:/journal-entries/archived
+     */
+    getArchivedJournalEntries: (
+      query?: {
+        /** @format double */
+        limit?: number;
+        orderBy?: UJournalEntrySortBy;
+        sortDirection?: UPaginationSortDirection;
+        search?: string;
+        /** @format double */
+        page?: number;
+        accountId?: string;
+      },
+      params: RequestParams = {}
+    ) =>
+      this.request<IPaginatedResponseIJournalEntryListDto, IHttpErrorDto>({
+        path: `/journal-entries/archived`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * @description Get a journal entry by id
      *
      * @tags Journal Entry
@@ -1663,6 +1696,26 @@ export class Api<
         path: `/journal-entries/${id}`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Delete a never-posted journal entry or reverse a previously-posted entry.
+     *
+     * @tags Journal Entry
+     * @name DeleteJournalEntry
+     * @request DELETE:/journal-entries/{id}
+     */
+    deleteJournalEntry: (
+      id: string,
+      data: IJournalEntryDeletionReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<void, IHttpErrorDto>({
+        path: `/journal-entries/${id}`,
+        method: 'DELETE',
+        body: data,
+        type: EContentType.Json,
         ...params,
       }),
 

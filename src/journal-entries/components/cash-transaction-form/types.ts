@@ -37,7 +37,9 @@ export interface CashTransactionFormProps {
   loading?: boolean;
   officialExchangeRate?: IExchangeRate;
   onCurrencyContextChange: (context: ICashTransactionCurrencyContext) => void;
+  onSaveDraft?: (values: ICashTransactionFormValues) => void;
   onSubmit: (values: ICashTransactionFormValues) => void;
+  savingDraft?: boolean;
   submitLabel?: string;
   variant?: UCashTransactionFormVariant;
 }

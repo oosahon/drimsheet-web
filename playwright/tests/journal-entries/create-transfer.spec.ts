@@ -183,7 +183,7 @@ test.describe('Cash transfer creation', () => {
     await page.getByLabel('Amount', { exact: true }).fill('5');
     await page.getByRole('combobox', { name: 'Category' }).click();
     await page.getByRole('option', { name: 'Bank fees' }).click();
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
 
     await page.getByLabel('Attach receipt').setInputFiles({
       name: 'transfer.pdf',
