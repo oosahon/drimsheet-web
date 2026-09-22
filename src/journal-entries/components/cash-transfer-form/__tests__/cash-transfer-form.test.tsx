@@ -399,4 +399,26 @@ describe('CashTransferForm', () => {
     expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled();
     expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
   });
+
+  it('emits normalized values through the draft action', async () => {
+    const user = userEvent.setup();
+    const onSaveDraft = vi.fn();
+    const onSubmit = vi.fn();
+    renderForm({
+      initialValues: {
+        ...defaultInitialValues,
+        description: ' Draft transfer ',
+      },
+      onSaveDraft,
+      onSubmit,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Save draft' }));
+
+    await waitFor(() => expect(onSaveDraft).toHaveBeenCalledOnce());
+    expect(onSaveDraft).toHaveBeenCalledWith(
+      expect.objectContaining({ description: 'Draft transfer' })
+    );
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });

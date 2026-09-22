@@ -521,12 +521,12 @@ test.describe('Outflow payment creation', () => {
       .getByRole('button', { name: 'Itemize this transaction' })
       .click();
     await page.getByLabel('Amount', { exact: true }).nth(1).fill('100');
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await page.getByRole('button', { name: 'Add a new item' }).click();
     await page.getByLabel('Amount', { exact: true }).nth(1).fill('150');
     await page.getByRole('combobox', { name: 'Category' }).click();
     await page.getByRole('option', { name: 'Marketing expense' }).click();
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
 
     await page.getByRole('button', { name: 'Create' }).click();
     await expect(

@@ -214,6 +214,19 @@ describe('journalEntryMapper', () => {
     });
   });
 
+  it('maps a null posting timestamp for draft creation', () => {
+    expect(
+      journalEntryMapper.toPaymentEntryReq(paymentValues, 'NGN', null).postedAt
+    ).toBeNull();
+    expect(
+      journalEntryMapper.toReceiptEntryReq(values, 'NGN', null).postedAt
+    ).toBeNull();
+    expect(
+      journalEntryMapper.toTransferEntryReq(transferValues, 'NGN', null)
+        .postedAt
+    ).toBeNull();
+  });
+
   it('maps itemized accounts to destination lines after the payment source', () => {
     const result = journalEntryMapper.toPaymentEntryReq(
       {

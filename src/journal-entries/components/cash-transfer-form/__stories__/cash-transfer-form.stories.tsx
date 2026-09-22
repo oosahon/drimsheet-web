@@ -61,6 +61,7 @@ const meta = {
     categories,
     functionalCurrencyCode: 'NGN',
     onCurrencyContextChange: () => undefined,
+    onSaveDraft: () => undefined,
     onSubmit: () => undefined,
   },
 } satisfies Meta<typeof CashTransferForm>;

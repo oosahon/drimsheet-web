@@ -51,6 +51,7 @@ const meta = {
     counterpartyOptions,
     functionalCurrencyCode: 'NGN',
     onCurrencyContextChange: () => undefined,
+    onSaveDraft: () => undefined,
     onSubmit: () => undefined,
   },
 } satisfies Meta<typeof CashTransactionForm>;

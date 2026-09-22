@@ -701,4 +701,32 @@ describe('CashTransactionForm', () => {
       })
     );
   });
+
+  it('emits normalized values through the draft action', async () => {
+    const user = userEvent.setup();
+    const onSaveDraft = vi.fn();
+    const onSubmit = vi.fn();
+    render(
+      <CashTransactionForm
+        accounts={accounts}
+        variant="inflow"
+        functionalCurrencyCode="NGN"
+        initialValues={{ ...validValues, description: ' Draft transaction ' }}
+        onCurrencyContextChange={() => undefined}
+        onSaveDraft={onSaveDraft}
+        onSubmit={onSubmit}
+        categories={categories}
+      />
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Save draft' }));
+
+    await waitFor(() =>
+      expect(onSaveDraft).toHaveBeenCalledWith({
+        ...validValues,
+        description: 'Draft transaction',
+      })
+    );
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
 });

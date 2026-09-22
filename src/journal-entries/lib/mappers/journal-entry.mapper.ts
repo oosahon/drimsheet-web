@@ -134,7 +134,7 @@ function toJournalEntryLineReq({
 function toPaymentEntryReq(
   values: ICashTransactionFormValues,
   functionalCurrencyCode: string,
-  occurredAt: string,
+  postedAt: string | null,
   attachmentReferences: string[] = []
 ): IPaymentEntryReq {
   const currencyCode = values.amount.currencyCode;
@@ -191,7 +191,7 @@ function toPaymentEntryReq(
     }),
     destinationLines,
     effectiveDate: values.date,
-    postedAt: occurredAt,
+    postedAt,
     memo: description,
   };
 }
@@ -199,7 +199,7 @@ function toPaymentEntryReq(
 function toReceiptEntryReq(
   values: ICashTransactionFormValues,
   functionalCurrencyCode: string,
-  occurredAt: string,
+  postedAt: string | null,
   attachmentReferences: string[] = []
 ): IReceiptEntryReq {
   const currencyCode = values.amount.currencyCode;
@@ -256,7 +256,7 @@ function toReceiptEntryReq(
       sequenceOrder: sourceLines.length + 1,
     }),
     effectiveDate: values.date,
-    postedAt: occurredAt,
+    postedAt,
     memo: description,
   };
 }
@@ -303,7 +303,7 @@ function toTransferChargeLineReq(
 function toTransferEntryReq(
   values: ICashTransferFormValues,
   functionalCurrencyCode: string,
-  occurredAt: string,
+  postedAt: string | null,
   attachmentReferences: string[] = []
 ): ITransferEntryReq {
   const sourceCurrencyCode = values.amountSent.currencyCode;
@@ -374,7 +374,7 @@ function toTransferEntryReq(
     ),
     chargeLines,
     effectiveDate: values.date,
-    postedAt: occurredAt,
+    postedAt,
     memo: description,
   };
 }

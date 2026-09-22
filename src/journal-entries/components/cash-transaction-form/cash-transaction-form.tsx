@@ -49,7 +49,9 @@ export function CashTransactionForm({
   loading = false,
   officialExchangeRate,
   onCurrencyContextChange,
+  onSaveDraft,
   onSubmit,
+  savingDraft = false,
   submitLabel,
   variant,
 }: Readonly<CashTransactionFormProps>) {
@@ -78,7 +80,7 @@ export function CashTransactionForm({
     [accounts, functionalCurrencyCode, initialValues]
   );
 
-  const handleSubmit = (values: ICashTransactionFormValues) => {
+  const normalizeValues = (values: ICashTransactionFormValues) => {
     const accountCurrencyCode =
       cashTransactionFormHelpers.getAccountCurrencyCode(
         accounts,
@@ -91,16 +93,18 @@ export function CashTransactionForm({
       values.date
     );
 
-    onSubmit(
-      cashTransactionFormHelpers.normalizeValues(
-        values,
-        cashTransactionFormHelpers.isExchangeRateRequired(
-          accountCurrencyCode,
-          functionalCurrencyCode
-        ),
-        officialRateMatches ? officialExchangeRate?.rate : undefined
-      )
+    return cashTransactionFormHelpers.normalizeValues(
+      values,
+      cashTransactionFormHelpers.isExchangeRateRequired(
+        accountCurrencyCode,
+        functionalCurrencyCode
+      ),
+      officialRateMatches ? officialExchangeRate?.rate : undefined
     );
+  };
+
+  const handleSubmit = (values: ICashTransactionFormValues) => {
+    onSubmit(normalizeValues(values));
   };
 
   const formik = useFormik<ICashTransactionFormValues>({
@@ -195,6 +199,16 @@ export function CashTransactionForm({
     void formik.setFieldTouched('attachment', true, false);
   };
 
+  const handleSaveDraft = async () => {
+    const errors = await formik.validateForm();
+    if (Object.keys(errors).length > 0) {
+      await formik.submitForm();
+      return;
+    }
+
+    onSaveDraft?.(normalizeValues(formik.values));
+  };
+
   const handleItemize = () => {
     const item = cashTransactionFormHelpers.createItem(
       generateUUID(),
@@ -268,7 +282,7 @@ export function CashTransactionForm({
       accountCurrencyCode,
       functionalCurrencyCode
     );
-  const interactionDisabled = disabled || loading;
+  const interactionDisabled = disabled || loading || savingDraft;
 
   /**
    * Errors
@@ -293,6 +307,7 @@ export function CashTransactionForm({
   const category_label = t('category_label');
   const category_placeholder = t('category_placeholder');
   const create_text = submitLabel ?? t('cash_transaction_create_text');
+  const save_draft_text = t('cash_transaction_save_draft_text');
   const description_label = t('description_label');
   const description_placeholder = t('description_placeholder');
   const exchange_rate_label = t('exchange_rate_label');
@@ -322,7 +337,7 @@ export function CashTransactionForm({
   return (
     <>
       <form
-        aria-busy={loading}
+        aria-busy={loading || savingDraft}
         className="w-full max-w-xl"
         onSubmit={formik.handleSubmit}
       >
@@ -498,9 +513,20 @@ export function CashTransactionForm({
             value={formik.values.attachment}
           />
 
-          <div className="flex justify-end pt-2">
+          <div className="flex justify-end gap-2 pt-2">
+            {onSaveDraft && (
+              <Button
+                disabled={disabled || loading || isItemizedRowEditing}
+                loading={savingDraft}
+                onClick={() => void handleSaveDraft()}
+                type="button"
+                variant="outline"
+              >
+                {save_draft_text}
+              </Button>
+            )}
             <Button
-              disabled={disabled || isItemizedRowEditing}
+              disabled={disabled || savingDraft || isItemizedRowEditing}
               loading={loading}
               type="submit"
             >

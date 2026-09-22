@@ -522,7 +522,7 @@ test.describe('Inflow receipt creation', () => {
     await expect(page.getByLabel('Amount', { exact: true }).nth(0)).toHaveValue(
       '250'
     );
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByLabel('Amount', { exact: true }).nth(0)).toHaveValue(
       '100'
     );
@@ -533,7 +533,7 @@ test.describe('Inflow receipt creation', () => {
     );
     await page.getByRole('combobox', { name: 'Category' }).click();
     await page.getByRole('option', { name: 'Professional services' }).click();
-    await page.getByRole('button', { name: 'Save' }).click();
+    await page.getByRole('button', { name: 'Save', exact: true }).click();
     await expect(page.getByLabel('Amount', { exact: true }).nth(0)).toHaveValue(
       '250'
     );

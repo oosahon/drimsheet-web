@@ -40,7 +40,9 @@ export function InflowFormContainer({
 
   const [currencyContext, setCurrencyContext] =
     useState<ICashTransactionCurrencyContext>();
-  const [isSubmittingReceipt, setIsSubmittingReceipt] = useState(false);
+  const [submissionIntent, setSubmissionIntent] = useState<
+    'submit' | 'draft'
+  >();
 
   const handleApiError = useApiErrorHandler();
 
@@ -74,8 +76,7 @@ export function InflowFormContainer({
     functionalCurrencyCode
   );
   const { data: officialExchangeRates } = useExchangeRates(exchangeRateQuery);
-  const { mutateAsync: createReceipt, isPending: isCreatingReceipt } =
-    useCreateReceipt();
+  const { mutateAsync: createReceipt } = useCreateReceipt();
   const { mutateAsync: rectifyJournalEntry, isPending: isRectifying } =
     useRectifyJournalEntry();
   const initialValues = useMemo(
@@ -95,10 +96,13 @@ export function InflowFormContainer({
     isCounterpartiesPending ||
     isAccountingEntityPending;
 
-  const handleSubmit = async (values: ICashTransactionFormValues) => {
-    if (isSubmittingReceipt) return;
+  const handlePersistValues = async (
+    values: ICashTransactionFormValues,
+    intent: 'submit' | 'draft'
+  ) => {
+    if (submissionIntent) return;
 
-    setIsSubmittingReceipt(true);
+    setSubmissionIntent(intent);
 
     try {
       if (journalEntry) {
@@ -119,23 +123,34 @@ export function InflowFormContainer({
         const attachmentReferences = values.attachment
           ? [await fileUploadService.uploadFile(values.attachment)]
           : [];
+        const postedAt = intent === 'draft' ? null : new Date().toISOString();
         const payload = journalEntryMapper.toReceiptEntryReq(
           values,
           functionalCurrencyCode,
-          new Date().toISOString(),
+          postedAt,
           attachmentReferences
         );
 
         await createReceipt(payload);
-        toast.success(t('inflow_receipt_created_success_text'));
+        const successMessage =
+          intent === 'draft'
+            ? t('journal_entry_draft_saved_success_text')
+            : t('inflow_receipt_created_success_text');
+        toast.success(successMessage);
       }
       navigate('/transactions');
     } catch (error) {
       handleApiError(error, { showToast: true });
     } finally {
-      setIsSubmittingReceipt(false);
+      setSubmissionIntent(undefined);
     }
   };
+
+  const handleSubmit = (values: ICashTransactionFormValues) =>
+    handlePersistValues(values, 'submit');
+
+  const handleSaveDraft = (values: ICashTransactionFormValues) =>
+    handlePersistValues(values, 'draft');
 
   if (isFormDataPending) return <CashTransactionFormSkeleton />;
 
@@ -147,10 +162,12 @@ export function InflowFormContainer({
       disabled={!functionalCurrencyCode}
       functionalCurrencyCode={functionalCurrencyCode}
       initialValues={initialValues}
-      loading={isSubmittingReceipt || isCreatingReceipt || isRectifying}
+      loading={submissionIntent === 'submit' || isRectifying}
       officialExchangeRate={officialExchangeRates?.[0]}
       onCurrencyContextChange={setCurrencyContext}
+      onSaveDraft={journalEntry ? undefined : handleSaveDraft}
       onSubmit={handleSubmit}
+      savingDraft={submissionIntent === 'draft'}
       submitLabel={journalEntry ? t('journal_entry_update_text') : undefined}
       variant="inflow"
     />

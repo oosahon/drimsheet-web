@@ -160,4 +160,26 @@ describe('CashTransferFormContainer', () => {
     });
     expect(handleApiError).not.toHaveBeenCalled();
   });
+
+  it('creates a draft transfer without a posting timestamp', async () => {
+    const user = userEvent.setup();
+    render(<CashTransferFormContainer />);
+
+    await user.click(screen.getByRole('combobox', { name: 'Source account' }));
+    await user.click(screen.getByRole('option', { name: 'Operating account' }));
+    await user.click(
+      screen.getByRole('combobox', { name: 'Destination account' })
+    );
+    await user.click(screen.getByRole('option', { name: 'Petty cash' }));
+    await user.type(screen.getByLabelText('Amount sent'), '250');
+    await user.click(screen.getByRole('button', { name: 'Save draft' }));
+
+    await waitFor(() => {
+      expect(createTransfer).toHaveBeenCalledWith(
+        expect.objectContaining({ postedAt: null })
+      );
+    });
+    expect(toast.success).toHaveBeenCalledWith('Draft saved successfully');
+    expect(navigate).toHaveBeenCalledWith('/transactions');
+  });
 });
