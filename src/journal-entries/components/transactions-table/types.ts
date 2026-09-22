@@ -32,6 +32,8 @@ export interface TransactionsTableProps {
   actionButton?: ReactNode;
   data: IJournalEntryListDto[];
   loading?: boolean;
+  archiving?: boolean;
+  onArchiveTransaction?: (entry: IJournalEntryListDto) => Promise<void>;
   pagination?: IPaginationResponseMeta;
   onEditTransaction?: (entry: IJournalEntryListDto) => void;
   onPageChange?: (page: number) => void;

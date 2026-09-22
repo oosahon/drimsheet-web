@@ -919,6 +919,11 @@ export interface ITransferEntryReq {
   memo: string | null;
 }
 
+export interface IJournalEntryArchiveReq {
+  /** @format double */
+  expectedVersion: number;
+}
+
 export interface IJournalEntryRectificationDto {
   mode: UJournalEntryRectificationMode;
   originalJournalEntryId: string;
@@ -1705,6 +1710,27 @@ export class Api<
     createTransfer: (data: ITransferEntryReq, params: RequestParams = {}) =>
       this.request<IJournalEntryDto, IHttpErrorDto>({
         path: `/journal-entries/transfer`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Archive a journal entry without changing its financial effect.
+     *
+     * @tags Journal Entry
+     * @name ArchiveJournalEntry
+     * @request POST:/journal-entries/{id}/archive
+     */
+    archiveJournalEntry: (
+      id: string,
+      data: IJournalEntryArchiveReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<IJournalEntryDto, IHttpErrorDto>({
+        path: `/journal-entries/${id}/archive`,
         method: 'POST',
         body: data,
         type: EContentType.Json,

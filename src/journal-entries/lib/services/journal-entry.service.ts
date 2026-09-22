@@ -1,6 +1,7 @@
 import { drimsheetApi } from '@/shared/lib/api';
 import type {
   IGetJournalEntriesQuery,
+  IJournalEntryArchiveReq,
   IPaymentEntryReq,
   IReceiptEntryReq,
   ITransferEntryReq,
@@ -8,6 +9,14 @@ import type {
 } from '@/shared/lib/api/Api';
 
 const journalEntryService = {
+  async archiveJournalEntry(id: string, payload: IJournalEntryArchiveReq) {
+    const res = await drimsheetApi.journalEntries.archiveJournalEntry(
+      id,
+      payload
+    );
+    return res.data;
+  },
+
   async getJournalEntries(query: IGetJournalEntriesQuery) {
     const res = await drimsheetApi.journalEntries.getJournalEntries(query);
     return res.data;

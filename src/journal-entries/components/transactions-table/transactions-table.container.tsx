@@ -1,5 +1,7 @@
+import { useArchiveJournalEntry } from '@/journal-entries/hooks/use-archive-journal-entry';
 import { useJournalEntries } from '@/journal-entries/hooks/use-journal-entries';
 import { journalEntryRouteMapper } from '@/journal-entries/lib/mappers/journal-entry-route.mapper';
+import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import {
@@ -19,6 +21,9 @@ export function TransactionsTableContainer({
   actionButton,
 }: Readonly<TransactionsTableContainerProps>) {
   const navigate = useNavigate();
+  const handleApiError = useApiErrorHandler();
+  const { mutateAsync: archive, isPending: archiving } =
+    useArchiveJournalEntry();
   const tableQuery = useTableQueryParams<'effectiveDate'>({
     defaultSortKey: EJournalEntrySortBy.EffectiveDate,
     defaultSortDirection: EPaginationSortDirection.Desc,
@@ -61,11 +66,26 @@ export function TransactionsTableContainer({
     [navigate]
   );
 
+  const handleArchiveTransaction = async (entry: IJournalEntryListDto) => {
+    if (archiving) return;
+    try {
+      await archive({
+        id: entry.id,
+        payload: { expectedVersion: entry.version },
+      });
+      navigate('/transactions');
+    } catch (error) {
+      handleApiError(error, { showToast: true });
+    }
+  };
+
   return (
     <TransactionsTable
       actionButton={actionButton}
       data={journalEntries?.data ?? []}
       loading={isPending}
+      archiving={archiving}
+      onArchiveTransaction={handleArchiveTransaction}
       pagination={journalEntries?.meta}
       onEditTransaction={handleEditTransaction}
       onPageChange={tableQuery.handlePageChange}
