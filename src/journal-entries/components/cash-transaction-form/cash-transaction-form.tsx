@@ -50,6 +50,7 @@ export function CashTransactionForm({
   officialExchangeRate,
   onCurrencyContextChange,
   onSubmit,
+  submitLabel,
   variant,
 }: Readonly<CashTransactionFormProps>) {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
@@ -291,7 +292,7 @@ export function CashTransactionForm({
   const date_placeholder = t('cash_transaction_date_placeholder');
   const category_label = t('category_label');
   const category_placeholder = t('category_placeholder');
-  const create_text = t('cash_transaction_create_text');
+  const create_text = submitLabel ?? t('cash_transaction_create_text');
   const description_label = t('description_label');
   const description_placeholder = t('description_placeholder');
   const exchange_rate_label = t('exchange_rate_label');

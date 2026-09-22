@@ -18,10 +18,14 @@ vi.mock('@/account/hooks/use-permitted-posting-accounts');
 vi.mock('@/accounting/hooks/use-accounting-entity');
 vi.mock('@/counterparty/hooks/use-counterparties');
 vi.mock('@/journal-entries/hooks/use-create-receipt');
+vi.mock('@/journal-entries/hooks/use-rectify-journal-entry', () => ({
+  useRectifyJournalEntry: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
 vi.mock('@/shared/hooks/use-api-error-handler');
 vi.mock('@/shared/hooks/use-exchange-rates');
 vi.mock('@/shared/lib/services/file-upload.service', () => ({
   fileUploadService: {
+    uploadAttachment: vi.fn(),
     uploadFile: vi.fn(),
   },
 }));

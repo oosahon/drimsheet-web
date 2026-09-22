@@ -1,7 +1,13 @@
 import type { ICashTransactionFormValues } from '@/journal-entries/components/cash-transaction-form';
 import type { ICashTransferFormValues } from '@/journal-entries/components/cash-transfer-form';
 import { journalEntryMapper } from '@/journal-entries/lib/mappers/journal-entry.mapper';
-import { EExchangeRateType } from '@/shared/lib/api/Api';
+import {
+  EExchangeRateType,
+  EJournalEntrySourceType,
+  EJournalEntryStatus,
+  EJournalSide,
+  type IJournalEntryListDto,
+} from '@/shared/lib/api/Api';
 import { describe, expect, it } from 'vitest';
 
 const occurredAt = '2026-08-12T10:30:00.000Z';
@@ -48,6 +54,70 @@ const transferValues: ICashTransferFormValues = {
   description: '  Petty cash funding  ',
   attachment: null,
 };
+
+const paymentJournalEntry = {
+  id: 'payment-entry',
+  accountingEntityId: 'entity-1',
+  sourceType: EJournalEntrySourceType.Payment,
+  memo: 'Original memo',
+  status: EJournalEntryStatus.Posted,
+  effectiveDate: '2026-08-10T00:00:00.000Z',
+  postedAt: occurredAt,
+  voidedAt: null,
+  voidingEntryId: null,
+  version: 4,
+  createdBy: 'user-1',
+  createdAt: occurredAt,
+  updatedAt: occurredAt,
+  attachments: [
+    {
+      url: 'https://files.example.com/original.pdf',
+      name: 'original.pdf',
+      type: 'application/pdf',
+      size: 42,
+    },
+  ],
+  lines: [
+    {
+      id: 'cash-line',
+      entryId: 'payment-entry',
+      account: { id: 'ngn-bank', name: 'Bank' },
+      counterparty: { id: 'vendor-1', name: 'Vendor' },
+      sequenceOrder: 1,
+      amount: { amount: 250000, currencyCode: 'NGN', isMinorUnit: false },
+      exchangeRate: null,
+      functionalAmount: {
+        amount: 250000,
+        currencyCode: 'NGN',
+        isMinorUnit: false,
+      },
+      side: EJournalSide.Credit,
+      description: null,
+      version: 1,
+      createdAt: occurredAt,
+      updatedAt: occurredAt,
+    },
+    {
+      id: 'office-line',
+      entryId: 'payment-entry',
+      account: { id: 'office-expense', name: 'Office expense' },
+      counterparty: { id: 'vendor-1', name: 'Vendor' },
+      sequenceOrder: 2,
+      amount: { amount: 250000, currencyCode: 'NGN', isMinorUnit: false },
+      exchangeRate: null,
+      functionalAmount: {
+        amount: 250000,
+        currencyCode: 'NGN',
+        isMinorUnit: false,
+      },
+      side: EJournalSide.Debit,
+      description: null,
+      version: 1,
+      createdAt: occurredAt,
+      updatedAt: occurredAt,
+    },
+  ],
+} satisfies IJournalEntryListDto;
 
 describe('journalEntryMapper', () => {
   it('maps foreign-currency context to the official exchange-rate query', () => {
@@ -617,5 +687,51 @@ describe('journalEntryMapper', () => {
       targetCurrencyCode: 'NGN',
       rate: 1600,
     });
+  });
+
+  it('maps payment edits to rectification with version and only persisted line IDs', () => {
+    const result = journalEntryMapper.toPaymentJournalEntryRectificationReq(
+      {
+        ...paymentValues,
+        isItemized: true,
+        items: [
+          {
+            id: 'office-line',
+            accountId: 'office-expense',
+            amount: {
+              amount: 100000,
+              currencyCode: 'NGN',
+              isMinorUnit: false,
+            },
+            description: 'Existing line',
+          },
+          {
+            id: 'client-generated-id',
+            accountId: 'travel-expense',
+            amount: {
+              amount: 150000,
+              currencyCode: 'NGN',
+              isMinorUnit: false,
+            },
+            description: 'New line',
+          },
+        ],
+      },
+      'NGN',
+      paymentJournalEntry,
+      paymentJournalEntry.attachments
+    );
+
+    expect(result).toMatchObject({
+      expectedVersion: 4,
+      sourceType: 'payment',
+      attachments: paymentJournalEntry.attachments,
+      sourceLine: { id: 'cash-line' },
+      destinationLines: [
+        { id: 'office-line' },
+        { accountId: 'travel-expense' },
+      ],
+    });
+    expect(result.destinationLines[1]).not.toHaveProperty('id');
   });
 });

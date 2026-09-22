@@ -2,7 +2,6 @@ import { ArrowLeftRight, ChevronRight } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { TransactionDetails } from '@/journal-entries/components/transaction-details';
 import { BalanceEffectIcon } from '@/shared/components/balance-effect-icon';
 import { Button } from '@/shared/components/button';
 import { DataTable, type ITableColumn } from '@/shared/components/data-table';
@@ -17,6 +16,7 @@ import {
   type IJournalEntryListDto,
 } from '@/shared/lib/api/Api';
 import transactionsTableHelpers from './helper';
+import { TransactionDetailsDrawer } from './parts/transaction-details-drawer';
 import { TransactionSummary } from './parts/transaction-summary';
 import { TransactionsTableSkeleton } from './skeleton';
 import type { ITransactionsTableRow, TransactionsTableProps } from './types';
@@ -26,6 +26,7 @@ export function TransactionsTable({
   data,
   loading = false,
   pagination,
+  onEditTransaction,
   onPageChange,
   onSortChange,
   currentSortDirection = null,
@@ -67,6 +68,12 @@ export function TransactionsTable({
   const handleDetailsOpenChange = useCallback((open: boolean) => {
     if (!open) setSelectedTransaction(null);
   }, []);
+
+  const handleSelectedTransactionEdit = useCallback(() => {
+    if (!selectedTransaction) return;
+
+    onEditTransaction?.(selectedTransaction);
+  }, [onEditTransaction, selectedTransaction]);
 
   const columns = useMemo<ITableColumn<ITransactionsTableRow>[]>(() => {
     const directionLabel = t('transactions_table_direction_label');
@@ -209,8 +216,10 @@ export function TransactionsTable({
         />
       )}
 
-      <TransactionDetails
+      <TransactionDetailsDrawer
         details={selectedDetails}
+        editDisabled={!onEditTransaction}
+        onEdit={handleSelectedTransactionEdit}
         onOpenChange={handleDetailsOpenChange}
         open={Boolean(selectedDetails)}
       />

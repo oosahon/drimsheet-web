@@ -1,6 +1,6 @@
 export default {
   org: 'Drimsheet',
   repo: 'drimsheet-core',
-  branch: 'development',
+  branch: 'feat/ENG-128',
   swaggerPath: 'generated/swagger.json',
 };

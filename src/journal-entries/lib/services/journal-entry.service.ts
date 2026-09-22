@@ -4,11 +4,17 @@ import type {
   IPaymentEntryReq,
   IReceiptEntryReq,
   ITransferEntryReq,
+  TJournalEntryRectificationReq,
 } from '@/shared/lib/api/Api';
 
 const journalEntryService = {
   async getJournalEntries(query: IGetJournalEntriesQuery) {
     const res = await drimsheetApi.journalEntries.getJournalEntries(query);
+    return res.data;
+  },
+
+  async getJournalEntry(id: string) {
+    const res = await drimsheetApi.journalEntries.getJournalEntry(id);
     return res.data;
   },
 
@@ -24,6 +30,17 @@ const journalEntryService = {
 
   async createTransfer(payload: ITransferEntryReq) {
     const res = await drimsheetApi.journalEntries.createTransfer(payload);
+    return res.data;
+  },
+
+  async rectifyJournalEntry(
+    id: string,
+    payload: TJournalEntryRectificationReq
+  ) {
+    const res = await drimsheetApi.journalEntries.rectifyJournalEntry(
+      id,
+      payload
+    );
     return res.data;
   },
 };

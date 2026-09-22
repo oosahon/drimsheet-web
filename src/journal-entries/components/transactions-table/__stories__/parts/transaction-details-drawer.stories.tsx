@@ -1,9 +1,10 @@
-import { TransactionDetails } from '@/journal-entries/components/transaction-details';
+import { TransactionDetailsDrawer } from '@/journal-entries/components/transactions-table/parts/transaction-details-drawer';
 import type { ICashTransactionDetails } from '@/journal-entries/lib/types/transaction-details';
 import { EJournalEntrySourceType } from '@/shared/lib/api/Api';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState, type ComponentProps } from 'react';
 
-const inflowDetails: ICashTransactionDetails = {
+const details: ICashTransactionDetails = {
   amount: { amount: 850_000, currencyCode: 'NGN', isMinorUnit: false },
   attachments: [
     {
@@ -36,21 +37,26 @@ const inflowDetails: ICashTransactionDetails = {
   memo: 'September consulting invoice paid in full.',
 };
 
+function OpenDrawer(args: ComponentProps<typeof TransactionDetailsDrawer>) {
+  const [open, setOpen] = useState(true);
+
+  return (
+    <TransactionDetailsDrawer {...args} onOpenChange={setOpen} open={open} />
+  );
+}
+
 const meta = {
-  title: 'Journal Entries/TransactionDetails',
-  component: TransactionDetails,
+  title: 'Journal Entries/TransactionsTable/TransactionDetailsDrawer',
+  component: TransactionDetailsDrawer,
   tags: ['autodocs'],
   args: {
-    details: inflowDetails,
+    details,
+    onEdit: () => undefined,
+    onOpenChange: () => undefined,
+    open: true,
   },
-  decorators: [
-    (Story) => (
-      <div className="max-w-md px-5 pb-6">
-        <Story />
-      </div>
-    ),
-  ],
-} satisfies Meta<typeof TransactionDetails>;
+  render: (args) => <OpenDrawer {...args} />,
+} satisfies Meta<typeof TransactionDetailsDrawer>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

@@ -1,12 +1,15 @@
 import { useJournalEntries } from '@/journal-entries/hooks/use-journal-entries';
+import { journalEntryRouteMapper } from '@/journal-entries/lib/mappers/journal-entry-route.mapper';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useTableQueryParams } from '@/shared/hooks/use-table-query-params';
 import {
   EJournalEntrySortBy,
   EPaginationSortDirection,
   type IGetJournalEntriesQuery,
+  type IJournalEntryListDto,
 } from '@/shared/lib/api/Api';
 import { useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TransactionsTable } from './transactions-table';
 import type { TransactionsTableContainerProps } from './types';
 
@@ -15,6 +18,7 @@ const TRANSACTIONS_PAGE_SIZE = 10;
 export function TransactionsTableContainer({
   actionButton,
 }: Readonly<TransactionsTableContainerProps>) {
+  const navigate = useNavigate();
   const tableQuery = useTableQueryParams<'effectiveDate'>({
     defaultSortKey: EJournalEntrySortBy.EffectiveDate,
     defaultSortDirection: EPaginationSortDirection.Desc,
@@ -44,12 +48,26 @@ export function TransactionsTableContainer({
     [tableQuery]
   );
 
+  const handleEditTransaction = useCallback(
+    (journalEntry: IJournalEntryListDto) => {
+      const routeType = journalEntryRouteMapper.toRouteType(
+        journalEntry.sourceType
+      );
+
+      if (!routeType) return;
+
+      navigate(`/transactions/${routeType}/${journalEntry.id}/edit`);
+    },
+    [navigate]
+  );
+
   return (
     <TransactionsTable
       actionButton={actionButton}
       data={journalEntries?.data ?? []}
       loading={isPending}
       pagination={journalEntries?.meta}
+      onEditTransaction={handleEditTransaction}
       onPageChange={tableQuery.handlePageChange}
       onSortChange={handleSortChange}
       currentSortDirection={tableQuery.sortDirection}

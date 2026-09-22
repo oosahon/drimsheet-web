@@ -1,8 +1,8 @@
 import { drimsheetApi } from '@/shared/lib/api';
-import { EFileUploadPurpose } from '@/shared/lib/api/Api';
+import { EFileUploadPurpose, type IFileUploadDto } from '@/shared/lib/api/Api';
 import axios from 'axios';
 
-async function uploadFile(file: File): Promise<string> {
+async function upload(file: File): Promise<IFileUploadDto> {
   const uploadInstructionResponse = await drimsheetApi.files.preSignUploads([
     {
       name: file.name,
@@ -19,9 +19,20 @@ async function uploadFile(file: File): Promise<string> {
     headers: uploadInstruction.headers,
   });
 
+  return uploadInstruction;
+}
+
+async function uploadFile(file: File): Promise<string> {
+  const uploadInstruction = await upload(file);
   return uploadInstruction.reference;
 }
 
+async function uploadAttachment(file: File) {
+  const uploadInstruction = await upload(file);
+  return uploadInstruction.file;
+}
+
 export const fileUploadService = Object.freeze({
+  uploadAttachment,
   uploadFile,
 });

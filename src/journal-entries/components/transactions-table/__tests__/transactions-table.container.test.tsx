@@ -67,11 +67,16 @@ function LocationSearch() {
   return <div aria-label="Location search">{useLocation().search}</div>;
 }
 
+function LocationPathname() {
+  return <div aria-label="Location pathname">{useLocation().pathname}</div>;
+}
+
 function renderContainer(initialEntry = '/transactions') {
   return render(
     <MemoryRouter initialEntries={[initialEntry]}>
       <TransactionsTableContainer />
       <LocationSearch />
+      <LocationPathname />
     </MemoryRouter>
   );
 }
@@ -130,6 +135,18 @@ describe('TransactionsTableContainer', () => {
         expect.objectContaining({ search: 'gift', sortDirection: 'asc' })
       );
     });
+  });
+
+  it('navigates from the details drawer to the canonical edit route', async () => {
+    const user = userEvent.setup();
+    renderContainer();
+
+    await user.click(screen.getByRole('button', { name: 'Open transaction' }));
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+
+    expect(screen.getByLabelText('Location pathname')).toHaveTextContent(
+      '/transactions/outflow/payment-entry/edit'
+    );
   });
 
   it('keeps the skeleton visible until journal entries are ready', () => {

@@ -16,10 +16,13 @@ const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }));
 vi.mock('@/account/hooks/use-permitted-posting-accounts');
 vi.mock('@/accounting/hooks/use-accounting-entity');
 vi.mock('@/journal-entries/hooks/use-create-transfer');
+vi.mock('@/journal-entries/hooks/use-rectify-journal-entry', () => ({
+  useRectifyJournalEntry: () => ({ mutateAsync: vi.fn(), isPending: false }),
+}));
 vi.mock('@/shared/hooks/use-api-error-handler');
 vi.mock('@/shared/hooks/use-exchange-rates');
 vi.mock('@/shared/lib/services/file-upload.service', () => ({
-  fileUploadService: { uploadFile: vi.fn() },
+  fileUploadService: { uploadAttachment: vi.fn(), uploadFile: vi.fn() },
 }));
 vi.mock('sonner', () => ({ toast: { success: vi.fn() } }));
 vi.mock('react-router-dom', () => ({ useNavigate: () => navigate }));

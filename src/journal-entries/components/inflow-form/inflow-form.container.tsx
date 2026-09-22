@@ -8,13 +8,18 @@ import {
   type ICashTransactionFormValues,
 } from '@/journal-entries/components/cash-transaction-form';
 import { useCreateReceipt } from '@/journal-entries/hooks/use-create-receipt';
+import { useRectifyJournalEntry } from '@/journal-entries/hooks/use-rectify-journal-entry';
+import { journalEntryFormMapper } from '@/journal-entries/lib/mappers/journal-entry-form.mapper';
 import { journalEntryMapper } from '@/journal-entries/lib/mappers/journal-entry.mapper';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useExchangeRates } from '@/shared/hooks/use-exchange-rates';
-import { EJournalEntrySourceType } from '@/shared/lib/api/Api';
+import {
+  EJournalEntrySourceType,
+  type IJournalEntryListDto,
+} from '@/shared/lib/api/Api';
 import { fileUploadService } from '@/shared/lib/services/file-upload.service';
 import type { IReactQueryOptions } from '@/shared/types/query-options.types';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -23,7 +28,13 @@ const requiredQueryOptions: IReactQueryOptions = {
   throwOnError: true,
 };
 
-export function InflowFormContainer() {
+interface InflowFormContainerProps {
+  journalEntry?: IJournalEntryListDto;
+}
+
+export function InflowFormContainer({
+  journalEntry,
+}: Readonly<InflowFormContainerProps>) {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
   const navigate = useNavigate();
 
@@ -65,6 +76,18 @@ export function InflowFormContainer() {
   const { data: officialExchangeRates } = useExchangeRates(exchangeRateQuery);
   const { mutateAsync: createReceipt, isPending: isCreatingReceipt } =
     useCreateReceipt();
+  const { mutateAsync: rectifyJournalEntry, isPending: isRectifying } =
+    useRectifyJournalEntry();
+  const initialValues = useMemo(
+    () =>
+      journalEntry
+        ? journalEntryFormMapper.toCashTransactionFormValues(
+            journalEntry,
+            functionalCurrencyCode
+          )
+        : undefined,
+    [functionalCurrencyCode, journalEntry]
+  );
 
   const isFormDataPending =
     isPermittedAccountsPending ||
@@ -78,19 +101,34 @@ export function InflowFormContainer() {
     setIsSubmittingReceipt(true);
 
     try {
-      const attachmentReferences = values.attachment
-        ? [await fileUploadService.uploadFile(values.attachment)]
-        : [];
+      if (journalEntry) {
+        const attachments = values.attachment
+          ? [await fileUploadService.uploadAttachment(values.attachment)]
+          : journalEntry.attachments;
+        const payload =
+          journalEntryMapper.toReceiptJournalEntryRectificationReq(
+            values,
+            functionalCurrencyCode,
+            journalEntry,
+            attachments
+          );
 
-      const payload = journalEntryMapper.toReceiptEntryReq(
-        values,
-        functionalCurrencyCode,
-        new Date().toISOString(),
-        attachmentReferences
-      );
+        await rectifyJournalEntry({ id: journalEntry.id, payload });
+        toast.success(t('journal_entry_updated_success_text'));
+      } else {
+        const attachmentReferences = values.attachment
+          ? [await fileUploadService.uploadFile(values.attachment)]
+          : [];
+        const payload = journalEntryMapper.toReceiptEntryReq(
+          values,
+          functionalCurrencyCode,
+          new Date().toISOString(),
+          attachmentReferences
+        );
 
-      await createReceipt(payload);
-      toast.success(t('inflow_receipt_created_success_text'));
+        await createReceipt(payload);
+        toast.success(t('inflow_receipt_created_success_text'));
+      }
       navigate('/transactions');
     } catch (error) {
       handleApiError(error, { showToast: true });
@@ -108,10 +146,12 @@ export function InflowFormContainer() {
       counterpartyOptions={counterpartiesData?.data ?? []}
       disabled={!functionalCurrencyCode}
       functionalCurrencyCode={functionalCurrencyCode}
-      loading={isSubmittingReceipt || isCreatingReceipt}
+      initialValues={initialValues}
+      loading={isSubmittingReceipt || isCreatingReceipt || isRectifying}
       officialExchangeRate={officialExchangeRates?.[0]}
       onCurrencyContextChange={setCurrencyContext}
       onSubmit={handleSubmit}
+      submitLabel={journalEntry ? t('journal_entry_update_text') : undefined}
       variant="inflow"
     />
   );
