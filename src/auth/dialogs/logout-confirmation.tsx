@@ -52,14 +52,14 @@ export function LogoutConfirmationDialog({
       onOpenChange={handleOpenChange}
       onConfirm={handleLogout}
       title={are_you_sure_logout_text}
-      description={will_need_to_log_back_in_text}
+      trigger={children}
       cancelText={cancel_text}
       confirmationText={isPending ? logging_out_text : log_out_text}
       variant="destructive"
       loading={isPending}
       media={<LogOutIcon className="text-destructive" />}
     >
-      {children}
+      {will_need_to_log_back_in_text}
     </ConfirmationDialog>
   );
 }

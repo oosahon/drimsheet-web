@@ -6,6 +6,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('@/shared/lib/api', () => ({
   drimsheetApi: {
     journalEntries: {
+      deleteJournalEntry: vi.fn(),
       getJournalEntry: vi.fn(),
       rectifyJournalEntry: vi.fn(),
     },
@@ -25,6 +26,23 @@ describe('journalEntryService', () => {
     ).resolves.toEqual({ id: 'entry-1' });
     expect(drimsheetApi.journalEntries.getJournalEntry).toHaveBeenCalledWith(
       'entry-1'
+    );
+  });
+
+  it('delegates deletion to the generated operation', async () => {
+    vi.mocked(drimsheetApi.journalEntries.deleteJournalEntry).mockResolvedValue(
+      {
+        data: undefined,
+      } as never
+    );
+
+    await journalEntryService.deleteJournalEntry('entry-1', {
+      expectedVersion: 3,
+    });
+
+    expect(drimsheetApi.journalEntries.deleteJournalEntry).toHaveBeenCalledWith(
+      'entry-1',
+      { expectedVersion: 3 }
     );
   });
 

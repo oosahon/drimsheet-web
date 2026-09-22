@@ -1,5 +1,6 @@
 import { TransactionsTableContainer } from '@/journal-entries/components/transactions-table';
 import { useArchiveJournalEntry } from '@/journal-entries/hooks/use-archive-journal-entry';
+import { useDeleteJournalEntry } from '@/journal-entries/hooks/use-delete-journal-entry';
 import { useJournalEntries } from '@/journal-entries/hooks/use-journal-entries';
 import {
   EJournalEntrySourceType,
@@ -7,13 +8,14 @@ import {
   EJournalSide,
   type IJournalEntryListDto,
 } from '@/shared/lib/api/Api';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/journal-entries/hooks/use-journal-entries');
 vi.mock('@/journal-entries/hooks/use-archive-journal-entry');
+vi.mock('@/journal-entries/hooks/use-delete-journal-entry');
 
 const money = { amount: 125_000, currencyCode: 'NGN', isMinorUnit: false };
 const paymentEntry = {
@@ -90,6 +92,10 @@ describe('TransactionsTableContainer', () => {
       mutateAsync: vi.fn(),
       isPending: false,
     } as never);
+    vi.mocked(useDeleteJournalEntry).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    } as never);
     vi.mocked(useJournalEntries).mockReturnValue({
       data: {
         data: [paymentEntry],
@@ -153,6 +159,38 @@ describe('TransactionsTableContainer', () => {
     expect(screen.getByLabelText('Location pathname')).toHaveTextContent(
       '/transactions/outflow/payment-entry/edit'
     );
+  });
+
+  it('deletes the selected transaction at its current version', async () => {
+    const user = userEvent.setup();
+    const deleteEntry = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(useDeleteJournalEntry).mockReturnValue({
+      mutateAsync: deleteEntry,
+      isPending: false,
+    } as never);
+    renderContainer();
+
+    await user.click(screen.getByRole('button', { name: 'Open transaction' }));
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    const confirmationDialog = screen.getByRole('alertdialog', {
+      name: 'Delete this transaction?',
+    });
+    await user.type(
+      within(confirmationDialog).getByLabelText('Type "delete" to confirm'),
+      'delete'
+    );
+    await user.click(
+      within(confirmationDialog).getByRole('button', { name: 'Delete' })
+    );
+
+    expect(deleteEntry).toHaveBeenCalledWith({
+      id: 'payment-entry',
+      payload: { expectedVersion: 1 },
+    });
+    await waitFor(() => {
+      expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
   });
 
   it('keeps the skeleton visible until journal entries are ready', () => {

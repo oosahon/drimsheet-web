@@ -290,7 +290,114 @@ test('dismisses archive confirmation without changing the transaction', async ({
   await expect(confirmation).not.toBeVisible();
 });
 
-test('archives the selected transaction once and returns to the refreshed transactions page', async ({
+test('requires typing delete before confirming transaction deletion', async ({
+  page,
+}) => {
+  await registerRoutes(page, [], []);
+  await signIn(page);
+  let deleted = false;
+  let requestCount = 0;
+  await page.route('**/api/v1/journal-entries?*', async (route) => {
+    const data = deleted ? journalEntries.slice(1) : journalEntries;
+    await route.fulfill({
+      json: {
+        data,
+        meta: { page: 1, limit: 10, total: data.length, totalPages: 1 },
+      },
+    });
+  });
+  await page.route('**/api/v1/journal-entries/payment-1', async (route) => {
+    requestCount += 1;
+    expect(route.request().method()).toBe('DELETE');
+    expect(route.request().postDataJSON()).toEqual({ expectedVersion: 1 });
+    deleted = true;
+    await route.fulfill({ status: 204 });
+  });
+  await page.goto('/transactions');
+  await page.getByRole('button', { name: 'Open transaction' }).first().click();
+
+  const drawer = page.getByRole('dialog', { name: 'Transaction details' });
+  await drawer.getByRole('button', { name: 'Delete', exact: true }).click();
+
+  const confirmation = page.getByRole('alertdialog', {
+    name: 'Delete this transaction?',
+  });
+  const confirmationInput = confirmation.getByLabel('Type "delete" to confirm');
+  const deleteButton = confirmation.getByRole('button', {
+    name: 'Delete',
+    exact: true,
+  });
+
+  await expect(confirmation).toBeVisible();
+  await expect(
+    confirmation.getByText(
+      'This action cannot be undone. Type delete below to confirm.'
+    )
+  ).toBeVisible();
+  await expect(
+    confirmation.getByRole('button', { name: 'Cancel' })
+  ).toBeVisible();
+  await expect(
+    confirmation.getByRole('button', { name: 'Archive instead' })
+  ).toBeVisible();
+  await expect(deleteButton).toBeDisabled();
+
+  await confirmationInput.fill('Delete');
+  await expect(deleteButton).toBeDisabled();
+  expect(requestCount).toBe(0);
+  await confirmationInput.fill('delete');
+  await expect(deleteButton).toBeEnabled();
+  await deleteButton.click();
+
+  await expect(confirmation).not.toBeVisible();
+  await expect(drawer).not.toBeVisible();
+  await expect(page.getByText('Payment to Osahon Oboite')).not.toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Open transaction' })
+  ).toHaveCount(2);
+  expect(requestCount).toBe(1);
+});
+
+test('keeps delete confirmation open when deletion fails', async ({ page }) => {
+  await registerRoutes(page, [], []);
+  await signIn(page);
+  let requestCount = 0;
+  await page.route('**/api/v1/journal-entries/payment-1', async (route) => {
+    requestCount += 1;
+    await route.fulfill({
+      status: 400,
+      json: {
+        name: 'AuthenticationError',
+        errorKey: 'auth_error_token_missing_unauthorized',
+        validationErrors: [],
+      },
+    });
+  });
+  await page.goto('/transactions');
+  await page.getByRole('button', { name: 'Open transaction' }).first().click();
+
+  const drawer = page.getByRole('dialog', { name: 'Transaction details' });
+  await drawer.getByRole('button', { name: 'Delete', exact: true }).click();
+  const confirmation = page.getByRole('alertdialog', {
+    name: 'Delete this transaction?',
+  });
+  await confirmation.getByLabel('Type "delete" to confirm').fill('delete');
+  await confirmation
+    .getByRole('button', { name: 'Delete', exact: true })
+    .click();
+
+  await expect(page.getByText('Missing token.')).toBeVisible();
+  await expect(confirmation).toBeVisible();
+  await expect(
+    confirmation.getByRole('button', { name: 'Delete', exact: true })
+  ).toBeEnabled();
+  await confirmation.getByRole('button', { name: 'Cancel' }).click();
+  await expect(confirmation).not.toBeVisible();
+  await expect(drawer).toBeVisible();
+  expect(requestCount).toBe(1);
+});
+
+test('archives instead of deleting and returns to the refreshed transactions page', async ({
   page,
 }) => {
   await registerRoutes(page, [], []);
@@ -326,12 +433,12 @@ test('archives the selected transaction once and returns to the refreshed transa
   await page.goto('/transactions?q=gift');
   await page.getByRole('button', { name: 'Open transaction' }).first().click();
   const drawer = page.getByRole('dialog', { name: 'Transaction details' });
-  await drawer.getByRole('button', { name: 'Archive', exact: true }).click();
+  await drawer.getByRole('button', { name: 'Delete', exact: true }).click();
   const confirmation = page.getByRole('alertdialog', {
-    name: 'Archive this transaction?',
+    name: 'Delete this transaction?',
   });
   await confirmation
-    .getByRole('button', { name: 'Archive', exact: true })
+    .getByRole('button', { name: 'Archive instead', exact: true })
     .click();
   const pendingButton = confirmation.getByRole('button', {
     name: 'Archiving...',

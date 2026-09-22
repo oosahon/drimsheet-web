@@ -175,9 +175,9 @@
   "journal_entry_error_mismatched_journal_lines_invalid": "Mismatched journal lines.",
   "journal_entry_error_opening_balance_date_invalid": "Invalid opening balance date.",
   "journal_entry_error_posting_date_invalid": "Invalid posting date.",
-  "journal_entry_error_source_type_invalid": "Invalid journal entry source type.",
+  "journal_entry_error_source_type_invalid": "Invalid transaction source type.",
   "journal_entry_error_status_invalid": "Invalid journal entry status.",
-  "journal_entry_error_status_transition_invalid": "Invalid journal entry status transition.",
+  "journal_entry_error_status_transition_invalid": "Invalid transaction status transition.",
   "journal_entry_error_transfer_not_permitted_on_account_invalid": "Transfers are not permitted on this account.",
   "journal_entry_error_unbalanced_journal_entry_invalid": "Unbalanced journal entry.",
   "journal_entry_error_unconfigured_opening_balance_account_unexpected": "Opening balance account is not configured.",
@@ -330,5 +330,6 @@
   "journal_entry_error_journal_line_id_invalid": "Invalid journal.",
   "journal_entry_error_rectification_has_no_changes_invalid": "No changes were made.",
   "journal_entry_error_rectification_line_id_invalid": "Invalid rectification line.",
-  "journal_entry_error_rectification_not_permitted_invalid": "You are not allowed to update this resource."
+  "journal_entry_error_rectification_not_permitted_invalid": "You are not allowed to update this resource.",
+  "journal_entry_error_deletion_not_permitted_invalid": "You are not allowed to delete this resource."
 }

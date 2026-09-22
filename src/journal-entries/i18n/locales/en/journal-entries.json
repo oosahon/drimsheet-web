@@ -148,5 +148,11 @@
   "archive_entry_confirmation_title": "Archive this transaction?",
   "archive_entry_confirmation_description": "Are you sure you want to archive this transaction?",
   "archive_entry_cancel_text": "Cancel",
-  "delete_entry_label": "Delete"
+  "delete_entry_label": "Delete",
+  "delete_entry_loading_text": "Deleting...",
+  "delete_entry_confirmation_title": "Delete this transaction?",
+  "delete_entry_confirmation_description": "This action cannot be undone. Type delete below to confirm.",
+  "delete_entry_confirmation_input_label": "Type \"delete\" to confirm",
+  "delete_entry_confirmation_keyword": "delete",
+  "delete_entry_archive_instead_text": "Archive instead"
 }

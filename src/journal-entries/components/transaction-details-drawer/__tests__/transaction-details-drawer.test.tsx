@@ -1,4 +1,4 @@
-import { TransactionDetailsDrawer } from '@/journal-entries/components/transactions-table/parts/transaction-details-drawer';
+import { TransactionDetailsDrawer } from '@/journal-entries/components/transaction-details-drawer';
 import type { ICashTransactionDetails } from '@/journal-entries/lib/types/transaction-details';
 import { EJournalEntrySourceType } from '@/shared/lib/api/Api';
 import { render, screen, within } from '@testing-library/react';
@@ -72,7 +72,7 @@ describe('TransactionDetailsDrawer', () => {
     expect(within(drawer).getByText('Main checking')).toBeInTheDocument();
   });
 
-  it('renders inert Delete before Edit and emits only the edit intent', async () => {
+  it('renders Delete before Edit and emits the edit intent', async () => {
     const user = userEvent.setup();
     const onEdit = vi.fn();
     render(
@@ -92,10 +92,6 @@ describe('TransactionDetailsDrawer', () => {
       deleteButton.compareDocumentPosition(editButton) &
         Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();
-
-    await user.click(deleteButton);
-    expect(onEdit).not.toHaveBeenCalled();
-    expect(drawer).toBeInTheDocument();
 
     await user.click(editButton);
     expect(onEdit).toHaveBeenCalledOnce();
