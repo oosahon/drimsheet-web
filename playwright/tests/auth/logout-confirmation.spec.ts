@@ -114,8 +114,13 @@ test('keeps a single pending logout request and disables dialog actions', async 
     dialog.getByRole('button', { name: 'Logging out...' })
   ).toBeDisabled();
   await expect(dialog.getByRole('button', { name: 'Cancel' })).toBeDisabled();
+  await expect(
+    dialog.getByRole('button', { name: 'Logging out...' })
+  ).toHaveAttribute('aria-busy', 'true');
   await expect.poll(() => logoutRequestCount).toBe(1);
 
+  await page.keyboard.press('Escape');
+  await expect(dialog).toBeVisible();
   await page.keyboard.press('Enter');
   expect(logoutRequestCount).toBe(1);
 

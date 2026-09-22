@@ -243,3 +243,161 @@ test('lists transactions at the index route and preserves creation routes', asyn
   await expect(page).toHaveURL('/transactions/inflow');
   await expect(page.getByRole('tab', { name: 'Inflow' })).toBeVisible();
 });
+
+test('dismisses archive confirmation without changing the transaction', async ({
+  page,
+}) => {
+  const journalEntryRequests: string[] = [];
+  await registerRoutes(page, [], journalEntryRequests);
+  await signIn(page);
+  await page.goto('/transactions');
+  await page.getByRole('button', { name: 'Open transaction' }).first().click();
+
+  const drawer = page.getByRole('dialog', { name: 'Transaction details' });
+  const archiveButton = drawer.getByRole('button', {
+    name: 'Archive',
+    exact: true,
+  });
+  const confirmation = page.getByRole('alertdialog', {
+    name: 'Archive this transaction?',
+  });
+
+  await archiveButton.click();
+  await expect(confirmation).toBeVisible();
+  await expect(confirmation).toHaveAccessibleDescription(
+    'Are you sure you want to archive this transaction?'
+  );
+  await expect(
+    confirmation.getByRole('button', { name: 'Cancel' })
+  ).toBeFocused();
+  await confirmation.getByRole('button', { name: 'Cancel' }).click();
+  await expect(confirmation).not.toBeVisible();
+  await expect(archiveButton).toBeFocused();
+
+  await archiveButton.click();
+  await page.keyboard.press('Escape');
+  await expect(confirmation).not.toBeVisible();
+  await expect(drawer).toBeVisible();
+
+  expect(journalEntryRequests).toEqual([]);
+
+  await drawer
+    .getByRole('button', { name: 'Close transaction details' })
+    .click();
+  await expect(page.getByText('Payment to Osahon Oboite')).toBeVisible();
+  await page.getByRole('button', { name: 'Open transaction' }).first().click();
+  await expect(drawer).toBeVisible();
+  await expect(confirmation).not.toBeVisible();
+});
+
+test('archives the selected transaction once and returns to the refreshed transactions page', async ({
+  page,
+}) => {
+  await registerRoutes(page, [], []);
+  await signIn(page);
+  let archived = false;
+  let requestCount = 0;
+  let releaseResponse = () => {};
+  const responseGate = new Promise<void>((resolve) => {
+    releaseResponse = resolve;
+  });
+  await page.route('**/api/v1/journal-entries?*', async (route) => {
+    const data = archived ? journalEntries.slice(1) : journalEntries;
+    await route.fulfill({
+      json: {
+        data,
+        meta: { page: 1, limit: 10, total: data.length, totalPages: 1 },
+      },
+    });
+  });
+  await page.route(
+    '**/api/v1/journal-entries/payment-1/archive',
+    async (route) => {
+      requestCount += 1;
+      expect(route.request().method()).toBe('POST');
+      expect(route.request().postDataJSON()).toEqual({ expectedVersion: 1 });
+      await responseGate;
+      archived = true;
+      await route.fulfill({
+        json: { ...journalEntries[0], status: 'archived', version: 2 },
+      });
+    }
+  );
+  await page.goto('/transactions?q=gift');
+  await page.getByRole('button', { name: 'Open transaction' }).first().click();
+  const drawer = page.getByRole('dialog', { name: 'Transaction details' });
+  await drawer.getByRole('button', { name: 'Archive', exact: true }).click();
+  const confirmation = page.getByRole('alertdialog', {
+    name: 'Archive this transaction?',
+  });
+  await confirmation
+    .getByRole('button', { name: 'Archive', exact: true })
+    .click();
+  const pendingButton = confirmation.getByRole('button', {
+    name: 'Archiving...',
+  });
+  await expect(pendingButton).toBeDisabled();
+  await expect(pendingButton).toHaveAttribute('aria-busy', 'true');
+  await expect(
+    confirmation.getByRole('button', { name: 'Cancel' })
+  ).toBeDisabled();
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('Enter');
+  await expect(confirmation).toBeVisible();
+  await expect.poll(() => requestCount).toBe(1);
+  releaseResponse();
+  await expect(page).toHaveURL('/transactions');
+  await expect(confirmation).not.toBeVisible();
+  await expect(drawer).not.toBeVisible();
+  await expect(page.getByText('Payment to Osahon Oboite')).not.toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Open transaction' })
+  ).toHaveCount(2);
+  expect(requestCount).toBe(1);
+  await page.getByRole('button', { name: 'Open transaction' }).first().click();
+  await expect(drawer).toBeVisible();
+  await expect(confirmation).not.toBeVisible();
+});
+
+test('closes archive confirmation on failure and shows the error', async ({
+  page,
+}) => {
+  await registerRoutes(page, [], []);
+  await signIn(page);
+  let requestCount = 0;
+  await page.route(
+    '**/api/v1/journal-entries/payment-1/archive',
+    async (route) => {
+      requestCount += 1;
+      if (requestCount === 1) {
+        await route.fulfill({
+          status: 400,
+          json: {
+            name: 'AuthenticationError',
+            errorKey: 'auth_error_token_missing_unauthorized',
+            validationErrors: [],
+          },
+        });
+        return;
+      }
+      await route.fulfill({
+        json: { ...journalEntries[0], status: 'archived', version: 2 },
+      });
+    }
+  );
+  await page.goto('/transactions?q=gift');
+  await page.getByRole('button', { name: 'Open transaction' }).first().click();
+  const drawer = page.getByRole('dialog', { name: 'Transaction details' });
+  await drawer.getByRole('button', { name: 'Archive', exact: true }).click();
+  const confirmation = page.getByRole('alertdialog', {
+    name: 'Archive this transaction?',
+  });
+  await confirmation
+    .getByRole('button', { name: 'Archive', exact: true })
+    .click();
+  await expect(page.getByText('Missing token.')).toBeVisible();
+  await expect(confirmation).not.toBeVisible();
+  await expect(drawer).not.toBeVisible();
+  await expect(page).toHaveURL('/transactions?q=gift');
+  expect(requestCount).toBe(1);
+});

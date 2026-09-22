@@ -25,6 +25,8 @@ export function TransactionsTable({
   actionButton,
   data,
   loading = false,
+  archiving = false,
+  onArchiveTransaction,
   pagination,
   onEditTransaction,
   onPageChange,
@@ -74,6 +76,12 @@ export function TransactionsTable({
 
     onEditTransaction?.(selectedTransaction);
   }, [onEditTransaction, selectedTransaction]);
+
+  const handleSelectedTransactionArchive = async () => {
+    if (!selectedTransaction || !onArchiveTransaction || archiving) return;
+    await onArchiveTransaction(selectedTransaction);
+    setSelectedTransaction(null);
+  };
 
   const columns = useMemo<ITableColumn<ITransactionsTableRow>[]>(() => {
     const directionLabel = t('transactions_table_direction_label');
@@ -217,6 +225,10 @@ export function TransactionsTable({
       )}
 
       <TransactionDetailsDrawer
+        archiving={archiving}
+        onArchive={
+          onArchiveTransaction ? handleSelectedTransactionArchive : undefined
+        }
         details={selectedDetails}
         editDisabled={!onEditTransaction}
         onEdit={handleSelectedTransactionEdit}

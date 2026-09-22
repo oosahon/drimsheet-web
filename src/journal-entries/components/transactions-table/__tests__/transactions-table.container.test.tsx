@@ -1,4 +1,5 @@
 import { TransactionsTableContainer } from '@/journal-entries/components/transactions-table';
+import { useArchiveJournalEntry } from '@/journal-entries/hooks/use-archive-journal-entry';
 import { useJournalEntries } from '@/journal-entries/hooks/use-journal-entries';
 import {
   EJournalEntrySourceType,
@@ -12,6 +13,7 @@ import { MemoryRouter, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/journal-entries/hooks/use-journal-entries');
+vi.mock('@/journal-entries/hooks/use-archive-journal-entry');
 
 const money = { amount: 125_000, currencyCode: 'NGN', isMinorUnit: false };
 const paymentEntry = {
@@ -84,6 +86,10 @@ function renderContainer(initialEntry = '/transactions') {
 describe('TransactionsTableContainer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useArchiveJournalEntry).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    } as never);
     vi.mocked(useJournalEntries).mockReturnValue({
       data: {
         data: [paymentEntry],

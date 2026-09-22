@@ -1,16 +1,5 @@
 import { useLogout } from '@/auth/hooks/use-logout';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogMedia,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '@/shared/components/alert-dialog';
+import { ConfirmationDialog } from '@/shared/components/confirmation-dialog';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { LogOutIcon } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
@@ -41,8 +30,7 @@ export function LogoutConfirmationDialog({
     onOpenChange?.(nextOpen);
   };
 
-  const handleLogout = async (e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleLogout = async () => {
     try {
       await logout();
       handleOpenChange(false);
@@ -59,32 +47,19 @@ export function LogoutConfirmationDialog({
   const log_out_text = t('log_out_text');
 
   return (
-    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
-      {children && <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>}
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogMedia>
-            <LogOutIcon className="text-destructive" />
-          </AlertDialogMedia>
-          <AlertDialogTitle>{are_you_sure_logout_text}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {will_need_to_log_back_in_text}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel variant="outline" disabled={isPending} size="sm">
-            {cancel_text}
-          </AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleLogout}
-            variant="destructive"
-            size="sm"
-            disabled={isPending}
-          >
-            {isPending ? logging_out_text : log_out_text}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmationDialog
+      open={isOpen}
+      onOpenChange={handleOpenChange}
+      onConfirm={handleLogout}
+      title={are_you_sure_logout_text}
+      description={will_need_to_log_back_in_text}
+      cancelText={cancel_text}
+      confirmationText={isPending ? logging_out_text : log_out_text}
+      variant="destructive"
+      loading={isPending}
+      media={<LogOutIcon className="text-destructive" />}
+    >
+      {children}
+    </ConfirmationDialog>
   );
 }

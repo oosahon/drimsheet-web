@@ -51,6 +51,7 @@ const meta = {
   tags: ['autodocs'],
   args: {
     details,
+    onArchive: async () => {},
     onEdit: () => undefined,
     onOpenChange: () => undefined,
     open: true,

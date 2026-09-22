@@ -143,5 +143,10 @@
   "transaction_details_exchange_rate_value": "1 {{baseCurrency}} = {{rate}} {{targetCurrency}}",
   "entry_overview_menu_label": "Open entry actions",
   "edit_entry_label": "Edit",
+  "archive_entry_label": "Archive",
+  "archive_entry_loading_text": "Archiving...",
+  "archive_entry_confirmation_title": "Archive this transaction?",
+  "archive_entry_confirmation_description": "Are you sure you want to archive this transaction?",
+  "archive_entry_cancel_text": "Cancel",
   "delete_entry_label": "Delete"
 }
