@@ -33,6 +33,7 @@ export interface TransactionsTableProps {
   data: IJournalEntryListDto[];
   loading?: boolean;
   pagination?: IPaginationResponseMeta;
+  onEditTransaction?: (entry: IJournalEntryListDto) => void;
   onPageChange?: (page: number) => void;
   onSortChange?: (
     key: 'effectiveDate',

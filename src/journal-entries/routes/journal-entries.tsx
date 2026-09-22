@@ -1,4 +1,5 @@
 import { TransactionLayout } from '@/journal-entries/layouts/transaction-layout';
+import { EditTransactionPage } from '@/journal-entries/pages/edit-transaction';
 import { InflowPage } from '@/journal-entries/pages/inflow';
 import { OutflowPage } from '@/journal-entries/pages/outflow';
 import { TransactionsPage } from '@/journal-entries/pages/transactions';
@@ -9,6 +10,7 @@ export const useJournalEntriesRoutes: TModuleRoutes = (basePath) => ({
   path: basePath,
   children: [
     { index: true, element: <TransactionsPage /> },
+    { path: ':type/:id/edit', element: <EditTransactionPage /> },
     {
       element: <TransactionLayout />,
       children: [

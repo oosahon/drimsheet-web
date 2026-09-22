@@ -5,9 +5,7 @@ import type {
 } from '@/journal-entries/lib/types/transaction-details';
 
 export interface TransactionDetailsProps {
-  details?: UTransactionDetails;
-  onOpenChange: (open: boolean) => void;
-  open: boolean;
+  details: UTransactionDetails;
 }
 
 export interface CashTransactionDetailsProps {

@@ -229,6 +229,14 @@ export const EFileUploadPurpose = {
 export type UFileUploadPurpose =
   (typeof EFileUploadPurpose)[keyof typeof EFileUploadPurpose];
 
+export const EJournalEntryRectificationMode = {
+  UpdateDraft: 'update_draft',
+  UpdateMeta: 'update_meta',
+  VoidAndReplace: 'void_and_replace',
+} as const;
+export type UJournalEntryRectificationMode =
+  (typeof EJournalEntryRectificationMode)[keyof typeof EJournalEntryRectificationMode];
+
 export const ECounterpartyType = {
   Individual: 'individual',
   Organization: 'organization',
@@ -275,7 +283,6 @@ export type UExchangeRateType =
   (typeof EExchangeRateType)[keyof typeof EExchangeRateType];
 
 export const EJournalEntrySourceType = {
-  System: 'system',
   Expense: 'expense',
   OpeningBalance: 'opening_balance',
   Sale: 'sale',
@@ -286,6 +293,7 @@ export const EJournalEntrySourceType = {
   Payment: 'payment',
   Receipt: 'receipt',
   Adjustment: 'adjustment',
+  Reversal: 'reversal',
 } as const;
 export type UJournalEntrySourceType =
   (typeof EJournalEntrySourceType)[keyof typeof EJournalEntrySourceType];
@@ -910,6 +918,94 @@ export interface ITransferEntryReq {
   postedAt: string | null;
   memo: string | null;
 }
+
+export interface IJournalEntryRectificationDto {
+  mode: UJournalEntryRectificationMode;
+  originalJournalEntryId: string;
+  currentJournalEntryId: string;
+  reversingJournalEntryId: string | null;
+  journalEntry: IJournalEntryDto;
+}
+
+export interface IJournalEntryRectificationCounterpartyLineReq {
+  accountId: string;
+  counterparty: IJournalCounterpartyReq;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+  description: string | null;
+  /** @format double */
+  sequenceOrder: number;
+  id?: string;
+}
+
+export interface IPaymentJournalEntryRectificationReq {
+  /** @format double */
+  expectedVersion: number;
+  attachments: IFileAttachment[];
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  memo: string | null;
+  sourceType: 'payment';
+  sourceLine: IJournalEntryRectificationCounterpartyLineReq;
+  destinationLines: IJournalEntryRectificationCounterpartyLineReq[];
+}
+
+export interface IReceiptJournalEntryRectificationReq {
+  /** @format double */
+  expectedVersion: number;
+  attachments: IFileAttachment[];
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  memo: string | null;
+  sourceType: 'receipt';
+  sourceLines: IJournalEntryRectificationCounterpartyLineReq[];
+  destinationLine: IJournalEntryRectificationCounterpartyLineReq;
+}
+
+export interface ITransferJournalEntryRectificationLineReq {
+  id?: string;
+  accountId: string;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+  description: string | null;
+  /** @format double */
+  sequenceOrder: number;
+}
+
+export interface IJournalEntryRectificationLineReq {
+  accountId: string;
+  counterparty: IJournalCounterpartyReq | null;
+  amount: IMoneyDto;
+  exchangeRate: IExchangeRateDto | null;
+  description: string | null;
+  /** @format double */
+  sequenceOrder: number;
+  id?: string;
+}
+
+export interface ITransferJournalEntryRectificationReq {
+  /** @format double */
+  expectedVersion: number;
+  attachments: IFileAttachment[];
+  /** @format date-time */
+  effectiveDate: string;
+  /** @format date-time */
+  postedAt: string | null;
+  memo: string | null;
+  sourceType: 'transfer';
+  sourceLine: ITransferJournalEntryRectificationLineReq;
+  destinationLine: ITransferJournalEntryRectificationLineReq;
+  chargeLines: IJournalEntryRectificationLineReq[];
+}
+
+export type TJournalEntryRectificationReq =
+  | IPaymentJournalEntryRectificationReq
+  | IReceiptJournalEntryRectificationReq
+  | ITransferJournalEntryRectificationReq;
 
 /** Make all properties in T readonly */
 export type ReadonlyRecordStringString = Record<string, string>;
@@ -1551,6 +1647,21 @@ export class Api<
       }),
 
     /**
+     * @description Get a journal entry by id
+     *
+     * @tags Journal Entry
+     * @name GetJournalEntry
+     * @request GET:/journal-entries/{id}
+     */
+    getJournalEntry: (id: string, params: RequestParams = {}) =>
+      this.request<IJournalEntryListDto, IHttpErrorDto>({
+        path: `/journal-entries/${id}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
      * @description Create payment journal entry
      *
      * @tags Journal Entry
@@ -1594,6 +1705,27 @@ export class Api<
     createTransfer: (data: ITransferEntryReq, params: RequestParams = {}) =>
       this.request<IJournalEntryDto, IHttpErrorDto>({
         path: `/journal-entries/transfer`,
+        method: 'POST',
+        body: data,
+        type: EContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description Correct a journal entry while preserving its accounting audit trail.
+     *
+     * @tags Journal Entry
+     * @name RectifyJournalEntry
+     * @request POST:/journal-entries/{id}/rectify
+     */
+    rectifyJournalEntry: (
+      id: string,
+      data: TJournalEntryRectificationReq,
+      params: RequestParams = {}
+    ) =>
+      this.request<IJournalEntryRectificationDto, IHttpErrorDto>({
+        path: `/journal-entries/${id}/rectify`,
         method: 'POST',
         body: data,
         type: EContentType.Json,

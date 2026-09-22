@@ -353,6 +353,25 @@ describe('TransactionsTable', () => {
     ).toBeInTheDocument();
   });
 
+  it('emits edit intent for the selected transaction', async () => {
+    const user = userEvent.setup();
+    const onEditTransaction = vi.fn();
+
+    render(
+      <TransactionsTable
+        {...defaultProps}
+        onEditTransaction={onEditTransaction}
+      />
+    );
+
+    await user.click(
+      screen.getAllByRole('button', { name: 'Open transaction' })[0]
+    );
+    await user.click(screen.getByRole('button', { name: 'Edit' }));
+
+    expect(onEditTransaction).toHaveBeenCalledWith(paymentEntry);
+  });
+
   it('renders an optional action button alongside the search field', () => {
     render(
       <TransactionsTable

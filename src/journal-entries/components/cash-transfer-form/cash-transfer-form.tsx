@@ -45,6 +45,7 @@ export function CashTransferForm({
   officialExchangeRate,
   onCurrencyContextChange,
   onSubmit,
+  submitLabel,
 }: Readonly<CashTransferFormProps>) {
   const { t } = useTranslation<'journal-entries'>('journal-entries');
 
@@ -314,7 +315,7 @@ export function CashTransferForm({
   const attachment_guidance_text = t(
     'cash_transaction_attachment_guidance_text'
   );
-  const create_text = t('cash_transaction_create_text');
+  const create_text = submitLabel ?? t('cash_transaction_create_text');
   const return_title = t('cash_transfer_return_to_single_title');
   const return_description = t('cash_transfer_return_to_single_description');
   const return_cancel_text = t('cash_transfer_return_to_single_cancel_text');

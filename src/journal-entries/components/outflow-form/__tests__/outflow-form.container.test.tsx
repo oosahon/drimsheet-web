@@ -5,23 +5,39 @@ import { OutflowFormContainer } from '@/journal-entries/components/outflow-form'
 import { useCreatePayment } from '@/journal-entries/hooks/use-create-payment';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { useExchangeRates } from '@/shared/hooks/use-exchange-rates';
-import type { ILedgerAccountDto } from '@/shared/lib/api/Api';
+import {
+  EJournalEntrySourceType,
+  EJournalEntryStatus,
+  EJournalSide,
+  type IJournalEntryListDto,
+  type ILedgerAccountDto,
+} from '@/shared/lib/api/Api';
 import { fileUploadService } from '@/shared/lib/services/file-upload.service';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { toast } from 'sonner';
 import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { navigate } = vi.hoisted(() => ({ navigate: vi.fn() }));
+const { navigate, rectifyJournalEntry } = vi.hoisted(() => ({
+  navigate: vi.fn(),
+  rectifyJournalEntry: vi.fn(),
+}));
 
 vi.mock('@/account/hooks/use-permitted-posting-accounts');
 vi.mock('@/accounting/hooks/use-accounting-entity');
 vi.mock('@/counterparty/hooks/use-counterparties');
 vi.mock('@/journal-entries/hooks/use-create-payment');
+vi.mock('@/journal-entries/hooks/use-rectify-journal-entry', () => ({
+  useRectifyJournalEntry: () => ({
+    mutateAsync: rectifyJournalEntry,
+    isPending: false,
+  }),
+}));
 vi.mock('@/shared/hooks/use-api-error-handler');
 vi.mock('@/shared/hooks/use-exchange-rates');
 vi.mock('@/shared/lib/services/file-upload.service', () => ({
   fileUploadService: {
+    uploadAttachment: vi.fn(),
     uploadFile: vi.fn(),
   },
 }));
@@ -51,6 +67,61 @@ const categories = [
     balance: { amount: 0, currencyCode: 'NGN', isMinorUnit: false },
   },
 ] as unknown as ILedgerAccountDto[];
+
+const timestamp = '2026-09-21T10:00:00.000Z';
+const transactionMoney = {
+  amount: 250,
+  currencyCode: 'NGN',
+  isMinorUnit: false,
+};
+const journalEntry = {
+  id: 'payment-entry',
+  accountingEntityId: 'entity-1',
+  sourceType: EJournalEntrySourceType.Payment,
+  memo: 'Office supplies',
+  status: EJournalEntryStatus.Posted,
+  effectiveDate: '2026-09-21T00:00:00.000Z',
+  postedAt: timestamp,
+  voidedAt: null,
+  voidingEntryId: null,
+  version: 2,
+  createdBy: 'user-1',
+  createdAt: timestamp,
+  updatedAt: timestamp,
+  attachments: [],
+  lines: [
+    {
+      id: 'cash-line',
+      entryId: 'payment-entry',
+      account: { id: 'bank-account', name: 'Operating account' },
+      counterparty: { id: 'vendor-1', name: 'Acme' },
+      sequenceOrder: 1,
+      amount: transactionMoney,
+      exchangeRate: null,
+      functionalAmount: transactionMoney,
+      side: EJournalSide.Credit,
+      description: 'Office supplies',
+      version: 1,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    },
+    {
+      id: 'category-line',
+      entryId: 'payment-entry',
+      account: { id: 'office-expense', name: 'Office expense' },
+      counterparty: { id: 'vendor-1', name: 'Acme' },
+      sequenceOrder: 2,
+      amount: transactionMoney,
+      exchangeRate: null,
+      functionalAmount: transactionMoney,
+      side: EJournalSide.Debit,
+      description: 'Office supplies',
+      version: 1,
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    },
+  ],
+} satisfies IJournalEntryListDto;
 
 const createPayment = vi.fn();
 const handleApiError = vi.fn();
@@ -92,6 +163,7 @@ describe('OutflowFormContainer', () => {
     vi.mocked(useApiErrorHandler).mockReturnValue(handleApiError);
     vi.mocked(fileUploadService.uploadFile).mockResolvedValue('attachment-ref');
     createPayment.mockResolvedValue(undefined);
+    rectifyJournalEntry.mockResolvedValue(undefined);
   });
 
   it('renders the outflow loading state while prerequisite data is pending', () => {
@@ -167,5 +239,29 @@ describe('OutflowFormContainer', () => {
       expect(navigate).toHaveBeenCalledWith('/transactions');
     });
     expect(handleApiError).not.toHaveBeenCalled();
+  });
+
+  it('prefills and rectifies an existing payment', async () => {
+    const user = userEvent.setup();
+    render(<OutflowFormContainer journalEntry={journalEntry} />);
+
+    expect(screen.getByLabelText('Description')).toHaveValue('Office supplies');
+    await user.click(screen.getByRole('button', { name: 'Update' }));
+
+    await waitFor(() => {
+      expect(rectifyJournalEntry).toHaveBeenCalledWith({
+        id: 'payment-entry',
+        payload: expect.objectContaining({
+          expectedVersion: 2,
+          sourceType: 'payment',
+          sourceLine: expect.objectContaining({ id: 'cash-line' }),
+          destinationLines: [expect.objectContaining({ id: 'category-line' })],
+        }),
+      });
+    });
+    expect(toast.success).toHaveBeenCalledWith(
+      'Transaction updated successfully'
+    );
+    expect(createPayment).not.toHaveBeenCalled();
   });
 });
