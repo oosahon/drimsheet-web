@@ -1,6 +1,7 @@
 import { Ellipsis, Plus } from 'lucide-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 import { useGetCounterpartyRoleLabel } from '@/counterparty/hooks/use-get-counterparty-role-label';
 import { useGetCounterpartyTypeLabel } from '@/counterparty/hooks/use-get-counterparty-type-label';
@@ -25,6 +26,7 @@ import { cn } from '@/shared/lib/utils/cn';
 
 export interface CounterpartiesTableProps {
   data: ICounterpartyDto[];
+  getCounterpartyHref?: (id: string) => string;
   loading?: boolean;
   selectable?: boolean;
   selectedRowIds?: (string | number)[];
@@ -49,6 +51,7 @@ export interface CounterpartiesTableProps {
 
 export function CounterpartiesTable({
   data,
+  getCounterpartyHref,
   loading = false,
   selectable = false,
   selectedRowIds,
@@ -91,7 +94,17 @@ export function CounterpartiesTable({
         dataIndex: 'name',
         title: counterparty_name_label,
         sortable: true,
-        render: (value) => <span>{String(value)}</span>,
+        render: (value, row) =>
+          getCounterpartyHref ? (
+            <Link
+              className="underline-offset-4 hover:underline focus-visible:underline"
+              to={getCounterpartyHref(row.id)}
+            >
+              {String(value)}
+            </Link>
+          ) : (
+            <span>{String(value)}</span>
+          ),
       },
       {
         dataIndex: 'status',
@@ -177,7 +190,12 @@ export function CounterpartiesTable({
         },
       },
     ];
-  }, [t, getCounterpartyTypeLabel, getCounterpartyRoleLabel]);
+  }, [
+    t,
+    getCounterpartyTypeLabel,
+    getCounterpartyRoleLabel,
+    getCounterpartyHref,
+  ]);
 
   const search_placeholder_text = t('counterparty:search_placeholder');
   const add_counterparty_text = t('counterparty:add_counterparty');

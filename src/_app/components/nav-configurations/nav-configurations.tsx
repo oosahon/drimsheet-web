@@ -6,10 +6,12 @@ import {
   SidebarMenuItem,
 } from '@/shared/components/sidebar';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 
 interface NavConfigurationsProps {
   items: {
     name: string;
+    isActive?: boolean;
     url: string;
     icon: React.ReactNode;
   }[];
@@ -28,11 +30,14 @@ export function NavConfigurations({ items }: Readonly<NavConfigurationsProps>) {
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
+            <SidebarMenuButton asChild isActive={item.isActive}>
+              <Link
+                to={item.url}
+                aria-current={item.isActive ? 'page' : undefined}
+              >
                 {item.icon}
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}

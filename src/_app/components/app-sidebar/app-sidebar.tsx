@@ -68,6 +68,7 @@ export function AppSidebar({
         {
           name: t('shared:counterparties'),
           url: '/counterparties',
+          isActive: isRouteActive(currentPath, '/counterparties'),
           icon: <UsersRound />,
         },
         {

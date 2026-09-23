@@ -2,9 +2,20 @@ import { drimsheetApi } from '@/shared/lib/api';
 import type {
   ICounterpartyCreateReq,
   IGetCounterpartiesQuery,
+  IGetJournalEntriesQuery,
 } from '@/shared/lib/api/Api';
 
 export const counterpartyService = {
+  async getCounterparty(id: string) {
+    const response = await drimsheetApi.counterparties.getCounterparty(id);
+    return response.data;
+  },
+
+  async getCounterpartyTransactions(query: IGetJournalEntriesQuery) {
+    const response = await drimsheetApi.journalEntries.getJournalEntries(query);
+    return response.data;
+  },
+
   async getCounterparties(query: IGetCounterpartiesQuery) {
     const response = await drimsheetApi.counterparties.getCounterparties(query);
     return response.data;

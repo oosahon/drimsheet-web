@@ -14,6 +14,14 @@ Make imports predictable so the agent can change one part of the app without cau
 - `src/<feature>/routes/` may import pages only.
 - `src/shared/` must not import from any feature folder.
 
+### Counterparty detail composition exception
+
+`src/counterparty/pages/counterparty-details.tsx` may import the public
+`TransactionsTable` from `@/journal-entries/components/transactions-table`.
+The page supplies data and presentation props; it must not import the transaction
+container or private helpers. This exception does not extend to feature hooks,
+services, or components.
+
 ## Dependency Boundaries
 
 - Shared code must stay feature-agnostic.

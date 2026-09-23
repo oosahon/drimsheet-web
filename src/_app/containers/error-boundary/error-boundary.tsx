@@ -9,6 +9,7 @@ import { FullPageLoader } from '@/shared/components/full-page-loader';
 import { useApiErrorHandler } from '@/shared/hooks/use-api-error-handler';
 import { isFeatureFlagApiError } from '@/shared/lib/api';
 import { ErrorBoundary as SentryErrorBoundary } from '@sentry/react';
+import { QueryErrorResetBoundary } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -73,15 +74,20 @@ export const DefaultErrorBoundary = ({
   };
 
   return (
-    <SentryErrorBoundary
-      fallback={renderFallback}
-      onError={(error: unknown) => {
-        if (isAxiosError(error)) {
-          handleApiError(error, { report: false });
-        }
-      }}
-    >
-      {children}
-    </SentryErrorBoundary>
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <SentryErrorBoundary
+          onReset={reset}
+          fallback={renderFallback}
+          onError={(error: unknown) => {
+            if (isAxiosError(error)) {
+              handleApiError(error, { report: false });
+            }
+          }}
+        >
+          {children}
+        </SentryErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
   );
 };
