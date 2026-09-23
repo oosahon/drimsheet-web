@@ -1,9 +1,4 @@
-import type {
-  IContractorCreateReq,
-  ICounterpartyCreateReq,
-  IEmployerCreateReq,
-  IVendorCreateReq,
-} from '@/shared/lib/api/Api';
+import type { ICounterpartyCreateReq } from '@/shared/lib/api/Api';
 import { expect, test } from '@integration/fixtures/test';
 import {
   authenticatedUser,
@@ -16,9 +11,6 @@ const refreshEndpoint = '**/api/v1/auth/refresh-access-token';
 const jurisdictionsEndpoint = '**/api/v1/accounting/jurisdictions';
 
 const createCounterpartyEndpoint = '**/api/v1/counterparties';
-const createVendorEndpoint = '**/api/v1/counterparties/vendor';
-const createContractorEndpoint = '**/api/v1/counterparties/contractor';
-const createEmployerEndpoint = '**/api/v1/counterparties/employer';
 
 async function registerCounterpartyPageRoutes(page: Page) {
   await registerAuthenticatedAppRoutes(page);
@@ -156,6 +148,10 @@ test.describe('Counterparty Selection and Creation Flow', () => {
     // Intercept POST
     let capturedBody: ICounterpartyCreateReq | null = null;
     await page.route(createCounterpartyEndpoint, async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.fallback();
+        return;
+      }
       capturedBody = JSON.parse(route.request().postData() ?? '{}');
       await route.fulfill({
         status: 201,
@@ -214,8 +210,12 @@ test.describe('Counterparty Selection and Creation Flow', () => {
     await vendorDialog.getByRole('textbox', { name: /city/i }).fill('Ikeja');
 
     // Intercept POST
-    let capturedBody: IVendorCreateReq | null = null;
-    await page.route(createVendorEndpoint, async (route) => {
+    let capturedBody: ICounterpartyCreateReq | null = null;
+    await page.route(createCounterpartyEndpoint, async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.fallback();
+        return;
+      }
       capturedBody = JSON.parse(route.request().postData() ?? '{}');
       await route.fulfill({
         status: 201,
@@ -231,11 +231,15 @@ test.describe('Counterparty Selection and Creation Flow', () => {
       name: 'Acme Supplies',
       type: 'organization',
       status: 'active',
-      address: {
-        line1: '123 Vendor Rd',
-        city: 'Ikeja',
-        region: 'Lagos State',
-        countryCode: 'NG',
+      meta: {
+        vendor: {
+          address: {
+            line1: '123 Vendor Rd',
+            city: 'Ikeja',
+            region: 'Lagos State',
+            countryCode: 'NG',
+          },
+        },
       },
     });
   });
@@ -272,8 +276,12 @@ test.describe('Counterparty Selection and Creation Flow', () => {
       .fill('San Francisco');
 
     // Intercept POST
-    let capturedBody: IContractorCreateReq | null = null;
-    await page.route(createContractorEndpoint, async (route) => {
+    let capturedBody: ICounterpartyCreateReq | null = null;
+    await page.route(createCounterpartyEndpoint, async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.fallback();
+        return;
+      }
       capturedBody = JSON.parse(route.request().postData() ?? '{}');
       await route.fulfill({
         status: 201,
@@ -291,10 +299,14 @@ test.describe('Counterparty Selection and Creation Flow', () => {
       name: 'Jane Smith',
       type: 'individual',
       status: 'active',
-      address: {
-        line1: '456 Contractor Way',
-        city: 'San Francisco',
-        countryCode: 'US',
+      meta: {
+        contractor: {
+          address: {
+            line1: '456 Contractor Way',
+            city: 'San Francisco',
+            countryCode: 'US',
+          },
+        },
       },
     });
   });
@@ -336,8 +348,12 @@ test.describe('Counterparty Selection and Creation Flow', () => {
       .fill('New York');
 
     // Intercept POST
-    let capturedBody: IEmployerCreateReq | null = null;
-    await page.route(createEmployerEndpoint, async (route) => {
+    let capturedBody: ICounterpartyCreateReq | null = null;
+    await page.route(createCounterpartyEndpoint, async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.fallback();
+        return;
+      }
       capturedBody = JSON.parse(route.request().postData() ?? '{}');
       await route.fulfill({
         status: 201,
@@ -353,11 +369,15 @@ test.describe('Counterparty Selection and Creation Flow', () => {
       name: 'MegaCorp International',
       type: 'organization',
       status: 'active',
-      displayName: 'MegaCorp',
-      address: {
-        line1: '789 Employer Lane',
-        city: 'New York',
-        countryCode: 'US',
+      meta: {
+        employer: {
+          displayName: 'MegaCorp',
+          address: {
+            line1: '789 Employer Lane',
+            city: 'New York',
+            countryCode: 'US',
+          },
+        },
       },
     });
   });
@@ -366,6 +386,10 @@ test.describe('Counterparty Selection and Creation Flow', () => {
     await signInAndNavigateToCounterparties(page);
 
     await page.route(createCounterpartyEndpoint, async (route) => {
+      if (route.request().method() !== 'POST') {
+        await route.fallback();
+        return;
+      }
       await route.fulfill({
         status: 500,
         json: { message: 'Failed to create counterparty' },

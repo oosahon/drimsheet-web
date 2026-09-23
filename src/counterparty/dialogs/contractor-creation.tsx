@@ -3,7 +3,8 @@ import {
   ContractorForm,
   type IContractorFormValues,
 } from '@/counterparty/components';
-import { useCreateContractor } from '@/counterparty/hooks/use-create-contractor';
+import { useCreateCounterparty } from '@/counterparty/hooks/use-create-counterparty';
+import { counterpartyMapper } from '@/counterparty/lib/mappers/counterparty.mapper';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +31,7 @@ export function ContractorCreationDialog({
   const { data: jurisdictions = [], isPending: isJurisdictionsPending } =
     useJurisdictions();
   const { mutateAsync: createContractor, isPending: isCreating } =
-    useCreateContractor();
+    useCreateCounterparty();
 
   const formDisabled = isJurisdictionsPending;
 
@@ -42,7 +43,7 @@ export function ContractorCreationDialog({
 
   const handleSubmit = async (values: IContractorFormValues) => {
     try {
-      await createContractor(values);
+      await createContractor(counterpartyMapper.toContractorCreateReq(values));
       toast.success(t('counterparty:contractor_created_success_text'));
       onClose();
     } catch (error) {

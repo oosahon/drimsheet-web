@@ -44,6 +44,7 @@ export function CounterpartiesTableContainer({
 
   return (
     <CounterpartiesTable
+      getCounterpartyHref={(id) => `/counterparties/${encodeURIComponent(id)}`}
       onAddCounterparty={onAddCounterparty}
       data={counterpartiesData?.data ?? []}
       loading={isLoading}

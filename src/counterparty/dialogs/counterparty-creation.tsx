@@ -3,6 +3,7 @@ import {
   type ICounterpartyFormValues,
 } from '@/counterparty/components';
 import { useCreateCounterparty } from '@/counterparty/hooks/use-create-counterparty';
+import { counterpartyMapper } from '@/counterparty/lib/mappers/counterparty.mapper';
 import {
   Dialog,
   DialogContent,
@@ -37,7 +38,9 @@ export function CounterpartyCreationDialog({
 
   const handleSubmit = async (values: ICounterpartyFormValues) => {
     try {
-      await createCounterparty(values);
+      await createCounterparty(
+        counterpartyMapper.toCounterpartyCreateReq(values)
+      );
       toast.success(t('counterparty:counterparty_created_success_text'));
       onClose();
     } catch (error) {

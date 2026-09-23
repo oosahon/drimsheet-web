@@ -782,6 +782,8 @@ export interface IGetJournalEntriesQuery {
   /** @format double */
   page?: number;
   accountId?: string;
+  counterpartyId?: string;
+  status?: 'posted' | 'archived';
 }
 
 export interface IJournalLineDto {
@@ -1069,25 +1071,6 @@ export interface IExchangeRateQueryParam {
   asOf?: string;
 }
 
-export interface ICounterpartyDto {
-  id: string;
-  accountingEntityId: string;
-  name: string;
-  status: UCounterpartyStatus;
-  type: UCounterpartyType;
-  roles: UCounterpartyRole[];
-  /** @format date-time */
-  createdAt: string;
-  /** @format date-time */
-  updatedAt: string;
-}
-
-export interface ICounterpartyCreateReq {
-  name: string;
-  status: UCounterpartyStatus;
-  type: UCounterpartyType;
-}
-
 export interface IAddressDto {
   line1: string;
   line2?: string;
@@ -1097,26 +1080,51 @@ export interface IAddressDto {
   countryCode: string;
 }
 
-export interface IVendorCreateReq {
-  name: string;
-  status: UCounterpartyStatus;
-  type: UCounterpartyType;
-  address?: IAddressDto;
+export interface ICounterpartyMetaDto {
+  employer?: {
+    address: IAddressDto;
+    displayName: string | null;
+  };
+  vendor?: {
+    address: IAddressDto | null;
+  };
+  contractor?: {
+    address: IAddressDto;
+  };
 }
 
-export interface IContractorCreateReq {
+export interface ICounterpartyDto {
+  id: string;
+  accountingEntityId: string;
   name: string;
   status: UCounterpartyStatus;
   type: UCounterpartyType;
-  address: IAddressDto;
+  roles: UCounterpartyRole[];
+  meta: ICounterpartyMetaDto;
+  /** @format date-time */
+  createdAt: string;
+  /** @format date-time */
+  updatedAt: string;
 }
 
-export interface IEmployerCreateReq {
+export interface ICounterpartyCreateMetaReq {
+  employer?: {
+    address: IAddressDto;
+    displayName?: string | null;
+  };
+  vendor?: {
+    address?: IAddressDto | null;
+  };
+  contractor?: {
+    address: IAddressDto;
+  };
+}
+
+export interface ICounterpartyCreateReq {
   name: string;
   status: UCounterpartyStatus;
   type: UCounterpartyType;
-  displayName?: string | null;
-  address: IAddressDto;
+  meta?: ICounterpartyCreateMetaReq;
 }
 
 export interface IPaginatedResponseICounterpartyDto {
@@ -1629,7 +1637,7 @@ export class Api<
   };
   journalEntries = {
     /**
-     * @description Get paginated journal entries with optional account participation filter
+     * @description Get paginated journal entries with optional line participation filters
      *
      * @tags Journal Entry
      * @name GetJournalEntries
@@ -1645,39 +1653,13 @@ export class Api<
         /** @format double */
         page?: number;
         accountId?: string;
+        counterpartyId?: string;
+        status?: 'posted' | 'archived';
       },
       params: RequestParams = {}
     ) =>
       this.request<IPaginatedResponseIJournalEntryListDto, IHttpErrorDto>({
         path: `/journal-entries`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Get paginated archived journal entries with optional account participation filter
-     *
-     * @tags Journal Entry
-     * @name GetArchivedJournalEntries
-     * @request GET:/journal-entries/archived
-     */
-    getArchivedJournalEntries: (
-      query?: {
-        /** @format double */
-        limit?: number;
-        orderBy?: UJournalEntrySortBy;
-        sortDirection?: UPaginationSortDirection;
-        search?: string;
-        /** @format double */
-        page?: number;
-        accountId?: string;
-      },
-      params: RequestParams = {}
-    ) =>
-      this.request<IPaginatedResponseIJournalEntryListDto, IHttpErrorDto>({
-        path: `/journal-entries/archived`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -1927,55 +1909,16 @@ export class Api<
       }),
 
     /**
-     * @description Create a new vendor
+     * @description Get a counterparty by id
      *
      * @tags Counterparty
-     * @name CreateVendor
-     * @request POST:/counterparties/vendor
+     * @name GetCounterparty
+     * @request GET:/counterparties/{id}
      */
-    createVendor: (data: IVendorCreateReq, params: RequestParams = {}) =>
+    getCounterparty: (id: string, params: RequestParams = {}) =>
       this.request<ICounterpartyDto, IHttpErrorDto>({
-        path: `/counterparties/vendor`,
-        method: 'POST',
-        body: data,
-        type: EContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Create a new contractor
-     *
-     * @tags Counterparty
-     * @name CreateContractor
-     * @request POST:/counterparties/contractor
-     */
-    createContractor: (
-      data: IContractorCreateReq,
-      params: RequestParams = {}
-    ) =>
-      this.request<ICounterpartyDto, IHttpErrorDto>({
-        path: `/counterparties/contractor`,
-        method: 'POST',
-        body: data,
-        type: EContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description Create a new employer
-     *
-     * @tags Counterparty
-     * @name CreateEmployer
-     * @request POST:/counterparties/employer
-     */
-    createEmployer: (data: IEmployerCreateReq, params: RequestParams = {}) =>
-      this.request<ICounterpartyDto, IHttpErrorDto>({
-        path: `/counterparties/employer`,
-        method: 'POST',
-        body: data,
-        type: EContentType.Json,
+        path: `/counterparties/${id}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

@@ -331,5 +331,6 @@
   "journal_entry_error_rectification_has_no_changes_invalid": "No changes were made.",
   "journal_entry_error_rectification_line_id_invalid": "Invalid rectification line.",
   "journal_entry_error_rectification_not_permitted_invalid": "You are not allowed to update this resource.",
-  "journal_entry_error_deletion_not_permitted_invalid": "You are not allowed to delete this resource."
+  "journal_entry_error_deletion_not_permitted_invalid": "You are not allowed to delete this resource.",
+  "counterparty_error_meta_invalid": "Invalid counterparty details."
 }

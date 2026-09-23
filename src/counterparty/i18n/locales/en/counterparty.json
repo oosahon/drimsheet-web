@@ -44,5 +44,17 @@
   "employer_created_success_text": "Employer created successfully",
   "roles_label": "Roles",
   "search_placeholder": "Search counterparties...",
-  "add_counterparty": "Add counterparty"
+  "add_counterparty": "Add counterparty",
+  "relationships_label": "Relationships",
+  "missing_address_text": "No address provided",
+  "no_roles_text": "No relationships",
+  "added_label": "Added",
+  "updated_label": "Last updated",
+  "edit_label": "Edit",
+  "details_loading_text": "Loading counterparty details",
+  "all_counterparties_label": "All counterparties",
+  "details_title": "Counterparty details",
+  "recent_transactions_title": "Recent transactions",
+  "view_transactions_label": "View all transactions",
+  "transactions_count_text": "Showing {{count}} of {{total}}"
 }

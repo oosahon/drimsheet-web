@@ -1,13 +1,21 @@
 import { drimsheetApi } from '@/shared/lib/api';
 import type {
-  IContractorCreateReq,
   ICounterpartyCreateReq,
-  IEmployerCreateReq,
   IGetCounterpartiesQuery,
-  IVendorCreateReq,
+  IGetJournalEntriesQuery,
 } from '@/shared/lib/api/Api';
 
 export const counterpartyService = {
+  async getCounterparty(id: string) {
+    const response = await drimsheetApi.counterparties.getCounterparty(id);
+    return response.data;
+  },
+
+  async getCounterpartyTransactions(query: IGetJournalEntriesQuery) {
+    const response = await drimsheetApi.journalEntries.getJournalEntries(query);
+    return response.data;
+  },
+
   async getCounterparties(query: IGetCounterpartiesQuery) {
     const response = await drimsheetApi.counterparties.getCounterparties(query);
     return response.data;
@@ -15,21 +23,6 @@ export const counterpartyService = {
 
   async createCounterparty(data: ICounterpartyCreateReq) {
     const response = await drimsheetApi.counterparties.createCounterparty(data);
-    return response.data;
-  },
-
-  async createVendor(data: IVendorCreateReq) {
-    const response = await drimsheetApi.counterparties.createVendor(data);
-    return response.data;
-  },
-
-  async createContractor(data: IContractorCreateReq) {
-    const response = await drimsheetApi.counterparties.createContractor(data);
-    return response.data;
-  },
-
-  async createEmployer(data: IEmployerCreateReq) {
-    const response = await drimsheetApi.counterparties.createEmployer(data);
     return response.data;
   },
 };

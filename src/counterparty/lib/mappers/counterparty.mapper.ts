@@ -7,12 +7,9 @@ import type {
 import type { TStatusBadgeValue } from '@/shared/components/status-badge';
 import {
   ECounterpartyStatus,
-  type IContractorCreateReq,
   type ICounterpartyCreateReq,
   type ICounterpartyDto,
-  type IEmployerCreateReq,
   type IGetCounterpartiesQuery,
-  type IVendorCreateReq,
   type UCounterpartyRole,
   type UCounterpartySortBy,
   type UCounterpartyStatus,
@@ -81,7 +78,7 @@ export const counterpartyMapper = {
     };
   },
 
-  toVendorCreateReq(values: IVendorFormValues): IVendorCreateReq {
+  toVendorCreateReq(values: IVendorFormValues): ICounterpartyCreateReq {
     const address = values.address;
     const hasAddress =
       address &&
@@ -95,45 +92,57 @@ export const counterpartyMapper = {
       name: values.name,
       type: values.type,
       status: ECounterpartyStatus.Active,
-      address: hasAddress
-        ? {
-            line1: address.line1 ?? '',
-            line2: address.line2 || undefined,
-            city: address.city ?? '',
-            region: address.region || undefined,
-            countryCode: address.countryCode ?? '',
-          }
-        : undefined,
-    };
-  },
-
-  toContractorCreateReq(values: IContractorFormValues): IContractorCreateReq {
-    return {
-      name: values.name,
-      type: values.type,
-      status: ECounterpartyStatus.Active,
-      address: {
-        line1: values.address.line1,
-        line2: values.address.line2 || undefined,
-        city: values.address.city,
-        region: values.address.region || undefined,
-        countryCode: values.address.countryCode,
+      meta: {
+        vendor: {
+          address: hasAddress
+            ? {
+                line1: address.line1 ?? '',
+                line2: address.line2 || undefined,
+                city: address.city ?? '',
+                region: address.region || undefined,
+                countryCode: address.countryCode ?? '',
+              }
+            : undefined,
+        },
       },
     };
   },
 
-  toEmployerCreateReq(values: IEmployerFormValues): IEmployerCreateReq {
+  toContractorCreateReq(values: IContractorFormValues): ICounterpartyCreateReq {
     return {
       name: values.name,
       type: values.type,
       status: ECounterpartyStatus.Active,
-      displayName: values.displayName || null,
-      address: {
-        line1: values.address.line1,
-        line2: values.address.line2 || undefined,
-        city: values.address.city,
-        region: values.address.region || undefined,
-        countryCode: values.address.countryCode,
+      meta: {
+        contractor: {
+          address: {
+            line1: values.address.line1,
+            line2: values.address.line2 || undefined,
+            city: values.address.city,
+            region: values.address.region || undefined,
+            countryCode: values.address.countryCode,
+          },
+        },
+      },
+    };
+  },
+
+  toEmployerCreateReq(values: IEmployerFormValues): ICounterpartyCreateReq {
+    return {
+      name: values.name,
+      type: values.type,
+      status: ECounterpartyStatus.Active,
+      meta: {
+        employer: {
+          displayName: values.displayName || null,
+          address: {
+            line1: values.address.line1,
+            line2: values.address.line2 || undefined,
+            city: values.address.city,
+            region: values.address.region || undefined,
+            countryCode: values.address.countryCode,
+          },
+        },
       },
     };
   },
