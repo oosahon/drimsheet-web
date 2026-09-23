@@ -151,7 +151,11 @@ describe('counterparty.mapper', () => {
         name: 'Acme Corp',
         type: 'organization',
         status: ECounterpartyStatus.Active,
-        address: undefined,
+        meta: {
+          vendor: {
+            address: undefined,
+          },
+        },
       });
     });
 
@@ -171,12 +175,16 @@ describe('counterparty.mapper', () => {
         name: 'Acme Corp',
         type: 'organization',
         status: ECounterpartyStatus.Active,
-        address: {
-          line1: '123 Main St',
-          line2: undefined,
-          city: 'Lagos',
-          region: undefined,
-          countryCode: 'NG',
+        meta: {
+          vendor: {
+            address: {
+              line1: '123 Main St',
+              line2: undefined,
+              city: 'Lagos',
+              region: undefined,
+              countryCode: 'NG',
+            },
+          },
         },
       });
     });
@@ -199,12 +207,16 @@ describe('counterparty.mapper', () => {
         name: 'Jane Smith',
         type: 'individual',
         status: ECounterpartyStatus.Active,
-        address: {
-          line1: '456 side road',
-          line2: undefined,
-          city: 'Abuja',
-          region: undefined,
-          countryCode: 'NG',
+        meta: {
+          contractor: {
+            address: {
+              line1: '456 side road',
+              line2: undefined,
+              city: 'Abuja',
+              region: undefined,
+              countryCode: 'NG',
+            },
+          },
         },
       });
     });
@@ -227,13 +239,17 @@ describe('counterparty.mapper', () => {
         name: 'Tech Inc',
         type: 'organization',
         status: ECounterpartyStatus.Active,
-        displayName: 'Tech LLC',
-        address: {
-          line1: '789 Business Blvd',
-          line2: undefined,
-          city: 'Ibadan',
-          region: undefined,
-          countryCode: 'NG',
+        meta: {
+          employer: {
+            displayName: 'Tech LLC',
+            address: {
+              line1: '789 Business Blvd',
+              line2: undefined,
+              city: 'Ibadan',
+              region: undefined,
+              countryCode: 'NG',
+            },
+          },
         },
       });
     });
@@ -253,13 +269,17 @@ describe('counterparty.mapper', () => {
         name: 'Tech Inc',
         type: 'organization',
         status: ECounterpartyStatus.Active,
-        displayName: null,
-        address: {
-          line1: '789 Business Blvd',
-          line2: undefined,
-          city: 'Ibadan',
-          region: undefined,
-          countryCode: 'NG',
+        meta: {
+          employer: {
+            displayName: null,
+            address: {
+              line1: '789 Business Blvd',
+              line2: undefined,
+              city: 'Ibadan',
+              region: undefined,
+              countryCode: 'NG',
+            },
+          },
         },
       });
     });

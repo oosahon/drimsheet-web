@@ -3,7 +3,8 @@ import {
   EmployerForm,
   type IEmployerFormValues,
 } from '@/counterparty/components';
-import { useCreateEmployer } from '@/counterparty/hooks/use-create-employer';
+import { useCreateCounterparty } from '@/counterparty/hooks/use-create-counterparty';
+import { counterpartyMapper } from '@/counterparty/lib/mappers/counterparty.mapper';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +31,7 @@ export function EmployerCreationDialog({
   const { data: jurisdictions = [], isPending: isJurisdictionsPending } =
     useJurisdictions();
   const { mutateAsync: createEmployer, isPending: isCreating } =
-    useCreateEmployer();
+    useCreateCounterparty();
 
   const formDisabled = isJurisdictionsPending;
 
@@ -42,7 +43,7 @@ export function EmployerCreationDialog({
 
   const handleSubmit = async (values: IEmployerFormValues) => {
     try {
-      await createEmployer(values);
+      await createEmployer(counterpartyMapper.toEmployerCreateReq(values));
       toast.success(t('counterparty:employer_created_success_text'));
       onClose();
     } catch (error) {

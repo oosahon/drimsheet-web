@@ -1,6 +1,7 @@
 import { useJurisdictions } from '@/accounting/hooks/use-jurisdictions';
 import { VendorForm, type IVendorFormValues } from '@/counterparty/components';
-import { useCreateVendor } from '@/counterparty/hooks/use-create-vendor';
+import { useCreateCounterparty } from '@/counterparty/hooks/use-create-counterparty';
+import { counterpartyMapper } from '@/counterparty/lib/mappers/counterparty.mapper';
 import {
   Dialog,
   DialogContent,
@@ -27,7 +28,7 @@ export function VendorCreationDialog({
   const { data: jurisdictions = [], isPending: isJurisdictionsPending } =
     useJurisdictions();
   const { mutateAsync: createVendor, isPending: isCreating } =
-    useCreateVendor();
+    useCreateCounterparty();
 
   const formDisabled = isJurisdictionsPending;
 
@@ -39,7 +40,7 @@ export function VendorCreationDialog({
 
   const handleSubmit = async (values: IVendorFormValues) => {
     try {
-      await createVendor(values);
+      await createVendor(counterpartyMapper.toVendorCreateReq(values));
       toast.success(t('counterparty:vendor_created_success_text'));
       onClose();
     } catch (error) {
